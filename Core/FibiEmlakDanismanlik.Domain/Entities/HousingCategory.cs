@@ -10,5 +10,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
     {
         public int HousingCategoryId { get; set; }
         public string HousingCategoryName { get; set; }
+        public int MainCategoryId { get; set; }
+        public MainCategory MainCategory { get; set; }
     }
 }

@@ -10,6 +10,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
     public class RentalLandListing
     {   //MainInfo
         public int RentalLandListingId { get; set; }
+        [Required]
         public int PropertyNo { get; set; }
         [Required]
         public string PropertyName { get; set; }
@@ -22,22 +23,23 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         //Adress
         public string ZoningStatus { get; set; } // İmar Durumu
         public double Area { get; set; } // m²
-        public decimal Price { get; set; }
+        public decimal Rent { get; set; } //PricePerMontxh
         public decimal PricePerSquareMeter { get; set; } // m² Fiyatı
         public string ParcelNumber { get; set; } // Ada No
         public string PlotNumber { get; set; } // Parsel No
         public string MapSheetNumber { get; set; } // Pafta No
         public double FloorAreaRatio { get; set; } // Kaks (Emsal)
+        public double BaseAreaRatio { get; set; } // Taks (Emsal)
         public string ZoningPlan { get; set; } // Gabari
         public string TitleDeedStatus { get; set; } // front drop list olarak verilecek 
         public string DevelopmentRight { get; set; } // Kat Karşılığı
-        public bool LandLoan { get; set; }// Krediye Uygunluk
-        public bool Exchange { get; set; } // Takas
         //MainInfo
 
         //relational
-        public int HousingCategoryId { get; set; }
-        public HousingCategory HousingCategory { get; set; }
+        public int LandCategoryId { get; set; }
+        public LandCategory LandCategory { get; set; }
+        public int AgentId { get; set; }
+        public Agent Agent { get; set; }
         //relational
 
         //Images

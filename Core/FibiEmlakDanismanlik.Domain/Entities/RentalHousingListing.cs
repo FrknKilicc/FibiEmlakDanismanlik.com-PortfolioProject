@@ -27,22 +27,24 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public double GrossArea { get; set; }
         public double NetArea { get; set; }
         public double OpenArea { get; set; }
-        public int BuildingAge { get; set; } 
+        public string BuildingAge { get; set; } 
         public int NumberOfFloors { get; set; }
         public string Heating { get; set; }
         public bool ParkingLot { get; set; }
         public bool Furnished { get; set; }
         public string UsageStatus { get; set; } // front drop list olarak verilecek 
         public bool WithinTheComplex { get; set; }
-        public decimal Dues { get; set; }
+        public decimal Dues { get; set; } // aidat
         public decimal Deposit { get; set; }
         //MainInfo
         //relational
         public int HousingCategoryId { get; set; }
         public HousingCategory HousingCategory { get; set; }
+        public int AgentId { get; set; }
+        public Agent Agent { get; set; }
         //relational
-        //Images
 
+        //Images
         public string? PropImgUrl1 { get; set; }
         public string? PropImgUrl2 { get; set; }
         public string? PropImgUrl3 { get; set; }

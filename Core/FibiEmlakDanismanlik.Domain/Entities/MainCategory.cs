@@ -13,5 +13,6 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         [Required]
         public string CategoryName { get; set; }
 
+
     }
 }
