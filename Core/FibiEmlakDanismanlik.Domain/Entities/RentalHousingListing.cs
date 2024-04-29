@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class RentalHousingListing
-    {
+    public class RentalHousingListing //Kiralık Konut
+    { 
         //MainInfo
         public int RentalHousingListId { get; set; }
         [Required]
@@ -37,6 +37,11 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public decimal Dues { get; set; } // aidat
         public decimal Deposit { get; set; }
         //MainInfo
+
+        //Optional
+        public bool? BestDeals { get; set; }
+        //Optional
+
         //relational
         public int HousingCategoryId { get; set; }
         public HousingCategory HousingCategory { get; set; }

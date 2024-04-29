@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class ForSaleLandListing
+    public class ForSaleLandListing //Satılık Arsa
     {
         //MainInfo
         public int ForSaleLandListingId { get; set; }
@@ -39,7 +39,11 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string DevelopmentRight { get; set; } // Kat Karşılığı
         public bool LandLoan { get; set; }// Krediye Uygunluk
         public bool Exchange { get; set; } // Takas
-         //MainInfo
+                                           //MainInfo
+
+        //Optional
+        public bool? BestDeals { get; set; }
+        //Optional
 
         //relational
         public int LandCategoryId { get; set; }

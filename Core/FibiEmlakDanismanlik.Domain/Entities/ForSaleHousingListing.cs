@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class ForSaleHousingListing
+    public class ForSaleHousingListing //Satılık Konut
     {
 
         //MainInfo
@@ -28,7 +28,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public double GrossArea { get; set; }
         public double NetArea { get; set; }
         public double OpenArea { get; set; }
-        public int BuildingAge { get; set; }
+        public string BuildingAge { get; set; }
         public int NumberOfFloors { get; set; }
         public string Heating { get; set; }
         public bool ParkingLot { get; set; }
@@ -39,6 +39,11 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string TitleDeedStatus { get; set; } // front drop list olarak verilecek 
         public bool HomeLoan { get; set; }
         //MainInfo
+
+        //Optional
+        public bool? BestDeals { get; set; }
+        //Optional
+
         //relational
         public int HousingCategoryId { get; set; }
         public HousingCategory HousingCategory { get; set; }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class ForSaleCommercialPropertyListing
+    public class ForSaleCommercialPropertyListing //Satılık İşyeri
     {
         //MainInfo
         public int ForSaleCommercialListingId { get; set; }
@@ -31,6 +31,10 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public bool Exchange { get; set; } // Takas
         public bool Transferable { get; set; } // devredilebilir ? 
         //MainInfo
+
+        //Optional
+        public bool? BestDeals { get; set; }
+        //Optional
 
         //relational
         public int AgentId { get; set; }

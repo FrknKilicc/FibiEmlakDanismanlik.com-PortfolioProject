@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class RentalLandListing
+    public class RentalLandListing //Kiralık Arsa
     {   //MainInfo
         public int RentalLandListingId { get; set; }
         [Required]
@@ -33,7 +33,11 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string ZoningPlan { get; set; } // Gabari
         public string TitleDeedStatus { get; set; } // front drop list olarak verilecek 
         public string DevelopmentRight { get; set; } // Kat Karşılığı
-        //MainInfo
+                                                     //MainInfo
+
+        //Optional
+        public bool? BestDeals { get; set; }
+        //Optional
 
         //relational
         public int LandCategoryId { get; set; }
