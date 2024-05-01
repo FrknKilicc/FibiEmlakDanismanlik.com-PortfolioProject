@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,8 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 {
     public class Contact
     {
-        public int ContactUsId { get; set; }
+        [Key]
+        public int ContactId { get; set; }
         public string EMail1 { get; set; }
         public string EMail2 { get; set; }
         public int PhoneNumber1 { get; set; }

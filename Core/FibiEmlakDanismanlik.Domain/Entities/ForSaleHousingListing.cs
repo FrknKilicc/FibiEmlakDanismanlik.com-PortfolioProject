@@ -11,32 +11,52 @@ namespace FibiEmlakDanismanlik.Domain.Entities
     {
 
         //MainInfo
+        [Key]
         public int RentalHousingListId { get; set; }
-        [Required]
         public int PropertyNo { get; set; }
         [Required]
         public string PropertyName { get; set; }
         [Required]
         public string PropertyDescription { get; set; }
+        public string? PropertyStatus { get; set; }
         public DateTime CreatedDate { get; set; }
+        [Required]
         public decimal Price { get; set; }
         //Adress
+        [Required]
         public string City { get; set; } // İl
+        [Required]
         public string District { get; set; } // İlçe
-        public string AddressDesc { get; set; } //Açık Adress
+        public string? AddressDesc { get; set; } //Açık Adress
         //Adress
+       
+        [Required]
+        public bool IsElevator { get; set; }
+        [Required]
         public double GrossArea { get; set; }
+        [Required]
         public double NetArea { get; set; }
-        public double OpenArea { get; set; }
+        public double? OpenArea { get; set; }
+        [Required]
         public string BuildingAge { get; set; }
-        public int NumberOfFloors { get; set; }
+        [Required]
+        public int NumberOfFloors { get; set; }//kaçıncı kat
+        public int? NumberOfBathRoom { get; set; }
+        [Required]
+        public string NumberOfRoom { get; set; }
+        [Required]
+        public int TotalNumberOfFloor { get; set; }
+        [Required]
         public string Heating { get; set; }
-        public bool ParkingLot { get; set; }
-        public bool Furnished { get; set; }
-        public string UsageStatus { get; set; } // front drop list olarak verilecek 
-        public bool WithinTheComplex { get; set; }
-        public decimal Dues { get; set; }
-        public string TitleDeedStatus { get; set; } // front drop list olarak verilecek 
+        public bool? ParkingLot { get; set; }
+        public bool? Furnished { get; set; }
+        [Required]
+        public string UsageStatus { get; set; } // front drop list olarak verilecek
+        public bool? WithinTheComplex { get; set; }
+        public decimal? Dues { get; set; }
+        [Required]
+        public string TitleDeedStatus { get; set; } // front drop list olarak verilecek
+        [Required]
         public bool HomeLoan { get; set; }
         //MainInfo
 
@@ -51,7 +71,8 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public Agent Agent { get; set; }
         //relational
         //Images
-        public string? PropImgUrl1 { get; set; }
+        [Required]
+        public string PropImgUrl1 { get; set; }
         public string? PropImgUrl2 { get; set; }
         public string? PropImgUrl3 { get; set; }
         public string? PropImgUrl4 { get; set; }

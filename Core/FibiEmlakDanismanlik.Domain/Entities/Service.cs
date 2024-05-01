@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class MainCategory
+    public class Service
     {
         [Key]
-        public int CategoryId { get; set; }
-        [Required]
-        public string CategoryName { get; set; }
-
-
+        public int ServiceId { get; set; }
+        public string ServiceImgUrl { get; set; }
+        public string ServiceTitle { get; set; }
+        public string ServiceDesc { get; set; }
     }
 }

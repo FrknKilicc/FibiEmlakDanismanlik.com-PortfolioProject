@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class MainCategory
+    public class FrequentlyAskedQuestion
     {
         [Key]
-        public int CategoryId { get; set; }
-        [Required]
-        public string CategoryName { get; set; }
-
-
+        public int FrequentlyAskedQuestionId { get; set; }
+        public string Question { get; set; }
+        public string Answer { get; set; }
     }
 }

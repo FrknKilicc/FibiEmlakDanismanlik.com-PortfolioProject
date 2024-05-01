@@ -9,6 +9,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 {
     public class MainBanner
     {
+        [Key]
         public int MainBannerId { get; set; }
         [Required]
         public string MainBannerUrl { get; set; }

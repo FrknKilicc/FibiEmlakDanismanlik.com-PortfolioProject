@@ -8,33 +8,49 @@ using System.Threading.Tasks;
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
     public class RentalHousingListing //Kiralık Konut
-    { 
+    {
         //MainInfo
+        [Key]
         public int RentalHousingListId { get; set; }
-        [Required]
         public int PropertyNo { get; set; }
         [Required]
         public string PropertyName { get; set; }
         [Required]
         public string PropertyDescription { get; set; }
+        public string? PropertyStatus { get; set; }
         public DateTime CreatedDate { get; set; }
+        [Required]
         public decimal Rent { get; set; } //Price
         //Adress
+        [Required]
         public string City { get; set; } // İl
+        [Required]
         public string District { get; set; } // İlçe
-        public string AddressDesc { get; set; } //AçıkAdress
-         //Adress
+        public string? AddressDesc { get; set; } //AçıkAdress
+                                                 //Adress
+        [Required]
+        public bool IsElevator { get; set; }
+        [Required]
         public double GrossArea { get; set; }
+        [Required]
         public double NetArea { get; set; }
-        public double OpenArea { get; set; }
-        public string BuildingAge { get; set; } 
-        public int NumberOfFloors { get; set; }
+        public double? OpenArea { get; set; }
+        [Required]
+        public string BuildingAge { get; set; }
+        [Required]
+        public int NumberOfFloors { get; set; }//kaçıncı kat
+        public int? NumberOfBathRoom { get; set; }
+        [Required]
+        public string NumberOfRoom { get; set; }
+        [Required]
+        public int TotalNumberOfFloor { get; set; }
+        [Required]
         public string Heating { get; set; }
-        public bool ParkingLot { get; set; }
-        public bool Furnished { get; set; }
-        public string UsageStatus { get; set; } // front drop list olarak verilecek 
-        public bool WithinTheComplex { get; set; }
-        public decimal Dues { get; set; } // aidat
+        public bool? ParkingLot { get; set; }
+        public bool? Furnished { get; set; }
+        public bool? WithinTheComplex { get; set; }
+        public decimal? Dues { get; set; } // aidat
+        [Required]
         public decimal Deposit { get; set; }
         //MainInfo
 
@@ -50,6 +66,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         //relational
 
         //Images
+        [Required]
         public string? PropImgUrl1 { get; set; }
         public string? PropImgUrl2 { get; set; }
         public string? PropImgUrl3 { get; set; }

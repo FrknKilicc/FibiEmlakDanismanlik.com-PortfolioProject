@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,29 +10,54 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 {
     public class ForSaleCommercialPropertyListing //Satılık İşyeri
     {
-        //MainInfo
-        public int ForSaleCommercialListingId { get; set; }
-        [Required]
-        public int PropertyNo { get; set; }
-        [Required]
-        public string PropertyName { get; set; }
-        [Required]
-        public string PropertyDescription { get; set; }
-        //Adress
-        [Required]
-        public string City { get; set; } // İl
-        [Required]
-        public string District { get; set; } // İlçe
-        public string AddressDesc { get; set; } //Açık Adress
-        //Adress
-        public double Area { get; set; } // m²
-        public decimal Price { get; set; } //Price
-        public string TitleDeedStatus { get; set; } // front drop list olarak verilecek  // tapu durumu 
-        public bool LandLoan { get; set; }// Krediye Uygunluk
-        public bool Exchange { get; set; } // Takas
-        public bool Transferable { get; set; } // devredilebilir ? 
-        //MainInfo
+        //MainInfo 
+        [Key]
+        public int ForSaleCommercialListingId { get; set; } 
 
+        [Display(Name = "İlan No")]
+        public int PropertyNo { get; set; }
+
+        [Display(Name = "İlan Adı")]
+        [Required(ErrorMessage = "İlan adı zorunludur.")]
+        public string PropertyName { get; set; }
+
+        [Display(Name = "İlan Açıklaması")]
+        [Required(ErrorMessage = "İlan Açıklaması zorunludur.")]
+        public string PropertyDescription { get; set; }
+
+        // Adres Bilgileri
+        [Display(Name = "Şehir")]
+        [Required(ErrorMessage = "Şehir alanı zorunludur.")]
+        public string City { get; set; }
+
+        [Display(Name = "İlçe")]
+        public string District { get; set; }
+
+        [Display(Name = "Adres")]
+        public string AddressDesc { get; set; }
+        // Adres Bilgileri
+
+        [Display(Name = "Alan (m²)")]
+        public double? Area { get; set; } 
+
+        [Display(Name = "Fiyat")]
+        [DataType(DataType.Currency)]
+        [Range(0, double.MaxValue, ErrorMessage = "Geçerli bir fiyat giriniz.")]
+        public decimal Price { get; set; }
+
+        [Display(Name = "Tapu Durumu")]
+        public string TitleDeedStatus { get; set; } // Front drop list olarak verilecek // tapu durumu 
+
+        [Display(Name = "Krediye Uygunluk")]
+        public bool LandLoan { get; set; }
+
+        [Display(Name = "Takas")]
+        public bool Exchange { get; set; }
+
+        [Display(Name = "Devren")]
+        public bool Transferable { get; set; }
+        //MainInfo  
+      
         //Optional
         public bool? BestDeals { get; set; }
         //Optional

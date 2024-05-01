@@ -9,13 +9,14 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 {
     public class RentalLandListing //Kiralık Arsa
     {   //MainInfo
+        [Key]
         public int RentalLandListingId { get; set; }
-        [Required]
         public int PropertyNo { get; set; }
         [Required]
         public string PropertyName { get; set; }
         [Required]
         public string PropertyDescription { get; set; }
+        public string PropertyStatus { get; set; }
         //Adress
         public string City { get; set; } // İl
         public string District { get; set; } // İlçe
@@ -33,7 +34,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string ZoningPlan { get; set; } // Gabari
         public string TitleDeedStatus { get; set; } // front drop list olarak verilecek 
         public string DevelopmentRight { get; set; } // Kat Karşılığı
-                                                     //MainInfo
+        //MainInfo
 
         //Optional
         public bool? BestDeals { get; set; }

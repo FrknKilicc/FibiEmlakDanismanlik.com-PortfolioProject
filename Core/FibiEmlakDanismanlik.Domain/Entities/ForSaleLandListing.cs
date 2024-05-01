@@ -10,13 +10,14 @@ namespace FibiEmlakDanismanlik.Domain.Entities
     public class ForSaleLandListing //Satılık Arsa
     {
         //MainInfo
+        [Key]
         public int ForSaleLandListingId { get; set; }
-        [Required]
         public int PropertyNo { get; set; }
         [Required]
         public string PropertyName { get; set; }
         [Required]
         public string PropertyDescription { get; set; }
+        public string PropertyStatus { get; set; }
         //Adress
         [Required]
         public string City { get; set; } // İl
@@ -39,7 +40,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string DevelopmentRight { get; set; } // Kat Karşılığı
         public bool LandLoan { get; set; }// Krediye Uygunluk
         public bool Exchange { get; set; } // Takas
-                                           //MainInfo
+        //MainInfo
 
         //Optional
         public bool? BestDeals { get; set; }

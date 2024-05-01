@@ -10,20 +10,21 @@ namespace FibiEmlakDanismanlik.Domain.Entities
     public class RentalCommercialPropertyListing //Kiralık İşyeri 
     {
         //MainInfo
+        [Key]
         public int RentalCommercialListId { get; set; }
-        [Required]
         public int PropertyNo { get; set; }
         [Required]
         public string PropertyName { get; set; }
         [Required]
         public string PropertyDescription { get; set; }
+        public string PropertyStatus { get; set; }
         public DateTime CreatedDate { get; set; }
         public decimal Rent { get; set; } //Price
         //Adress
         public string City { get; set; } // İl
         public string District { get; set; } // İlçe
         public string AddressDesc { get; set; } //AçıkAdress
-                                                //Adress
+        //Adress
         public double GrossArea { get; set; } // brüt m2
         public double NetArea { get; set; }
         public string BuildingAge { get; set; }
@@ -32,8 +33,9 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public bool Furnished { get; set; }
         public string TitleDeedStatus { get; set; } // front drop list olarak verilecek  // tapu durumu 
         public decimal Dues { get; set; } // aidat
-        public decimal Deposit { get; set; } //
+        public decimal Deposit { get; set; } 
         //MainInfo
+
          //Optional
         public bool? BestDeals { get; set; }
         //Optional
@@ -41,6 +43,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         //relational
         public int AgentId { get; set; }
         public Agent Agent { get; set; }
+        //relational
 
         //Images
         public string? PropImgUrl1 { get; set; }
