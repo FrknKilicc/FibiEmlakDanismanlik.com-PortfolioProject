@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\FibiEmlakDanismanlik.Application\FibiEmlakDanismanlik.Application.csproj" />
     <ProjectReference Include="..\..\Core\FibiEmlakDanismanlik.Domain\FibiEmlakDanismanlik.Domain.csproj" />
   </ItemGroup>
 
