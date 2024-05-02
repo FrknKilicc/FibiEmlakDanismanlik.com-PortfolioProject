@@ -18,7 +18,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AboutUsHandlers
         {
             _repository = repository;
         }
-
         public async Task Handle(UpdateAboutUsCommand request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.AboutUsId);
