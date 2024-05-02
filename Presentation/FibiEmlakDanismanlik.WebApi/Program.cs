@@ -1,10 +1,14 @@
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Application.Services;
+using FibiEmlakDanismanlik.Persistence.Context;
 using FibiEmlakDanismanlik.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddScoped<FibiEmlakDanismanlikContext>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
