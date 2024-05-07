@@ -765,11 +765,11 @@ img {
 
 .main-header .logo-box{
   position: relative;
-  padding: 27.5px 0px;
+  /*padding: 27.5px 0px;*/
 }
 
 .main-header .logo-box .logo{
-  max-width: 214px;
+  max-width: 400px;
 }
 
 .main-header .logo-box .logo img{
