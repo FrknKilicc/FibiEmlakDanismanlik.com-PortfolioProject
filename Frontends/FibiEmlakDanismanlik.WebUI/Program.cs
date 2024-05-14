@@ -4,6 +4,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 
+// IConfiguration aracýlýðýyla AppSettings.json'daki yapýlandýrmayý yükleme
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -6,7 +6,7 @@
         @foreach (var item in Model)
         {
             <div class="slide-item">
-                <div class="image-layer" style="background-image:url(/Realshed/assets/images/banner/banner-2.jpg)"></div>
+                <div class="image-layer" style="background-image:url(@item.MainBannerUrl)"></div>
                 <div class="auto-container">
                     <div class="content-box">
                         <h2>@item.MainBannerDesc</h2>
