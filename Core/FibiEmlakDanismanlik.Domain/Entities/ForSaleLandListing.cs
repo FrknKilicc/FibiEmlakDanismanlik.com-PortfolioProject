@@ -18,28 +18,34 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         [Required]
         public string PropertyDescription { get; set; }
         public string PropertyStatus { get; set; }
+        public DateTime CreatedDate { get; set; }
         //Adress
         [Required]
         public string City { get; set; } // İl
         [Required]
         public string District { get; set; } // İlçe
-        
+        [Required]
+        public string Neighborhood { get; set; }//Mahalle
         public string AddressDesc { get; set; } //Açık Adress
+        //mahalle
         //Adress
         public string ZoningStatus { get; set; } // İmar Durumu
+
+        //between
+        public double? SharePercentage { get; set; } // çevir
         public double Area { get; set; } // m²
         public decimal Price { get; set; } //Price
         public decimal PricePerSquareMeter { get; set; } // m² Fiyatı
-        public string ParcelNumber { get; set; } // Ada No
-        public string PlotNumber { get; set; } // Parsel No
-        public string MapSheetNumber { get; set; } // Pafta No
-        public double FloorAreaRatio { get; set; } // Kaks (Emsal)
-        public double BaseAreaRatio { get; set; } // Taks (Emsal)
-        public string ZoningPlan { get; set; } // Gabari
+        public string? ParcelNumber { get; set; } // Ada No
+        public string? PlotNumber { get; set; } // Parsel No
+        public string? MapSheetNumber { get; set; } // Pafta No
+        public double? FloorAreaRatio { get; set; } // Kaks (Emsal)
+        public double? BaseAreaRatio { get; set; } // Taks (Emsal)
+        public string? ZoningPlan { get; set; } // Gabari
         public string TitleDeedStatus { get; set; } // front drop list olarak verilecek  // tapu durumu 
-        public string DevelopmentRight { get; set; } // Kat Karşılığı
-        public bool LandLoan { get; set; }// Krediye Uygunluk
-        public bool Exchange { get; set; } // Takas
+        public bool? DevelopmentRight { get; set; } // Kat Karşılığı
+        public bool? LandLoan { get; set; }// Krediye Uygunluk
+        public bool? Exchange { get; set; } // Takas
         //MainInfo
 
         //Optional
@@ -55,6 +61,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         //relational
 
         //Images
+        [Required]
         public string? PropImgUrl1 { get; set; }
         public string? PropImgUrl2 { get; set; }
         public string? PropImgUrl3 { get; set; }
@@ -70,6 +77,23 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string? PropImgUrl13 { get; set; }
         public string? PropImgUrl14 { get; set; }
         public string? PropImgUrl15 { get; set; }
+        public string? PropImgUrl16 { get; set; }
+        public string? PropImgUrl17 { get; set; }
+        public string? PropImgUrl18 { get; set; }
+        public string? PropImgUrl19 { get; set; }
+        public string? PropImgUrl20 { get; set; }
+        public string? PropImgUrl21 { get; set; }
+        public string? PropImgUrl22 { get; set; }
+        public string? PropImgUrl23 { get; set; }
+        public string? PropImgUrl24 { get; set; }
+        public string? PropImgUrl25 { get; set; }
+        public string? PropImgUrl26 { get; set; }
+        public string? PropImgUrl27 { get; set; }
+        public string? PropImgUrl28 { get; set; }
+        public string? PropImgUrl29 { get; set; }
+        public string? PropImgUrl30 { get; set; }
+
+
         //Images
 
     }

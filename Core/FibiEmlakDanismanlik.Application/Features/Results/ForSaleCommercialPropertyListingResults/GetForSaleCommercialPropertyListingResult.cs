@@ -1,62 +1,40 @@
-﻿using System;
+﻿using FibiEmlakDanismanlik.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FibiEmlakDanismanlik.Domain.Entities
+namespace FibiEmlakDanismanlik.Application.Features.Results.ForSaleCommercialPropertyListingResults
 {
-    public class RentalCommercialPropertyListing //Kiralık İşyeri 
+    public class GetForSaleCommercialPropertyListingResult
     {
-        //MainInfo
-        [Key]
-        public int RentalCommercialListId { get; set; }
+        //MainInfo 
+        public int ForSaleCommercialListingId { get; set; }
         public int PropertyNo { get; set; }
-        [Required]
         public string PropertyName { get; set; }
-        [Required]
         public string PropertyDescription { get; set; }
-        public string PropertyStatus { get; set; }
-        public DateTime CreatedDate { get; set; }
-        [Required]
-        public decimal Rent { get; set; } //Price
 
-        //Adress
-        public string City { get; set; } // İl
-        public string District { get; set; } // İlçe
-        [Required]
-        public string Neighborhood { get; set; }//Mahalle
-        public string? AddressDesc { get; set; } //AçıkAdress
-                                                 //Adress
-        public string? Facade { get; set; } //cephe
-        public int? NumberOfSection { get; set; } // Bölüm Sayısı
-        public int? NumberOfKitchens { get; set; } // Mutfak Sayısı
-        public int? NumberOfBathrooms { get; set; }// Lavabo Sayısı
-        [Required]
-        public int NumberOfFloors { get; set; } // Kaçıncı Kat
-        public double? GrossArea { get; set; } // brüt m2
-        public double? NetArea { get; set; }
-        [Required]
-        public string BuildingAge { get; set; }
-        [Required]
-        public string Heating { get; set; }
-        public string? TitleDeedStatus { get; set; } // front drop list olarak verilecek  // tapu durumu 
-        [Required]
-        public decimal Deposit { get; set; } 
-        //MainInfo
-
-         //Optional
+        // Adres Bilgileri
+        public string City { get; set; }
+        public string District { get; set; }
+        public string AddressDesc { get; set; }
+        // Adres Bilgileri
+        public double? Area { get; set; }
+        public decimal Price { get; set; }
+        public string TitleDeedStatus { get; set; } // Front drop list olarak verilecek // tapu durumu 
+        public bool LandLoan { get; set; }
+        public bool Exchange { get; set; }
+        public bool Transferable { get; set; }
+        //MainInfo  
+        //Optional
         public bool? BestDeals { get; set; }
         //Optional
-
         //relational
         public int AgentId { get; set; }
-        public Agent Agent { get; set; }
         //relational
-
         //Images
-        [Required]
         public string? PropImgUrl1 { get; set; }
         public string? PropImgUrl2 { get; set; }
         public string? PropImgUrl3 { get; set; }
@@ -88,13 +66,6 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string? PropImgUrl29 { get; set; }
         public string? PropImgUrl30 { get; set; }
 
-
         //Images
-
-
-
-
-
-
     }
 }
