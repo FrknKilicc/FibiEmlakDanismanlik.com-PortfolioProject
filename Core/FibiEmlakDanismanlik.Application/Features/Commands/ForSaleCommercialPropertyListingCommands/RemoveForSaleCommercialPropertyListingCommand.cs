@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPropertyListingCommands
 {
-    public class RemoveForSaleCommercialPropertyListingCommands:IRequest
+    public class RemoveForSaleCommercialPropertyListingCommand:IRequest
     {
         public int Id { get; set; }
 
-        public RemoveForSaleCommercialPropertyListingCommands(int id)
+        public RemoveForSaleCommercialPropertyListingCommand(int id)
         {
             Id = id;
         }
