@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Persistence.Context
 {
-    public class FibiEmlakDanismanlikContext:DbContext
+    public class FibiEmlakDanismanlikContext : DbContext
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -20,8 +20,8 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<ForSaleCommercialPropertyListing> forSaleCommercialPropertyListings { get; set; }
-        public DbSet<ForSaleHousingListing> forSaleHousingPropertyListings { get;set; }
-        public DbSet<ForSaleLandListing> forSaleLandListings { get; set;}
+        public DbSet<ForSaleHousingListing> forSaleHousingPropertyListings { get; set; }
+        public DbSet<ForSaleLandListing> forSaleLandListings { get; set; }
         public DbSet<RentalCommercialPropertyListing> rentalCommercialPropertyListings { get; set; }
         public DbSet<RentalHousingListing> rentalHousingListings { get; set; }
         public DbSet<RentalLandListing> rentalLandListings { get; set; }
@@ -31,6 +31,61 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<MainCategory> MainCategories { get; set; }
         public DbSet<FrequentlyAskedQuestion> frequentlyAskedQuestions { get; set; }
         public DbSet<Service> services { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.HasSequence<int>("Seq_ForSaleCommercialPropertyListings_Table")
+                .StartsAt(500000)
+                .IncrementsBy(1);
+
+            modelBuilder.HasSequence<int>("Seq_ForSaleHousingPropertyListings_Table")
+                .StartsAt(1)
+                .IncrementsBy(1);
+
+            modelBuilder.HasSequence<int>("Seq_ForSaleLandListings_Table")
+                .StartsAt(200000)
+                .IncrementsBy(1);
+
+            modelBuilder.HasSequence<int>("Seq_RentalCommercialPropertyListings_Table")
+                .StartsAt(1000000)
+                .IncrementsBy(1);
+
+            modelBuilder.HasSequence<int>("Seq_RentalHousingListings_Table")
+                .StartsAt(100000)
+                .IncrementsBy(1);
+
+            modelBuilder.HasSequence<int>("Seq_RentalLandListings_Table")
+                .StartsAt(300000)
+                .IncrementsBy(1);
+
+            modelBuilder.Entity<ForSaleCommercialPropertyListing>()
+                .Property(f => f.PropertyNo)
+                .HasDefaultValueSql("NEXT VALUE FOR Seq_ForSaleCommercialPropertyListings_Table");
+
+            modelBuilder.Entity<ForSaleHousingListing>()
+                .Property(f => f.PropertyNo)
+                .HasDefaultValueSql("NEXT VALUE FOR Seq_ForSaleHousingPropertyListings_Table");
+
+            modelBuilder.Entity<ForSaleLandListing>()
+                .Property(f => f.PropertyNo)
+                .HasDefaultValueSql("NEXT VALUE FOR Seq_ForSaleLandListings_Table");
+
+            modelBuilder.Entity<RentalCommercialPropertyListing>()
+                .Property(f => f.PropertyNo)
+                .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalCommercialPropertyListings_Table");
+
+            modelBuilder.Entity<RentalHousingListing>()
+                .Property(f => f.PropertyNo)
+                .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalHousingListings_Table");
+
+            modelBuilder.Entity<RentalLandListing>()
+                .Property(f => f.PropertyNo)
+                .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalLandListings_Table");
+
+            base.OnModelCreating(modelBuilder);
+        }
+
+
 
     }
 }

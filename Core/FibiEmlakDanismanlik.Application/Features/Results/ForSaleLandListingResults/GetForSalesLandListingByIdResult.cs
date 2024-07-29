@@ -1,37 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FibiEmlakDanismanlik.Domain.Entities
+namespace FibiEmlakDanismanlik.Application.Features.Results.ForSaleLandListingResults
 {
-    public class ForSaleLandListing //Satılık Arsa
+    public class GetForSalesLandListingByIdResult
     {
-        //MainInfo
-        [Key]
         public int ForSaleLandListingId { get; set; }
         public int? PropertyNo { get; set; }
-        [Required]
         public string PropertyName { get; set; }
-        [Required]
         public string PropertyDescription { get; set; }
         public string PropertyStatus { get; set; }
         public DateTime CreatedDate { get; set; }
-        //Adress
-        [Required]
         public string City { get; set; } // İl
-        [Required]
         public string District { get; set; } // İlçe
-        [Required]
         public string Neighborhood { get; set; }//Mahalle
         public string AddressDesc { get; set; } //Açık Adress
-        //mahalle
-        //Adress
         public string ZoningStatus { get; set; } // İmar Durumu
-
-        //between
         public double? SharePercentage { get; set; } // çevir
         public double Area { get; set; } // m²
         public decimal Price { get; set; } //Price
@@ -46,22 +33,9 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public bool? DevelopmentRight { get; set; } // Kat Karşılığı
         public bool? LandLoan { get; set; }// Krediye Uygunluk
         public bool? Exchange { get; set; } // Takas
-        //MainInfo
-
-        //Optional
         public bool? BestDeals { get; set; }
-        //Optional
-
-        //relational
         public int LandCategoryId { get; set; }
-        public LandCategory LandCategory { get; set; }
         public int AgentId { get; set; }
-        public Agent Agent { get; set; }
-
-        //relational
-
-        //Images
-        [Required]
         public string? PropImgUrl1 { get; set; }
         public string? PropImgUrl2 { get; set; }
         public string? PropImgUrl3 { get; set; }
@@ -92,9 +66,6 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string? PropImgUrl28 { get; set; }
         public string? PropImgUrl29 { get; set; }
         public string? PropImgUrl30 { get; set; }
-
-
-        //Images
 
     }
 }

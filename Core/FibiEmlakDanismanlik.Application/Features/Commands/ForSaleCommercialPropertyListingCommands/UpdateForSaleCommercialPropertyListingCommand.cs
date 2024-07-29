@@ -11,7 +11,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPr
     {
         //MainInfo 
         public int ForSaleCommercialListingId { get; set; }
-        public int PropertyNo { get; set; }
+        public int? PropertyNo { get; set; }
         public string PropertyName { get; set; }
         public string PropertyDescription { get; set; }
 

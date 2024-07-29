@@ -12,7 +12,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         //MainInfo
         [Key]
         public int RentalHousingListId { get; set; }
-        public int PropertyNo { get; set; }
+        public int? PropertyNo { get; set; }
         [Required]
         public string PropertyName { get; set; }
         [Required]

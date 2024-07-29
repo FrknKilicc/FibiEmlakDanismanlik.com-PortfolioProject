@@ -4,6 +4,7 @@ using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FibiEmlakDanismanlik.Persistence.Migrations
 {
     [DbContext(typeof(FibiEmlakDanismanlikContext))]
-    partial class FibiEmlakDanismanlikContextModelSnapshot : ModelSnapshot
+    [Migration("20240729164535_edited_DatabaseForSquencess")]
+    partial class edited_DatabaseForSquencess
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,23 +24,6 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.HasSequence<int>("Seq_ForSaleCommercialPropertyListings_Table")
-                .StartsAt(500000L);
-
-            modelBuilder.HasSequence<int>("Seq_ForSaleHousingPropertyListings_Table");
-
-            modelBuilder.HasSequence<int>("Seq_ForSaleLandListings_Table")
-                .StartsAt(200000L);
-
-            modelBuilder.HasSequence<int>("Seq_RentalCommercialPropertyListings_Table")
-                .StartsAt(1000000L);
-
-            modelBuilder.HasSequence<int>("Seq_RentalHousingListings_Table")
-                .StartsAt(100000L);
-
-            modelBuilder.HasSequence<int>("Seq_RentalLandListings_Table")
-                .StartsAt(300000L);
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.AboutUs", b =>
                 {
@@ -353,10 +339,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PropertyNo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValueSql("NEXT VALUE FOR Seq_ForSaleCommercialPropertyListings_Table");
+                    b.Property<int>("PropertyNo")
+                        .HasColumnType("int");
 
                     b.Property<double?>("SharePercentage")
                         .HasColumnType("float");
@@ -566,10 +550,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PropertyNo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValueSql("NEXT VALUE FOR Seq_ForSaleHousingPropertyListings_Table");
+                    b.Property<int>("PropertyNo")
+                        .HasColumnType("int");
 
                     b.Property<string>("PropertyStatus")
                         .HasColumnType("nvarchar(max)");
@@ -765,10 +747,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PropertyNo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValueSql("NEXT VALUE FOR Seq_ForSaleLandListings_Table");
+                    b.Property<int>("PropertyNo")
+                        .HasColumnType("int");
 
                     b.Property<string>("PropertyStatus")
                         .IsRequired()
@@ -1061,10 +1041,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PropertyNo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalCommercialPropertyListings_Table");
+                    b.Property<int>("PropertyNo")
+                        .HasColumnType("int");
 
                     b.Property<string>("PropertyStatus")
                         .IsRequired()
@@ -1268,10 +1246,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PropertyNo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalHousingListings_Table");
+                    b.Property<int>("PropertyNo")
+                        .HasColumnType("int");
 
                     b.Property<string>("PropertyStatus")
                         .HasColumnType("nvarchar(max)");
@@ -1453,10 +1429,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PropertyNo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalLandListings_Table");
+                    b.Property<int>("PropertyNo")
+                        .HasColumnType("int");
 
                     b.Property<string>("PropertyStatus")
                         .IsRequired()

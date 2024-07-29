@@ -15,7 +15,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         [Key]
         public int ForSaleCommercialListingId { get; set; } 
         [Display(Name = "İlan No")]
-        public int PropertyNo { get; set; }
+        public int? PropertyNo { get; set; }
         [Display(Name = "İlan Adı")]
         [Required(ErrorMessage = "İlan adı zorunludur.")]
         public string PropertyName { get; set; }

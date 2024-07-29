@@ -9,7 +9,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForSaleHousingListin
     public class GetForSaleHousingListingByIdResult
     {
         public int ForSaleHousingListId { get; set; }
-        public int PropertyNo { get; set; }
+        public int? PropertyNo { get; set; }
         public string PropertyName { get; set; }
         public string PropertyDescription { get; set; }
         public string? PropertyStatus { get; set; }

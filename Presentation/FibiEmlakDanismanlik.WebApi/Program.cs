@@ -1,7 +1,9 @@
 using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces;
 using FibiEmlakDanismanlik.Application.Services;
 using FibiEmlakDanismanlik.Persistence.Context;
 using FibiEmlakDanismanlik.Persistence.Repositories;
+using FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,7 @@ builder.Services.AddSwaggerGen();
 
 //Configure IRepositories 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(IPropertyRepository), typeof(ForSalePropertyRepository));
 
 //Configure IRepositories
 
