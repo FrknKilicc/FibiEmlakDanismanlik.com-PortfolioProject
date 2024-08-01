@@ -78,6 +78,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSaleCommercialPr
             value.PropImgUrl30 = request.PropImgUrl30;
             // images
 
+            await _repository.UpdateAsync(value);
+
+
         }
     }
 }

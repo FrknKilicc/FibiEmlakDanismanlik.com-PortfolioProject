@@ -1,16 +1,18 @@
-﻿using MediatR;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPropertyListingCommands
+namespace FibiEmlakDanismanlik.Dto.PropertyDtos
 {
-    public class UpdateForSaleCommercialPropertyListingCommand: IRequest
+    public class ResultForSaleCommercialPropertyListingDto
     {
+
         //MainInfo 
         public int ForSaleCommercialListingId { get; set; }
+        public int? PropertyNo { get; set; }
         public string PropertyName { get; set; }
         public string PropertyDescription { get; set; }
 
@@ -29,11 +31,16 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPr
         public double GrossArea { get; set; }
         public double? Area { get; set; }
         public decimal Price { get; set; }
+
         public string TitleDeedStatus { get; set; } // Front drop list olarak verilecek // tapu durumu 
 
+        //BETWEEN
         public double? SharePercentage { get; set; } // çevir
+
         public bool LandLoan { get; set; }
+
         public bool Exchange { get; set; }
+
         public bool Transferable { get; set; }
         //MainInfo  
 
@@ -75,6 +82,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPr
         public string? PropImgUrl28 { get; set; }
         public string? PropImgUrl29 { get; set; }
         public string? PropImgUrl30 { get; set; }
+
+
         //Images
+
     }
 }

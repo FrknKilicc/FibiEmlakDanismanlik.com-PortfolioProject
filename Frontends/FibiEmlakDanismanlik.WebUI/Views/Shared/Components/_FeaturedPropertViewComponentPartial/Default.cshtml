@@ -1,0 +1,54 @@
+﻿@model List<ResultForSaleCommercialPropertyListingDto>
+
+<section class="feature-style-two sec-pad">
+    <div class="auto-container">
+        <div class="sec-title">
+            <h5>İlanlar</h5>
+            <h2>Son eklenenler</h2>
+        </div>
+        <div class="three-item-carousel owl-carousel owl-theme owl-dots-none nav-style-one">
+            @foreach(var item in Model)
+            {
+                <div class="feature-block-one">
+                    <div class="inner-box">
+                        <div class="image-box">
+                            <figure class="image"><img src="@item.PropImgUrl1" alt=""></figure>
+                            <div class="batch"><i class="icon-11"></i></div>
+                            <span class="category">İş Yeri</span>
+                        </div>
+                        <div class="lower-content">
+                            <div class="author-info clearfix">
+                                <div class="author pull-left">
+                                    <figure class="author-thumb"><img src="/Realshed/assets/images/feature/author-1.jpg" alt=""></figure>
+                                    <h6>Atakan Bayram</h6>
+                                </div>
+                                <div class="buy-btn pull-right"><a href="/Realshed/property-details.html">Satılık</a></div>
+                            </div>
+                            <div class="title-text"><h4><a href="/Realshed/property-details.html">@item.PropertyName</a></h4></div>
+                            <div class="price-box clearfix">
+                                <div class="price-info pull-left">
+                                    <h6>Fiyat:</h6>
+                                    <h4>@item.Price.ToString("N0") TL</h4>
+                                </div>
+                                <ul class="other-option pull-right clearfix">
+                                    <li><a href="/Realshed/property-details.html"><i class="icon-12"></i></a></li>
+                                    <li><a href="/Realshed/property-details.html"><i class="icon-13"></i></a></li>
+                                </ul>
+                            </div>
+                            <p>@item.PropertyDescription</p>
+                            <ul class="more-details clearfix">
+                                <li><i class="icon-14"></i>3 Beds</li>
+                                <li><i class="icon-15"></i>@item.NumberOfBathrooms Banyo</li>
+                                <li><i class="icon-16"></i>@item.GrossArea m2</li>
+                            </ul>
+                            <div class="btn-box"><a href="property-details.html" class="theme-btn btn-two">Detayları Gör</a></div>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+           
+        </div>
+        <div class="more-btn centred"><a href="/Realshed/property-list.html" class="theme-btn btn-one">Tüm İlanları Gör</a></div>
+    </div>
+</section>
