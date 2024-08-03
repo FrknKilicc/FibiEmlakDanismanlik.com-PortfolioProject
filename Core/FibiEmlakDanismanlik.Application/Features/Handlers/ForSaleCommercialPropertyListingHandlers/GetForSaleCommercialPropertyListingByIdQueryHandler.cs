@@ -48,6 +48,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSaleCommercialPr
                 SharePercentage = value.SharePercentage,
                 TitleDeedStatus = value.TitleDeedStatus,
                 Transferable = value.Transferable,
+                CreatedDate = value.CreatedDate,
+                PropertyStatus= value.PropertyStatus,
                 //images
                 PropImgUrl1 = value.PropImgUrl1,
                 PropImgUrl2 = value.PropImgUrl2,

@@ -45,6 +45,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSaleCommercialPr
                 SharePercentage = request.SharePercentage,
                 TitleDeedStatus = request.TitleDeedStatus,
                 Transferable = request.Transferable,
+                PropertyStatus=request.PropertyStatus,
+                CreatedDate = DateTime.UtcNow,
                 //images
                 PropImgUrl1 = request.PropImgUrl1,
                 PropImgUrl2 = request.PropImgUrl2,

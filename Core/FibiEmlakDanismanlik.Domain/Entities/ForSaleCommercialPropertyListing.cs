@@ -22,6 +22,8 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         [Display(Name = "İlan Açıklaması")]
         [Required(ErrorMessage = "İlan Açıklaması zorunludur.")]
         public string PropertyDescription { get; set; }
+        public string? PropertyStatus { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         // Adres Bilgileri
         [Display(Name = "Şehir")]

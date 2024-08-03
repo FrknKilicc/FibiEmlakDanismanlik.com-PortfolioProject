@@ -20,6 +20,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPr
         public string District { get; set; }
         public string Neighborhood { get; set; }//Mahalle
         public string AddressDesc { get; set; }
+        public string? PropertyStatus { get; set; }
+        public DateTime CreatedDate { get; set; }
+
         // Adres Bilgileri
         public string? Facade { get; set; } //cephe
         public int? NumberOfSection { get; set; } // Bölüm Sayısı

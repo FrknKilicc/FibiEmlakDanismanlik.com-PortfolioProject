@@ -4,6 +4,7 @@ using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FibiEmlakDanismanlik.Persistence.Migrations
 {
     [DbContext(typeof(FibiEmlakDanismanlikContext))]
-    partial class FibiEmlakDanismanlikContextModelSnapshot : ModelSnapshot
+    [Migration("20240803153618_Updated_PropertyCreatedDatendStatusFor_ForSalePropertCommercialListings")]
+    partial class Updated_PropertyCreatedDatendStatusFor_ForSalePropertCommercialListings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

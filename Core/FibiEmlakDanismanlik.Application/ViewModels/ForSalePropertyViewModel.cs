@@ -13,6 +13,7 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
         public decimal Price { get; set; }
         public string PropertyDescription { get; set; }
         public string PropertyStatus { get; set; }
+        public DateTime CreatedDate { get; set; }
         public string AgentName { get; set; }
         public string AgentTitle { get; set; }
         public string AgentImgUrl { get; set; }

@@ -31,6 +31,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHand
                 PropertyDescription = x.PropertyDescription,
                 PropertyName = x.PropertyName,
                 PropertyStatus = x.PropertyStatus,
+                CreatedDate = x.CreatedDate,
                 PropertyType = x.PropertyType,
                 PropImgUrl1=x.PropImgUrl1
             }).ToList();

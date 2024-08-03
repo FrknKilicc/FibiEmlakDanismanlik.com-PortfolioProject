@@ -37,6 +37,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                   AgentTitle = agent.AgentTitle,
                                   AgentImgUrl = agent.AgentImgUrl,
                                   PropImgUrl1 = housing.PropImgUrl1,
+                                  CreatedDate = housing.CreatedDate,
                               };
 
             var landListings = from land in _context.forSaleLandListings
@@ -53,7 +54,9 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                    AgentTitle = agent.AgentTitle,
                                    AgentImgUrl = agent.AgentImgUrl,
                                    PropImgUrl1 = land.PropImgUrl1,
+                                   CreatedDate = land.CreatedDate,
                                };
+
             var commercialListing = from commercial in _context.forSaleCommercialPropertyListings
                                     join agent in _context.Agents on commercial.AgentId equals agent.AgentId
                                     select new ForSalePropertyViewModel
@@ -62,15 +65,23 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                         PropertyName = commercial.PropertyName,
                                         Price = commercial.Price,
                                         PropertyDescription = commercial.PropertyDescription,
-                                        AgentImgUrl=agent.AgentImgUrl,
-                                        AgentName=agent.AgentName,
-                                        AgentTitle=agent.AgentTitle,
+                                        PropertyStatus = commercial.PropertyStatus,
+                                        AgentImgUrl = agent.AgentImgUrl,
+                                        AgentName = agent.AgentName,
+                                        AgentTitle = agent.AgentTitle,
                                         PropImgUrl1 = commercial.PropImgUrl1,
-                                       
+                                        CreatedDate = commercial.CreatedDate,
                                     };
 
-            var listings = housingList.Union(landListings).Union(commercialListing).ToList();
+            var listings = housingList
+                            .Concat(landListings)
+                            .Concat(commercialListing)
+                            .OrderByDescending(x => x.CreatedDate)
+                            .Take(10)
+                            .ToList();
+
             return listings;
         }
+
     }
 }

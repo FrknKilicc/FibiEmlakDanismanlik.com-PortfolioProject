@@ -1,4 +1,4 @@
-﻿@model List<ResultForSaleCommercialPropertyListingDto>
+﻿@model List<ResultAllForSaleListingDto>
 
 <section class="feature-style-two sec-pad">
     <div class="auto-container">
@@ -19,8 +19,8 @@
                         <div class="lower-content">
                             <div class="author-info clearfix">
                                 <div class="author pull-left">
-                                    <figure class="author-thumb"><img src="/Realshed/assets/images/feature/author-1.jpg" alt=""></figure>
-                                    <h6>Atakan Bayram</h6>
+                                    <figure class="author-thumb"><img src="@item.AgentImgUrl" alt=""></figure>
+                                    <h6>@item.AgentName</h6>
                                 </div>
                                 <div class="buy-btn pull-right"><a href="/Realshed/property-details.html">Satılık</a></div>
                             </div>
@@ -38,8 +38,8 @@
                             <p>@item.PropertyDescription</p>
                             <ul class="more-details clearfix">
                                 <li><i class="icon-14"></i>3 Beds</li>
-                                <li><i class="icon-15"></i>@item.NumberOfBathrooms Banyo</li>
-                                <li><i class="icon-16"></i>@item.GrossArea m2</li>
+                                <li><i class="icon-15"></i>3 Banyo</li>
+                                <li><i class="icon-16"></i>400 m2</li>
                             </ul>
                             <div class="btn-box"><a href="property-details.html" class="theme-btn btn-two">Detayları Gör</a></div>
                         </div>

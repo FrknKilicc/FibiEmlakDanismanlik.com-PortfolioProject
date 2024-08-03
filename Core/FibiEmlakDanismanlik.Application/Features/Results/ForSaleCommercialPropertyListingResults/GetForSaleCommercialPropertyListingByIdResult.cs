@@ -15,6 +15,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForSaleCommercialPro
         public int? PropertyNo { get; set; }
         public string PropertyName { get; set; }
         public string PropertyDescription { get; set; }
+        public string? PropertyStatus { get; set; }
+        public DateTime CreatedDate { get; set; }
+
 
         // Adres Bilgileri
         public string City { get; set; }
