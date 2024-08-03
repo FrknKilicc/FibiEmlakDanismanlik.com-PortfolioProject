@@ -1,0 +1,33 @@
+﻿        @model List<ResultAgentDto>
+        <section class="team-section sec-pad centred">
+            <div class="auto-container">
+                <div class="sec-title">
+                    <h5>Danışmanlarımız</h5>
+                    <h2>Uzman Danışmanlarımızla Tanışın</h2>
+                </div>
+                <div class="row clearfix">
+            @foreach(var item in Model)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-12 team-block">
+                    <div class="team-block-one wow fadeInDown animated" data-wow-delay="750ms" data-wow-duration="1500ms">
+                        <div class="inner-box">
+                            <figure class="image-box"><img src="@item.AgentImgUrl" alt=""></figure>
+                            <div class="lower-content">
+                                <div class="inner">
+                                    <h4><a href="/Realshed/agents-details.html">@item.AgentName</a></h4>
+                                    <span class="designation">@item.AgentTitle</span>
+                                    <ul class="social-links clearfix">
+                                        <li><a href="/Realshed/index.html"><i class="fab fa-facebook-f"></i></a></li>
+                                        <li><a href="/Realshed/index.html"><i class="fab fa-twitter"></i></a></li>
+                                        <li><a href="/Realshed/index.html"><i class="fab fa-google-plus-g"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+                </div>
+            </div>
+        </section>

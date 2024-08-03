@@ -1,0 +1,63 @@
+﻿@model List<ResultForSaleCommercialPropertyListingDto>
+
+<section class="deals-style-two sec-pad">
+    <div class="auto-container">
+        <div class="sec-title centred">
+            <h5>asdas</h5>
+            <h2>Özel Teklifler</h2>
+        </div>
+        <div class="deals-carousel owl-carousel owl-theme dots-style-one owl-nav-none">
+            @foreach(var item in Model)
+            {
+                <div class="single-item">
+                    <div class="row clearfix">
+                        <div class="col-lg-6 col-md-6 col-sm-12 deals-block">
+                            <div class="image-box">
+                                <figure class="image"><img src="@item.PropImgUrl1" alt=""></figure>
+                                <div class="batch"><i class="icon-11"></i></div>
+                                <span class="category">Featured</span>
+                                <div class="buy-btn"><a href="/Realshed/property-details.html">For Buy</a></div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 deals-block">
+                            <div class="deals-block-one">
+                                <div class="inner-box">
+                                    <div class="lower-content">
+                                        <div class="title-text"><h4><a href="/Realshed/property-details.html">@item.PropertyName</a></h4></div>
+                                        <div class="price-box clearfix">
+                                            <div class="price-info pull-left">
+                                                <h6>Fiyat:</h6>
+                                                <h4>@item.Price</h4>
+                                            </div>
+                                            <div class="author-box pull-right">
+                                                <figure class="author-thumb">
+                                                    <img src="/Realshed/assets/images/feature/author-1.jpg" alt="">
+                                                    <span>Michael Bean</span>
+                                                </figure>
+                                            </div>
+                                        </div>
+                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing sed eiusm do tempor incididunt labore.</p>
+                                        <ul class="more-details clearfix">
+                                            <li><i class="icon-14"></i>3 Beds</li>
+                                            <li><i class="icon-15"></i>2 Baths</li>
+                                            <li><i class="icon-16"></i>600 Sq Ft</li>
+                                        </ul>
+                                        <div class="other-info-box clearfix">
+                                            <div class="btn-box pull-left"><a href="/Realshed/property-details.html" class="theme-btn btn-one">See Details</a></div>
+                                            <ul class="other-option pull-right clearfix">
+                                                <li><a href="/Realshed/property-details.html"><i class="icon-12"></i></a></li>
+                                                <li><a href="/Realshed/property-details.html"><i class="icon-13"></i></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+           
+        </div>
+    </div>
+</section> 
