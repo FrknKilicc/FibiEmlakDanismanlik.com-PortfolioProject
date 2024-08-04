@@ -20,7 +20,7 @@ builder.Services.AddSwaggerGen();
 
 //Configure IRepositories 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped(typeof(IPropertyRepository), typeof(ForSalePropertyRepository));
+builder.Services.AddScoped(typeof(IPropertyRepository), typeof(PropertyRepository));
 
 //Configure IRepositories
 

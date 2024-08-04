@@ -16,4 +16,8 @@
     <ProjectReference Include="..\FibiEmlakDanismanlik.Domain\FibiEmlakDanismanlik.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Results\RentalPropertyResults\" />
+  </ItemGroup>
+
 </Project>

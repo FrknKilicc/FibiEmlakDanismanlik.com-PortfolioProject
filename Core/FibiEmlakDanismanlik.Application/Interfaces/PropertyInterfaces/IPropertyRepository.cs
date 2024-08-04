@@ -11,5 +11,6 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces
     public interface IPropertyRepository
     {
         public List<ForSalePropertyViewModel> GetAllForSalePropertyWithAgent();
+        public List<RentalPropertyBaseViewModel> GetAllRentalPropertyWithAgent();
     }
 }
