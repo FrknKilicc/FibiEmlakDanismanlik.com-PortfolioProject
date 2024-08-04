@@ -139,6 +139,8 @@
         <!-- feature-style-two -->
        
         @await Component.InvokeAsync("_FeaturedPropertViewComponentPartial") @* anasayfa  ilan widget *@
+         @* anasayfa  ilan widget *@
+
         <!-- feature-style-two end -->
 
 
@@ -526,6 +528,29 @@
 
     <!-- main-js -->
     <script src="/Realshed/assets/js/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+
+        $(document).ready(function () {
+            $('#deneme').on('click', function () {
+                $.ajax({
+                    url: '@Url.Action("Get10RecentRentalProperties", "Home")',
+                    method: 'GET',
+                    success: function (data) {
+                        console.log("başarılı");
+                        $('#tab-rental').html(data);
+                        $('#tab-rental').addClass('active');
+                        $('#tab-featured').removeClass('active');
+                    },
+                    error: function (error) {
+                        console.error('Error fetching data:', error);
+                    }
+                });
+      
+            })
+        })
+    </script>
 
 </body><!-- End of .page_wrapper -->
 </html>
