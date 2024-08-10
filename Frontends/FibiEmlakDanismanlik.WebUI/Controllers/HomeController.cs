@@ -2,6 +2,8 @@ using FibiEmlakDanismanlik.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
 
 namespace FibiEmlakDanismanlik.WebUI.Controllers
 {
@@ -31,10 +33,11 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        public async Task<IActionResult> Get10RecentRentalProperties()
+        public IActionResult Get10RecentRentalProperties()
         {
-            var content = await _viewComponentHelper.InvokeAsync("_FeaturedRentalPropertViewComponentPartial");
-            return Content(content.ToString());
+            return ViewComponent("_FeaturedRentalPropertViewComponentPartial");
         }
+
+
     }
 }

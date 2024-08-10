@@ -1,0 +1,60 @@
+﻿@model List<ResultAllBlogsDto>
+
+ <!--Page Title-->
+<section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
+    <div class="auto-container">
+        <div class="content-box clearfix">
+            <h1>Blog Yazıları</h1>
+            <ul class="bread-crumb clearfix">
+                <li><a href="@Url.Action("Index", "UILayout")">Anasayfa</a></li>
+                <li>Blog Yazıları</li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!--End Page Title-->
+<!-- sidebar-page-container -->
+<section class="blog-list sec-pad-2">
+    <div class="auto-container">
+        <div class="row clearfix">
+            @foreach(var item in Model)
+            {
+                <div class="col-lg-6 col-md-12 col-sm-12 news-block">
+                    <div class="news-block-two wow fadeInLeft animated animated" data-wow-delay="00ms" data-wow-duration="1500ms">
+                        <div class="inner-box align-items-center">
+                            <div class="image-box">
+                                <figure class="image"><a href="blog-details.html"><img src="@item.BlogImgUrl" alt=""></a></figure>
+                                <a href="blog-details.html" class="feature">Featured</a>
+                            </div>
+                            <div class="content-box">
+                                <h4><a href="blog-details.html">@item.BlogTitle</a></h4>
+                                <ul class="post-info clearfix">
+                                    <li class="author-box">
+                                        <figure class="author-thumb"><img src="assets/images/news/author-1.jpg" alt=""></figure>
+                                        <h5><a href="blog-details.html">Eva Green</a></h5>
+                                    </li>
+                                    <li>@item.CreatedDate.ToString("dd MMMM yyyy")</li>
+                                </ul>
+                                <p>@item.BlogDescription.</p>
+                                <div class="btn-box">
+                                    <a href="blog-details.html" class="theme-btn btn-two">Devamını Oku</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+           
+        <div class="pagination-wrapper">
+            <ul class="pagination clearfix">
+                <li><a href="blog-2.html" class="current">1</a></li>
+                <li><a href="blog-2.html">2</a></li>
+                <li><a href="blog-2.html">3</a></li>
+                <li><a href="blog-2.html"><i class="fas fa-angle-right"></i></a></li>
+            </ul>
+        </div>
+    </div>
+    </div>
+</section>
+<!-- sidebar-page-container -->
