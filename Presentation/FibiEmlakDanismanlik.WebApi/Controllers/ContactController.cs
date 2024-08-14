@@ -17,6 +17,14 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         {
             _mediator = mediator;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetContactList()
+        {
+            var value = await _mediator.Send(new GetContactQuery());
+            return Ok(value);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetContactById(int id)
         {

@@ -11,8 +11,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.ContactCommands
     {
         public string EMail1 { get; set; }
         public string EMail2 { get; set; }
-        public int PhoneNumber1 { get; set; }
-        public int PhoneNumber2 { get; set; }
+        public string PhoneNumber1 { get; set; }
+        public string PhoneNumber2 { get; set; }
         public string OfficeAddress { get; set; }
     }
 }

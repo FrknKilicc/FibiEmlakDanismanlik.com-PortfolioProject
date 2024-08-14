@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FibiEmlakDanismanlik.Domain.Entities
+namespace FibiEmlakDanismanlik.Application.Features.Results.ContactResults
 {
-    public class Contact
+    public class GetContactResult
     {
-        [Key]
         public int ContactId { get; set; }
         public string EMail1 { get; set; }
         public string EMail2 { get; set; }
