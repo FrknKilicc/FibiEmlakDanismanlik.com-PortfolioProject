@@ -4,5 +4,5 @@
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
 
-<h1>Index</h1>
+@await Component.InvokeAsync("_GetContactInfoViewComponentPartial")
 
