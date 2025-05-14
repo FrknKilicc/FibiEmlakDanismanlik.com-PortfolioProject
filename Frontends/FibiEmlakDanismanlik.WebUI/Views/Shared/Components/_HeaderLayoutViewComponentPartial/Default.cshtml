@@ -4,7 +4,7 @@
         <div class="outer-box">
             <div class="main-box">
                 <div class="logo-box">
-                    <figure class="logo"><a href="/Realshed/index.html"><img src="/Realshed/assets/images/FibiLogo.png" alt="fibiEmlak"></a></figure>
+                    <figure class="logo"><a href="@Url.Action("Index","UILayout")"><img src="/Realshed/assets/images/FibiLogo.png" alt="fibiEmlak"></a></figure>
                 </div>
                 <div class="menu-area clearfix">
                     <!--Mobile Navigation Toggler-->
@@ -105,13 +105,9 @@
                                         </div>
                                     </div>
                                 </li>
-                                <li class="dropdown">
-                                    <a href="/Realshed/index.html"><span>Ekibimiz</span></a>
-                                    <ul>
-                                        <li><a href="/Realshed/agency-list.html">Agency List</a></li>
-                                        <li><a href="/Realshed/agency-grid.html">Agency Grid</a></li>
-                                        <li><a href="/Realshed/agency-details.html">Agency Details</a></li>
-                                    </ul>
+                                <li class="">
+                                    <a href="@Url.Action("Index","Agent")"><span>Ekibimiz</span></a>
+                                   
                                 </li>
                                 <li class="dropdown">
                                     <a href="/Realshed/index.html"><span>Blog</span></a>

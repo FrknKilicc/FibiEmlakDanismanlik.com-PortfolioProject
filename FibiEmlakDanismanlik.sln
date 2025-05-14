@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontends", "Frontends", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FibiEmlakDanismanlik.WebUI", "Frontends\FibiEmlakDanismanlik.WebUI\FibiEmlakDanismanlik.WebUI.csproj", "{337B7378-0FFC-4C6B-8571-7F1A5CE18CBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FibiEmlakDanismanlik.Dto", "Frontends\FibiEmlakDanismanlik.Dto\FibiEmlakDanismanlik.Dto.csproj", "{20170A64-E13C-4683-A0C5-5CCE5E673718}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FibiEmlakDanismanlik.Dto", "Frontends\FibiEmlakDanismanlik.Dto\FibiEmlakDanismanlik.Dto.csproj", "{20170A64-E13C-4683-A0C5-5CCE5E673718}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
