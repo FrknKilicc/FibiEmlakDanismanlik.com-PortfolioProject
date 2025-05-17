@@ -17,48 +17,7 @@
 
 
         <!-- preloader -->
-        <div class="loader-wrap">
-            <div class="preloader">
-                <div class="preloader-close"><i class="far fa-times"></i></div>
-                <div id="handle-preloader" class="handle-preloader">
-                    <div class="animation-preloader">
-                        <div class="spinner"></div>
-                        <div class="txt-loading">
-                            <span data-text-preloader="k" class="letters-loading">
-                                K
-                            </span>
-                            <span data-text-preloader="a" class="letters-loading">
-                                A
-                            </span>
-                            <span data-text-preloader="l" class="letters-loading">
-                                L
-                            </span>
-                            <span data-text-preloader="m" class="letters-loading">
-                                M
-                            </span>
-                            <span data-text-preloader="e" class="letters-loading">
-                                E
-                            </span>
-                            <span data-text-preloader=" " class="letters-loading">
-                                  
-                            </span>
-                            <span data-text-preloader="i" class="letters-loading">
-                                İ
-                            </span>
-                            <span data-text-preloader="b" class="letters-loading">
-                                B
-                            </span>
-                            <span data-text-preloader="i" class="letters-loading">
-                                İ
-                            </span>
-                            <span data-text-preloader="f" class="letters-loading">
-                                F
-                            </span>
-                        </div>
-                    </div>  
-                </div>
-            </div>
-        </div> @* partial olarak  çalışmalı *@
+           @*  @await Component.InvokeAsync("_PreLoaderViewComponentPartial") *@ @* partial olarak  çalışmalı *@
         <!-- preloader end -->
 
 
@@ -123,7 +82,9 @@
                     </ul>
                 </div>
             </nav>
-        </div><!-- End Mobile Menu -->
+        </div>
+        
+        <!-- End Mobile Menu -->
 
 
         <!-- banner-style-two -->

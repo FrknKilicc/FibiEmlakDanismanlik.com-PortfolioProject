@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,6 +77,10 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public HousingCategory HousingCategory { get; set; }
         public int AgentId { get; set; }
         public Agent Agent { get; set; }
+        public int? ListingTypeId { get; set; }
+
+        [ForeignKey("ListingTypeId")]
+        public ListingType ListingType { get; set; }
         //relational
         //Images
         [Required]
