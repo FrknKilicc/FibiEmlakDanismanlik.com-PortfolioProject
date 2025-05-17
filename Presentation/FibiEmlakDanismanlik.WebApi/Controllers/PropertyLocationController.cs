@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/locations")]
     [ApiController]
     public class PropertyLocationController : ControllerBase
     {
@@ -39,7 +39,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet("GetFilteredListings")]
 
         public async Task<IActionResult> GetFilteredListings([FromQuery] int usageType,[FromQuery] int listingTypeId,[FromQuery] string? location,[FromQuery] string? keyword)
 
@@ -142,4 +142,3 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
 
     }
     }
-}

@@ -7,6 +7,18 @@ using FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Allow Frontend Request
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7012") // frontend Localaddress
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 // Add services to the container.
 
 builder.Services.AddScoped<FibiEmlakDanismanlikContext>();
@@ -39,6 +51,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowLocalhost");
 
 app.UseAuthorization();
 

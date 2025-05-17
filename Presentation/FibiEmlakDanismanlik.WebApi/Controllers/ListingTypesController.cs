@@ -6,7 +6,7 @@ using System;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/listingtypes")]
     [ApiController]
     public class ListingTypesController : ControllerBase
     {

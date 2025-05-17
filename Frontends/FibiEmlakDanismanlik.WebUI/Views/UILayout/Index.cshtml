@@ -407,35 +407,70 @@
     <script src="/Realshed/assets/js/jquery-ui.js"></script>
     <script src="/Realshed/assets/js/jquery.paroller.min.js"></script>
     <script src="/Realshed/assets/js/nav-tool.js"></script>
+    <!-- niceSelect CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.css" />
+
+    <!-- jQuery -->
+
+
+
 
     <!-- main-js -->
     <script src="/Realshed/assets/js/script.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- niceSelect JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
+
+
     <script>
         $(document).ready(function () {
-            $('.tab-btn').click(function () {
-                $('.tab-btn').removeClass('active-btn');
-                $(this).addClass('active-btn');
-                debugger;
-                let methodName = $(this).attr('method');
 
-                $.ajax({
-                 
-                    url: `/Home/${methodName}`, 
-                    type: 'GET',
-                    success: function (result) {
-                        $('#props').html(result); 
-                        console.log(result);
-                       
-                    error: function (xhr, status, error) {
-                        console.error('Partial view yüklenirken hata oluştu:', error);
+            function populateDropdown(dropdownSelector, items) {
+                const dropdown = $(dropdownSelector);
+
+                dropdown.find('option:not([disabled])').remove();
+
+                items.forEach(item => {
+                    if (typeof item === "object") {
+                        dropdown.append(`<option value="${item.listingTypeId || item.id}">${item.name}</option>`);
+                    } else {
+                        dropdown.append(`<option value="${item}">${item}</option>`);
                     }
                 });
-            });
-        });
-       
+                if ($.fn.niceSelect) {
 
+
+                    dropdown.niceSelect('update');
+                }
+            }
+
+            function loadListingTypes(usageType) {
+                $.get(`https://localhost:7015/api/listingtypes?usageTypes=${usageType}`, function (data) {
+                    console.log("İlan Tipleri:", data);
+                    populateDropdown('#listingTypeDropdown', data);
+                });
+            }
+
+            function loadLocations(usageType) {
+                $.get(`https://localhost:7015/api/locations?usageType=${usageType}`, function (data) {
+                    console.log("Lokasyonlar:", data);
+                    populateDropdown('#locationDropdown', data);
+                });
+            }
+
+            $('.tab-btn').click(function () {
+                const isForSale = $(this).text().includes("Satın");
+                const usageType = isForSale ? 1 : 2;
+
+                loadListingTypes(usageType);
+                loadLocations(usageType);
+            });
+
+            loadListingTypes(1);
+            loadLocations(1);
+        });
     </script>
+
 
 
 </body><!-- End of .page_wrapper -->

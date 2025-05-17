@@ -20,42 +20,36 @@
                                                     <label>Search Property</label>
                                                     <div class="field-input">
                                                         <i class="fas fa-search"></i>
-                                                        <input type="search" name="search-field" placeholder="Search by Property, Location or Landmark..." required="">
+                                                        <input type="search" name="search-field" placeholder="Search by Property, Location or Landmark..." required="" style="direction:ltr !important;">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column">
                                                 <div class="form-group">
-                                                    <label>Location</label>
+                                                    <label>Lokasyon</label>
                                                     <div class="select-box">
                                                         <i class="far fa-compass"></i>
-                                                        <select class="wide">
-                                                            <option data-display="Input location">Input location</option>
-                                                            <option value="1">New York</option>
-                                                            <option value="2">California</option>
-                                                            <option value="3">London</option>
-                                                            <option value="4">Maxico</option>
+                                                        <select class="wide" id="locationDropdown" data-placeholder="Seçiniz">
+                                                            <option value="" disabled selected hidden>Lokasyon Seçiniz</option>
+                                                          
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column">
                                                 <div class="form-group">
-                                                    <label>Property Type</label>
+                                                    <label>İlan Tipi</label>
                                                     <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="İlan Tipi">İlan Tipi</option>
-                                                            <option value="1">Laxury</option>
-                                                            <option value="2">Classic</option>
-                                                            <option value="3">Modern</option>
-                                                            <option value="4">New</option>
+                                                        <select class="wide" id="listingTypeDropdown">
+                                                            <option value="" disabled selected hidden>İlan Tipi Seçiniz</option>
+
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="search-btn">
-                                            <button type="submit"><i class="fas fa-search"></i>Search</button>
+                                            <button type="submit"><i class="fas fa-search"></i>Ara</button>
                                         </div>
                                     </form>
                                 </div>
@@ -187,35 +181,27 @@
                                                     <label>Search Property</label>
                                                     <div class="field-input">
                                                         <i class="fas fa-search"></i>
-                                                        <input type="search" name="search-field" placeholder="Search by Property, Location or Landmark..." required="">
+                                                        <input type="search" name="search-field" placeholder="Search by Property, Location or Landmark..." required="" style="direction:ltr !important;">
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column">
                                                 <div class="form-group">
-                                                    <label>Location</label>
+                                                    <label>Lokasyon</label>
                                                     <div class="select-box">
                                                         <i class="far fa-compass"></i>
-                                                        <select class="wide">
-                                                            <option data-display="Input location">Input location</option>
-                                                            <option value="1">New York</option>
-                                                            <option value="2">California</option>
-                                                            <option value="3">London</option>
-                                                            <option value="4">Maxico</option>
+                                                        <select class="wide" id="locationDropdown">
+                                                            <option value="" disabled selected hidden>Lokasyon Seçiniz</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column">
                                                 <div class="form-group">
-                                                    <label>Property Type</label>
+                                                    <label>İlan Tipi</label>
                                                     <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="All Type">All Type</option>
-                                                            <option value="1">Laxury</option>
-                                                            <option value="2">Classic</option>
-                                                            <option value="3">Modern</option>
-                                                            <option value="4">New</option>
+                                                        <select class="wide" id="listingTypeDropdown">
+                                                            <option value="" disabled selected hidden>İlan Tipi Seçiniz</option>
                                                         </select>
                                                     </div>
                                                 </div>
