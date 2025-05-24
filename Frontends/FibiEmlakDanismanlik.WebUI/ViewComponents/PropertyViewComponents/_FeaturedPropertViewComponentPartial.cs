@@ -22,7 +22,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<List<ResultAllForSaleListingDto>>(jsonData);
+                var value = JsonConvert.DeserializeObject<List<ResultAllForSaleListingWithAgentDto>>(jsonData);
                 return View(value);
             }
             else

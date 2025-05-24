@@ -16,25 +16,8 @@
                     <nav class="main-menu navbar-expand-md navbar-light">
                         <div class="collapse navbar-collapse show clearfix" id="navbarSupportedContent">
                             <ul class="navigation clearfix">
-                                <li class="current dropdown">
-                                    <a href="index.html"><span>Anasayfa</span></a>
-                                    <ul>
-                                        <li><a href="/Realshed/index.html">Main Home</a></li>
-                                        <li><a href="/Realshed/index-2.html">Home Modern</a></li>
-                                        <li><a href="/Realshed/index-3.html">Home Map</a></li>
-                                        <li><a href="/Realshed/index-4.html">Home Half Map</a></li>
-                                        <li><a href="/Realshed/index-5.html">Home Agent</a></li>
-                                        <li><a href="/Realshed/index-onepage.html">OnePage Home</a></li>
-                                        <li><a href="/Realshed/index-rtl.html">RTL Home</a></li>
-                                        <li class="dropdown">
-                                            <a href="/Realshed/index.html">Header Style</a>
-                                            <ul>
-                                                <li><a href="/Realshed/index.html">Header Style 01</a></li>
-                                                <li><a href="/Realshed/index-2.html">Header Style 02</a></li>
-                                                <li><a href="/Realshed/index-3.html">Header Style 03</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
+                                <li class="">
+                                    <a href="@Url.Action("Index","UILayout")"><span>Anasayfa</span></a>
                                 </li>
                                 <li class="dropdown">
                                     <a href="/Realshed/index.html"><span>Ekspertiz</span></a>
@@ -48,7 +31,7 @@
                                     <a href="index.html"><span>İlanlar</span></a>
                                     <ul>
                                         <li><a href="/Realshed/property-list.html">Property List</a></li>
-                                        <li><a href="/Realshed/property-grid.html">Property Grid</a></li>
+                                        <li><a href="@Url.Action("Index", "AllForSalePage")">Satılık İlanlar</></li>
                                         <li><a href="/Realshed/property-list-2.html">Property List Full View</a></li>
                                         <li><a href="/Realshed/property-grid-2.html">Property Grid Full View</a></li>
                                         <li><a href="/Realshed/property-list-3.html">Property List Half View</a></li>

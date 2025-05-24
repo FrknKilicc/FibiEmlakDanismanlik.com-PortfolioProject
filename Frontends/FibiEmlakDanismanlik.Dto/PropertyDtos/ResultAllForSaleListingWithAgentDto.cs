@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Dto.PropertyDtos
 {
-    public class ResultAllForSaleListingDto
+    public class ResultAllForSaleListingWithAgentDto
     {
         public string PropertyType { get; set; }
         public string PropertyName { get; set; }
