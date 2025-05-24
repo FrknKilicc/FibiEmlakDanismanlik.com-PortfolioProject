@@ -1,4 +1,5 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Queries.ForSalePropertyQueries;
+using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,5 +23,12 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _meditor.Send(new GetAllForsalePropertyWithAgentQuery());
             return Ok(value);
         }
+        [HttpGet("GetAllForSalesPropertyForListing")]
+        public async Task<IActionResult> GetAllForSalesPropertyForListing()
+        {
+            var value = await _meditor.Send(new GetAllForSalePropertiesForListingQuery());
+            return Ok(value);
+        }
+
     }
 }

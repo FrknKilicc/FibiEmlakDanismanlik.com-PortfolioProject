@@ -109,6 +109,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHand
                 PropImgUrl7 =  x.PropImgUrl7,
                 PropImgUrl8 =  x.PropImgUrl8,
                 PropImgUrl9 =  x.PropImgUrl9,
+                
             }).ToList();
         }
     }
