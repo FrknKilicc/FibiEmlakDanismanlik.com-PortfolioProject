@@ -84,8 +84,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         //relational
         //Images
         [Required]
-        public string SanalTurUrl { get; set; }
-        public string areaname { get; set; }
+        
         public string? PropImgUrl1 { get; set; }
         public string? PropImgUrl2 { get; set; }
         public string? PropImgUrl3 { get; set; }
