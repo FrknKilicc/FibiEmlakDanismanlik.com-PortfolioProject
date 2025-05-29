@@ -4,6 +4,7 @@ using FibiEmlakDanismanlik.Application.ViewModels;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -202,8 +203,239 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             return getAllRentalProperties;
         }
 
+        public async Task<ForSalePropertyForListingViewModel> GetUnifiedForSalePropertyById(int id)
+        {
+            var housingById = await _context.forSaleHousingPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleHousingListId == id);
+            if (housingById != null)
+            {
+                return new ForSalePropertyForListingViewModel
+                {
+                    ListingId = housingById.ForSaleHousingListId,
+                    PropertyNo = housingById.PropertyNo,
+                    PropertyName = housingById.PropertyName,
+                    PropertyDescription = housingById.PropertyDescription,
+                    PropertyStatus = housingById.PropertyStatus,
+                    CreatedDate = housingById.CreatedDate,
+                    Price = housingById.Price,
+                    TitleDeedStatus = housingById.TitleDeedStatus,
+                    City = housingById.City,
+                    District = housingById.District,
+                    Neighborhood = housingById.Neighborhood,
+                    AddressDesc = housingById.AddressDesc,
+                    Facade = housingById.Facade,
+                    IsElevator = housingById.IsElevator,
+                    GrossArea = housingById.GrossArea,
+                    NetArea = housingById.NetArea,
+                    OpenArea = housingById.OpenArea,
+                    BuildingAge = housingById.BuildingAge,
+                    TotalNumberOfFloor = housingById.TotalNumberOfFloor,
+                    NumberOfFloors = housingById.NumberOfFloors,
+                    NumberOfBathRoom = housingById.NumberOfBathRoom,
+                    Heating = housingById.Heating,
+                    BlackBox = housingById.BlackBox,
+                    NumberOfBalconies = housingById.NumberOfBalconies,
+                    ParkingLot = housingById.ParkingLot,
+                    Furnished = housingById.Furnished,
+                    UsageStatus = housingById.UsageStatus,
+                    WithinTheComplex = housingById.WithinTheComplex,
+                    Dues = housingById.Dues,
+                    Exchange = housingById.Exchange,
+                    HomeLoan = housingById.HomeLoan,
+                    AgentId = housingById.AgentId,
+                    AgentName = housingById.Agent.AgentName,
+                    AgentTitle = housingById.Agent.AgentTitle,
+                    AgentImgUrl = housingById.Agent.AgentImgUrl,
+                    BestDeals = housingById.BestDeals,
+                    ListingType = "Konut",
+                    //Images
+                    PropImgUrl1 = housingById.PropImgUrl1,
+                    PropImgUrl10 = housingById.PropImgUrl10,
+                    PropImgUrl11 = housingById.PropImgUrl11,
+                    PropImgUrl12 = housingById.PropImgUrl12,
+                    PropImgUrl13 = housingById.PropImgUrl13,
+                    PropImgUrl14 = housingById.PropImgUrl14,
+                    PropImgUrl15 = housingById.PropImgUrl15,
+                    PropImgUrl16 = housingById.PropImgUrl16,
+                    PropImgUrl17 = housingById.PropImgUrl17,
+                    PropImgUrl18 = housingById.PropImgUrl18,
+                    PropImgUrl19 = housingById.PropImgUrl19,
+                    PropImgUrl2 = housingById.PropImgUrl2,
+                    PropImgUrl20 = housingById.PropImgUrl20,
+                    PropImgUrl21 = housingById.PropImgUrl21,
+                    PropImgUrl22 = housingById.PropImgUrl22,
+                    PropImgUrl23 = housingById.PropImgUrl23,
+                    PropImgUrl24 = housingById.PropImgUrl24,
+                    PropImgUrl25 = housingById.PropImgUrl25,
+                    PropImgUrl26 = housingById.PropImgUrl26,
+                    PropImgUrl27 = housingById.PropImgUrl27,
+                    PropImgUrl28 = housingById.PropImgUrl28,
+                    PropImgUrl29 = housingById.PropImgUrl29,
+                    PropImgUrl3 = housingById.PropImgUrl3,
+                    PropImgUrl30 = housingById.PropImgUrl30,
+                    PropImgUrl4 = housingById.PropImgUrl4,
+                    PropImgUrl5 = housingById.PropImgUrl5,
+                    PropImgUrl6 = housingById.PropImgUrl6,
+                    PropImgUrl7 = housingById.PropImgUrl7,
+                    PropImgUrl8 = housingById.PropImgUrl8,
+                    PropImgUrl9 = housingById.PropImgUrl9,
+                    //Images
+
+                };
+
+            }
+            var land = await _context.forSaleLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x=>x.LandCategory).FirstOrDefaultAsync(x => x.ForSaleLandListingId == id);
+
+            if (land != null)
+            {
+                return new ForSalePropertyForListingViewModel
+                {
+                    ListingId = land.ForSaleLandListingId,
+                    PropertyNo= land.PropertyNo,
+                    PropertyName= land.PropertyName,
+                    PropertyDescription= land.PropertyDescription,
+                    PropertyStatus= land.PropertyStatus,
+                    CreatedDate= land.CreatedDate,
+                    City= land.City,
+                    District= land.District,
+                    Neighborhood= land.Neighborhood,
+                    AddressDesc= land.AddressDesc,
+                    ZoningStatus= land.ZoningStatus,
+                    SharePercentage= land.SharePercentage,
+                    Area= land.Area,
+                    Price= land.Price,
+                    PricePerSquareMeter= land.PricePerSquareMeter,
+                    ParcelNumber= land.ParcelNumber,
+                    PlotNumber= land.PlotNumber,
+                    MapSheetNumber= land.MapSheetNumber,
+                    FloorAreaRatio= land.FloorAreaRatio,
+                    BaseAreaRatio= land.BaseAreaRatio,
+                    ZoningPlan= land.ZoningPlan,
+                    TitleDeedStatus= land.TitleDeedStatus,
+                    DevelopmentRight= land.DevelopmentRight,
+                    LandLoan    = land.LandLoan,
+                    Exchange= land.Exchange,
+                    LandCategoryId= land.LandCategoryId,
+                    AgentId= land.AgentId,
+                    AgentImgUrl=land.Agent.AgentImgUrl,
+                    AgentName=land.Agent.AgentName,
+                    AgentTitle=land.Agent.AgentTitle,
+                    BestDeals= land.BestDeals,
+                    ListingType="Arsa",
+
+                      //Images 
+                    PropImgUrl1 =  land.PropImgUrl1,
+                    PropImgUrl10 = land.PropImgUrl10,
+                    PropImgUrl11 = land.PropImgUrl11,
+                    PropImgUrl12 = land.PropImgUrl12,
+                    PropImgUrl13 = land.PropImgUrl13,
+                    PropImgUrl14 = land.PropImgUrl14,
+                    PropImgUrl15 = land.PropImgUrl15,
+                    PropImgUrl16 = land.PropImgUrl16,
+                    PropImgUrl17 = land.PropImgUrl17,
+                    PropImgUrl18 = land.PropImgUrl18,
+                    PropImgUrl19 = land.PropImgUrl19,
+                    PropImgUrl2 =  land.PropImgUrl2,
+                    PropImgUrl20 = land.PropImgUrl20,
+                    PropImgUrl21 = land.PropImgUrl21,
+                    PropImgUrl22 = land.PropImgUrl22,
+                    PropImgUrl23 = land.PropImgUrl23,
+                    PropImgUrl24 = land.PropImgUrl24,
+                    PropImgUrl25 = land.PropImgUrl25,
+                    PropImgUrl26 = land.PropImgUrl26,
+                    PropImgUrl27 = land.PropImgUrl27,
+                    PropImgUrl28 = land.PropImgUrl28,
+                    PropImgUrl29 = land.PropImgUrl29,
+                    PropImgUrl3 =  land.PropImgUrl3,
+                    PropImgUrl30 = land.PropImgUrl30,
+                    PropImgUrl4 =  land.PropImgUrl4,
+                    PropImgUrl5 =  land.PropImgUrl5,
+                    PropImgUrl6 =  land.PropImgUrl6,
+                    PropImgUrl7 =  land.PropImgUrl7,
+                    PropImgUrl8 =  land.PropImgUrl8,
+                    PropImgUrl9 =  land.PropImgUrl9,
+                    //Images
+
+
+                };
+            }
+            var commercialById = await _context.forSaleCommercialPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleCommercialListingId == id);
+            if (commercialById!=null)
+            {
+                return new ForSalePropertyForListingViewModel
+                {
+                    ListingId = commercialById.ForSaleCommercialListingId,
+                    PropertyNo = commercialById.PropertyNo,
+                    PropertyName = commercialById.PropertyName,
+                    PropertyDescription = commercialById.PropertyDescription,
+                    PropertyStatus = commercialById.PropertyStatus,
+                    CreatedDate = commercialById.CreatedDate,
+                    City = commercialById.City,
+                    District = commercialById.District,
+                    Neighborhood = commercialById.Neighborhood,
+                    AddressDesc = commercialById.AddressDesc,
+                    Facade = commercialById.Facade,
+                    NumberOfSection = commercialById.NumberOfSection,
+                    NumberOfKitchens = commercialById.NumberOfKitchens,
+                    NumberOfBathrooms = commercialById.NumberOfBathrooms,
+                    NumberOfFloors = commercialById.NumberOfFloors,
+                    GrossArea = commercialById.GrossArea,
+                    Area = commercialById.Area,
+                    Price = commercialById.Price,
+                    TitleDeedStatus = commercialById.TitleDeedStatus,
+                    SharePercentage = commercialById.SharePercentage,
+                    LandLoan = commercialById.LandLoan,
+                    Exchange = commercialById.Exchange,
+                    Transferable = commercialById.Transferable,
+                    BestDeals = commercialById.BestDeals,
+                    AgentId = commercialById.AgentId,
+                    AgentName = commercialById.Agent.AgentName,
+                    AgentImgUrl = commercialById.Agent.AgentImgUrl,
+                    AgentTitle = commercialById.Agent.AgentTitle,
+                    ListingType = "İşyeri",
+                    //Images 
+                    PropImgUrl1 = commercialById.PropImgUrl1,
+                    PropImgUrl10 = commercialById.PropImgUrl10,
+                    PropImgUrl11 = commercialById.PropImgUrl11,
+                    PropImgUrl12 = commercialById.PropImgUrl12,
+                    PropImgUrl13 = commercialById.PropImgUrl13,
+                    PropImgUrl14 = commercialById.PropImgUrl14,
+                    PropImgUrl15 = commercialById.PropImgUrl15,
+                    PropImgUrl16 = commercialById.PropImgUrl16,
+                    PropImgUrl17 = commercialById.PropImgUrl17,
+                    PropImgUrl18 = commercialById.PropImgUrl18,
+                    PropImgUrl19 = commercialById.PropImgUrl19,
+                    PropImgUrl2 = commercialById.PropImgUrl2,
+                    PropImgUrl20 = commercialById.PropImgUrl20,
+                    PropImgUrl21 = commercialById.PropImgUrl21,
+                    PropImgUrl22 = commercialById.PropImgUrl22,
+                    PropImgUrl23 = commercialById.PropImgUrl23,
+                    PropImgUrl24 = commercialById.PropImgUrl24,
+                    PropImgUrl25 = commercialById.PropImgUrl25,
+                    PropImgUrl26 = commercialById.PropImgUrl26,
+                    PropImgUrl27 = commercialById.PropImgUrl27,
+                    PropImgUrl28 = commercialById.PropImgUrl28,
+                    PropImgUrl29 = commercialById.PropImgUrl29,
+                    PropImgUrl3 = commercialById.PropImgUrl3,
+                    PropImgUrl30 = commercialById.PropImgUrl30,
+                    PropImgUrl4 = commercialById.PropImgUrl4,
+                    PropImgUrl5 = commercialById.PropImgUrl5,
+                    PropImgUrl6 = commercialById.PropImgUrl6,
+                    PropImgUrl7 = commercialById.PropImgUrl7,
+                    PropImgUrl8 = commercialById.PropImgUrl8,
+                    PropImgUrl9 = commercialById.PropImgUrl9,
+                    //Images 
+
+                };
+
+            }
+            return null;
+
+        }
+
+
+
         /*
- 
+            
         */
 
         List<ForSalePropertyForListingViewModel> IPropertyRepository.GetAllForSalePropertyForListing()
@@ -381,7 +613,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                      AgentTitle = agent.AgentTitle,
                                      AgentImgUrl = agent.AgentImgUrl,
 
-                                     ListingType = "Ticari",
+                                     ListingType = "İşyeri",
                                      PropImgUrl1 =  comm.PropImgUrl1,
                                      PropImgUrl10 = comm.PropImgUrl10,
                                      PropImgUrl11 = comm.PropImgUrl11,
@@ -525,5 +757,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             return listing;
                         
         }
+
     }
 }
