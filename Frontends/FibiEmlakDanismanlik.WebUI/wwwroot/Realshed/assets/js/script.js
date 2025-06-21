@@ -22,7 +22,7 @@
 	    $(".switch_btn_one .close-btn").on("click", function(){
 	    	$(".search-field .switch_btn_one").removeClass("active");
 	    }) 
-    }
+	}
 	
 	//Update Header Style and Scroll to Top
 	function headerStyle() {

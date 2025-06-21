@@ -1,179 +1,31 @@
 ﻿   
  @model ResultAllForSaleListinForPageDto
 
-
-
-
-
-
-
-
 <!--Page Title-->
-<section class="page-title-two bg-color-1 centred">
-    <div class="pattern-layer">
-        <div class="pattern-1" style="background-image: url(assets/images/shape/shape-9.png);"></div>
-        <div class="pattern-2" style="background-image: url(assets/images/shape/shape-10.png);"></div>
-    </div>
+<<!--Page Title-->
+<section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
     <div class="auto-container">
         <div class="content-box clearfix">
-            <h1>Property Details 03</h1>
+            <h1>Satılık İlanlar</h1>
             <ul class="bread-crumb clearfix">
-                <li><a href="index.html">Home</a></li>
-                <li>Property Details 03</li>
+                <li><a href="@Url.Action("Index","UILayout")">Anasayfa</a></li>
+                <li><a href="@Url.Action("Index","AllForSalePage")">Satılık İlanlar</a></li>
+                <li>İlan Detayı</li>
             </ul>
         </div>
     </div>
 </section>
 <!--End Page Title-->
 <!-- property-details -->
-<section class="property-details property-details-three">
+<section class="property-details property-details-one">
     <div class="auto-container">
-        <div class="carousel-inner">
-            <div class="bxslider">
-                <div class="slider-content">
-                    <div class="product-image">
-                        <figure class="image-box"><img src="assets/images/resource/property-details-2.jpg" alt=""></figure>
-                    </div>
-                    <div class="slider-pager">
-                        <ul class="thumb-box clearfix">
-                            <li>
-                                <a class="active" data-slide-index="0" href="#"><figure><img src="assets/images/resource/single-thumb-1.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="1" href="#"><figure><img src="assets/images/resource/single-thumb-2.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="2" href="#"><figure><img src="assets/images/resource/single-thumb-3.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="3" href="#"><figure><img src="assets/images/resource/single-thumb-4.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="4" href="#"><figure><img src="assets/images/resource/single-thumb-5.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="5" href="#"><figure><img src="assets/images/resource/single-thumb-3.jpg" alt=""></figure></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="slider-content">
-                    <div class="product-image">
-                        <figure class="image-box"><img src="assets/images/resource/property-details-3.jpg" alt=""></figure>
-                    </div>
-                    <div class="slider-pager">
-                        <ul class="thumb-box clearfix">
-                            <li>
-                                <a class="active" data-slide-index="0" href="#"><figure><img src="assets/images/resource/single-thumb-1.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="1" href="#"><figure><img src="assets/images/resource/single-thumb-2.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="2" href="#"><figure><img src="assets/images/resource/single-thumb-3.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="3" href="#"><figure><img src="assets/images/resource/single-thumb-4.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="4" href="#"><figure><img src="assets/images/resource/single-thumb-5.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="5" href="#"><figure><img src="assets/images/resource/single-thumb-3.jpg" alt=""></figure></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="slider-content">
-                    <div class="product-image">
-                        <figure class="image-box"><img src="assets/images/resource/property-details-4.jpg" alt=""></figure>
-                    </div>
-                    <div class="slider-pager">
-                        <ul class="thumb-box clearfix">
-                            <li>
-                                <a class="active" data-slide-index="0" href="#"><figure><img src="assets/images/resource/single-thumb-1.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="1" href="#"><figure><img src="assets/images/resource/single-thumb-2.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="2" href="#"><figure><img src="assets/images/resource/single-thumb-3.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="3" href="#"><figure><img src="assets/images/resource/single-thumb-4.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="4" href="#"><figure><img src="assets/images/resource/single-thumb-5.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="5" href="#"><figure><img src="assets/images/resource/single-thumb-3.jpg" alt=""></figure></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="slider-content">
-                    <div class="product-image">
-                        <figure class="image-box"><img src="assets/images/resource/property-details-5.jpg" alt=""></figure>
-                    </div>
-                    <div class="slider-pager">
-                        <ul class="thumb-box clearfix">
-                            <li>
-                                <a class="active" data-slide-index="0" href="#"><figure><img src="assets/images/resource/single-thumb-1.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="1" href="#"><figure><img src="assets/images/resource/single-thumb-2.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="2" href="#"><figure><img src="assets/images/resource/single-thumb-3.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="3" href="#"><figure><img src="assets/images/resource/single-thumb-4.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="4" href="#"><figure><img src="assets/images/resource/single-thumb-5.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="5" href="#"><figure><img src="assets/images/resource/single-thumb-3.jpg" alt=""></figure></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="slider-content">
-                    <div class="product-image">
-                        <figure class="image-box"><img src="assets/images/resource/property-details-6.jpg" alt=""></figure>
-                    </div>
-                    <div class="slider-pager">
-                        <ul class="thumb-box clearfix">
-                            <li>
-                                <a class="active" data-slide-index="0" href="#"><figure><img src="assets/images/resource/single-thumb-1.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="1" href="#"><figure><img src="assets/images/resource/single-thumb-2.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="2" href="#"><figure><img src="assets/images/resource/single-thumb-3.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="3" href="#"><figure><img src="assets/images/resource/single-thumb-4.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="4" href="#"><figure><img src="assets/images/resource/single-thumb-5.jpg" alt=""></figure></a>
-                            </li>
-                            <li>
-                                <a data-slide-index="5" href="#"><figure><img src="assets/images/resource/single-thumb-3.jpg" alt=""></figure></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="top-details clearfix">
             <div class="left-column pull-left clearfix">
-                <h3>The Citizen Apartment</h3>
+                <h3>@Model.PropertyName</h3>
                 <div class="author-info clearfix">
                     <div class="author-box pull-left">
-                        <figure class="author-thumb"><img src="assets/images/feature/author-1.jpg" alt=""></figure>
-                        <h6>Michael Bean</h6>
+                        <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt=""></figure>
+                        <h6>@Model.AgentName</h6>
                     </div>
                     <ul class="rating clearfix pull-left">
                         <li><i class="icon-39"></i></li>
@@ -187,11 +39,11 @@
             <div class="right-column pull-right clearfix">
                 <div class="price-inner clearfix">
                     <ul class="category clearfix pull-left">
-                        <li><a href="property-details.html">Building</a></li>
-                        <li><a href="property-details.html">For Buy</a></li>
+                        <li><a href="property-details.html">Bina</a></li>
+                        <li><a href="property-details.html">@Model.PropertyStatus</a></li>
                     </ul>
                     <div class="price-box pull-right">
-                        <h3>$30,000.00</h3>
+                        <h3>@Model.Price.ToString("N0") TL</h3>
                     </div>
                 </div>
                 <ul class="other-option pull-right clearfix">
@@ -205,24 +57,31 @@
         <div class="row clearfix">
             <div class="col-lg-8 col-md-12 col-sm-12 content-side">
                 <div class="property-details-content">
+                    <div class="carousel-inner">
+                        <div class="single-item-carousel owl-carousel owl-theme owl-dots-none">
+                            <figure class="image-box"><img src="@Model.PropImgUrl1" alt=""></figure>
+                            <figure class="image-box"><img src="@Model.PropImgUrl2" alt=""></figure>
+                            <figure class="image-box"><img src="@Model.PropImgUrl3" alt=""></figure>
+                            <figure class="image-box"><img src="@Model.PropImgUrl4" alt=""></figure>
+                        </div>
+                    </div>
                     <div class="discription-box content-widget">
                         <div class="title-box">
-                            <h4>Property Description</h4>
+                            <h4>İlan Açıklaması</h4>
                         </div>
                         <div class="text">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing sed eiusm tempor incididunt labore dolore magna aliqua enim minim veniam quis nostrud exercitation laboris nisi ut aliquip ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur occaecat</p>
-                            <p>Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim  est laborum. Sed perspiciatis unde omnis iste natus error sit voluptatem accusantium dolore mque laudantium totam rem aperiam.</p>
+                            <p>@Model.PropertyDescription</p>
                         </div>
                     </div>
                     <div class="details-box content-widget">
                         <div class="title-box">
-                            <h4>Property Details</h4>
+                            <h4>İlan Detayları</h4>
                         </div>
                         <ul class="list clearfix">
-                            <li>Property ID: <span>ZOP251C</span></li>
+                            <li>İlan ID: <span>@Model.PropertyNo</span></li>
                             <li>Rooms: <span>06</span></li>
                             <li>Garage Size: <span>200 Sq Ft</span></li>
-                            <li>Property Price: <span>$30,000</span></li>
+                            <li>Fiyat:<span>@Model.Price.ToString("N0") TL</span></li>
                             <li>Bedrooms: <span>04</span></li>
                             <li>Year Built: <span>01 April, 2019</span></li>
                             <li>Property Type: <span>Apertment</span></li>
@@ -252,19 +111,19 @@
                     </div>
                     <div class="floorplan-inner content-widget">
                         <div class="title-box">
-                            <h4>Floor Plan</h4>
+                            <h4>Kat Planı</h4>
                         </div>
                         <ul class="accordion-box">
                             <li class="accordion block active-block">
                                 <div class="acc-btn active">
                                     <div class="icon-outer"><i class="fas fa-angle-down"></i></div>
-                                    <h5>First Floor</h5>
+                                    <h5>Birinci Kat</h5>
                                 </div>
                                 <div class="acc-content current">
                                     <div class="content-box">
                                         <p>Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim  est laborum. Sed perspiciatis unde omnis iste natus error sit voluptatem accusa dolore mque laudant.</p>
                                         <figure class="image-box">
-                                            <img src="assets/images/resource/floor-1.png" alt="">
+                                            <img src="@Model.PropImgUrl1" alt="">
                                         </figure>
                                     </div>
                                 </div>
@@ -446,17 +305,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="statistics-box content-widget">
-                        <div class="title-box">
-                            <h4>Page Statistics</h4>
-                        </div>
-                        <figure class="image-box">
-                            <a href="assets/images/resource/statistics-1.png" class="lightbox-image" data-fancybox="gallery"><img src="assets/images/resource/statistics-1.png" alt=""></a>
-                        </figure>
-                    </div>
                     <div class="schedule-box content-widget">
                         <div class="title-box">
-                            <h4>Schedule A Tour</h4>
+                            <h4>Görüşme Randevusu Talep Et</h4>
                         </div>
                         <div class="form-inner">
                             <form action="property-details.html" method="post">
@@ -464,38 +315,38 @@
                                     <div class="col-lg-6 col-md-12 col-sm-12 column">
                                         <div class="form-group">
                                             <i class="far fa-calendar-alt"></i>
-                                            <input type="text" name="date" placeholder="Tour Date" id="datepicker">
+                                            <input type="text" name="date" placeholder="Tarih" id="datepicker">
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-12 col-sm-12 column">
                                         <div class="form-group">
                                             <i class="far fa-clock"></i>
-                                            <input type="text" name="time" placeholder="Any Time">
+                                            <input type="text" name="time" placeholder="Saat">
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-                                            <input type="text" name="name" placeholder="Your Name" required="">
+                                            <input type="text" name="name" placeholder="İsim" required="">
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-                                            <input type="email" name="email" placeholder="Your Email" required="">
+                                            <input type="email" name="email" placeholder="E-Mail" required="">
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-                                            <input type="tel" name="phone" placeholder="Your Phone" required="">
+                                            <input type="tel" name="phone" placeholder="Telefon" required="">
                                         </div>
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-                                            <textarea name="message" placeholder="Your message"></textarea>
+                                            <textarea name="message" placeholder="Mesaj Yaz"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-12 column">
                                         <div class="form-group message-btn">
-                                            <button type="submit" class="theme-btn btn-one">Submit Now</button>
+                                            <button type="submit" class="theme-btn btn-one">Gönder</button>
                                         </div>
                                     </div>
                                 </div>
@@ -510,13 +361,12 @@
                         <div class="author-box">
                             <figure class="author-thumb"><img src="assets/images/resource/author-1.jpg" alt=""></figure>
                             <div class="inner">
-                                <h4>Michael Bean</h4>
+                                <h4>@Model.AgentName</h4>
                                 <ul class="info clearfix">
                                     <li>
-                                        <i class="fas fa-map-marker-alt"></i>84 St. John Wood High Street,
-                                        St Johns Wood
+                                        <i class="fas fa-map-marker-alt"></i> Telsiz, 85/2. Sk. 3A, 34020 Zeytinburnu/İstanbu
                                     </li>
-                                    <li><i class="fas fa-phone"></i><a href="tel:03030571965">030 3057 1965</a></li>
+                                    <li><i class="fas fa-phone"></i><a href="tel:0212 5100114">0212 510 01 14</a></li>
                                 </ul>
                                 <div class="btn-box"><a href="agents-details.html">View Listing</a></div>
                             </div>
@@ -524,19 +374,19 @@
                         <div class="form-inner">
                             <form action="property-details.html" method="post" class="default-form">
                                 <div class="form-group">
-                                    <input type="text" name="name" placeholder="Your name" required="">
+                                    <input type="text" name="name" placeholder="İsminiz" required="">
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" name="email" placeholder="Your Email" required="">
+                                    <input type="email" name="email" placeholder="E-Mail" >
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" name="phone" placeholder="Phone" required="">
+                                    <input type="text" name="phone"  placeholder="Telefon" required="">
                                 </div>
                                 <div class="form-group">
-                                    <textarea name="message" placeholder="Message"></textarea>
+                                    <textarea name="message" placeholder="Mesajınız"></textarea>
                                 </div>
                                 <div class="form-group message-btn">
-                                    <button type="submit" class="theme-btn btn-one">Send Message</button>
+                                    <button type="submit" class="theme-btn btn-one">Bize Ulaşın</button>
                                 </div>
                             </form>
                         </div>
@@ -544,35 +394,29 @@
                     <div class="calculator-widget sidebar-widget">
                         <div class="calculate-inner">
                             <div class="widget-title">
-                                <h4>Mortgage Calculator</h4>
+                                <h4>Kredi Hesapla</h4>
                             </div>
+                           
                             <form method="post" action="mortgage-calculator.html" class="default-form">
                                 <div class="form-group">
-                                    <i class="fas fa-dollar-sign"></i>
-                                    <input type="number" name="total_amount" placeholder="Total Amount">
+                                    <i class="fas fa-lira-sign"></i>
+                                    <input type="number" name="total_amount" placeholder="Toplam Tutar">
                                 </div>
                                 <div class="form-group">
-                                    <i class="fas fa-dollar-sign"></i>
-                                    <input type="number" name="down_payment" placeholder="Down Payment">
+                                    <i class="fas fa-lira-sign"></i>
+                                    <input type="number" name="down_payment" placeholder="Peşinat Tutarı">
                                 </div>
                                 <div class="form-group">
                                     <i class="fas fa-percent"></i>
-                                    <input type="number" name="interest_rate" placeholder="Interest Rate">
+                                    <input type="number" name="interest_rate" placeholder="Faiz Oranı">
                                 </div>
                                 <div class="form-group">
                                     <i class="far fa-calendar-alt"></i>
-                                    <input type="number" name="loan" placeholder="Loan Terms(Years)">
+                                    <input type="number" name="loan" placeholder="Vade (Yıl)">
                                 </div>
-                                <div class="form-group">
-                                    <div class="select-box">
-                                        <select class="wide">
-                                            <option data-display="Monthly">Monthly</option>
-                                            <option value="1">Yearly</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                
                                 <div class="form-group message-btn">
-                                    <button type="submit" class="theme-btn btn-one">Calculate Now</button>
+                                    <button type="submit" class="theme-btn btn-one">Hesapla</button>
                                 </div>
                             </form>
                         </div>
@@ -597,15 +441,15 @@
                                 <div class="author-info clearfix">
                                     <div class="author pull-left">
                                         <figure class="author-thumb"><img src="assets/images/feature/author-1.jpg" alt=""></figure>
-                                        <h6>Michael Bean</h6>
+                                        <h6>@Model.AgentName</h6>
                                     </div>
-                                    <div class="buy-btn pull-right"><a href="property-details.html">For Buy</a></div>
+                                    <div class="buy-btn pull-right"><a href="property-details.html">@Model.PropertyStatus</a></div>
                                 </div>
                                 <div class="title-text"><h4><a href="property-details.html">Villa on Grand Avenue</a></h4></div>
                                 <div class="price-box clearfix">
                                     <div class="price-info pull-left">
-                                        <h6>Start From</h6>
-                                        <h4>$30,000.00</h4>
+                                        <h6>Fiyat</h6>
+                                        <h4>@Model.Price.ToString("N0") TL</h4>
                                     </div>
                                     <ul class="other-option pull-right clearfix">
                                         <li><a href="property-details.html"><i class="icon-12"></i></a></li>
@@ -703,4 +547,7 @@
         </div>
     </div>
 </section>
+
+<!-- property-details end -->
+<!-- property-details end -->
 <!-- property-details end -->

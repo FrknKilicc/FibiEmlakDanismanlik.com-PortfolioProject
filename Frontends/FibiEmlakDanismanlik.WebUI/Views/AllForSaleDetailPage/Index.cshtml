@@ -1,6 +1,8 @@
-﻿@{
+﻿   @model ResultAllForSaleListinForPageDto
+@{
+  
     ViewData["Title"] = "Index";
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+ 
 }
-
-@await Component.InvokeAsync("_AllForSaleDetailPageViewComponentPartial");
+@await Component.InvokeAsync("_AllForSaleDetailPageViewComponentPartial", new { id = Model.ListingId })

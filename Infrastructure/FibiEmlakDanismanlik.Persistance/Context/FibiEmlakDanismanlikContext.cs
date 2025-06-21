@@ -32,6 +32,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<FrequentlyAskedQuestion> frequentlyAskedQuestions { get; set; }
         public DbSet<Service> services { get; set; }
         public DbSet<ListingType>  listingTypes { get; set; }
+        public DbSet<CustomerContact> customerContacts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

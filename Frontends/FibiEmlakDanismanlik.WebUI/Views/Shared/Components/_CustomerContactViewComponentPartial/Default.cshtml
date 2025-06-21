@@ -1,0 +1,49 @@
+﻿@model ResultCustomerContactDto
+
+<section class="contact-section bg-color-1">
+    <div class="auto-container">
+        <div class="row align-items-center clearfix">
+            <div class="col-lg-6 col-md-12 col-sm-12 content-column">
+                <div class="content-box">
+                    <div class="sec-title">
+                        <h5>İletişim</h5>
+                        <h2>Mesaj Gönder</h2>
+                    </div>
+                    <div class="form-inner">
+                        <form asp-action="CustomerContactForm" asp-controller="Contact" method="post">
+                            <div class="row clearfix">
+                                <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                    <input type="text" name="CustomerContactName" placeholder="İsim Soyisim" required="">
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                    <input type="email" name="CustomerContactMail" placeholder="Mail" required="">
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                    <input type="text" name="CustomerContactPhone" placeholder="Telefon" required="">
+                                </div>
+                              
+                                <div class="col-lg-12 col-md-12 col-sm-12 form-group">
+                                    <textarea name="CustomerContactMessage" placeholder="Mesajınızı Buraya Yazın"></textarea>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 form-group message-btn">
+                                    <button class="theme-btn btn-one" type="submit"name="submit-form">Gönder</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                        <div>
+                        
+                            <div class="alert alert-success">@ViewBag.Message</div>
+                        </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12 col-sm-12 map-column">
+                <div class="google-map-area">
+                    <div class="google-map">
+                        <img src="https://images.pexels.com/photos/326576/pexels-photo-326576.jpeg" alt="Harita" style="width: 100%; height: auto;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

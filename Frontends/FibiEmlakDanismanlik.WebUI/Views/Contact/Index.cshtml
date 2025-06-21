@@ -1,8 +1,10 @@
-﻿
+﻿@model ResultCustomerContactDto
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
 @await Component.InvokeAsync("_GetContactInfoViewComponentPartial")
+@await Component.InvokeAsync("_CustomerContactViewComponentPartial", new { dto = Model })
+
 
 

@@ -19,7 +19,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
         public async Task<IViewComponentResult> InvokeAsync(int id)
         {
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync($"{_configuration["Url:ApiUrl"]}ForSales/GetUnifiedForSalesPropertyById?id={id}");
+            var response = await client.GetAsync($"{_configuration["Url:ApiUrl"]}ForSales/GetUnifiedForSalesPropertyById/{id}");
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();

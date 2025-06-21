@@ -196,6 +196,44 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("Contacts");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.CustomerContact", b =>
+                {
+                    b.Property<int>("CustomerContactId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CustomerContactId"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerContactMail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerContactMessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerContactName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CustomerContactPhone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PropertyListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PropertyListingTypeEnum")
+                        .HasColumnType("int");
+
+                    b.HasKey("CustomerContactId");
+
+                    b.ToTable("customerContacts");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ForSaleCommercialPropertyListing", b =>
                 {
                     b.Property<int>("ForSaleCommercialListingId")

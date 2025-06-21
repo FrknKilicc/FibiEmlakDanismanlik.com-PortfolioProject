@@ -29,7 +29,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _meditor.Send(new GetAllForSalePropertiesForListingQuery());
             return Ok(value);
         }
-        [HttpGet("GetUnifiedForSalesPropertyById")]
+        [HttpGet("GetUnifiedForSalesPropertyById/{id}")]
         public async Task<IActionResult> GetUnifiedForSalesPropertyById(int id)
         {
             var value = await _meditor.Send(new GetForSalesPropertyByIdQueries(id));
