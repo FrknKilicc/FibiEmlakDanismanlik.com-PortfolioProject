@@ -13,6 +13,7 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces
         public List<ForSalePropertyViewModel> GetAllForSalePropertyWithAgent();
         public List<RentalPropertyBaseViewModel> GetAllRentalPropertyWithAgent();
         public List<ForSalePropertyForListingViewModel> GetAllForSalePropertyForListing();
-        public Task<ForSalePropertyForListingViewModel>  GetUnifiedForSalePropertyById(int id);
+        public Task<ForSalePropertyForListingViewModel> GetUnifiedForSalePropertyById(int id);
+        public List<ForRentalPropertForListingViewModel> GetAllForRentalPropertyForListing();
     }
 }
