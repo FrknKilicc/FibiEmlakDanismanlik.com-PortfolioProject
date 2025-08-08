@@ -454,6 +454,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                         HousingCategoryId = rentalHouse.HousingCategoryId,
                                         PropertyType = "Konut",
                                         Deposit = rentalHouse.Deposit,
+                                        
 
                                         //adress
                                         City = rentalHouse.City,
@@ -474,6 +475,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                         Furnished = rentalHouse.Furnished,
                                         WithinTheComplex = rentalHouse.WithinTheComplex,
                                         Dues = rentalHouse.Dues,
+                                        RentalCommercialListId = null,
+                                        RentalLandListingId = null,
 
                                         // Arsa alanları boş
                                         Area = null,
@@ -486,7 +489,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                         ZoningPlan = null,
                                         ZoningStatus = null,
                                         DevelopmentRight = null,
-                                        BestDeals = null,
+                                        BestDeals = rentalHouse.BestDeals,
                                         LandCategoryId = null,
 
                                         // // İşyeri alanlrı boş  
@@ -494,6 +497,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                         NumberOfSection = null,
                                         NumberOfKitchens = null,
                                         NumberOfBathrooms = null,
+                                        LandCategory = null,
+                                        
 
 
 
@@ -550,16 +555,232 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                                            PropertyNo = rentalCommercial.PropertyNo,
                                            PropertyName = rentalCommercial.PropertyName,
+                                           PropertyStatus=rentalCommercial.PropertyStatus,
                                            PropertyDescription = rentalCommercial.PropertyDescription,
                                            CreatedDate = rentalCommercial.CreatedDate,
                                            Rent = rentalCommercial.Rent,
                                            BestDeals = rentalCommercial.BestDeals,
                                            PropertyType = "İşyeri",
                                            Deposit = rentalCommercial.Deposit,
+                                           
+
+                                           //BaseModel Adress
+
+                                           City = rentalCommercial.City,
+                                           District = rentalCommercial.District,
+                                           Neighborhood = rentalCommercial.Neighborhood,
+                                           AddressDesc = rentalCommercial.AddressDesc,
+
+                                           //Relational
+
+                                           AgentId = rentalCommercial.AgentId,
+                                           AgentName = agent.AgentName,
+                                           AgentDescription = agent.AgentDescription,
+                                           AgentImgUrl = agent.AgentImgUrl,
+                                           AgentPhoneNumber = agent.AgentPhoneNumber,
+
+                                           ListingTypeId = rentalCommercial.ListingTypeId,
+                                           HousingCategoryId = null,
+                                           
+
+                                           //ViewModelRental
+
+                                           BuildingAge = rentalCommercial.BuildingAge,
+                                           GrossArea = rentalCommercial.GrossArea,
+                                           NetArea = rentalCommercial.NetArea,
+                                           Heating = rentalCommercial.Heating,
+                                           NumberOfFloors = rentalCommercial.NumberOfFloors,
+                                           RentalCommercialListId = rentalCommercial.RentalCommercialListId,
+                                           RentalHousingListId = null,
+                                           RentalLandListingId = null,
+                                           
+
+                                           IsElevator = null,
+                                           OpenArea = null,
+                                           TotalNumberOfFloor = null,
+                                           NumberOfBathRoom = null,
+                                           NumberOfBalconies = null,
+                                           NumberOfRoom = null,
+                                           ParkingLot = null,
+                                           Furnished = null,
+                                           WithinTheComplex = null,
+                                           Dues = null,
+                                           BlackBox = null,
+                                          
+
+                                           Facade = rentalCommercial.Facade,
+                                           NumberOfSection = rentalCommercial.NumberOfSection,
+                                           NumberOfKitchens = rentalCommercial.NumberOfKitchens,
+                                           NumberOfBathrooms = rentalCommercial.NumberOfBathrooms,
+
+
+                                           ZoningStatus = null,
+                                           Area = null,
+                                           PricePerSquareMeter = null,
+                                           ParcelNumber = null,
+                                           PlotNumber = null,
+                                           MapSheetNumber = null,
+                                           FloorAreaRatio = null,
+                                           BaseAreaRatio = null,
+                                           ZoningPlan = null,
+                                           DevelopmentRight = null,
+                                           LandCategoryId = null,
+                                           LandCategory = null,
+
+                                           //img
+
+                                           PropImgUrl1 = rentalCommercial.PropImgUrl1,
+                                           PropImgUrl10 = rentalCommercial.PropImgUrl10,
+                                           PropImgUrl11 = rentalCommercial.PropImgUrl11,
+                                           PropImgUrl12 = rentalCommercial.PropImgUrl12,
+                                           PropImgUrl13 = rentalCommercial.PropImgUrl13,
+                                           PropImgUrl14 = rentalCommercial.PropImgUrl14,
+                                           PropImgUrl15 = rentalCommercial.PropImgUrl15,
+                                           PropImgUrl16 = rentalCommercial.PropImgUrl16,
+                                           PropImgUrl17 = rentalCommercial.PropImgUrl17,
+                                           PropImgUrl18 = rentalCommercial.PropImgUrl18,
+                                           PropImgUrl19 = rentalCommercial.PropImgUrl19,
+                                           PropImgUrl2 = rentalCommercial.PropImgUrl2,
+                                           PropImgUrl20 = rentalCommercial.PropImgUrl20,
+                                           PropImgUrl21 = rentalCommercial.PropImgUrl21,
+                                           PropImgUrl22 = rentalCommercial.PropImgUrl22,
+                                           PropImgUrl23 = rentalCommercial.PropImgUrl23,
+                                           PropImgUrl24 = rentalCommercial.PropImgUrl24,
+                                           PropImgUrl25 = rentalCommercial.PropImgUrl25,
+                                           PropImgUrl26 = rentalCommercial.PropImgUrl26,
+                                           PropImgUrl27 = rentalCommercial.PropImgUrl27,
+                                           PropImgUrl28 = rentalCommercial.PropImgUrl28,
+                                           PropImgUrl29 = rentalCommercial.PropImgUrl29,
+                                           PropImgUrl3 = rentalCommercial.PropImgUrl3,
+                                           PropImgUrl30 = rentalCommercial.PropImgUrl30,
+                                           PropImgUrl4 = rentalCommercial.PropImgUrl4,
+                                           PropImgUrl5 = rentalCommercial.PropImgUrl5,
+                                           PropImgUrl6 = rentalCommercial.PropImgUrl6,
+                                           PropImgUrl7 = rentalCommercial.PropImgUrl7,
+                                           PropImgUrl8 = rentalCommercial.PropImgUrl8,
+                                           PropImgUrl9 = rentalCommercial.PropImgUrl9,
+
 
 
 
                                        };
+            var rentalLandList = from rentalLand in _context.rentalLandListings
+                                 join agent in _context.Agents on rentalLand.AgentId equals agent.AgentId
+                                 select new ForRentalPropertForListingViewModel
+                                 {
+                                     //baseModel
+                                     PropertyNo = rentalLand.PropertyNo,
+                                     PropertyName = rentalLand.PropertyName,
+                                     PropertyDescription = rentalLand.PropertyDescription,
+                                     PropertyStatus = rentalLand.PropertyStatus,
+                                     CreatedDate = rentalLand.CreatedDate,
+                                     Rent = rentalLand.Rent,
+                                     BestDeals = rentalLand.BestDeals,
+                                     PropertyType = "Arsa",
+
+                                     //baseModel Adress
+
+                                     City = rentalLand.City,
+                                     District = rentalLand.District,
+                                     Neighborhood = rentalLand.Neighborhood,
+                                     AddressDesc = rentalLand.AddressDesc,
+
+
+
+                                     //Relational
+
+                                     AgentId = rentalLand.AgentId,
+                                     AgentName = agent.AgentName,
+                                     AgentDescription = agent.AgentDescription,
+                                     AgentImgUrl = agent.AgentImgUrl,
+                                     AgentPhoneNumber = agent.AgentPhoneNumber,
+
+                                     ListingTypeId = rentalLand.ListingTypeId,
+
+
+                                     Deposit = null,
+
+                                     //ViewModel
+
+                                     BuildingAge = null,
+                                     GrossArea = null,
+                                     NetArea = null,
+                                     Heating = null,
+                                     NumberOfFloors = null,
+
+                                     RentalCommercialListId = null,
+                                     RentalHousingListId = null,
+                                     RentalLandListingId = rentalLand.RentalLandListingId,
+
+                                     HousingCategoryId = null,
+                                     IsElevator = null,
+                                     OpenArea = null,
+                                     TotalNumberOfFloor = null,
+                                     NumberOfBathRoom = null,
+                                     NumberOfRoom = null,
+                                     NumberOfBalconies = null,
+                                     BlackBox = null,
+                                     ParkingLot = null,
+                                     Furnished = null,
+                                     WithinTheComplex = null,
+                                     Dues = null,
+
+                                     Facade = null,
+                                     NumberOfSection = null,
+                                     NumberOfKitchens = null,
+                                     NumberOfBathrooms = null,
+                                     LandCategory = null,
+
+                                     ZoningStatus = rentalLand.ZoningStatus,
+                                     Area = rentalLand.Area,
+                                     PricePerSquareMeter = rentalLand.PricePerSquareMeter,
+                                     ParcelNumber = rentalLand.ParcelNumber,
+                                     PlotNumber = rentalLand.PlotNumber,
+                                     MapSheetNumber = rentalLand.MapSheetNumber,
+                                     FloorAreaRatio = rentalLand.FloorAreaRatio,
+                                     BaseAreaRatio = rentalLand.BaseAreaRatio,
+                                     ZoningPlan = rentalLand.ZoningPlan,
+                                     DevelopmentRight = rentalLand.DevelopmentRight,
+                                     LandCategoryId = rentalLand.LandCategoryId,
+
+                                     //img
+
+                                     PropImgUrl1 = rentalLand.PropImgUrl1,
+                                     PropImgUrl10 = rentalLand.PropImgUrl10,
+                                     PropImgUrl11 = rentalLand.PropImgUrl11,
+                                     PropImgUrl12 = rentalLand.PropImgUrl12,
+                                     PropImgUrl13 = rentalLand.PropImgUrl13,
+                                     PropImgUrl14 = rentalLand.PropImgUrl14,
+                                     PropImgUrl15 = rentalLand.PropImgUrl15,
+                                     PropImgUrl16 = rentalLand.PropImgUrl16,
+                                     PropImgUrl17 = rentalLand.PropImgUrl17,
+                                     PropImgUrl18 = rentalLand.PropImgUrl18,
+                                     PropImgUrl19 = rentalLand.PropImgUrl19,
+                                     PropImgUrl2 = rentalLand.PropImgUrl2,
+                                     PropImgUrl20 = rentalLand.PropImgUrl20,
+                                     PropImgUrl21 = rentalLand.PropImgUrl21,
+                                     PropImgUrl22 = rentalLand.PropImgUrl22,
+                                     PropImgUrl23 = rentalLand.PropImgUrl23,
+                                     PropImgUrl24 = rentalLand.PropImgUrl24,
+                                     PropImgUrl25 = rentalLand.PropImgUrl25,
+                                     PropImgUrl26 = rentalLand.PropImgUrl26,
+                                     PropImgUrl27 = rentalLand.PropImgUrl27,
+                                     PropImgUrl28 = rentalLand.PropImgUrl28,
+                                     PropImgUrl29 = rentalLand.PropImgUrl29,
+                                     PropImgUrl3 = rentalLand.PropImgUrl3,
+                                     PropImgUrl30 = rentalLand.PropImgUrl30,
+                                     PropImgUrl4 = rentalLand.PropImgUrl4,
+                                     PropImgUrl5 = rentalLand.PropImgUrl5,
+                                     PropImgUrl6 = rentalLand.PropImgUrl6,
+                                     PropImgUrl7 = rentalLand.PropImgUrl7,
+                                     PropImgUrl8 = rentalLand.PropImgUrl8,
+                                     PropImgUrl9 = rentalLand.PropImgUrl9,
+
+                                 };
+
+            var listing = rentalHousingList.Concat(rentalLandList).Concat(rentalCommercialList).OrderByDescending(x => x.CreatedDate).ToList();
+
+            return listing;
         }
 
         List<ForSalePropertyForListingViewModel> IPropertyRepository.GetAllForSalePropertyForListing()
