@@ -45,5 +45,24 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
             };
 
         }
+
+        public Task<List<GetBlogDetailWithAuthorResult>> GetLast3BlogWithAuthor()
+        {
+            var value = _context.Blogs.Include(_b => _b.Author).OrderByDescending(x=>x.CreatedDate).Take(3).Select(x=> new GetBlogDetailWithAuthorResult
+            {
+                BlogId = x.BlogId,
+                BlogTitle=x.BlogTitle,
+                BlogDescription= x.BlogDescription,
+                BlogImgUrl = x.BlogImgUrl,
+                CreatedDate = x.CreatedDate,
+                TopNews = x.TopNews,
+                AuthorId = x.AuthorId,
+                AuthorImgUrl= x.Author.AuthorImgUrl,
+                AuthorName = x.Author.AuthorName,
+    
+            }).ToListAsync();
+
+            return value;
+        }
     }
 }

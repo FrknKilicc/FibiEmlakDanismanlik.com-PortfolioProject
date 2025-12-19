@@ -10,6 +10,7 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces
     public interface IBlogRepository
     {
         public Task<GetBlogDetailWithAuthorResult?> GetBlogDetailWithAuthorById(int blogId);
+        public Task<List<GetBlogDetailWithAuthorResult?>> GetLast3BlogWithAuthor();
         
     }
 }

@@ -60,5 +60,15 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok(value);
         }
 
+        [HttpGet("GetLast3BlogWithAuthor")]
+        public async Task<IActionResult> GetLast3BlogWithAuthor()
+        {
+            var value = await _mediator.Send(new GetBlogDetailWithAuthorQuery());
+            if (value == null)
+            {
+                return NotFound("Blog Detayına Erişilemiyor");
+            }
+            return Ok(value);
+        }
     }
 }

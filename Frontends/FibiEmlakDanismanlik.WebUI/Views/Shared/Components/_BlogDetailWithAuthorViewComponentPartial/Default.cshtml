@@ -175,28 +175,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="sidebar-widget post-widget">
-                        <div class="widget-title">
-                            <h4>Recent Posts</h4>
-                        </div>
-                        <div class="post-inner">
-                            <div class="post">
-                                <figure class="post-thumb"><a href="blog-details.html"><img src="assets/images/news/post-1.jpg" alt=""></a></figure>
-                                <h5><a href="blog-details.html">Best interior design idea for your home.</a></h5>
-                                <span class="post-date">April 10, 2020</span>
-                            </div>
-                            <div class="post">
-                                <figure class="post-thumb"><a href="blog-details.html"><img src="assets/images/news/post-2.jpg" alt=""></a></figure>
-                                <h5><a href="blog-details.html">A digital prescription for the industry.</a></h5>
-                                <span class="post-date">April 09, 2020</span>
-                            </div>
-                            <div class="post">
-                                <figure class="post-thumb"><a href="blog-details.html"><img src="assets/images/news/post-3.jpg" alt=""></a></figure>
-                                <h5><a href="blog-details.html">Strategic & commercial approach with issues.</a></h5>
-                                <span class="post-date">April 08, 2020</span>
-                            </div>
-                        </div>
-                    </div>
+                    @await Component.InvokeAsync("_GetLast3BlogWithAuthorViewComponentPartial")
                     <div class="sidebar-widget category-widget">
                         <div class="widget-title">
                             <h4>Archives</h4>
