@@ -48,5 +48,17 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok("Blog Bilgisi Başarıyla Silindi");
         }
 
+        [HttpGet ("GetBlogDetailWithAuthorById")]
+        public async Task<IActionResult> GetBlogDetailWithAuthorById(int id)
+        {
+            var value = await _mediator.Send(new GetBlogDetailWithAuthorByIdQuery(id));
+
+            if (value == null)
+            {
+                return NotFound("Blog Detayına Erişilemiyor.");
+            }
+            return Ok(value);
+        }
+
     }
 }
