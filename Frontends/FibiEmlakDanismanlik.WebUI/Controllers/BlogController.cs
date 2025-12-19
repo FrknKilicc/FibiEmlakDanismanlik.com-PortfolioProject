@@ -8,5 +8,13 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
         {
             return View();
         }
+        [HttpGet("/Blog/Detail/{id:int}")]
+        public IActionResult Detail(int id)
+        {
+            ViewBag.BlogId = id;    
+            return View();
+
+        }
+
     }
 }

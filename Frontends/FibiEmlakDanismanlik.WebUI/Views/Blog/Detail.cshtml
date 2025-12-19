@@ -1,0 +1,7 @@
+﻿@{
+    ViewData["Title"] = "detay";
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+}
+
+@await Component.InvokeAsync("_BlogDetailWithAuthorViewComponentPartial", new {id = (int) ViewBag.BlogId})
+

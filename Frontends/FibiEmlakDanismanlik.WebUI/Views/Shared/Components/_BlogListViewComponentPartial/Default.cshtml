@@ -22,22 +22,22 @@
                 <div class="col-lg-6 col-md-12 col-sm-12 news-block">
                     <div class="news-block-two wow fadeInLeft animated animated" data-wow-delay="00ms" data-wow-duration="1500ms">
                         <div class="inner-box align-items-center">
-                            <div class="image-box">
-                                <figure class="image"><a href="blog-details.html"><img src="@item.BlogImgUrl" alt=""></a></figure>
-                                <a href="blog-details.html" class="feature">Featured</a>
+                            <div style="height:100%" class="image-box">
+                                <figure style="height:100%" class="image"><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId"><img style="height:100%" src="@item.BlogImgUrl" alt=""></a></figure>
+                                <a asp-controller ="Blog" asp-action="Detail" asp-route-id="@item.BlogId" class="feature">Featured</a>
                             </div>
                             <div class="content-box">
-                                <h4><a href="blog-details.html">@item.BlogTitle</a></h4>
+                                <h4><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">@item.BlogTitle</a></h4>
                                 <ul class="post-info clearfix">
                                     <li class="author-box">
                                         <figure class="author-thumb"><img src="assets/images/news/author-1.jpg" alt=""></figure>
-                                        <h5><a href="blog-details.html">Eva Green</a></h5>
+                                        <h5><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">Eva Green</a></h5>
                                     </li>
                                     <li>@item.CreatedDate.ToString("dd MMMM yyyy")</li>
                                 </ul>
                                 <p>@item.BlogDescription.</p>
-                                <div class="btn-box">
-                                    <a href="blog-details.html" class="theme-btn btn-two">Devamını Oku</a>
+                                <div class="btn-box" >
+                                    <a  asp-action="Detail" asp-controller="Blog" asp-route-id="@item.BlogId" class="theme-btn btn-two">Devamını Oku</a>
                                 </div>
                             </div>
                         </div>
