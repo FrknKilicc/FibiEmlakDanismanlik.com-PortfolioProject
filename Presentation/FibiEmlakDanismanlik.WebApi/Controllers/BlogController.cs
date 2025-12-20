@@ -1,4 +1,5 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Commands.BlogCommands;
+using FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers;
 using FibiEmlakDanismanlik.Application.Features.Queries.BlogQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -48,7 +49,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok("Blog Bilgisi Başarıyla Silindi");
         }
 
-        [HttpGet ("GetBlogDetailWithAuthorById")]
+        [HttpGet("GetBlogDetailWithAuthorById")]
         public async Task<IActionResult> GetBlogDetailWithAuthorById(int id)
         {
             var value = await _mediator.Send(new GetBlogDetailWithAuthorByIdQuery(id));
@@ -68,6 +69,20 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             {
                 return NotFound("Blog Detayına Erişilemiyor");
             }
+            return Ok(value);
+        }
+
+        [HttpGet("GetBlogListWithAuthor")]
+
+        public async Task<IActionResult> GetBlogListWithAuthor()
+        {
+            var value = await _mediator.Send(new GetBlogListWithAuthorQuery());
+            if (value == null)
+            {
+                return NotFound("Blog Detayına erişilemiyor");
+                
+            }
+
             return Ok(value);
         }
     }

@@ -46,6 +46,23 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
 
         }
 
+        public Task<List<GetBlogDetailWithAuthorResult?>> GetBlogListWithAuthor()
+        {
+            var value = _context.Blogs.Include(_b => _b.Author).Select(y=> new GetBlogDetailWithAuthorResult
+            {
+                BlogId = y.BlogId,
+                BlogTitle = y.BlogTitle,
+                BlogDescription = y.BlogDescription,
+                BlogImgUrl = y.BlogImgUrl,
+                CreatedDate = y.CreatedDate,
+                TopNews = y.TopNews,
+                AuthorId = y.AuthorId,
+                AuthorImgUrl= y.Author.AuthorImgUrl,
+                AuthorName= y.Author.AuthorName,
+            }).ToListAsync();
+            return value;
+        }
+
         public Task<List<GetBlogDetailWithAuthorResult>> GetLast3BlogWithAuthor()
         {
             var value = _context.Blogs.Include(_b => _b.Author).OrderByDescending(x=>x.CreatedDate).Take(3).Select(x=> new GetBlogDetailWithAuthorResult

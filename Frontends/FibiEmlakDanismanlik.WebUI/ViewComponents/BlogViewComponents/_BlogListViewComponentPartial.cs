@@ -19,11 +19,11 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.BlogViewComponents
         public async Task<IViewComponentResult>  InvokeAsync()
         {
             var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_configuration["Url:ApiUrl"]}Blog");
+            var responseMessage = await client.GetAsync($"{_configuration["Url:ApiUrl"]}Blog/GetBlogListWithAuthor");
             if ( responseMessage.IsSuccessStatusCode )
             {
                 var jsonData= await responseMessage.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<List<ResultAllBlogsDto>>(jsonData);
+                var result = JsonConvert.DeserializeObject<List<ResultBlogWithAuthorDto>>(jsonData);
                 return View(result);
             }
             else

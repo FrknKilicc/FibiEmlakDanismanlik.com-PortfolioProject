@@ -1,4 +1,4 @@
-﻿@model List<ResultAllBlogsDto>
+﻿@model List<ResultBlogWithAuthorDto>
 
  <!--Page Title-->
 <section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
@@ -23,15 +23,15 @@
                     <div class="news-block-two wow fadeInLeft animated animated" data-wow-delay="00ms" data-wow-duration="1500ms">
                         <div class="inner-box align-items-center">
                             <div style="height:100%" class="image-box">
-                                <figure style="height:100%" class="image"><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId"><img style="height:100%" src="@item.BlogImgUrl" alt=""></a></figure>
-                                <a asp-controller ="Blog" asp-action="Detail" asp-route-id="@item.BlogId" class="feature">Featured</a>
+                                <figure style="height:100%" class="image"><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId"><img style="height:100%; object-fit:cover;" src="@item.BlogImgUrl" alt=""></a></figure>
+                                <a asp-controller ="Blog" asp-action="Detail" asp-route-id="@item.BlogId" class="feature">Öne Çıkanlar</a>
                             </div>
                             <div class="content-box">
                                 <h4><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">@item.BlogTitle</a></h4>
                                 <ul class="post-info clearfix">
                                     <li class="author-box">
-                                        <figure class="author-thumb"><img src="assets/images/news/author-1.jpg" alt=""></figure>
-                                        <h5><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">Eva Green</a></h5>
+                                        <figure class="author-thumb"><img src="@item.AuthorImgUrl" alt=""></figure>
+                                        <h5><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">@item.AuthorName</a></h5>
                                     </li>
                                     <li>@item.CreatedDate.ToString("dd MMMM yyyy")</li>
                                 </ul>
@@ -45,7 +45,7 @@
                 </div>
 
             }
-           
+              
         <div class="pagination-wrapper">
             <ul class="pagination clearfix">
                 <li><a href="blog-2.html" class="current">1</a></li>
