@@ -40,10 +40,12 @@
                                 </div>
                                 <div class="post-tags">
                                     <ul class="tags-list clearfix">
-                                        <li><h5>Tags:</h5></li>
-                                        <li><a href="blog-details.html">Real Estate</a></li>
-                                        <li><a href="blog-details.html">Interior</a></li>
-                                        <li><a href="blog-details.html">Rent Home</a></li>
+                                        <li><h5>Etiketler:</h5></li>
+                                        @foreach (var tag in Model.Tags)
+                                        {
+                                           <li><a href="blog-details.html">@tag.Name</a></li>
+                                        }
+                                        
                                     </ul>
                                 </div>
                             </div>

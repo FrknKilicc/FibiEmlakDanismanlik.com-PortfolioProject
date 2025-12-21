@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace FibiEmlakDanismanlik.Persistence.Context
 {
     public class FibiEmlakDanismanlikContext : DbContext
@@ -33,6 +34,9 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<Service> services { get; set; }
         public DbSet<ListingType>  listingTypes { get; set; }
         public DbSet<CustomerContact> customerContacts { get; set; }
+        public DbSet<BlogTag> BlogTags { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -83,6 +87,31 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             modelBuilder.Entity<RentalLandListing>()
                 .Property(f => f.PropertyNo)
                 .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalLandListings_Table");
+           
+            // Tag
+            modelBuilder.Entity<Tag>(entity =>
+            {
+                entity.Property(x => x.Name)
+                      .IsRequired()
+                      .HasMaxLength(80);
+                
+               
+            });
+
+            // BlogTag 
+            modelBuilder.Entity<BlogTag>(entity =>
+            {
+                entity.HasKey(x => new { x.BlogId, x.TagId });
+
+                entity.HasOne(x => x.Blog)
+                      .WithMany(x => x.BlogTags)
+                      .HasForeignKey(x => x.BlogId);
+
+                entity.HasOne(x => x.Tag)
+                      .WithMany(x => x.BlogTags)
+                      .HasForeignKey(x => x.TagId);
+            });
+
 
             base.OnModelCreating(modelBuilder);
         }

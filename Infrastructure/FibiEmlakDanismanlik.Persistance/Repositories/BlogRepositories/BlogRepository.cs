@@ -1,5 +1,6 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Results.BlogResults;
 using FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces;
+using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -22,7 +23,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
 
         public async Task<GetBlogDetailWithAuthorResult?> GetBlogDetailWithAuthorById(int blogId)
         {
-            var blog = await _context.Blogs.Include(b => b.Author).FirstOrDefaultAsync(b => b.BlogId == blogId);
+            var blog = await _context.Blogs.Include(b => b.Author).Include(b=>b.BlogTags).ThenInclude(bt=>bt.Tag).FirstOrDefaultAsync(b => b.BlogId == blogId);
 
             if (blog == null)
             {
@@ -42,6 +43,12 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
                 AuthorId = blog.AuthorId,
                 AuthorImgUrl = blog.Author.AuthorImgUrl,
                 AuthorName = blog.Author.AuthorName,
+
+                Tags = blog.BlogTags.Select(x => new BlogTagItemResult
+                {
+                    Id = x.TagId,
+                    Name = x.Tag.Name,
+                }).ToList()
 
             };
 

@@ -20,5 +20,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public int AuthorId { get; set; }
         public Author Author { get; set; }
 
+        public ICollection<BlogTag> BlogTags { get; set; } = new List<BlogTag>();
+
     }
 }
