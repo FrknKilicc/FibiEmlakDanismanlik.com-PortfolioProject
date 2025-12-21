@@ -35,7 +35,7 @@
                                     </li>
                                     <li>@item.CreatedDate.ToString("dd MMMM yyyy")</li>
                                 </ul>
-                                <p>@item.BlogDescription.</p>
+                                <p style="display:-webkit-box ; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow:hidden; text-overflow:ellipsis ">@item.BlogDescription.</p>
                                 <div class="btn-box" >
                                     <a  asp-action="Detail" asp-controller="Blog" asp-route-id="@item.BlogId" class="theme-btn btn-two">Devamını Oku</a>
                                 </div>

@@ -56,13 +56,27 @@
                 <div class="blog-sidebar">
                     <div class="sidebar-widget search-widget">
                         <div class="widget-title">
-                            <h4>Search</h4>
+                            <h4>Arama</h4>
                         </div>
                         <div class="search-inner">
-                            <form action="blog-1.html" method="post">
-                                <div class="form-group">
-                                    <input type="search" name="search_field" placeholder="Search" required="">
-                                    <button type="submit"><i class="fas fa-search"></i></button>
+                            <form action="#" method="get" id="blogSearchForm">
+                                <div class="form-group" style="position:relative;">
+                                    <input type="search"
+                                           id="blogSearchInput"
+                                           name="q"
+                                           placeholder="Blog Ara"
+                                           autocomplete="off">
+
+                                    <button type="button"><i class="fas fa-search"></i></button>
+                                    
+                                    <div id="blogSuggestBox"
+                                         class="widget-content"
+                                         style="display:none; position:absolute; left:0; right:0; top:100%; z-index:999; background:#fff;">
+                                        <ul id="blogSuggestList"
+                                            class="category-list clearfix"
+                                            style="margin:0;">
+                                        </ul>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -117,3 +131,87 @@
     </div>
 </section>
 <!-- sidebar-page-container -->
+
+<script>
+    (function () {
+        const input = document.getElementById("blogSearchInput");
+        const box = document.getElementById("blogSuggestBox");
+        const list = document.getElementById("blogSuggestList");
+        const form = document.getElementById("blogSearchForm");
+
+        if (!input || !box || !list) return;
+
+        let timer = null;
+
+        if (form) {
+            form.addEventListener("submit", function (e) { e.preventDefault(); });
+        }
+
+        function hide() {
+            box.style.display = "none";
+            list.innerHTML = "";
+        }
+
+        function show() {
+            box.style.display = "block";
+        }
+
+        function escapeHtml(str) {
+            return (str || "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        async function fetchSuggest(q) {
+            const url = `/Blog/Suggest?q=${encodeURIComponent(q)}&take=6`;
+            const res = await fetch(url, { headers: { "Accept": "application/json" } });
+            if (!res.ok) return [];
+            return await res.json();
+        }
+
+        function render(items) {
+            if (!items || items.length === 0) {
+                hide();
+                return;
+            }
+            // Arama spmrası suggested - blog görsel eklenebilir şuan title ve desc suggest ediyor. 
+
+            list.innerHTML = items.map(x => `
+                <li style="padding:10px 12px; border-bottom:1px solid #eee;">
+                    <a href="/Blog/Detail/${x.blogId}" style="display:block;">
+                        <div style="font-weight:600;color : black ; ">${escapeHtml(x.blogTitle)}</div>
+                        <div style="font-size:13px; color:black; opacity:.75; margin-top:4px;">
+                            ${escapeHtml(x.blogDescPrew)}
+                        </div>
+                    </a>
+                </li>
+            `).join("");
+
+            show();
+        }
+
+        input.addEventListener("keyup", function () {
+            const q = input.value.trim();
+
+            // 2 karakter altı suggestion kapatmalı 
+            if (q.length < 2) { hide(); return; }
+
+            clearTimeout(timer);
+            timer = setTimeout(async () => {
+                try {
+                    const items = await fetchSuggest(q);
+                    render(items);
+                } catch (e) {
+                    hide();
+                }
+            }, 300); // debounce rate standart olarak istenen yapıda / 200 de fazla hızlı. 
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!box.contains(e.target) && e.target !== input) hide();
+        });
+    })();
+</script>
