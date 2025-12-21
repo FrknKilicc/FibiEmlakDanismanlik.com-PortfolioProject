@@ -85,5 +85,17 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
 
             return Ok(value);
         }
+
+        [HttpGet("SearchSuggestions")]
+        public async Task<IActionResult> SearchSuggestions([FromQuery] string q , [FromQuery] int take=6) 
+        
+        {
+            if (string.IsNullOrWhiteSpace(q) || q.Trim().Length<2)
+            {
+                return Ok(new List<object>());
+            }
+            var result = await _mediator.Send(new GetBlogSuggestionsQuery(q, take));
+            return Ok(result);
+        }
     }
 }

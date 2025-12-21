@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
@@ -80,6 +81,45 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
             }).ToListAsync();
 
             return value;
+        }
+
+        public async Task<List<BlogSuggestionResult>> SearchBlogSuggestion(string q, int take = 6)
+        {
+           if (string.IsNullOrWhiteSpace(q))
+                return new List<BlogSuggestionResult>();
+           q=q.Trim();
+            if(q.Length<2)
+                return new List<BlogSuggestionResult>();    
+            if(take<=0) take = 6;
+            if(take>10) take = 10;
+
+            var list = await _context.Blogs.OrderByDescending(b => b.CreatedDate).Where(b =>
+            EF.Functions.Like(b.BlogTitle, $"%{q}%") || EF.Functions.Like(b.BlogDescription, $"${q}%")).Select(b => new BlogSuggestionResult
+            {
+                BlogTitle = b.BlogTitle,
+                BlogImgUrl = b.BlogImgUrl,
+                BlogId = b.BlogId,
+                BlogDescPrew = b.BlogDescription
+            }).Take(take).ToListAsync();
+
+            // 50 karakter sonrası  preview gösterr
+            foreach (var item in list)
+            {
+                var plain = StripHtml(item.BlogDescPrew ?? "");
+                item.BlogDescPrew = TruncateWithDots(plain, 50);
+            }
+
+            return list;
+        }
+        private static string TruncateWithDots(string text, int maxLen)
+        {
+            if (string.IsNullOrEmpty(text)) return "";
+            if (text.Length <= maxLen) return text;
+            return text.Substring(0, maxLen)+"...";
+        }
+        private static string StripHtml (string input)
+        {
+            return Regex.Replace(input, "<.*?>", string.Empty);
         }
     }
 }
