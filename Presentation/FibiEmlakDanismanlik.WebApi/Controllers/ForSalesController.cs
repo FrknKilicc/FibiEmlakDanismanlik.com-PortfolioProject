@@ -1,5 +1,6 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Queries.ForSalePropertyQueries;
 using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
+using FibiEmlakDanismanlik.Domain.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +25,9 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok(value);
         }
         [HttpGet("GetAllForSalesPropertyForListing")]
-        public async Task<IActionResult> GetAllForSalesPropertyForListing()
+        public async Task<IActionResult> GetAllForSalesPropertyForListing([FromQuery]ForSaleListingFilterDto filter)
         {
-            var value = await _meditor.Send(new GetAllForSalePropertiesForListingQuery());
+            var value = await _meditor.Send(new GetAllForSalePropertiesForListingQuery(filter));
             return Ok(value);
         }
         [HttpGet("GetUnifiedForSalesPropertyById/{id}")]
@@ -34,6 +35,12 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         {
             var value = await _meditor.Send(new GetForSalesPropertyByIdQueries(id));
             return Ok(value);
+        }
+        [HttpGet("GetForSaleListingTypeFacets")]
+        public async Task<IActionResult> GetForSaleListingTypeFacets()
+        {
+            var result = await _meditor.Send(new GetForSaleListingTypeFacetsQuery());
+            return Ok(result);
         }
 
     }

@@ -1,7 +1,10 @@
-﻿using FibiEmlakDanismanlik.Application.Interfaces;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces;
 using FibiEmlakDanismanlik.Application.ViewModels;
+using FibiEmlakDanismanlik.Domain.DTOs;
 using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -17,7 +20,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
     {
         private readonly FibiEmlakDanismanlikContext _context;
 
-        
+
         public PropertyRepository(FibiEmlakDanismanlikContext context)
         {
             _context = context;
@@ -283,47 +286,47 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 };
 
             }
-            var land = await _context.forSaleLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x=>x.LandCategory).FirstOrDefaultAsync(x => x.ForSaleLandListingId == id);
+            var land = await _context.forSaleLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x => x.LandCategory).FirstOrDefaultAsync(x => x.ForSaleLandListingId == id);
 
             if (land != null)
             {
                 return new ForSalePropertyForListingViewModel
                 {
                     ListingId = land.ForSaleLandListingId,
-                    PropertyNo= land.PropertyNo,
-                    PropertyName= land.PropertyName,
-                    PropertyDescription= land.PropertyDescription,
-                    PropertyStatus= land.PropertyStatus,
-                    CreatedDate= land.CreatedDate,
-                    City= land.City,
-                    District= land.District,
-                    Neighborhood= land.Neighborhood,
-                    AddressDesc= land.AddressDesc,
-                    ZoningStatus= land.ZoningStatus,
-                    SharePercentage= land.SharePercentage,
-                    Area= land.Area,
-                    Price= land.Price,
-                    PricePerSquareMeter= land.PricePerSquareMeter,
-                    ParcelNumber= land.ParcelNumber,
-                    PlotNumber= land.PlotNumber,
-                    MapSheetNumber= land.MapSheetNumber,
-                    FloorAreaRatio= land.FloorAreaRatio,
-                    BaseAreaRatio= land.BaseAreaRatio,
-                    ZoningPlan= land.ZoningPlan,
-                    TitleDeedStatus= land.TitleDeedStatus,
-                    DevelopmentRight= land.DevelopmentRight,
-                    LandLoan    = land.LandLoan,
-                    Exchange= land.Exchange,
-                    LandCategoryId= land.LandCategoryId,
-                    AgentId= land.AgentId,
-                    AgentImgUrl=land.Agent.AgentImgUrl,
-                    AgentName=land.Agent.AgentName,
-                    AgentTitle=land.Agent.AgentTitle,
-                    BestDeals= land.BestDeals,
-                    ListingType="Arsa",
+                    PropertyNo = land.PropertyNo,
+                    PropertyName = land.PropertyName,
+                    PropertyDescription = land.PropertyDescription,
+                    PropertyStatus = land.PropertyStatus,
+                    CreatedDate = land.CreatedDate,
+                    City = land.City,
+                    District = land.District,
+                    Neighborhood = land.Neighborhood,
+                    AddressDesc = land.AddressDesc,
+                    ZoningStatus = land.ZoningStatus,
+                    SharePercentage = land.SharePercentage,
+                    Area = land.Area,
+                    Price = land.Price,
+                    PricePerSquareMeter = land.PricePerSquareMeter,
+                    ParcelNumber = land.ParcelNumber,
+                    PlotNumber = land.PlotNumber,
+                    MapSheetNumber = land.MapSheetNumber,
+                    FloorAreaRatio = land.FloorAreaRatio,
+                    BaseAreaRatio = land.BaseAreaRatio,
+                    ZoningPlan = land.ZoningPlan,
+                    TitleDeedStatus = land.TitleDeedStatus,
+                    DevelopmentRight = land.DevelopmentRight,
+                    LandLoan = land.LandLoan,
+                    Exchange = land.Exchange,
+                    LandCategoryId = land.LandCategoryId,
+                    AgentId = land.AgentId,
+                    AgentImgUrl = land.Agent.AgentImgUrl,
+                    AgentName = land.Agent.AgentName,
+                    AgentTitle = land.Agent.AgentTitle,
+                    BestDeals = land.BestDeals,
+                    ListingType = "Arsa",
 
-                      //Images 
-                    PropImgUrl1 =  land.PropImgUrl1,
+                    //Images 
+                    PropImgUrl1 = land.PropImgUrl1,
                     PropImgUrl10 = land.PropImgUrl10,
                     PropImgUrl11 = land.PropImgUrl11,
                     PropImgUrl12 = land.PropImgUrl12,
@@ -334,7 +337,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     PropImgUrl17 = land.PropImgUrl17,
                     PropImgUrl18 = land.PropImgUrl18,
                     PropImgUrl19 = land.PropImgUrl19,
-                    PropImgUrl2 =  land.PropImgUrl2,
+                    PropImgUrl2 = land.PropImgUrl2,
                     PropImgUrl20 = land.PropImgUrl20,
                     PropImgUrl21 = land.PropImgUrl21,
                     PropImgUrl22 = land.PropImgUrl22,
@@ -345,21 +348,21 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     PropImgUrl27 = land.PropImgUrl27,
                     PropImgUrl28 = land.PropImgUrl28,
                     PropImgUrl29 = land.PropImgUrl29,
-                    PropImgUrl3 =  land.PropImgUrl3,
+                    PropImgUrl3 = land.PropImgUrl3,
                     PropImgUrl30 = land.PropImgUrl30,
-                    PropImgUrl4 =  land.PropImgUrl4,
-                    PropImgUrl5 =  land.PropImgUrl5,
-                    PropImgUrl6 =  land.PropImgUrl6,
-                    PropImgUrl7 =  land.PropImgUrl7,
-                    PropImgUrl8 =  land.PropImgUrl8,
-                    PropImgUrl9 =  land.PropImgUrl9,
+                    PropImgUrl4 = land.PropImgUrl4,
+                    PropImgUrl5 = land.PropImgUrl5,
+                    PropImgUrl6 = land.PropImgUrl6,
+                    PropImgUrl7 = land.PropImgUrl7,
+                    PropImgUrl8 = land.PropImgUrl8,
+                    PropImgUrl9 = land.PropImgUrl9,
                     //Images
 
 
                 };
             }
             var commercialById = await _context.forSaleCommercialPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleCommercialListingId == id);
-            if (commercialById!=null)
+            if (commercialById != null)
             {
                 return new ForSalePropertyForListingViewModel
                 {
@@ -454,7 +457,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                         HousingCategoryId = rentalHouse.HousingCategoryId,
                                         PropertyType = "Konut",
                                         Deposit = rentalHouse.Deposit,
-                                        
+
 
                                         //adress
                                         City = rentalHouse.City,
@@ -498,7 +501,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                         NumberOfKitchens = null,
                                         NumberOfBathrooms = null,
                                         LandCategory = null,
-                                        
+
 
 
 
@@ -555,14 +558,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                                            PropertyNo = rentalCommercial.PropertyNo,
                                            PropertyName = rentalCommercial.PropertyName,
-                                           PropertyStatus=rentalCommercial.PropertyStatus,
+                                           PropertyStatus = rentalCommercial.PropertyStatus,
                                            PropertyDescription = rentalCommercial.PropertyDescription,
                                            CreatedDate = rentalCommercial.CreatedDate,
                                            Rent = rentalCommercial.Rent,
                                            BestDeals = rentalCommercial.BestDeals,
                                            PropertyType = "İşyeri",
                                            Deposit = rentalCommercial.Deposit,
-                                           
+
 
                                            //BaseModel Adress
 
@@ -581,7 +584,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                                            ListingTypeId = rentalCommercial.ListingTypeId,
                                            HousingCategoryId = null,
-                                           
+
 
                                            //ViewModelRental
 
@@ -593,7 +596,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                            RentalCommercialListId = rentalCommercial.RentalCommercialListId,
                                            RentalHousingListId = null,
                                            RentalLandListingId = null,
-                                           
+
 
                                            IsElevator = null,
                                            OpenArea = null,
@@ -606,7 +609,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                            WithinTheComplex = null,
                                            Dues = null,
                                            BlackBox = null,
-                                          
+
 
                                            Facade = rentalCommercial.Facade,
                                            NumberOfSection = rentalCommercial.NumberOfSection,
@@ -783,10 +786,15 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             return listing;
         }
 
-        List<ForSalePropertyForListingViewModel> IPropertyRepository.GetAllForSalePropertyForListing()
+        public  async Task<List<ForSalePropertyForListingViewModel>> GetAllForSalePropertyForListing(ForSaleListingFilterDto filter)
+
         {
+            var ids = filter?.ListingTypeIds ?? new List<int>();
+            var activeStatuses = PropertyStatuses.ActiveSet;
             var housingList = from house in _context.forSaleHousingPropertyListings
                               join agent in _context.Agents on house.AgentId equals agent.AgentId
+                              where house.PropertyStatus != null && activeStatuses.Contains(house.PropertyStatus)
+                              where !ids.Any() || (house.ListingTypeId != null && ids.Contains(house.ListingTypeId.Value))
                               select new ForSalePropertyForListingViewModel
                               {
                                   ListingId = house.ForSaleHousingListId,
@@ -856,7 +864,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                                   ListingType = "Konut",
 
-                                  PropImgUrl1 =  house.PropImgUrl1,
+                                  PropImgUrl1 = house.PropImgUrl1,
                                   PropImgUrl10 = house.PropImgUrl10,
                                   PropImgUrl11 = house.PropImgUrl11,
                                   PropImgUrl12 = house.PropImgUrl12,
@@ -867,7 +875,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                   PropImgUrl17 = house.PropImgUrl17,
                                   PropImgUrl18 = house.PropImgUrl18,
                                   PropImgUrl19 = house.PropImgUrl19,
-                                  PropImgUrl2 =  house.PropImgUrl2,
+                                  PropImgUrl2 = house.PropImgUrl2,
                                   PropImgUrl20 = house.PropImgUrl20,
                                   PropImgUrl21 = house.PropImgUrl21,
                                   PropImgUrl22 = house.PropImgUrl22,
@@ -878,7 +886,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                   PropImgUrl27 = house.PropImgUrl27,
                                   PropImgUrl28 = house.PropImgUrl28,
                                   PropImgUrl29 = house.PropImgUrl29,
-                                  PropImgUrl3 =  house.PropImgUrl3,
+                                  PropImgUrl3 = house.PropImgUrl3,
                                   PropImgUrl30 = house.PropImgUrl30,
                                   PropImgUrl4 = house.PropImgUrl4,
                                   PropImgUrl5 = house.PropImgUrl5,
@@ -886,11 +894,13 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                   PropImgUrl7 = house.PropImgUrl7,
                                   PropImgUrl8 = house.PropImgUrl8,
                                   PropImgUrl9 = house.PropImgUrl9,
-                                 
+
 
                               };
             var commercialList = from comm in _context.forSaleCommercialPropertyListings
                                  join agent in _context.Agents on comm.AgentId equals agent.AgentId
+                                 where comm.PropertyStatus != null && activeStatuses.Contains(comm.PropertyStatus)
+                                 where !ids.Any() || (comm.ListingTypeId != null && ids.Contains(comm.ListingTypeId.Value))
                                  select new ForSalePropertyForListingViewModel
                                  {
                                      ListingId = comm.ForSaleCommercialListingId,
@@ -959,7 +969,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                      AgentImgUrl = agent.AgentImgUrl,
 
                                      ListingType = "İşyeri",
-                                     PropImgUrl1 =  comm.PropImgUrl1,
+                                     PropImgUrl1 = comm.PropImgUrl1,
                                      PropImgUrl10 = comm.PropImgUrl10,
                                      PropImgUrl11 = comm.PropImgUrl11,
                                      PropImgUrl12 = comm.PropImgUrl12,
@@ -970,7 +980,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                      PropImgUrl17 = comm.PropImgUrl17,
                                      PropImgUrl18 = comm.PropImgUrl18,
                                      PropImgUrl19 = comm.PropImgUrl19,
-                                     PropImgUrl2 =  comm.PropImgUrl2,
+                                     PropImgUrl2 = comm.PropImgUrl2,
                                      PropImgUrl20 = comm.PropImgUrl20,
                                      PropImgUrl21 = comm.PropImgUrl21,
                                      PropImgUrl22 = comm.PropImgUrl22,
@@ -989,12 +999,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                      PropImgUrl7 = comm.PropImgUrl7,
                                      PropImgUrl8 = comm.PropImgUrl8,
                                      PropImgUrl9 = comm.PropImgUrl9,
-                                    
+
 
 
                                  };
             var landList = from land in _context.forSaleLandListings
                            join agent in _context.Agents on land.AgentId equals agent.AgentId
+                           where land.PropertyStatus != null && activeStatuses.Contains(land.PropertyStatus)
+                           where !ids.Any() || (land.ListingTypeId != null && ids.Contains(land.ListingTypeId.Value))
                            select new ForSalePropertyForListingViewModel
                            {
                                ListingId = land.ForSaleLandListingId,
@@ -1065,7 +1077,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                // İlan türü statikk "Arsa"
                                ListingType = "Arsa",
 
-                               PropImgUrl1 =  land.PropImgUrl1,
+                               PropImgUrl1 = land.PropImgUrl1,
                                PropImgUrl10 = land.PropImgUrl10,
                                PropImgUrl11 = land.PropImgUrl11,
                                PropImgUrl12 = land.PropImgUrl12,
@@ -1076,7 +1088,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                PropImgUrl17 = land.PropImgUrl17,
                                PropImgUrl18 = land.PropImgUrl18,
                                PropImgUrl19 = land.PropImgUrl19,
-                               PropImgUrl2 =  land.PropImgUrl2,
+                               PropImgUrl2 = land.PropImgUrl2,
                                PropImgUrl20 = land.PropImgUrl20,
                                PropImgUrl21 = land.PropImgUrl21,
                                PropImgUrl22 = land.PropImgUrl22,
@@ -1087,21 +1099,59 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                PropImgUrl27 = land.PropImgUrl27,
                                PropImgUrl28 = land.PropImgUrl28,
                                PropImgUrl29 = land.PropImgUrl29,
-                               PropImgUrl3 =  land.PropImgUrl3,
+                               PropImgUrl3 = land.PropImgUrl3,
                                PropImgUrl30 = land.PropImgUrl30,
-                               PropImgUrl4 =  land.PropImgUrl4,
-                               PropImgUrl5 =  land.PropImgUrl5,
-                               PropImgUrl6 =  land.PropImgUrl6,
-                               PropImgUrl7 =  land.PropImgUrl7,
-                               PropImgUrl8 =  land.PropImgUrl8,
-                               PropImgUrl9 =  land.PropImgUrl9,
-                             
+                               PropImgUrl4 = land.PropImgUrl4,
+                               PropImgUrl5 = land.PropImgUrl5,
+                               PropImgUrl6 = land.PropImgUrl6,
+                               PropImgUrl7 = land.PropImgUrl7,
+                               PropImgUrl8 = land.PropImgUrl8,
+                               PropImgUrl9 = land.PropImgUrl9,
+
 
                            };
-            var listing= housingList.Concat(landList).Concat(commercialList).OrderByDescending(x=>x.CreatedDate).ToList();
+            var listing =  housingList.Concat(landList).Concat(commercialList).OrderByDescending(x => x.CreatedDate).ToList();
             return listing;
-                        
+
+        }
+        public async Task<List<ListingTypeFacetDto>> GetForSaleListingTypeFacetsAsync()
+        {
+            const int ForSaleUsageType = 1;
+            var activeStatuses = PropertyStatuses.ActiveSet;
+            var listingTypes = await _context.listingTypes.AsNoTracking().Where(x => x.UsageType == UsageType.ForSale).Select(x => new { x.ListingTypeId, x.Name }).ToListAsync();
+            var housingTypeIds = _context.forSaleHousingPropertyListings
+     .AsNoTracking()
+     .Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null)
+     .Select(x => x.ListingTypeId);
+
+            var landTypeIds = _context.forSaleLandListings
+        .AsNoTracking()
+        .Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null)
+        .Select(x => x.ListingTypeId);
+            var commercialTypeIds = _context.forSaleCommercialPropertyListings
+        .AsNoTracking()
+        .Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null)
+        .Select(x => x.ListingTypeId);
+            var groupedCounts = await housingTypeIds
+        .Concat(landTypeIds)
+        .Concat(commercialTypeIds)
+        .Where(id => id != null)
+        .GroupBy(id => id!.Value)
+        .Select(g => new { ListingTypeId = g.Key, Count = g.Count() })
+        .ToListAsync();
+            var result = listingTypes
+       .Select(lt => new ListingTypeFacetDto
+       {
+           ListingTypeId = lt.ListingTypeId,
+           Name = lt.Name,
+           Count = groupedCounts.FirstOrDefault(x => x.ListingTypeId == lt.ListingTypeId)?.Count ?? 0
+       })
+       .OrderBy(x => x.ListingTypeId)
+       .ToList();
+            return result;
         }
 
+        
     }
-}
+    }
+

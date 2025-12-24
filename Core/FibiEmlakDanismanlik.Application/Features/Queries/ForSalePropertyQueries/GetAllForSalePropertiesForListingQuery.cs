@@ -1,4 +1,5 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
+using FibiEmlakDanismanlik.Domain.DTOs;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,5 +11,11 @@ namespace FibiEmlakDanismanlik.Application.Features.Queries.ForSalePropertyQueri
 {
     public class GetAllForSalePropertiesForListingQuery:IRequest<List<GetAllForSalePropertiesForListingResult>>
     {
+        public ForSaleListingFilterDto Filter { get; }
+
+        public GetAllForSalePropertiesForListingQuery(ForSaleListingFilterDto filter)
+        {
+            Filter = filter ?? new ForSaleListingFilterDto();
+        }
     }
 }

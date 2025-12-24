@@ -6,8 +6,11 @@ using FibiEmlakDanismanlik.Persistence.Context;
 using FibiEmlakDanismanlik.Persistence.Repositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<FibiEmlakDanismanlikContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Allow Frontend Request
 builder.Services.AddCors(options =>

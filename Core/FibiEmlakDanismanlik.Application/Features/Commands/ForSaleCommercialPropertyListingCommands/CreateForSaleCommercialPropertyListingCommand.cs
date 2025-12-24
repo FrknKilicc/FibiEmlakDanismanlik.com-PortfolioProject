@@ -44,6 +44,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPr
 
         //relational
         public int AgentId { get; set; }
+        public int? ListingTypeId { get; set; }
         //relational
         //Images
         public string? PropImgUrl1 { get; set; }

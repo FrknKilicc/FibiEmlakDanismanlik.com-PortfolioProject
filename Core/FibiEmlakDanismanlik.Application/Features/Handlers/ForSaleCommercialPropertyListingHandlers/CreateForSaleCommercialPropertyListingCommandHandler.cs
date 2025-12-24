@@ -1,4 +1,5 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPropertyListingCommands;
+using FibiEmlakDanismanlik.Application.Helpers;
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
@@ -45,7 +46,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSaleCommercialPr
                 SharePercentage = request.SharePercentage,
                 TitleDeedStatus = request.TitleDeedStatus,
                 Transferable = request.Transferable,
-                PropertyStatus=request.PropertyStatus,
+                PropertyStatus= PropertyStatusHelper.NormalizeAndValidate(request.PropertyStatus),
                 CreatedDate = DateTime.UtcNow,
                 //images
                 PropImgUrl1 = request.PropImgUrl1,

@@ -11,10 +11,12 @@ namespace FibiEmlakDanismanlik.Persistence.Context
 {
     public class FibiEmlakDanismanlikContext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public FibiEmlakDanismanlikContext(DbContextOptions<FibiEmlakDanismanlikContext> options)
+        : base(options)
         {
-            optionsBuilder.UseSqlServer("Server=FURKAN\\FURKANKILIC;initial Catalog=fibiemlak.com;integrated Security=true;TrustServerCertificate=true;");
         }
+
+     
         public DbSet<AboutUs> AboutUs { get; set; }
         public DbSet<Agent> Agents { get; set; }
         public DbSet<Author> Authors { get; set; }
