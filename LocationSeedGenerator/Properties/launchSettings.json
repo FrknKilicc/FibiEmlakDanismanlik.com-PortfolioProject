@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LocationSeedGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\3060\\source\\repos\\FibiEmlakDanismanlik\\Infrastructure\\FibiEmlakDanismanlik.Persistance\\SeedData\\iller.json\" \"C:\\Users\\3060\\source\\repos\\FibiEmlakDanismanlik\\Infrastructure\\FibiEmlakDanismanlik.Persistance\\SeedData\\ilceler.json\" \"C:\\Users\\3060\\source\\repos\\FibiEmlakDanismanlik\\Infrastructure\\FibiEmlakDanismanlik.Persistance\\SeedData\\mahalleler-1.json;C:\\Users\\3060\\source\\repos\\FibiEmlakDanismanlik\\Infrastructure\\FibiEmlakDanismanlik.Persistance\\SeedData\\mahalleler-2.json;C:\\Users\\3060\\source\\repos\\FibiEmlakDanismanlik\\Infrastructure\\FibiEmlakDanismanlik.Persistance\\SeedData\\mahalleler-3.json;C:\\Users\\3060\\source\\repos\\FibiEmlakDanismanlik\\Infrastructure\\FibiEmlakDanismanlik.Per\r\n"
+    }
+  }
+}
