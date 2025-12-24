@@ -1,4 +1,4 @@
-﻿@model List<ResultAllForSaleListinForPageDto>
+﻿@model FibiEmlakDanismanlik.WebUI.Models.ForSaleListingPageVm
 
 <!--Page Title-->
 <section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
@@ -22,60 +22,20 @@
                             <h5>Property</h5>
                         </div>
                         <div class="widget-content">
-                            <div class="select-box">
-                                <select class="wide">
-                                    <option data-display="All Type">All Type</option>
-                                    <option value="1">Villa</option>
-                                    <option value="2">Commercial</option>
-                                    <option value="3">Residential</option>
-                                </select>
-                            </div>
-                            <div class="select-box">
-                                <select class="wide">
-                                    <option data-display="Select Location">Select Location</option>
-                                    <option value="1">New York</option>
-                                    <option value="2">California</option>
-                                    <option value="3">London</option>
-                                    <option value="4">Maxico</option>
-                                </select>
-                            </div>
-                            <div class="select-box">
-                                <select class="wide">
-                                    <option data-display="This Area Only">This Area Only</option>
-                                    <option value="1">New York</option>
-                                    <option value="2">California</option>
-                                    <option value="3">London</option>
-                                    <option value="4">Maxico</option>
-                                </select>
-                            </div>
-                            <div class="select-box">
-                                <select class="wide">
-                                    <option data-display="All Type">Max Rooms</option>
-                                    <option value="1">2+ Rooms</option>
-                                    <option value="2">3+ Rooms</option>
-                                    <option value="3">4+ Rooms</option>
-                                    <option value="4">5+ Rooms</option>
-                                </select>
-                            </div>
-                            <div class="select-box">
-                                <select class="wide">
-                                    <option data-display="Most Popular">Most Popular</option>
-                                    <option value="1">Villa</option>
-                                    <option value="2">Commercial</option>
-                                    <option value="3">Residential</option>
-                                </select>
-                            </div>
-                            <div class="select-box">
-                                <select class="wide">
-                                    <option data-display="All Type">Select Floor</option>
-                                    <option value="1">2x Floor</option>
-                                    <option value="2">3x Floor</option>
-                                    <option value="3">4x Floor</option>
-                                </select>
-                            </div>
-                            <div class="filter-btn">
-                                <button type="submit" class="theme-btn btn-one"><i class="fas fa-filter"></i>&nbsp;Filter</button>
-                            </div>
+                            <ul class="filter-list clearfix" id="listingTypeFilter">
+                                @foreach (var t in Model.ListingTypeFacets)
+                                {
+                                    <li class="filter-option @(t.Selected ? "active" : "")"
+                                        data-id="@t.ListingTypeId">
+                                        <span class="filter-name">@t.Name</span>
+                                        <span class="filter-count">(@t.Count)</span>
+                                    </li>
+                                }
+                            </ul>
+
+                            <button type="button" id="applyListingType" class="theme-btn btn-one w-100 mt-3">
+                                Filtrele
+                            </button>
                         </div>
                     </div>
                     <div class="price-filter sidebar-widget">
@@ -338,7 +298,7 @@
                         </div>
                         <div class="deals-grid-content grid-item">
                             <div class="row clearfix">
-                                @foreach(var item in Model)
+                                @foreach(var item in Model.Items)
                                 {
                                     <div class="col-lg-6 col-md-6 col-sm-12 feature-block">
                                         <div class="feature-block-one">
@@ -398,3 +358,71 @@
     </div>
  
 </section>
+<script>
+    document.querySelectorAll("#listingTypeFilter .filter-option")
+         .forEach(el => {
+             el.addEventListener("click", function () {
+                 this.classList.toggle("active");
+             });
+         });
+
+     document.getElementById("applyListingType")
+         ?.addEventListener("click", function () {
+
+             const selected = Array.from(
+                 document.querySelectorAll("#listingTypeFilter .filter-option.active")
+             ).map(x => x.dataset.id);
+
+             const url = new URL(window.location.href);
+             url.searchParams.delete("listingTypeIds");
+
+             selected.forEach(id => url.searchParams.append("listingTypeIds", id));
+
+             window.location.href = url.toString();
+         });
+</script>
+<style>
+    .filter-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+        .filter-list .filter-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            border: 1px solid #e5e5e5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+            .filter-list .filter-option:hover {
+                background: #f5f7fa;
+            }
+
+            .filter-list .filter-option.active {
+                background: #2db878; /*bu colorr kod temanın kodu color kod  = 2db878  */
+                border-color: #2db878;
+                color: #fff;
+            }
+
+                .filter-list .filter-option.active .filter-count {
+                    color: #fff;
+                }
+
+    .filter-name {
+        font-weight: 500;
+    }
+
+    .filter-count {
+        font-size: 14px;
+        color: #777;
+    }
+
+
+</style>
