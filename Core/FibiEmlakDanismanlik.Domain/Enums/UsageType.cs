@@ -9,6 +9,7 @@ namespace FibiEmlakDanismanlik.Domain.Enums
     public enum UsageType
     {
         ForSale=1,   
-        ForRent=2
+        ForRent=2,
+            Both = 3
     }
 }
