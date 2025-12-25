@@ -9,13 +9,9 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Queries.ForSalePropertyQueries
 {
-    public class GetAllForSalePropertiesForListingQuery:IRequest<List<GetAllForSalePropertiesForListingResult>>
+    public class GetAllForSalePropertiesForListingQuery
+    : IRequest<List<GetAllForSalePropertiesForListingResult>>
     {
-        public ForSaleListingFilterDto Filter { get; }
 
-        public GetAllForSalePropertiesForListingQuery(ForSaleListingFilterDto filter)
-        {
-            Filter = filter ?? new ForSaleListingFilterDto();
-        }
     }
 }

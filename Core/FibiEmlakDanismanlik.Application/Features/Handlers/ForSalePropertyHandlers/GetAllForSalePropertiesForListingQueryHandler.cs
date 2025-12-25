@@ -21,7 +21,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHand
 
         public async Task<List<GetAllForSalePropertiesForListingResult>> Handle(GetAllForSalePropertiesForListingQuery request, CancellationToken cancellationToken)
         {
-            var value = await _propertyRepository.GetAllForSalePropertyForListing(request.Filter);
+            var value = await _propertyRepository.GetAllForSalePropertyForListing();
             return value.Select(x => new GetAllForSalePropertiesForListingResult
             {
                 PropertyDescription=x.PropertyDescription,
