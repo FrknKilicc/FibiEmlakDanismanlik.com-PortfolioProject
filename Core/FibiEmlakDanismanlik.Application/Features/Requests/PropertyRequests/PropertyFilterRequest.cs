@@ -9,9 +9,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests
     public class PropertyFilterRequest
     {
 
-        public List<int>? ListingTypeIds { get; set; }
-
-        public string? ListingType { get; set; }
+        public List<int>? ListingTypeIds { get; set; } 
 
         public string? City { get; set; }
         public string? District { get; set; }
@@ -21,5 +19,11 @@ namespace FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests
         public decimal? MaxPrice { get; set; }
 
         public string? NumberOfRoom { get; set; }
+
+       
+        public int Page { get; set; } = 1;        
+        public int PageSize { get; set; } = 20;  
+        public string? SortBy { get; set; } = "CreatedDate"; 
+        public string? SortDir { get; set; } = "desc";      
     }
     }

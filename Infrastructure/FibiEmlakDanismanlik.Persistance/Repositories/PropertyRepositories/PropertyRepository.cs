@@ -21,21 +21,18 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
     {
         private readonly FibiEmlakDanismanlikContext _context;
 
-        private List<ForSalePropertyForListingViewModel> BuildForSaleListingInternal(PropertyFilterRequest? filter)
+        private IQueryable<ForSalePropertyForListingViewModel> BuildForSaleListingQuery()
         {
             var activeStatuses = PropertyStatuses.ActiveSet;
 
-            
-            var ids = filter?.ListingTypeIds ?? new List<int>();
-
-            var housingList =
-                from house in _context.forSaleHousingPropertyListings
-                join agent in _context.Agents on house.AgentId equals agent.AgentId
-                where house.PropertyStatus != null && activeStatuses.Contains(house.PropertyStatus)
-                where !ids.Any() || (house.ListingTypeId != null && ids.Contains(house.ListingTypeId.Value))
-                select new ForSalePropertyForListingViewModel
-                {
+            var housingQuery =
+          from house in _context.forSaleHousingPropertyListings
+          join agent in _context.Agents on house.AgentId equals agent.AgentId
+          where house.PropertyStatus != null && activeStatuses.Contains(house.PropertyStatus)
+          select new ForSalePropertyForListingViewModel
+          {
                     ListingId = house.ForSaleHousingListId,
+                    ListingTypeId = house.ListingTypeId,
                     PropertyNo = house.PropertyNo,
                     PropertyName = house.PropertyName,
                     PropertyDescription = house.PropertyDescription,
@@ -133,14 +130,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     PropImgUrl30 = house.PropImgUrl30
                 };
 
-            var commercialList =
-                from comm in _context.forSaleCommercialPropertyListings
-                join agent in _context.Agents on comm.AgentId equals agent.AgentId
-                where comm.PropertyStatus != null && activeStatuses.Contains(comm.PropertyStatus)
-                where !ids.Any() || (comm.ListingTypeId != null && ids.Contains(comm.ListingTypeId.Value))
-                select new ForSalePropertyForListingViewModel
-                {
+            var commercialQuery =
+         from comm in _context.forSaleCommercialPropertyListings
+         join agent in _context.Agents on comm.AgentId equals agent.AgentId
+         where comm.PropertyStatus != null && activeStatuses.Contains(comm.PropertyStatus)
+         select new ForSalePropertyForListingViewModel
+         {
                     ListingId = comm.ForSaleCommercialListingId,
+                    ListingTypeId = comm.ListingTypeId,
                     PropertyNo = comm.PropertyNo,
                     PropertyName = comm.PropertyName,
                     PropertyDescription = comm.PropertyDescription,
@@ -238,14 +235,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     PropImgUrl30 = comm.PropImgUrl30
                 };
 
-            var landList =
-                from land in _context.forSaleLandListings
-                join agent in _context.Agents on land.AgentId equals agent.AgentId
-                where land.PropertyStatus != null && activeStatuses.Contains(land.PropertyStatus)
-                where !ids.Any() || (land.ListingTypeId != null && ids.Contains(land.ListingTypeId.Value))
-                select new ForSalePropertyForListingViewModel
-                {
+            var landQuery =
+        from land in _context.forSaleLandListings
+        join agent in _context.Agents on land.AgentId equals agent.AgentId
+        where land.PropertyStatus != null && activeStatuses.Contains(land.PropertyStatus)
+        select new ForSalePropertyForListingViewModel
+        {
                     ListingId = land.ForSaleLandListingId,
+                    ListingTypeId = land.ListingTypeId,
                     PropertyNo = land.PropertyNo,
                     PropertyName = land.PropertyName,
                     PropertyDescription = land.PropertyDescription,
@@ -343,38 +340,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     PropImgUrl30 = land.PropImgUrl30
                 };
 
-            var listing = housingList
-                .Concat(landList)
-                .Concat(commercialList)
-                .ToList();
-
-            if (filter != null)
-            {
-                if (!string.IsNullOrWhiteSpace(filter.ListingType))
-                    listing = listing.Where(x => x.ListingType == filter.ListingType).ToList();
-
-                if (!string.IsNullOrWhiteSpace(filter.City))
-                    listing = listing.Where(x => x.City == filter.City).ToList();
-
-                if (!string.IsNullOrWhiteSpace(filter.District))
-                    listing = listing.Where(x => x.District == filter.District).ToList();
-
-                if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
-                    listing = listing.Where(x => x.Neighborhood == filter.Neighborhood).ToList();
-
-                if (filter.MinPrice.HasValue)
-                    listing = listing.Where(x => x.Price >= filter.MinPrice.Value).ToList();
-
-                if (filter.MaxPrice.HasValue)
-                    listing = listing.Where(x => x.Price <= filter.MaxPrice.Value).ToList();
-
-                if (!string.IsNullOrWhiteSpace(filter.NumberOfRoom))
-                    listing = listing.Where(x => x.NumberOfRoom == filter.NumberOfRoom).ToList();
-            }
-
-            return listing
-                .OrderByDescending(x => x.CreatedDate)
-                .ToList();
+            return housingQuery.Concat(landQuery).Concat(commercialQuery);
         }
 
 
@@ -1181,39 +1147,62 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             return result;
         }
 
-        public Task<List<ForSalePropertyForListingViewModel>> GetAllForSalePropertyForListing()
+        public async Task<List<ForSalePropertyForListingViewModel>> GetAllForSalePropertyForListing()
         {
-            var list = BuildForSaleListingInternal(filter: null);
-            return Task.FromResult(list);
+            return await BuildForSaleListingQuery()
+                .OrderByDescending(x => x.CreatedDate)
+                .ToListAsync();
         }
 
 
         public async Task<List<ForSalePropertyForListingViewModel>> GetFilteredForSalePropertyForListing(PropertyFilterRequest filter)
         {
-            var list = await GetAllForSalePropertyForListing();
+            var query = BuildForSaleListingQuery();
+            var city = filter.City?.Trim();
+            var disrict = filter.District?.Trim();
+            var neighborhood = filter.Neighborhood?.Trim();
 
-            if (!string.IsNullOrWhiteSpace(filter.ListingType))
-                list = list.Where(x => x.ListingType == filter.ListingType).ToList();
+            if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
+                query = query.Where(x => x.ListingTypeId != null && filter.ListingTypeIds.Contains(x.ListingTypeId.Value));
 
             if (!string.IsNullOrWhiteSpace(filter.City))
-                list = list.Where(x => x.City == filter.City).ToList();
+                query = query.Where(x => x.City == filter.City);
 
             if (!string.IsNullOrWhiteSpace(filter.District))
-                list = list.Where(x => x.District == filter.District).ToList();
+                query = query.Where(x => x.District == filter.District);
 
             if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
-                list = list.Where(x => x.Neighborhood == filter.Neighborhood).ToList();
-
-            if (filter.MinPrice.HasValue)
-                list = list.Where(x => x.Price >= filter.MinPrice.Value).ToList();
-
-            if (filter.MaxPrice.HasValue)
-                list = list.Where(x => x.Price <= filter.MaxPrice.Value).ToList();
+                query = query.Where(x => x.Neighborhood == filter.Neighborhood);
 
             if (!string.IsNullOrWhiteSpace(filter.NumberOfRoom))
-                list = list.Where(x => x.NumberOfRoom == filter.NumberOfRoom).ToList();
+                query = query.Where(x => x.NumberOfRoom == filter.NumberOfRoom);
 
-            return list.OrderByDescending(x => x.CreatedDate).ToList();
+
+            if (filter.MinPrice.HasValue)
+                query = query.Where(x => x.Price >= filter.MinPrice.Value);
+
+            if (filter.MaxPrice.HasValue)
+                query = query.Where(x => x.Price <= filter.MaxPrice.Value);
+
+            // sıralama
+            var sortBy = (filter.SortBy ?? "CreatedDate").ToLowerInvariant();
+            var sortDir = (filter.SortDir ?? "desc").ToLowerInvariant();
+
+            query = (sortBy, sortDir) switch
+            {
+                ("price", "asc") => query.OrderBy(x => x.Price),
+                ("price", "desc") => query.OrderByDescending(x => x.Price),
+                ("createddate", "asc") => query.OrderBy(x => x.CreatedDate),
+                _ => query.OrderByDescending(x => x.CreatedDate),
+            };
+
+            // paginationn
+            var page = filter.Page < 1 ? 1 : filter.Page;
+            var pageSize = filter.PageSize is < 1 or > 100 ? 20 : filter.PageSize;
+
+            query = query.Skip((page - 1) * pageSize).Take(pageSize);
+
+            return await query.ToListAsync();
         }
     }
     }

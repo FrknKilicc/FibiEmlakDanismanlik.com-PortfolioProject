@@ -17,41 +17,86 @@
         <div class="row clearfix">
             <div class="col-lg-4 col-md-12 col-sm-12 sidebar-side">
                 <div class="default-sidebar property-sidebar">
+
+                    <div id="forSaleFilterRoot" data-api="@ViewBag.ApiUrl"></div>
+
+                    <!-- PROPERTY -->
                     <div class="filter-widget sidebar-widget">
-                        <div class="widget-title">
-                            <h5>Property</h5>
-                        </div>
+                        <div class="widget-title"><h5>İlan Türü</h5></div>
                         <div class="widget-content">
                             <ul class="filter-list clearfix" id="listingTypeFilter">
                                 @foreach (var t in Model.ListingTypeFacets)
                                 {
-                                    <li class="filter-option @(t.Selected ? "active" : "")"
-                                        data-id="@t.ListingTypeId">
+                                    <li class="filter-option @(t.Selected ? "active" : "")" data-id="@t.ListingTypeId">
                                         <span class="filter-name">@t.Name</span>
                                         <span class="filter-count">(@t.Count)</span>
                                     </li>
                                 }
                             </ul>
 
-                            <button type="button" id="applyListingType" class="theme-btn btn-one w-100 mt-3">
-                                Filtrele
-                            </button>
+                           
                         </div>
                     </div>
-                    <div class="price-filter sidebar-widget">
-                        <div class="widget-title">
-                            <h5>Select Price Range</h5>
+
+                    <!-- LOKASYON -->
+                    <div class="filter-widget sidebar-widget">
+                        <div class="widget-title"><h5>Lokasyon</h5></div>
+                        <div class="widget-content">
+                            <div class="form-group">
+                                <label>Şehir</label>
+                                <select id="citySelect" class="wide" data-selected-id="@Model.CityId">
+                                    <option value="">Şehir seç</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>İlçe</label>
+                                <select id="districtSelect" class="wide" data-selected-id="@Model.DistrictId" >
+                                    <option value="">İlçe seç</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Mahalle</label>
+                                <select id="neighborhoodSelect" class="wide" data-selected-id="@Model.NeighborhoodId" >
+                                    <option value="">Mahalle seç</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="range-slider clearfix">
-                            <div class="clearfix">
-                                <div class="input">
-                                    <input type="text" class="property-amount" name="field-name" readonly="">
+                    </div>
+
+
+                    <!-- FİYAT -->
+                    <div class="filter-widget sidebar-widget">
+                        <div class="widget-title"><h5>Fiyat</h5></div>
+                        <div class="widget-content">
+                            <div class="row clearfix">
+                                <div class="col-6">
+                                    <input id="minPrice" type="number" class="form-control" placeholder="Min"
+                                           value="@(Model.MinPrice?.ToString() ?? "")" />
+                                </div>
+                                <div class="col-6">
+                                    <input id="maxPrice" type="number" class="form-control" placeholder="Max"
+                                           value="@(Model.MaxPrice?.ToString() ?? "")" />
                                 </div>
                             </div>
-                            <div class="price-range-slider"></div>
                         </div>
                     </div>
-                   
+
+                    <!-- ODA -->
+                    <div class="filter-widget sidebar-widget">
+                        <div class="widget-title"><h5>Oda</h5></div>
+                        <div class="widget-content">
+                            <select id="roomSelect" class="wide" data-selected="@Model.NumberOfRoom">
+                                <option value="">Seç</option>
+                                <option value="1+0">1+0</option>
+                                <option value="1+1">1+1</option>
+                                <option value="2+1">2+1</option>
+                                <option value="3+1">3+1</option>
+                                <option value="4+1">4+1</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="category-widget sidebar-widget">
                         <div class="widget-title">
                             <h5>Amenities</h5>
@@ -69,13 +114,16 @@
                             <li><a href="property-details.html">Hardwood Flows <span>(9)</span></a></li>
                         </ul>
                     </div>
+                    <button type="button" id="applyFilters" class="theme-btn btn-one w-100 mt-3">
+                        Filtrele
+                    </button>
                 </div>
             </div>
             <div class="col-lg-8 col-md-12 col-sm-12 content-side">
                 <div class="property-content-side">
                     <div class="item-shorting clearfix">
                         <div class="left-column pull-left">
-                            <h5>Search Reasults: <span>Showing 1-5 of 20 Listings</span></h5>
+                        <h5>Sonuç: <span>@Model.Items.Count ilan bulundu</span></h5>
                         </div>
                         <div class="right-column pull-right clearfix">
                             <div class="short-box clearfix">
@@ -90,11 +138,12 @@
                                 </div>
                             </div>
                             <div class="short-menu clearfix">
-                                <button class="list-view"><i class="icon-35"></i></button>
+                                <button class="list-view "><i class="icon-35"></i></button>
                                 <button class="grid-view on"><i class="icon-36"></i></button>
                             </div>
                         </div>
                     </div>
+
                     <div class="wrapper grid">
                         <div class="deals-list-content list-item">
                             <div class="deals-block-one">
@@ -135,121 +184,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="deals-block-one">
-                                <div class="inner-box">
-                                    <div class="image-box">
-                                        <figure class="image"><img src="assets/images/resource/deals-4.jpg" alt=""></figure>
-                                        <div class="batch"><i class="icon-11"></i></div>
-                                        <span class="category">Featured</span>
-                                        <div class="buy-btn"><a href="property-details.html">For Buy</a></div>
-                                    </div>
-                                    <div class="lower-content">
-                                        <div class="title-text"><h4><a href="property-details.html">Contemporary Apartment</a></h4></div>
-                                        <div class="price-box clearfix">
-                                            <div class="price-info pull-left">
-                                                <h6>Start From</h6>
-                                                <h4>$20,000.00</h4>
-                                            </div>
-                                            <div class="author-box pull-right">
-                                                <figure class="author-thumb">
-                                                    <img src="assets/images/feature/author-1.jpg" alt="">
-                                                    <span>Michael Bean</span>
-                                                </figure>
-                                            </div>
-                                        </div>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing sed eiusm do tempor incididunt labore.</p>
-                                        <ul class="more-details clearfix">
-                                            <li><i class="icon-14"></i>3 Beds</li>
-                                            <li><i class="icon-15"></i>2 Baths</li>
-                                            <li><i class="icon-16"></i>600 Sq Ft</li>
-                                        </ul>
-                                        <div class="other-info-box clearfix">
-                                            <div class="btn-box pull-left"><a href="property-details.html" class="theme-btn btn-two">See Details</a></div>
-                                            <ul class="other-option pull-right clearfix">
-                                                <li><a href="property-details.html"><i class="icon-12"></i></a></li>
-                                                <li><a href="property-details.html"><i class="icon-13"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="deals-block-one">
-                                <div class="inner-box">
-                                    <div class="image-box">
-                                        <figure class="image"><img src="assets/images/resource/deals-5.jpg" alt=""></figure>
-                                        <div class="batch"><i class="icon-11"></i></div>
-                                        <span class="category">Featured</span>
-                                        <div class="buy-btn"><a href="property-details.html">For Buy</a></div>
-                                    </div>
-                                    <div class="lower-content">
-                                        <div class="title-text"><h4><a href="property-details.html">Luxury Villa With Pool</a></h4></div>
-                                        <div class="price-box clearfix">
-                                            <div class="price-info pull-left">
-                                                <h6>Start From</h6>
-                                                <h4>$35,000.00</h4>
-                                            </div>
-                                            <div class="author-box pull-right">
-                                                <figure class="author-thumb">
-                                                    <img src="assets/images/feature/author-1.jpg" alt="">
-                                                    <span>Michael Bean</span>
-                                                </figure>
-                                            </div>
-                                        </div>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing sed eiusm do tempor incididunt labore.</p>
-                                        <ul class="more-details clearfix">
-                                            <li><i class="icon-14"></i>3 Beds</li>
-                                            <li><i class="icon-15"></i>2 Baths</li>
-                                            <li><i class="icon-16"></i>600 Sq Ft</li>
-                                        </ul>
-                                        <div class="other-info-box clearfix">
-                                            <div class="btn-box pull-left"><a href="property-details.html" class="theme-btn btn-two">See Details</a></div>
-                                            <ul class="other-option pull-right clearfix">
-                                                <li><a href="property-details.html"><i class="icon-12"></i></a></li>
-                                                <li><a href="property-details.html"><i class="icon-13"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="deals-block-one">
-                                <div class="inner-box">
-                                    <div class="image-box">
-                                        <figure class="image"><img src="assets/images/resource/deals-6.jpg" alt=""></figure>
-                                        <div class="batch"><i class="icon-11"></i></div>
-                                        <span class="category">Featured</span>
-                                        <div class="buy-btn"><a href="property-details.html">For Buy</a></div>
-                                    </div>
-                                    <div class="lower-content">
-                                        <div class="title-text"><h4><a href="property-details.html">Home in Merrick Way</a></h4></div>
-                                        <div class="price-box clearfix">
-                                            <div class="price-info pull-left">
-                                                <h6>Start From</h6>
-                                                <h4>$45,000.00</h4>
-                                            </div>
-                                            <div class="author-box pull-right">
-                                                <figure class="author-thumb">
-                                                    <img src="assets/images/feature/author-1.jpg" alt="">
-                                                    <span>Michael Bean</span>
-                                                </figure>
-                                            </div>
-                                        </div>
-                                        <p>Lorem ipsum dolor sit amet consectetur adipisicing sed eiusm do tempor incididunt labore.</p>
-                                        <ul class="more-details clearfix">
-                                            <li><i class="icon-14"></i>3 Beds</li>
-                                            <li><i class="icon-15"></i>2 Baths</li>
-                                            <li><i class="icon-16"></i>600 Sq Ft</li>
-                                        </ul>
-                                        <div class="other-info-box clearfix">
-                                            <div class="btn-box pull-left"><a href="property-details.html" class="theme-btn btn-two">See Details</a></div>
-                                            <ul class="other-option pull-right clearfix">
-                                                <li><a href="property-details.html"><i class="icon-12"></i></a></li>
-                                                <li><a href="property-details.html"><i class="icon-13"></i></a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="deals-block-one">
+                           
                                 <div class="inner-box">
                                     <div class="image-box">
                                         <figure class="image"><img src="assets/images/resource/deals-7.jpg" alt=""></figure>
@@ -286,8 +221,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                        </div> @* Burası list-view için kullanılabilir  foreach döndürürek list-view js ile on yapılma seçeneği ile liste görünümüne geçilebilir *@
                         <div class="deals-grid-content grid-item">
                             <div class="row clearfix">
                                 @foreach(var item in Model.Items)
@@ -308,7 +242,7 @@
                                                         </div>
                                                         <div class="buy-btn pull-right"><a href="property-details.html">For Buy</a></div>
                                                     </div>
-                                                    <div class="title-text"><h4><a href="property-details.html">@item.PropertyName</a></h4></div>
+                                                    <div class="title-text"><h4><a asp-action="Index" asp-controller="AllForSaleDetailPageController" asp-route-id="@item.ListingId">@item.PropertyName</a></h4></div>
                                                     <div class="price-box clearfix">
                                                         <div class="price-info pull-left">
                                                             <h6>Fiyat</h6>
@@ -348,73 +282,52 @@
             </div>
         </div>
     </div>
- 
 </section>
-<script>
-    document.querySelectorAll("#listingTypeFilter .filter-option")
-         .forEach(el => {
-             el.addEventListener("click", function () {
-                 this.classList.toggle("active");
-             });
-         });
 
-     document.getElementById("applyListingType")
-         ?.addEventListener("click", function () {
-
-             const selected = Array.from(
-                 document.querySelectorAll("#listingTypeFilter .filter-option.active")
-             ).map(x => x.dataset.id);
-
-             const url = new URL(window.location.href);
-             url.searchParams.delete("listingTypeIds");
-
-             selected.forEach(id => url.searchParams.append("listingTypeIds", id));
-
-             window.location.href = url.toString();
-         });
-</script>
 <style>
-    .filter-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
+    #listingTypeFilter .filter-option {
+        cursor: pointer;
+        transition: all .15s ease;
+        border: 1px solid #e9ecef;
+        padding: 12px 14px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
-        .filter-list .filter-option {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 14px;
-            margin-bottom: 8px;
-            border-radius: 10px;
-            border: 1px solid #e5e5e5;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #fff;
+        #listingTypeFilter .filter-option:hover {
+            border-color: #22c55e;
         }
 
-            .filter-list .filter-option:hover {
-                background: #f5f7fa;
+        #listingTypeFilter .filter-option.active {
+            background: #22c55e !important;
+            border-color: #22c55e !important;
+            color: #fff !important;
+        }
+
+            #listingTypeFilter .filter-option.active .filter-name,
+            #listingTypeFilter .filter-option.active .filter-count {
+                color: #fff !important;
             }
 
-            .filter-list .filter-option.active {
-                background: #2db878; /*bu colorr kod temanın kodu color kod  = 2db878  */
-                border-color: #2db878;
-                color: #fff;
+        #listingTypeFilter .filter-option.active {
+            background: #22c55e !important;
+            border-color: #22c55e !important;
+            color: #fff !important;
+        }
+
+            #listingTypeFilter .filter-option.active * {
+                color: #fff !important;
             }
 
-                .filter-list .filter-option.active .filter-count {
-                    color: #fff;
-                }
-
-    .filter-name {
-        font-weight: 500;
-    }
-
-    .filter-count {
-        font-size: 14px;
-        color: #777;
+    .nice-select .list {
+        max-height: 240px;
+        overflow-y: auto;
     }
 
 
 </style>
+

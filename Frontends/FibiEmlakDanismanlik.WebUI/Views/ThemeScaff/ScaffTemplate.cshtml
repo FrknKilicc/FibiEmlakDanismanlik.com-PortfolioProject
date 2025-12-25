@@ -88,7 +88,6 @@
     <span class="fal fa-angle-up"></span>
 </button>
     <!-- jequery plugins -->
-    @await RenderSectionAsync("Scripts", required: false)
    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -115,7 +114,8 @@
     <!-- script.js -->
     <script src="/Realshed/assets/js/script.js"></script>
 
-    
+    @await RenderSectionAsync("Scripts", required: false)
+
 
 
     <!-- End of .page_wrapper -->

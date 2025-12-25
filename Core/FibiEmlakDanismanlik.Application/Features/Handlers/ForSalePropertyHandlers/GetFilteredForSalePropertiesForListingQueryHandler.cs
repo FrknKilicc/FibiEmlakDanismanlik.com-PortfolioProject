@@ -25,6 +25,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHand
         {
             var value = await  _propertyRepository.GetFilteredForSalePropertyForListing(request.Filter);
 
+
             return  value.Select
                 
                 (x => new GetAllForSalePropertiesForListingResult

@@ -46,6 +46,11 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         [HttpPost("filter")]
         public async Task<IActionResult> Filter([FromBody] PropertyFilterRequest request)
         {
+            if (request.MinPrice.HasValue && request.MaxPrice.HasValue && request.MinPrice > request.MaxPrice)
+            {
+                return BadRequest("Min Fiyat, Max Fiyat'dan büyük olamaz");
+
+            }
             var value = await _meditor.Send(new GetFilteredForSalePropertiesForListingQuery(request));
             return Ok(value);
         }
