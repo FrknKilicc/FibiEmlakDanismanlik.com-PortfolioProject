@@ -42,26 +42,37 @@
                     <div class="filter-widget sidebar-widget">
                         <div class="widget-title"><h5>Lokasyon</h5></div>
                         <div class="widget-content">
+
                             <div class="form-group">
                                 <label>Şehir</label>
-                                <select id="citySelect" class="wide" data-selected-id="@Model.CityId">
+                                <select id="citySelect"
+                                        class="wide js-city-select"
+                                        data-selected-id="@Model.CityId"
+                                        data-search-placeholder="İl ara...">
                                     <option value="">Şehir seç</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label>İlçe</label>
-                                <select id="districtSelect" class="wide" data-selected-id="@Model.DistrictId" >
+                                <select id="districtSelect"
+                                        class="wide js-district-select"
+                                        data-selected-id="@Model.DistrictId"
+                                        data-search-placeholder="İlçe ara...">
                                     <option value="">İlçe seç</option>
                                 </select>
                             </div>
 
                             <div class="form-group">
                                 <label>Mahalle</label>
-                                <select id="neighborhoodSelect" class="wide" data-selected-id="@Model.NeighborhoodId" >
+                                <select id="neighborhoodSelect"
+                                        class="wide js-neighborhood-select"
+                                        data-selected-id="@Model.NeighborhoodId"
+                                        data-search-placeholder="Mahalle ara...">
                                     <option value="">Mahalle seç</option>
                                 </select>
                             </div>
+
                         </div>
                     </div>
 
@@ -284,50 +295,4 @@
     </div>
 </section>
 
-<style>
-    #listingTypeFilter .filter-option {
-        cursor: pointer;
-        transition: all .15s ease;
-        border: 1px solid #e9ecef;
-        padding: 12px 14px;
-        border-radius: 10px;
-        margin-bottom: 10px;
-        background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-        #listingTypeFilter .filter-option:hover {
-            border-color: #22c55e;
-        }
-
-        #listingTypeFilter .filter-option.active {
-            background: #22c55e !important;
-            border-color: #22c55e !important;
-            color: #fff !important;
-        }
-
-            #listingTypeFilter .filter-option.active .filter-name,
-            #listingTypeFilter .filter-option.active .filter-count {
-                color: #fff !important;
-            }
-
-        #listingTypeFilter .filter-option.active {
-            background: #22c55e !important;
-            border-color: #22c55e !important;
-            color: #fff !important;
-        }
-
-            #listingTypeFilter .filter-option.active * {
-                color: #fff !important;
-            }
-
-    .nice-select .list {
-        max-height: 240px;
-        overflow-y: auto;
-    }
-
-
-</style>
 

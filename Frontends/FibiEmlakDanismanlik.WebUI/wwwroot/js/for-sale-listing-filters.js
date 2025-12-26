@@ -29,9 +29,38 @@
         window.jQuery(selectEl).niceSelect();
     }
 
+    function forceDestroyNiceSelect(selectEl) {
+        if (!window.jQuery) return;
+        const $sel = window.jQuery(selectEl);
+
+        const $nice = $sel.next(".nice-select");
+        if ($nice.length) $nice.remove();
+
+        $sel.css("display", "");
+
+        $sel.removeClass("nice-select");
+    }
+
     function fillSelect(selectEl, items, placeholder) {
-        
-        destroyNiceSelect(selectEl);
+        if (!window.jQuery) return;
+
+        const $sel = window.jQuery(selectEl);
+
+        const id = (selectEl.id || "").toLowerCase();
+        const isLocation =
+            id === "cityselect" ||
+            id === "districtselect" ||
+            id === "neighborhoodselect";
+
+        if (isLocation) {
+            forceDestroyNiceSelect(selectEl);
+
+            if ($sel.data("select2")) {
+                $sel.select2("destroy");
+            }
+        } else {
+            destroyNiceSelect(selectEl);
+        }
 
         selectEl.innerHTML = "";
 
@@ -42,27 +71,35 @@
 
         items.forEach(x => {
             const opt = document.createElement("option");
-            opt.value = x.id;          
+            opt.value = x.id;
             opt.textContent = x.text;
             selectEl.appendChild(opt);
         });
 
-        initNiceSelect(selectEl);
+        if (isLocation) {
+            $sel.select2({
+                width: "100%",
+                placeholder: placeholder,
+                allowClear: true,
+                dropdownParent: $sel.closest(".filter-widget")
+            });
+        } else {
+            initNiceSelect(selectEl);
+        }
+       
+    }
+    function setSelectDisabled(selectEl, isDisabled) {
+        window.jQuery(selectEl).prop("disabled", isDisabled);
+
+        if (window.jQuery(selectEl).data("select2")) {
+            window.jQuery(selectEl).trigger("change.select2");
+        }
     }
 
-    function bindChangeFromNice(selectEl) {
-        if (!window.jQuery) return;
-        const $ = window.jQuery;
-        const $ns = $(selectEl).next(".nice-select");
-        if (!$ns.length) return;
-
-        $ns.off("click.nicefix").on("click.nicefix", ".option", function () {
-            setTimeout(() => {
-                selectEl.dispatchEvent(new Event("change", { bubbles: true }));
-            }, 0);
-        });
+    function setSelectLoading(selectEl, placeholderText) {
+        fillSelect(selectEl, [], placeholderText);
+        setSelectDisabled(selectEl, true);
     }
-
 
     function initListingTypeClicks() {
         const root = document.getElementById("listingTypeFilter");
@@ -95,57 +132,68 @@
         const neigh = document.getElementById("neighborhoodSelect");
         if (!city || !dist || !neigh) return;
 
-        
         const cities = await fetchOptions(api + "Location/cities");
         fillSelect(city, cities, "Şehir seç");
-        bindChangeFromNice(city);
+        setSelectDisabled(dist, true);
+        setSelectDisabled(neigh, true);
 
         const cityId = city.getAttribute("data-selected-id");
         const distId = dist.getAttribute("data-selected-id");
         const neighId = neigh.getAttribute("data-selected-id");
 
-       
         if (cityId) {
             city.value = cityId;
-           
-
+            window.jQuery(city).trigger("change.select2"); 
             const districts = await fetchOptions(api + "Location/districts?cityId=" + cityId);
             fillSelect(dist, districts, "İlçe seç");
-            bindChangeFromNice(dist);
+            setSelectDisabled(dist, false);
 
             if (distId) {
                 dist.value = distId;
-               
+                window.jQuery(dist).trigger("change.select2");
 
                 const neighs = await fetchOptions(api + "Location/neighborhoods?districtId=" + distId);
                 fillSelect(neigh, neighs, "Mahalle seç");
+                setSelectDisabled(neigh, false);
 
                 if (neighId) {
                     neigh.value = neighId;
-                    
+                    window.jQuery(neigh).trigger("change.select2");
                 }
+            } else {
+                fillSelect(neigh, [], "Mahalle seç");
             }
-        }
-
-        city.addEventListener("change", async function () {
+        } else {
             fillSelect(dist, [], "İlçe seç");
             fillSelect(neigh, [], "Mahalle seç");
+        }
+        window.jQuery(city).off(".loc").on("select2:select.loc select2:clear.loc", async function () {
+            const cityIdVal = window.jQuery(this).val();
 
-            if (!this.value) return;
+            setSelectLoading(dist, "İl Seçiniz.");
+            setSelectLoading(neigh, "Mahalle seç");
 
-            const districts = await fetchOptions(api + "Location/districts?cityId=" + this.value);
+            if (!cityIdVal) return;
+
+            const districts = await fetchOptions(api + "Location/districts?cityId=" + cityIdVal);
             fillSelect(dist, districts, "İlçe seç");
-            bindChangeFromNice(dist);
+            setSelectDisabled(dist, false);
         });
 
-        dist.addEventListener("change", async function () {
-            fillSelect(neigh, [], "Mahalle seç");
 
-            if (!this.value) return;
+        window.jQuery(dist).off(".loc").on("select2:select.loc select2:clear.loc", async function () {
+            const distIdVal = window.jQuery(this).val();
 
-            const neighs = await fetchOptions(api + "Location/neighborhoods?districtId=" + this.value);
+            setSelectLoading(neigh, "İlçe Seçiniz.");
+
+            if (!distIdVal) return;
+
+            const neighs = await fetchOptions(api + "Location/neighborhoods?districtId=" + distIdVal);
+
             fillSelect(neigh, neighs, "Mahalle seç");
+            setSelectDisabled(neigh, false);
         });
+        
     }
 
     function initApplyButton() {
