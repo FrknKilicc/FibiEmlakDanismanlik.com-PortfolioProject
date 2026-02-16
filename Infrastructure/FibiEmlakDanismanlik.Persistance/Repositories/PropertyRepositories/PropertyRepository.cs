@@ -1,6 +1,7 @@
 ﻿using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
-using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Application.Features.Results.AmenityFacetResults;
+using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
 using FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces;
 using FibiEmlakDanismanlik.Application.ViewModels;
 using FibiEmlakDanismanlik.Domain.DTOs;
@@ -26,12 +27,15 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             var activeStatuses = PropertyStatuses.ActiveSet;
 
             var housingQuery =
-          from house in _context.forSaleHousingPropertyListings
-          join agent in _context.Agents on house.AgentId equals agent.AgentId
-          where house.PropertyStatus != null && activeStatuses.Contains(house.PropertyStatus)
-          select new ForSalePropertyForListingViewModel
-          {
-                    ListingId = house.ForSaleHousingListId,
+    from house in _context.forSaleHousingPropertyListings
+    join agent in _context.Agents on house.AgentId equals agent.AgentId
+    join lt in _context.listingTypes on house.ListingTypeId equals lt.ListingTypeId
+    where lt.UsageType == UsageType.ForSale
+          && house.PropertyStatus != null
+          && activeStatuses.Contains(house.PropertyStatus)
+    select new ForSalePropertyForListingViewModel
+    {
+        ListingId = house.ForSaleHousingListId,
                     ListingTypeId = house.ListingTypeId,
                     PropertyNo = house.PropertyNo,
                     PropertyName = house.PropertyName,
@@ -45,6 +49,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     District = house.District,
                     Neighborhood = house.Neighborhood,
                     AddressDesc = house.AddressDesc,
+                    SourceType = 1 ,  // usage type 1 satılık konut 3 ise kiralık konut 
 
                     // arsa boş
                     Area = null,
@@ -91,7 +96,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Transferable = null,
 
                     AgentId = house.AgentId,
-                    Agent = agent,
                     AgentName = agent.AgentName,
                     AgentTitle = agent.AgentTitle,
                     AgentImgUrl = agent.AgentImgUrl,
@@ -131,12 +135,15 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 };
 
             var commercialQuery =
-         from comm in _context.forSaleCommercialPropertyListings
-         join agent in _context.Agents on comm.AgentId equals agent.AgentId
-         where comm.PropertyStatus != null && activeStatuses.Contains(comm.PropertyStatus)
-         select new ForSalePropertyForListingViewModel
-         {
-                    ListingId = comm.ForSaleCommercialListingId,
+    from comm in _context.forSaleCommercialPropertyListings
+    join agent in _context.Agents on comm.AgentId equals agent.AgentId
+    join lt in _context.listingTypes on comm.ListingTypeId equals lt.ListingTypeId
+    where lt.UsageType == UsageType.ForSale
+          && comm.PropertyStatus != null
+          && activeStatuses.Contains(comm.PropertyStatus)
+    select new ForSalePropertyForListingViewModel
+    {
+        ListingId = comm.ForSaleCommercialListingId,
                     ListingTypeId = comm.ListingTypeId,
                     PropertyNo = comm.PropertyNo,
                     PropertyName = comm.PropertyName,
@@ -145,6 +152,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     CreatedDate = comm.CreatedDate,
                     Price = comm.Price,
                     TitleDeedStatus = comm.TitleDeedStatus,
+                    SourceType = 3 , // usage type 3 kullanarak satılık işyeri anlamına geliyor.
 
                     City = comm.City,
                     District = comm.District,
@@ -196,7 +204,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Transferable = comm.Transferable,
 
                     AgentId = comm.AgentId,
-                    Agent = agent,
                     AgentName = agent.AgentName,
                     AgentTitle = agent.AgentTitle,
                     AgentImgUrl = agent.AgentImgUrl,
@@ -236,11 +243,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 };
 
             var landQuery =
-        from land in _context.forSaleLandListings
-        join agent in _context.Agents on land.AgentId equals agent.AgentId
-        where land.PropertyStatus != null && activeStatuses.Contains(land.PropertyStatus)
-        select new ForSalePropertyForListingViewModel
-        {
+                from land in _context.forSaleLandListings
+                join agent in _context.Agents on land.AgentId equals agent.AgentId
+                join lt in _context.listingTypes on land.ListingTypeId equals lt.ListingTypeId
+                where lt.UsageType == UsageType.ForSale
+                      && land.PropertyStatus != null
+                      && activeStatuses.Contains(land.PropertyStatus)
+                select new ForSalePropertyForListingViewModel
+                {
                     ListingId = land.ForSaleLandListingId,
                     ListingTypeId = land.ListingTypeId,
                     PropertyNo = land.PropertyNo,
@@ -250,6 +260,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     CreatedDate = land.CreatedDate,
                     Price = land.Price,
                     TitleDeedStatus = land.TitleDeedStatus,
+                    SourceType=2, //usage type 2 - > satılık arsa anlamına geliyor
 
                     City = land.City,
                     District = land.District,
@@ -301,7 +312,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Transferable = null,
 
                     AgentId = land.AgentId,
-                    Agent = agent,
                     AgentName = agent.AgentName,
                     AgentTitle = agent.AgentTitle,
                     AgentImgUrl = agent.AgentImgUrl,
@@ -1132,7 +1142,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         .Concat(landTypeIds)
         .Concat(commercialTypeIds)
         .Where(id => id != null)
-        .GroupBy(id => id!.Value)
+        .GroupBy(id => id!)
         .Select(g => new { ListingTypeId = g.Key, Count = g.Count() })
         .ToListAsync();
             var result = listingTypes
@@ -1154,27 +1164,43 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 .ToListAsync();
         }
 
+        static string? Normalize(string? s)
+        {
+            if (string.IsNullOrWhiteSpace(s)) return null;
 
+            s = s.Trim();
+
+        
+            if (string.Equals(s, "string", StringComparison.OrdinalIgnoreCase))
+                return null;
+
+            return s;
+        }
         public async Task<List<ForSalePropertyForListingViewModel>> GetFilteredForSalePropertyForListing(PropertyFilterRequest filter)
         {
-            var query = BuildForSaleListingQuery();
-            var city = filter.City?.Trim();
-            var disrict = filter.District?.Trim();
-            var neighborhood = filter.Neighborhood?.Trim();
+           
+            var query = BuildForSaleListingQuery().AsNoTracking();
+            filter.City = Normalize(filter.City);
+            filter.District = Normalize(filter.District);
+            filter.Neighborhood = Normalize(filter.Neighborhood);
+            filter.NumberOfRoom = Normalize(filter.NumberOfRoom);
+            filter.SortBy = Normalize(filter.SortBy);
+            filter.SortDir = Normalize(filter.SortDir);
 
             if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
-                query = query.Where(x => x.ListingTypeId != null && filter.ListingTypeIds.Contains(x.ListingTypeId.Value));
+                query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
 
-            if (!string.IsNullOrWhiteSpace(filter.City))
+
+            if (filter.City != null)
                 query = query.Where(x => x.City == filter.City);
 
-            if (!string.IsNullOrWhiteSpace(filter.District))
+            if (filter.District != null)
                 query = query.Where(x => x.District == filter.District);
 
-            if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
+            if (filter.Neighborhood != null)
                 query = query.Where(x => x.Neighborhood == filter.Neighborhood);
 
-            if (!string.IsNullOrWhiteSpace(filter.NumberOfRoom))
+            if (filter.NumberOfRoom != null)
                 query = query.Where(x => x.NumberOfRoom == filter.NumberOfRoom);
 
 
@@ -1184,7 +1210,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (filter.MaxPrice.HasValue)
                 query = query.Where(x => x.Price <= filter.MaxPrice.Value);
 
-            // sıralama
+            // Sort
             var sortBy = (filter.SortBy ?? "CreatedDate").ToLowerInvariant();
             var sortDir = (filter.SortDir ?? "desc").ToLowerInvariant();
 
@@ -1196,14 +1222,167 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 _ => query.OrderByDescending(x => x.CreatedDate),
             };
 
-            // paginationn
+            // Pagination
             var page = filter.Page < 1 ? 1 : filter.Page;
             var pageSize = filter.PageSize is < 1 or > 100 ? 20 : filter.PageSize;
 
-            query = query.Skip((page - 1) * pageSize).Take(pageSize);
-
-            return await query.ToListAsync();
+            return await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
+    public async Task<ForSaleFilterResponseResult> GetFilteredForSalePropertyForListingWithFacets(PropertyFilterRequest filter)
+    {
+        // 1) Base query
+        var baseQuery = BuildForSaleListingQuery().AsNoTracking();
+
+            // 2) Normal filtreler
+            if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
+                baseQuery = baseQuery.Where(x =>
+                    filter.ListingTypeIds.Contains(x.ListingTypeId));
+
+            if (!string.IsNullOrWhiteSpace(filter.City))
+            baseQuery = baseQuery.Where(x => x.City == filter.City);
+
+        if (!string.IsNullOrWhiteSpace(filter.District))
+            baseQuery = baseQuery.Where(x => x.District == filter.District);
+
+        if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
+            baseQuery = baseQuery.Where(x => x.Neighborhood == filter.Neighborhood);
+
+        if (!string.IsNullOrWhiteSpace(filter.NumberOfRoom))
+            baseQuery = baseQuery.Where(x => x.NumberOfRoom == filter.NumberOfRoom);
+
+        if (filter.MinPrice.HasValue)
+            baseQuery = baseQuery.Where(x => x.Price >= filter.MinPrice.Value);
+
+        if (filter.MaxPrice.HasValue)
+            baseQuery = baseQuery.Where(x => x.Price <= filter.MaxPrice.Value);
+
+        // 3) Amenities OR filtresi (ListingTypeId enum ile)
+        if (filter.SelectedAmenityIds != null && filter.SelectedAmenityIds.Any())
+        {
+            var selected = filter.SelectedAmenityIds;
+
+            baseQuery = baseQuery.Where(x =>
+                (x.ListingTypeId == (int)PropertyListingType.ForSaleHousingListing &&
+                    _context.ForSaleHousingListingAmenities
+                        .Any(ha => ha.ForSaleHousingListId == x.ListingId && selected.Contains(ha.AmenityId)))
+
+                ||
+
+                (x.ListingTypeId == (int)PropertyListingType.ForSaleLandListing &&
+                    _context.ForSaleLandListingAmenities
+                        .Any(la => la.ForSaleLandListId == x.ListingId && selected.Contains(la.AmenityId)))
+
+                ||
+
+                (x.ListingTypeId == (int)PropertyListingType.ForSaleCommercialPropertyListing &&
+                    _context.ForSaleCommercialListingAmenities
+                        .Any(ca => ca.ForSaleCommercialListingId     == x.ListingId && selected.Contains(ca.AmenityId)))
+            );
+        }
+
+        // 4) Total (pagination öncesi)
+        var total = await baseQuery.CountAsync();
+
+        // 5) Facet için ID’ler (pagination öncesi!)
+        var filteredIds = baseQuery.Select(x => new { x.ListingId, x.SourceType });
+
+            var housingIds = filteredIds.Where(x => x.SourceType == 1).Select(x => x.ListingId);
+            var landIds = filteredIds.Where(x => x.SourceType == 2).Select(x => x.ListingId);
+            var commIds = filteredIds.Where(x => x.SourceType == 3).Select(x => x.ListingId);
+
+            var housingFacet = _context.ForSaleHousingListingAmenities
+            .Where(ha => housingIds.Contains(ha.ForSaleHousingListId))
+            .GroupBy(ha => ha.AmenityId)
+            .Select(g => new { AmenityId = g.Key, Count = g.Count() });
+
+        var landFacet = _context.ForSaleLandListingAmenities
+            .Where(la => landIds.Contains(la.ForSaleLandListId))
+            .GroupBy(la => la.AmenityId)
+            .Select(g => new { AmenityId = g.Key, Count = g.Count() });
+
+        var commFacet = _context.ForSaleCommercialListingAmenities
+            .Where(ca => commIds.Contains(ca.ForSaleCommercialListingId))
+            .GroupBy(ca => ca.AmenityId)
+            .Select(g => new { AmenityId = g.Key, Count = g.Count() });
+
+        var mergedFacet = housingFacet
+            .Concat(landFacet)
+            .Concat(commFacet)
+            .GroupBy(x => x.AmenityId)
+            .Select(g => new { AmenityId = g.Key, Count = g.Sum(x => x.Count) });
+
+        var selectedSet = (filter.SelectedAmenityIds ?? new List<int>()).ToHashSet();
+
+            var defs = await _context.AmenityDefinitions
+    .AsNoTracking()
+    .Where(d => d.isActive) 
+    .Select(d => new
+    {
+        d.AmenityId,
+        d.Name,
+        d.GroupName,
+        d.SortOrder
+    })
+    .ToListAsync();
+
+            var facetRows = await mergedFacet.ToListAsync();
+            var facetDict = facetRows.ToDictionary(x => x.AmenityId, x => x.Count);
+            var amenities = defs
+                .Select(d =>
+                {
+                    var count = facetDict.TryGetValue(d.AmenityId, out var c) ? c : 0;
+
+                    return new AmenityFacetResult
+                    {
+                        Id = d.AmenityId,
+                        Text = d.Name,
+                        Group = d.GroupName,
+                        SortOrder = d.SortOrder,
+                        Count = count,
+                        Selected = selectedSet.Contains(d.AmenityId),
+                        Disabled = count == 0
+                    };
+                })
+                .OrderBy(x => x.Group)
+                .ThenBy(x => x.SortOrder)
+                .ThenBy(x => x.Text)
+                .ToList();
+
+
+            // 8) Sorting + Pagination (Items)
+            var query = baseQuery; // baseQuery aynı filtre seti
+
+        var sortBy = (filter.SortBy ?? "CreatedDate").ToLowerInvariant();
+        var sortDir = (filter.SortDir ?? "desc").ToLowerInvariant();
+
+        query = (sortBy, sortDir) switch
+        {
+            ("price", "asc") => query.OrderBy(x => x.Price),
+            ("price", "desc") => query.OrderByDescending(x => x.Price),
+            ("createddate", "asc") => query.OrderBy(x => x.CreatedDate),
+            _ => query.OrderByDescending(x => x.CreatedDate),
+        };
+
+        var page = filter.Page < 1 ? 1 : filter.Page;
+        var pageSize = filter.PageSize is < 1 or > 100 ? 20 : filter.PageSize;
+
+        var itemsVm = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        // 9) Response (Items mapping Handler’da)
+        return new ForSaleFilterResponseResult
+        {
+            Total = total,
+            Items = itemsVm,          
+            Amenties = amenities   
+        };
     }
+}
     }
+    
 

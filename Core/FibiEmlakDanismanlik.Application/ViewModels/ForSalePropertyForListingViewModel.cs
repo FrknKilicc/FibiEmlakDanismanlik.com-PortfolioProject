@@ -14,16 +14,18 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
         public int ListingId { get; set; } //
         public int? PropertyNo { get; set; }
         public string PropertyName { get; set; }
-        public string PropertyDescription { get; set; }
+        public string? PropertyDescription { get; set; }
         public string? PropertyStatus { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public decimal Price { get; set; }
-        public string TitleDeedStatus { get; set; } // DropDown için ortak
+        public DateTime? CreatedDate { get; set; }
+        public decimal? Price { get; set; }
+        public string? TitleDeedStatus { get; set; } // DropDown için ortak
+        public int SourceType { get; set; } // 1 konut, 2 arsa, 3 işyeri // listingtypeId sourcetype ı ikame ediyor.
+
 
         // Adres Bilgileri 
-        public string City { get; set; }
-        public string District { get; set; }
-        public string Neighborhood { get; set; }
+        public string? City { get; set; }
+        public string? District { get; set; }
+        public string? Neighborhood { get; set; }
         public string? AddressDesc { get; set; }
 
         // Arsa  Alanları
@@ -72,17 +74,15 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
 
         // İlan Kaynağı ve Temsilci
         public int AgentId { get; set; }
-        public Agent Agent { get; set; }
-        public string AgentName { get; set; }
-        public string AgentTitle { get; set; }
-        public string AgentImgUrl { get; set; }
+        public string? AgentName { get; set; }
+        public string? AgentTitle { get; set; }
+        public string? AgentImgUrl { get; set; }
 
 
         // İlan Türü: Arsa, Konut, Ticari
 
-        [ForeignKey("ListingTypeId")]
         public string ListingType { get; set; } // gerekbilir, arsa , konut,ticari
-        public int? ListingTypeId { get; set; }
+        public int ListingTypeId { get; set; }
 
         //Images  Top10
         public string? PropImgUrl1 { get; set; }

@@ -24,6 +24,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests
         public int Page { get; set; } = 1;        
         public int PageSize { get; set; } = 20;  
         public string? SortBy { get; set; } = "CreatedDate"; 
-        public string? SortDir { get; set; } = "desc";      
+        public string? SortDir { get; set; } = "desc";
+
+        public List<int>? SelectedAmenityIds{ get; set; }
+
     }
     }

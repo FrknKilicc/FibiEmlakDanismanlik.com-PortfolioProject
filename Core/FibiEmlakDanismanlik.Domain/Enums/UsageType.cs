@@ -10,6 +10,6 @@ namespace FibiEmlakDanismanlik.Domain.Enums
     {
         ForSale=1,   
         ForRent=2,
-            Both = 3
+        Both = 3
     }
 }

@@ -24,7 +24,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             var apiUrl = _configuration["Url:ApiUrl"];
             ViewBag.ApiUrl = apiUrl;
 
-            // 1) listingTypeIds
+            //  listingTypeIds
             var selectedIds = new List<int>();
             if (HttpContext.Request.Query.TryGetValue("listingTypeIds", out var values))
             {
@@ -32,8 +32,16 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                     if (int.TryParse(v, out var id))
                         selectedIds.Add(id);
             }
+            //seçilen özellik idsi 
+            var selectedAmenityIds = new List<int>();
+            if (HttpContext.Request.Query.TryGetValue("selectedAmenityIds", out var amenityValues))
+            {
+                foreach (var v in amenityValues)
+                    if (int.TryParse(v, out var id))
+                        selectedAmenityIds.Add(id);
+            }
 
-            // 2) other query params
+            // sol framde bulunan sorgu parametreleri 
             int? cityId = TryInt("cityId");
             int? districtId = TryInt("districtId");
             int? neighborhoodId = TryInt("neighborhoodId");
@@ -63,6 +71,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             var request = new PropertyFilterRequest
             {
                 ListingTypeIds = selectedIds.Any() ? selectedIds : null,
+                SelectedAmenityIds = selectedAmenityIds.Any() ? selectedAmenityIds : null,
                 City = city,
                 District = district,
                 Neighborhood = neighborhood,
@@ -75,21 +84,35 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 PageSize = 20
             };
 
-            var body = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            var listResp = await client.PostAsync($"{apiUrl}ForSales/filter", body);
 
+            var body = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+            var apiBase = apiUrl!.TrimEnd('/') + "/";
+            var listResp = await client.PostAsync($"{apiBase}ForSales/filter", body);
             var items = new List<ResultAllForSaleListinForPageDto>();
+            var total = 0;
+            var amenities = new List<AmenityFacetDto>(); 
+
             if (listResp.IsSuccessStatusCode)
             {
                 var json = await listResp.Content.ReadAsStringAsync();
-                items = JsonConvert.DeserializeObject<List<ResultAllForSaleListinForPageDto>>(json) ?? new();
+                var respObj = JsonConvert.DeserializeObject<ForSaleFilterResponseDto>(json);
+
+                if (respObj != null)
+                {
+                    items = respObj.Items ?? new();
+                    total = respObj.Total;
+                    amenities = respObj.Amenties ?? new(); 
+                }
             }
 
             var vm = new ForSaleListingPageVm
             {
                 ListingTypeFacets = facets,
                 Items = items,
+                Total = total,
                 SelectedListingTypeIds = selectedIds,
+
+                Amenties = amenities, 
 
                 CityId = cityId,
                 DistrictId = districtId,
@@ -107,6 +130,9 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             };
 
             return View(vm);
+
+
+ 
 
             int? TryInt(string key) => int.TryParse(HttpContext.Request.Query[key], out var x) ? x : null;
             decimal? TryDecimal(string key) => decimal.TryParse(HttpContext.Request.Query[key], out var x) ? x : null;

@@ -9,5 +9,6 @@ namespace FibiEmlakDanismanlik.Domain.DTOs
     public class ForSaleListingFilterDto
     {
         public List<int>? ListingTypeIds { get; set; }
+
     }
 }

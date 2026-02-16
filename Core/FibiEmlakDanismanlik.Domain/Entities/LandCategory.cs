@@ -12,7 +12,6 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         [Key]
         public int LandCategoryId { get; set; }
         public string LandCategoryName { get; set; }
-        public int MainCategoryId { get; set; }
-        public MainCategory MainCategory { get; set; }
+        
     }
 }

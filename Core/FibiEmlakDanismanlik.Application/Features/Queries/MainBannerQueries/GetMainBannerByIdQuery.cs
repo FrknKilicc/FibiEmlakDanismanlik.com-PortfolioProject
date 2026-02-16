@@ -1,5 +1,4 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Results.MainBannerResults;
-using FibiEmlakDanismanlik.Application.Features.Results.MainCategoryResults;
 using MediatR;
 using System;
 using System.Collections.Generic;

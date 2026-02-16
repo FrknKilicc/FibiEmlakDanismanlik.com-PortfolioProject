@@ -113,15 +113,26 @@
 
     function initRoomSelect() {
         const room = document.getElementById("roomSelect");
-        if (!room) return;
+        if (!room || !window.jQuery) return;
 
-        destroyNiceSelect(room);
+        forceDestroyNiceSelect(room);
+
+        const $room = window.jQuery(room);
+        if ($room.data("select2")) $room.select2("destroy");
 
         const selected = room.getAttribute("data-selected");
         if (selected) room.value = selected;
 
-        initNiceSelect(room);
+        $room.select2({
+            width: "100%",
+            placeholder: "Oda seç",
+            allowClear: true,
+            dropdownParent: $room.closest(".filter-widget")
+        });
+
+        $room.trigger("change.select2");
     }
+
 
     async function initLocationDropdowns() {
         const api = getApiUrl();
@@ -196,6 +207,31 @@
         
     }
 
+    function formatThousandsTR(raw) {
+        const digits = (raw || "").toString().replace(/\D/g, "");
+        if (!digits) return "";
+
+        // 1000000 -> 1.000.000
+        return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function attachPriceFormatter(inputEl) {
+        if (!inputEl) return;
+
+        inputEl.addEventListener("input", function () {
+            const caretAtEnd = this.selectionStart === this.value.length;
+
+            const formatted = formatThousandsTR(this.value);
+            this.value = formatted;
+
+            // caret çok zıplamasın diye basit iyileştirme:
+            // kullanıcı genelde sona yazar, onu koruyoruz
+            if (caretAtEnd) {
+                this.setSelectionRange(this.value.length, this.value.length);
+            }
+        });
+    }
+
     function initApplyButton() {
         const btn = document.getElementById("applyFilters");
         if (!btn) return;
@@ -232,8 +268,8 @@
                 url.searchParams.set("neighborhood", neigh.options[neigh.selectedIndex].text);
             }
 
-            const min = document.getElementById("minPrice")?.value;
-            const max = document.getElementById("maxPrice")?.value;
+            const min = document.getElementById("minPrice")?.value?.replace(/\./g, "");
+            const max = document.getElementById("maxPrice")?.value?.replace(/\./g, "");
             const room = document.getElementById("roomSelect")?.value;
 
             if (min) url.searchParams.set("minPrice", min);
@@ -250,6 +286,9 @@
         initRoomSelect();
         initLocationDropdowns();
         initApplyButton();
+
+        attachPriceFormatter(document.getElementById("minPrice"));
+        attachPriceFormatter(document.getElementById("maxPrice"));
     });
 
 })();

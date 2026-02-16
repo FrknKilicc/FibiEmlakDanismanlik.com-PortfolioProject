@@ -66,6 +66,11 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 return dir.FullName;
             }
         }
+
+        public DbSet<AmenityDefinition> AmenityDefinitions { get; set; }
+        public DbSet<ForSaleHousingListingAmenity> ForSaleHousingListingAmenities { get; set; }
+        public DbSet<ForSaleLandListingAmenity> ForSaleLandListingAmenities { get; set; }
+        public DbSet<ForSaleCommercialListingAmenity> ForSaleCommercialListingAmenities { get; set; }
         public DbSet<AboutUs> AboutUs { get; set; }
         public DbSet<Agent> Agents { get; set; }
         public DbSet<Author> Authors { get; set; }
@@ -80,7 +85,6 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<HousingCategory> HousingCategories { get; set; }
         public DbSet<LandCategory> LandCategories { get; set; }
         public DbSet<MainBanner> MainBanners { get; set; }
-        public DbSet<MainCategory> MainCategories { get; set; }
         public DbSet<FrequentlyAskedQuestion> frequentlyAskedQuestions { get; set; }
         public DbSet<Service> services { get; set; }
         public DbSet<ListingType>  listingTypes { get; set; }
@@ -185,9 +189,73 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                       .HasForeignKey(x => x.TagId);
             });
 
+            // AmenityDefinition
+            modelBuilder.Entity<AmenityDefinition>(entity =>
+            {
+                entity.Property(x => x.Name).IsRequired().HasMaxLength(120);
+                entity.Property(x => x.GroupName).HasMaxLength(80);
+
+                entity.HasIndex(x => x.Name);
+            });
+
+            // Join forsalehousing
+            modelBuilder.Entity<ForSaleHousingListingAmenity>(entity =>
+            {
+                entity.HasKey(x => new { x.ForSaleHousingListId, x.AmenityId });
+
+                entity.HasOne(x => x.forSaleHousingListing)
+                      .WithMany() 
+                      .HasForeignKey(x => x.ForSaleHousingListId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.AmenityDefinition)
+                      .WithMany()
+                      .HasForeignKey(x => x.AmenityId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => new { x.AmenityId, x.ForSaleHousingListId });
+            });
+
+            // Join forsaleLand
+            modelBuilder.Entity<ForSaleLandListingAmenity>(entity =>
+            {
+                entity.HasKey(x => new { x.ForSaleLandListId, x.AmenityId });
+
+                entity.HasOne(x => x.ForSaleLandListing)
+                      .WithMany()
+                      .HasForeignKey(x => x.ForSaleLandListId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.AmenityDefinition)
+                      .WithMany()
+                      .HasForeignKey(x => x.AmenityId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => new { x.AmenityId, x.ForSaleLandListId });
+            });
+
+            // Join forsaleCommercial
+            modelBuilder.Entity<ForSaleCommercialListingAmenity>(entity =>
+            {
+                entity.HasKey(x => new { x.ForSaleCommercialListingId, x.AmenityId });
+
+                entity.HasOne(x => x.ForSaleCommercialProperty)
+                      .WithMany()
+                      .HasForeignKey(x => x.ForSaleCommercialListingId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.AmenityDefinition)
+                      .WithMany()
+                      .HasForeignKey(x => x.AmenityId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => new { x.AmenityId, x.ForSaleCommercialListingId });
+            });
+
 
             base.OnModelCreating(modelBuilder);
         }
+
 
 
 

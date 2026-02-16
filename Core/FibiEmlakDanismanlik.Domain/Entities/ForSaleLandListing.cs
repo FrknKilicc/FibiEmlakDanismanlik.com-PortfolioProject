@@ -58,7 +58,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public LandCategory LandCategory { get; set; }
         public int AgentId { get; set; }
         public Agent Agent { get; set; }
-        public int? ListingTypeId { get; set; }
+        public int ListingTypeId { get; set; }
 
         [ForeignKey("ListingTypeId")]
         public ListingType ListingType { get; set; }

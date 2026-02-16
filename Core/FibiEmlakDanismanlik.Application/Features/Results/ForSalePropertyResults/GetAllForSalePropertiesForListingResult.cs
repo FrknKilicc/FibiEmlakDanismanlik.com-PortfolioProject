@@ -14,17 +14,17 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResul
         // Ortak Alanlar (3 model de var)
         public int ListingId { get; set; } //
         public int? PropertyNo { get; set; }
-        public string PropertyName { get; set; }
-        public string PropertyDescription { get; set; }
+        public string? PropertyName { get; set; }
+        public string? PropertyDescription { get; set; }
         public string? PropertyStatus { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public decimal Price { get; set; }
-        public string TitleDeedStatus { get; set; } // DropDown için ortak
+        public DateTime? CreatedDate { get; set; }
+        public decimal? Price { get; set; }
+        public string? TitleDeedStatus { get; set; } // DropDown için ortak
 
         // Adres Bilgileri 
-        public string City { get; set; }
-        public string District { get; set; }
-        public string Neighborhood { get; set; }
+        public string? City { get; set; }
+        public string? District { get; set; }
+        public string? Neighborhood { get; set; }
         public string? AddressDesc { get; set; }
 
         // Arsa  Alanları
@@ -74,14 +74,14 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResul
         // Çalışan
         public int AgentId { get; set; }
         public Agent Agent { get; set; }
-        public string AgentName { get; set; }
-        public string AgentTitle { get; set; }
-        public string AgentImgUrl { get; set; }
+        public string? AgentName { get; set; }
+        public string? AgentTitle { get; set; }
+        public string? AgentImgUrl { get; set; }
 
         // İlan Türü
 
         [ForeignKey("ListingTypeId")]
-        public string ListingType { get; set; } // gerekbilir, arsa , konut,ticari
+        public string? ListingType { get; set; } // gerekbilir, arsa , konut,ticari
 
         //Images  
         public string? PropImgUrl1 { get; set; }
