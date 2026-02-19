@@ -50,6 +50,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Neighborhood = house.Neighborhood,
                     AddressDesc = house.AddressDesc,
                     SourceType = 1 ,  // usage type 1 satılık konut 3 ise kiralık konut 
+                    UsageTypeId = (int)lt.UsageType,
 
                     // arsa boş
                     Area = null,
@@ -102,6 +103,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                     ListingType = "Konut",
 
+
                     PropImgUrl1 = house.PropImgUrl1,
                     PropImgUrl2 = house.PropImgUrl2,
                     PropImgUrl3 = house.PropImgUrl3,
@@ -143,6 +145,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
           && activeStatuses.Contains(comm.PropertyStatus)
     select new ForSalePropertyForListingViewModel
     {
+       
         ListingId = comm.ForSaleCommercialListingId,
                     ListingTypeId = comm.ListingTypeId,
                     PropertyNo = comm.PropertyNo,
@@ -153,6 +156,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Price = comm.Price,
                     TitleDeedStatus = comm.TitleDeedStatus,
                     SourceType = 3 , // usage type 3 kullanarak satılık işyeri anlamına geliyor.
+                    UsageTypeId = (int)lt.UsageType,
 
                     City = comm.City,
                     District = comm.District,
@@ -175,6 +179,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Exchange = null,
                     BestDeals = null,
                     LandCategoryId = null,
+                    
 
                     // konut boş
                     Facade = null,
@@ -251,6 +256,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                       && activeStatuses.Contains(land.PropertyStatus)
                 select new ForSalePropertyForListingViewModel
                 {
+
                     ListingId = land.ForSaleLandListingId,
                     ListingTypeId = land.ListingTypeId,
                     PropertyNo = land.PropertyNo,
@@ -261,6 +267,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Price = land.Price,
                     TitleDeedStatus = land.TitleDeedStatus,
                     SourceType=2, //usage type 2 - > satılık arsa anlamına geliyor
+                    UsageTypeId = (int)lt.UsageType,
 
                     City = land.City,
                     District = land.District,

@@ -7,7 +7,7 @@ namespace FibiEmlakDanismanlik.WebUI.Models
         public List<ListingTypeFacetVm> ListingTypeFacets { get; set; } = new();
         public List<ResultAllForSaleListinForPageDto> Items { get; set; } = new();
         public List<int> SelectedListingTypeIds { get; set; } = new();
-        public List<AmenityFacetDto> Amenties { get; set; } = new();
+        public List<AmenityFacetDto> Amenities { get; set; } = new();
         public int? CityId { get; set; }
         public int? DistrictId { get; set; }
         public int? NeighborhoodId { get; set; }
@@ -24,6 +24,11 @@ namespace FibiEmlakDanismanlik.WebUI.Models
 
         public string SortBy { get; set; } = "CreatedDate";
         public string SortDir { get; set; } = "desc";
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+
+        public int TotalPages =>
+            PageSize == 0 ? 0 : (int)Math.Ceiling((double)Total / PageSize);
     }
     public class ListingTypeFacetVm
     {

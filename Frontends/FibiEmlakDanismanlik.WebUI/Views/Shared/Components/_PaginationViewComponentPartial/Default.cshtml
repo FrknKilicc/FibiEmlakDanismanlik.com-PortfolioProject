@@ -1,0 +1,89 @@
+﻿@model FibiEmlakDanismanlik.WebUI.Models.PaginationVm
+
+@{
+    var totalPages = Model.TotalPages;
+    var currentPage = Model.Page;
+
+    if (totalPages < 2)
+    {
+        totalPages = 0;
+    }
+
+    if (totalPages > 0 && currentPage > totalPages)
+    {
+        currentPage = totalPages;
+    }
+
+    string BuildPageUrl(int p)
+    {
+        var q = new Dictionary<string, List<string>>();
+
+        foreach (var kv in Context.Request.Query)
+            q[kv.Key] = kv.Value.ToList();
+
+        q["page"] = new List<string> { p.ToString() };
+
+        if (Model.PageSize > 0)
+            q["pageSize"] = new List<string> { Model.PageSize.ToString() };
+
+        return "?" + string.Join("&",
+            q.SelectMany(kv => kv.Value.Select(v =>
+                $"{Uri.EscapeDataString(kv.Key)}={Uri.EscapeDataString(v)}")));
+    }
+
+    int window = 2;
+    bool ShouldShow(int p)
+    {
+        if (p == 1 || p == totalPages) return true;
+        if (p >= currentPage - window && p <= currentPage + window) return true;
+        return false;
+    }
+}
+
+@if (totalPages > 0)
+{
+    <div class="pagination-wrapper">
+        <ul class="pagination clearfix">
+
+            @* Prev *@
+            @if (currentPage > 1)
+            {
+                <li>
+                    <a href="@BuildPageUrl(currentPage - 1)"><i class="fa fa-angle-left"></i></a>
+                </li>
+            }
+
+            @{
+                var lastShown = 0;
+                for (int p = 1; p <= totalPages; p++)
+                {
+                    if (!ShouldShow(p)) continue;
+
+                    if (lastShown != 0 && p - lastShown > 1)
+                    {
+                        <li><a class="disabled">...</a></li>
+                    }
+
+                    if (p == currentPage)
+                    {
+                        <li><a class="current">@p</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="@BuildPageUrl(p)">@p</a></li>
+                    }
+
+                    lastShown = p;
+                }
+            }
+
+            @* Next *@
+            @if (currentPage < totalPages)
+            {
+                <li>
+                    <a href="@BuildPageUrl(currentPage + 1)"><i class="fa fa-angle-right"></i></a>
+                </li>
+            }
+        </ul>
+    </div>
+}

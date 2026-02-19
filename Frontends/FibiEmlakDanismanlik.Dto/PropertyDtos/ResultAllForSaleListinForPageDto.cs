@@ -80,8 +80,10 @@ namespace FibiEmlakDanismanlik.Dto.PropertyDtos
         // İlan Türü: Arsa, Konut, Ticari
 
         [ForeignKey("ListingTypeId")]
-        public int ListinTypeId { get; set; }
+        public int ListingTypeId { get; set; }
         public string ListingType { get; set; } // arsa , konut,ticari
+
+        public int UsageTypeId { get; set; } // usage type enumı 1=ForSale, 2=ForRent, 3=Both
 
         //Images  Top10
         public string? PropImgUrl1 { get; set; }

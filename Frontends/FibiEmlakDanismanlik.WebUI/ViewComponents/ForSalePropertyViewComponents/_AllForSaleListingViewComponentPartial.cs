@@ -17,8 +17,22 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
         }
+        private static int ReadIntQuery(HttpRequest request, string key, int defaultValue)
+        {
+            if (!request.Query.TryGetValue(key, out var v)) return defaultValue;
+            if (int.TryParse(v.ToString(), out var parsed) && parsed > 0) return parsed;
+            return defaultValue;
+        }
+        private static int ReadIntQuery(HttpRequest request, string key, int defaultValue, int min, int max)
+        {
+            var val = ReadIntQuery(request, key, defaultValue);
+            if (val < min) return min;
+            if (val > max) return max;
+            return val;
+        }
 
-        public  async Task<IViewComponentResult> InvokeAsync()
+
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             var client = _httpClientFactory.CreateClient();
             var apiUrl = _configuration["Url:ApiUrl"];
@@ -56,6 +70,9 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
 
             var sortBy = TryStr("sortBy") ?? "CreatedDate";
             var sortDir = TryStr("sortDir") ?? "desc";
+            var page = ReadIntQuery(Request, "page", 1, 1, int.MaxValue);
+            var pageSize = ReadIntQuery(Request, "pageSize", 3, 1, 100);
+
 
             // 3) facets
             var facetResp = await client.GetAsync($"{apiUrl}ForSales/GetForSaleListingTypeFacets");
@@ -80,8 +97,8 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 NumberOfRoom = numberOfRoom,
                 SortBy = sortBy,
                 SortDir = sortDir,
-                Page = 1,
-                PageSize = 20
+                Page = page,
+                PageSize = pageSize
             };
 
 
@@ -101,7 +118,9 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 {
                     items = respObj.Items ?? new();
                     total = respObj.Total;
-                    amenities = respObj.Amenties ?? new(); 
+                    amenities = respObj.Amenties ?? new();
+                    request.Page = page;
+                    request.PageSize = pageSize;
                 }
             }
 
@@ -112,7 +131,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 Total = total,
                 SelectedListingTypeIds = selectedIds,
 
-                Amenties = amenities, 
+                Amenities = amenities, 
 
                 CityId = cityId,
                 DistrictId = districtId,
@@ -126,13 +145,15 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 MaxPrice = maxPrice,
                 NumberOfRoom = numberOfRoom,
                 SortBy = sortBy,
-                SortDir = sortDir
+                SortDir = sortDir,
+                Page = page,
+                PageSize = pageSize,
+                
+                
+                
             };
-
+     
             return View(vm);
-
-
- 
 
             int? TryInt(string key) => int.TryParse(HttpContext.Request.Query[key], out var x) ? x : null;
             decimal? TryDecimal(string key) => decimal.TryParse(HttpContext.Request.Query[key], out var x) ? x : null;

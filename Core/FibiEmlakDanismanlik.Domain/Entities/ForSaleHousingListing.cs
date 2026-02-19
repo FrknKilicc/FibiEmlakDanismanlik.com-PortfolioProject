@@ -45,7 +45,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         [Required]
         public int TotalNumberOfFloor { get; set; }
         [Required]
-        public int NumberOfFloors { get; set; }//kaçıncı kat
+        public int NumberOfFloors { get; set; } //kaçıncı kat
         public int? NumberOfBathRoom { get; set; }
         [Required]
         public string NumberOfRoom { get; set; }

@@ -83,6 +83,7 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
 
         public string ListingType { get; set; } // gerekbilir, arsa , konut,ticari
         public int ListingTypeId { get; set; }
+        public int UsageTypeId { get; set; } // 1=ForSale, 2=ForRent, 3=Both
 
         //Images  Top10
         public string? PropImgUrl1 { get; set; }

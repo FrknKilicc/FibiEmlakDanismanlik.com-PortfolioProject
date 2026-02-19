@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Dto.PropertyDtos
 {
-    public class AmenityFacetDto
+    public class    AmenityFacetDto
     {
         public int Id { get; set; }           
         public string Text { get; set; }      

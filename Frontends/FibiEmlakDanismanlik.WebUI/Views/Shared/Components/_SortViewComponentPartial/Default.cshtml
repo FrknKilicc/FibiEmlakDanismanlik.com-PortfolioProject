@@ -1,0 +1,140 @@
+﻿@model FibiEmlakDanismanlik.WebUI.Models.SortVM 
+
+@{
+    string BuildSortUrl(string sortBy, string sortDir)
+    {
+        var q = new Dictionary<string, List<string>>();
+
+        foreach (var kv in Context.Request.Query)
+            q[kv.Key] = kv.Value.ToList();
+
+        // Sıralama değiştiğinde kullanıcıyıa sayfa 1'e dönerr
+        q["page"] = new List<string> { "1" };
+
+        if (Context.Request.Query.TryGetValue("pageSize", out var ps) && !string.IsNullOrWhiteSpace(ps.ToString()))
+            q["pageSize"] = new List<string> { ps.ToString() };
+
+        q["sortBy"] = new List<string> { sortBy };
+        q["sortDir"] = new List<string> { sortDir };
+
+        return "?" + string.Join("&",
+            q.SelectMany(kv => kv.Value.Select(v => $"{Uri.EscapeDataString(kv.Key)}={Uri.EscapeDataString(v)}")));
+    }
+    bool IsSelected(FibiEmlakDanismanlik.WebUI.Models.SortItemVM  item)
+        => string.Equals(item.SortBy, Model.CurrentSortBy, StringComparison.OrdinalIgnoreCase)
+           && string.Equals(item.SortDir, Model.CurrentSortDir, StringComparison.OrdinalIgnoreCase);
+
+    var selectedText = Model.Items.FirstOrDefault(IsSelected)?.Text
+                       ?? Model.Items.FirstOrDefault()?.Text
+                       ?? "Sırala";
+}
+<div class="short-box clearfix">
+    <div class="select-box">
+        <select class="wide js-sort-select" onchange="if(this.value) window.location.href=this.value;">
+            <option data-display="Sırala : @selectedText" value="@BuildSortUrl(Model.CurrentSortBy, Model.CurrentSortDir)">Sırala : @selectedText</option>
+            @foreach (var item in Model.Items)
+            {
+                var url = BuildSortUrl(item.SortBy, item.SortDir);
+                <option value="@url" selected="@(IsSelected(item) ? "selected" : null)">@item.Text</option>
+            }
+        </select>
+    </div>
+</div>
+
+<script>
+    (function () {
+      document.addEventListener('click', function (e) {
+        var opt = e.target.closest('.nice-select .option');
+        if (!opt) return;
+
+        var nice = opt.closest('.nice-select');
+        if (!nice) return;
+
+        var sel = nice.previousElementSibling;
+        if (!sel || !sel.classList || !sel.classList.contains('js-sort-select')) return;
+
+        var url = sel.value;
+        if (url) window.location.href = url;
+      });
+    })();
+</script>
+<style>
+    .item-shorting {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: nowrap; 
+    }
+
+        .item-shorting .short-box {
+            flex: 1 1 auto;
+            min-width: 200px; 
+            max-width: 340px; 
+        }
+
+        .item-shorting .view-mode,
+        .item-shorting .listing-view,
+        .item-shorting .grid-list-btn,
+        .item-shorting .list-grid-btn {
+            flex: 0 0 auto;
+        }
+
+        .item-shorting,
+        .item-shorting .short-box,
+        .item-shorting .select-box {
+            overflow: visible !important;
+        }
+
+            .item-shorting .nice-select {
+                width: 100% !important;
+                min-width: 200px;
+                white-space: nowrap;
+                z-index: 9999;
+            }
+
+                .item-shorting .nice-select .current {
+                    display: block;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    padding-right: 28px;
+                }
+
+                .item-shorting .nice-select .option {
+                    white-space: normal !important;
+                    line-height: 1.2;
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+                }
+                .item-shorting .nice-select .current {
+                    white-space: nowrap !important;
+                    max-width: 220px; 
+                }
+
+            .item-shorting .select-box {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+                .item-shorting .nice-select .list {
+                    z-index: 10000;
+                    max-height: 260px;
+                    overflow-y: auto;
+                    background: #fff;
+                    box-shadow: 0 10px 30px rgba(0,0,0,.12);
+                }
+
+                .item-shorting .nice-select .list {
+                    right: 0;
+                    left: auto;
+                    min-width: 260px; 
+                    max-width: 320px; 
+                }
+
+    .listing-top,
+    .property-list-top,
+    .listing-top-bar {
+        overflow: visible !important;
+    }
+ 
+</style>
