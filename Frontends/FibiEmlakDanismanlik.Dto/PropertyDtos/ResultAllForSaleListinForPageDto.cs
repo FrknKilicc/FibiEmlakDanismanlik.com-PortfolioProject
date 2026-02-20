@@ -84,6 +84,7 @@ namespace FibiEmlakDanismanlik.Dto.PropertyDtos
         public string ListingType { get; set; } // arsa , konut,ticari
 
         public int UsageTypeId { get; set; } // usage type enumı 1=ForSale, 2=ForRent, 3=Both
+        public List<ResultCardHighlightDto> Highlights { get; set; } = new();
 
         //Images  Top10
         public string? PropImgUrl1 { get; set; }

@@ -225,7 +225,7 @@
                                                             <h6>@item.AgentName</h6>
                                                         </div>
                                                         <div class="buy-btn pull-right">
-                                                            <a href="property-details.html">@UsageBadgeText(item.UsageTypeId)</a>
+                                                            <a href="@Url.Action("Index","AllForSalePage")">@UsageBadgeText(item.UsageTypeId)</a>
                                                         </div>
                                                     </div>
                                                     <div class="title-text"><h4><a asp-action="Index" asp-controller="AllForSaleDetailPageController" asp-route-id="@item.ListingId">@item.PropertyName</a></h4></div>
@@ -240,10 +240,13 @@
                                                         </ul>
                                                     </div>
                                                     <p>@item.PropertyDescription</p>
-                                                    <ul class="more-details clearfix">
-                                                        <li><i class="icon-14"></i>3 Beds</li>
-                                                        <li><i class="icon-15"></i>2 Baths</li>
-                                                        <li><i class="icon-16"></i>600 Sq Ft</li>
+                                                    @using FibiEmlakDanismanlik.Dto.PropertyDtos
+
+                                                <ul class="more-details clearfix">
+                                                    @foreach (var h in (item.Highlights ?? new List<ResultCardHighlightDto>()).Take(3))
+                                                        {
+                                                            <li><i class="@h.Icon"></i>@h.Text</li>
+                                                        }
                                                     </ul>
                                                     <div class="btn-box"><a asp-route-id="@item.ListingId" asp-controller="AllForSaleDetailPage" asp-action="Index" class="theme-btn btn-two">İlan Detayı</a></div>
                                                 </div>

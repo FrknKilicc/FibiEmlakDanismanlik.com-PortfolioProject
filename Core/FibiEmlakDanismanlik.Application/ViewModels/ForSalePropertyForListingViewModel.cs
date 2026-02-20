@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace FibiEmlakDanismanlik.Application.ViewModels
 {
     public class ForSalePropertyForListingViewModel
@@ -44,6 +45,7 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
         public bool? Exchange { get; set; }
         public bool? BestDeals { get; set; }
         public int? LandCategoryId { get; set; }
+        public List<CardHighlightViewModel> Highlights { get; set; } = new();
 
         // Konut Alanları
         public string? Facade { get; set; } // Cephe

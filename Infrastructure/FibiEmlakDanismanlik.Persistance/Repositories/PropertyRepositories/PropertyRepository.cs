@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,106 +36,117 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
           && activeStatuses.Contains(house.PropertyStatus)
     select new ForSalePropertyForListingViewModel
     {
+
+
         ListingId = house.ForSaleHousingListId,
-                    ListingTypeId = house.ListingTypeId,
-                    PropertyNo = house.PropertyNo,
-                    PropertyName = house.PropertyName,
-                    PropertyDescription = house.PropertyDescription,
-                    PropertyStatus = house.PropertyStatus,
-                    CreatedDate = house.CreatedDate,
-                    Price = house.Price,
-                    TitleDeedStatus = house.TitleDeedStatus,
 
-                    City = house.City,
-                    District = house.District,
-                    Neighborhood = house.Neighborhood,
-                    AddressDesc = house.AddressDesc,
-                    SourceType = 1 ,  // usage type 1 satılık konut 3 ise kiralık konut 
-                    UsageTypeId = (int)lt.UsageType,
+        ListingTypeId = house.ListingTypeId,
+        PropertyNo = house.PropertyNo,
+        PropertyName = house.PropertyName,
+        PropertyDescription = house.PropertyDescription,
+        PropertyStatus = house.PropertyStatus,
+        CreatedDate = house.CreatedDate,
+        Price = house.Price,
+        TitleDeedStatus = house.TitleDeedStatus,
 
-                    // arsa boş
-                    Area = null,
-                    SharePercentage = null,
-                    PricePerSquareMeter = null,
-                    ParcelNumber = null,
-                    PlotNumber = null,
-                    MapSheetNumber = null,
-                    FloorAreaRatio = null,
-                    BaseAreaRatio = null,
-                    ZoningPlan = null,
-                    ZoningStatus = null,
-                    DevelopmentRight = null,
-                    LandLoan = null,
-                    Exchange = null,
-                    BestDeals = null,
-                    LandCategoryId = null,
+        City = house.City,
+        District = house.District,
+        Neighborhood = house.Neighborhood,
+        AddressDesc = house.AddressDesc,
+        SourceType = 1,  // usage type 1 satılık konut 3 ise kiralık konut 
+        UsageTypeId = (int)lt.UsageType,
 
-                    // konut dolu
-                    Facade = house.Facade,
-                    IsElevator = house.IsElevator,
-                    GrossArea = house.GrossArea,
-                    NetArea = house.NetArea,
-                    OpenArea = house.OpenArea,
-                    BuildingAge = house.BuildingAge,
-                    TotalNumberOfFloor = house.TotalNumberOfFloor,
-                    NumberOfFloors = house.NumberOfFloors,
-                    NumberOfBathRoom = house.NumberOfBathRoom,
-                    NumberOfRoom = house.NumberOfRoom,
-                    Heating = house.Heating,
-                    BlackBox = house.BlackBox,
-                    NumberOfBalconies = house.NumberOfBalconies,
-                    ParkingLot = house.ParkingLot,
-                    Furnished = house.Furnished,
-                    UsageStatus = house.UsageStatus,
-                    WithinTheComplex = house.WithinTheComplex,
-                    Dues = house.Dues,
-                    HomeLoan = house.HomeLoan,
+//        Highlights = new List<CardHighlightViewModel>
+//{
+//    new() { Icon = "icon-14", Text = $"{house.NumberOfRoom} Oda" },
+//    new() { Icon = "icon-15", Text = $"{house.NumberOfBathRoom} Banyo" },
+//    new() { Icon = "icon-16", Text = $"{house.NetArea} m²" }
+//},
 
-                    // ticari boş
-                    NumberOfSection = null,
-                    NumberOfKitchens = null,
-                    NumberOfBathrooms = null,
-                    Transferable = null,
-
-                    AgentId = house.AgentId,
-                    AgentName = agent.AgentName,
-                    AgentTitle = agent.AgentTitle,
-                    AgentImgUrl = agent.AgentImgUrl,
-
-                    ListingType = "Konut",
+        // arsa boş
+        Area = null,
+        SharePercentage = null,
+        PricePerSquareMeter = null,
+        ParcelNumber = null,
+        PlotNumber = null,
+        MapSheetNumber = null,
+        FloorAreaRatio = null,
+        BaseAreaRatio = null,
+        ZoningPlan = null,
+        ZoningStatus = null,
+        DevelopmentRight = null,
+        LandLoan = null,
+        Exchange = null,
+        BestDeals = null,
+        LandCategoryId = null,
 
 
-                    PropImgUrl1 = house.PropImgUrl1,
-                    PropImgUrl2 = house.PropImgUrl2,
-                    PropImgUrl3 = house.PropImgUrl3,
-                    PropImgUrl4 = house.PropImgUrl4,
-                    PropImgUrl5 = house.PropImgUrl5,
-                    PropImgUrl6 = house.PropImgUrl6,
-                    PropImgUrl7 = house.PropImgUrl7,
-                    PropImgUrl8 = house.PropImgUrl8,
-                    PropImgUrl9 = house.PropImgUrl9,
-                    PropImgUrl10 = house.PropImgUrl10,
-                    PropImgUrl11 = house.PropImgUrl11,
-                    PropImgUrl12 = house.PropImgUrl12,
-                    PropImgUrl13 = house.PropImgUrl13,
-                    PropImgUrl14 = house.PropImgUrl14,
-                    PropImgUrl15 = house.PropImgUrl15,
-                    PropImgUrl16 = house.PropImgUrl16,
-                    PropImgUrl17 = house.PropImgUrl17,
-                    PropImgUrl18 = house.PropImgUrl18,
-                    PropImgUrl19 = house.PropImgUrl19,
-                    PropImgUrl20 = house.PropImgUrl20,
-                    PropImgUrl21 = house.PropImgUrl21,
-                    PropImgUrl22 = house.PropImgUrl22,
-                    PropImgUrl23 = house.PropImgUrl23,
-                    PropImgUrl24 = house.PropImgUrl24,
-                    PropImgUrl25 = house.PropImgUrl25,
-                    PropImgUrl26 = house.PropImgUrl26,
-                    PropImgUrl27 = house.PropImgUrl27,
-                    PropImgUrl28 = house.PropImgUrl28,
-                    PropImgUrl29 = house.PropImgUrl29,
-                    PropImgUrl30 = house.PropImgUrl30
-                };
+        // konut dolu
+        Facade = house.Facade,
+        IsElevator = house.IsElevator,
+        GrossArea = house.GrossArea,
+        NetArea = house.NetArea,
+        OpenArea = house.OpenArea,
+        BuildingAge = house.BuildingAge,
+        TotalNumberOfFloor = house.TotalNumberOfFloor,
+        NumberOfFloors = house.NumberOfFloors,
+        NumberOfBathRoom = house.NumberOfBathRoom,
+        NumberOfRoom = house.NumberOfRoom,
+        Heating = house.Heating,
+        BlackBox = house.BlackBox,
+        NumberOfBalconies = house.NumberOfBalconies,
+        ParkingLot = house.ParkingLot,
+        Furnished = house.Furnished,
+        UsageStatus = house.UsageStatus,
+        WithinTheComplex = house.WithinTheComplex,
+        Dues = house.Dues,
+        HomeLoan = house.HomeLoan,
+
+        // ticari boş
+        NumberOfSection = null,
+        NumberOfKitchens = null,
+        NumberOfBathrooms = null,
+        Transferable = null,
+
+        AgentId = house.AgentId,
+        AgentName = agent.AgentName,
+        AgentTitle = agent.AgentTitle,
+        AgentImgUrl = agent.AgentImgUrl,
+
+        ListingType = "Konut",
+
+
+        PropImgUrl1 = house.PropImgUrl1,
+        PropImgUrl2 = house.PropImgUrl2,
+        PropImgUrl3 = house.PropImgUrl3,
+        PropImgUrl4 = house.PropImgUrl4,
+        PropImgUrl5 = house.PropImgUrl5,
+        PropImgUrl6 = house.PropImgUrl6,
+        PropImgUrl7 = house.PropImgUrl7,
+        PropImgUrl8 = house.PropImgUrl8,
+        PropImgUrl9 = house.PropImgUrl9,
+        PropImgUrl10 = house.PropImgUrl10,
+        PropImgUrl11 = house.PropImgUrl11,
+        PropImgUrl12 = house.PropImgUrl12,
+        PropImgUrl13 = house.PropImgUrl13,
+        PropImgUrl14 = house.PropImgUrl14,
+        PropImgUrl15 = house.PropImgUrl15,
+        PropImgUrl16 = house.PropImgUrl16,
+        PropImgUrl17 = house.PropImgUrl17,
+        PropImgUrl18 = house.PropImgUrl18,
+        PropImgUrl19 = house.PropImgUrl19,
+        PropImgUrl20 = house.PropImgUrl20,
+        PropImgUrl21 = house.PropImgUrl21,
+        PropImgUrl22 = house.PropImgUrl22,
+        PropImgUrl23 = house.PropImgUrl23,
+        PropImgUrl24 = house.PropImgUrl24,
+        PropImgUrl25 = house.PropImgUrl25,
+        PropImgUrl26 = house.PropImgUrl26,
+        PropImgUrl27 = house.PropImgUrl27,
+        PropImgUrl28 = house.PropImgUrl28,
+        PropImgUrl29 = house.PropImgUrl29,
+        PropImgUrl30 = house.PropImgUrl30
+    };
 
             var commercialQuery =
     from comm in _context.forSaleCommercialPropertyListings
@@ -145,107 +157,115 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
           && activeStatuses.Contains(comm.PropertyStatus)
     select new ForSalePropertyForListingViewModel
     {
-       
+
         ListingId = comm.ForSaleCommercialListingId,
-                    ListingTypeId = comm.ListingTypeId,
-                    PropertyNo = comm.PropertyNo,
-                    PropertyName = comm.PropertyName,
-                    PropertyDescription = comm.PropertyDescription,
-                    PropertyStatus = comm.PropertyStatus,
-                    CreatedDate = comm.CreatedDate,
-                    Price = comm.Price,
-                    TitleDeedStatus = comm.TitleDeedStatus,
-                    SourceType = 3 , // usage type 3 kullanarak satılık işyeri anlamına geliyor.
-                    UsageTypeId = (int)lt.UsageType,
+        ListingTypeId = comm.ListingTypeId,
+        PropertyNo = comm.PropertyNo,
+        PropertyName = comm.PropertyName,
+        PropertyDescription = comm.PropertyDescription,
+        PropertyStatus = comm.PropertyStatus,
+        CreatedDate = comm.CreatedDate,
+        Price = comm.Price,
+        TitleDeedStatus = comm.TitleDeedStatus,
+        SourceType = 3, // usage type 3 kullanarak satılık işyeri anlamına geliyor.
+        UsageTypeId = (int)lt.UsageType,
 
-                    City = comm.City,
-                    District = comm.District,
-                    Neighborhood = comm.Neighborhood,
-                    AddressDesc = comm.AddressDesc,
 
-                    // arsa boş
-                    Area = null,
-                    SharePercentage = null,
-                    PricePerSquareMeter = null,
-                    ParcelNumber = null,
-                    PlotNumber = null,
-                    MapSheetNumber = null,
-                    FloorAreaRatio = null,
-                    BaseAreaRatio = null,
-                    ZoningPlan = null,
-                    ZoningStatus = null,
-                    DevelopmentRight = null,
-                    LandLoan = null,
-                    Exchange = null,
-                    BestDeals = null,
-                    LandCategoryId = null,
-                    
+//        Highlights = new List<CardHighlightViewModel>
+//{
+//    new() { Icon = "icon-14", Text = $"{comm.Area} m²" },
+//    new() { Icon = "icon-15", Text = $"{comm.NumberOfFloors} Kat" },
+//    new() { Icon = "icon-16", Text = $"{comm.NumberOfSection} Bölüm" }
+//},
 
-                    // konut boş
-                    Facade = null,
-                    IsElevator = null,
-                    GrossArea = null,
-                    NetArea = null,
-                    OpenArea = null,
-                    BuildingAge = null,
-                    TotalNumberOfFloor = null,
-                    NumberOfFloors = null,
-                    NumberOfBathRoom = null,
-                    NumberOfRoom = null,
-                    Heating = null,
-                    BlackBox = null,
-                    NumberOfBalconies = null,
-                    ParkingLot = null,
-                    Furnished = null,
-                    UsageStatus = null,
-                    WithinTheComplex = null,
-                    Dues = null,
-                    HomeLoan = null,
+        City = comm.City,
+        District = comm.District,
+        Neighborhood = comm.Neighborhood,
+        AddressDesc = comm.AddressDesc,
 
-                    // ticari dolu
-                    NumberOfSection = comm.NumberOfSection,
-                    NumberOfKitchens = comm.NumberOfKitchens,
-                    NumberOfBathrooms = comm.NumberOfBathrooms,
-                    Transferable = comm.Transferable,
+        // arsa boş
+        Area = null,
+        SharePercentage = null,
+        PricePerSquareMeter = null,
+        ParcelNumber = null,
+        PlotNumber = null,
+        MapSheetNumber = null,
+        FloorAreaRatio = null,
+        BaseAreaRatio = null,
+        ZoningPlan = null,
+        ZoningStatus = null,
+        DevelopmentRight = null,
+        LandLoan = null,
+        Exchange = null,
+        BestDeals = null,
+        LandCategoryId = null,
 
-                    AgentId = comm.AgentId,
-                    AgentName = agent.AgentName,
-                    AgentTitle = agent.AgentTitle,
-                    AgentImgUrl = agent.AgentImgUrl,
 
-                    ListingType = "İşyeri",
+        // konut boş
+        Facade = null,
+        IsElevator = null,
+        GrossArea = null,
+        NetArea = null,
+        OpenArea = null,
+        BuildingAge = null,
+        TotalNumberOfFloor = null,
+        NumberOfFloors = null,
+        NumberOfBathRoom = null,
+        NumberOfRoom = null,
+        Heating = null,
+        BlackBox = null,
+        NumberOfBalconies = null,
+        ParkingLot = null,
+        Furnished = null,
+        UsageStatus = null,
+        WithinTheComplex = null,
+        Dues = null,
+        HomeLoan = null,
 
-                    PropImgUrl1 = comm.PropImgUrl1,
-                    PropImgUrl2 = comm.PropImgUrl2,
-                    PropImgUrl3 = comm.PropImgUrl3,
-                    PropImgUrl4 = comm.PropImgUrl4,
-                    PropImgUrl5 = comm.PropImgUrl5,
-                    PropImgUrl6 = comm.PropImgUrl6,
-                    PropImgUrl7 = comm.PropImgUrl7,
-                    PropImgUrl8 = comm.PropImgUrl8,
-                    PropImgUrl9 = comm.PropImgUrl9,
-                    PropImgUrl10 = comm.PropImgUrl10,
-                    PropImgUrl11 = comm.PropImgUrl11,
-                    PropImgUrl12 = comm.PropImgUrl12,
-                    PropImgUrl13 = comm.PropImgUrl13,
-                    PropImgUrl14 = comm.PropImgUrl14,
-                    PropImgUrl15 = comm.PropImgUrl15,
-                    PropImgUrl16 = comm.PropImgUrl16,
-                    PropImgUrl17 = comm.PropImgUrl17,
-                    PropImgUrl18 = comm.PropImgUrl18,
-                    PropImgUrl19 = comm.PropImgUrl19,
-                    PropImgUrl20 = comm.PropImgUrl20,
-                    PropImgUrl21 = comm.PropImgUrl21,
-                    PropImgUrl22 = comm.PropImgUrl22,
-                    PropImgUrl23 = comm.PropImgUrl23,
-                    PropImgUrl24 = comm.PropImgUrl24,
-                    PropImgUrl25 = comm.PropImgUrl25,
-                    PropImgUrl26 = comm.PropImgUrl26,
-                    PropImgUrl27 = comm.PropImgUrl27,
-                    PropImgUrl28 = comm.PropImgUrl28,
-                    PropImgUrl29 = comm.PropImgUrl29,
-                    PropImgUrl30 = comm.PropImgUrl30
-                };
+        // ticari dolu
+        NumberOfSection = comm.NumberOfSection,
+        NumberOfKitchens = comm.NumberOfKitchens,
+        NumberOfBathrooms = comm.NumberOfBathrooms,
+        Transferable = comm.Transferable,
+
+        AgentId = comm.AgentId,
+        AgentName = agent.AgentName,
+        AgentTitle = agent.AgentTitle,
+        AgentImgUrl = agent.AgentImgUrl,
+
+        ListingType = "İşyeri",
+
+        PropImgUrl1 = comm.PropImgUrl1,
+        PropImgUrl2 = comm.PropImgUrl2,
+        PropImgUrl3 = comm.PropImgUrl3,
+        PropImgUrl4 = comm.PropImgUrl4,
+        PropImgUrl5 = comm.PropImgUrl5,
+        PropImgUrl6 = comm.PropImgUrl6,
+        PropImgUrl7 = comm.PropImgUrl7,
+        PropImgUrl8 = comm.PropImgUrl8,
+        PropImgUrl9 = comm.PropImgUrl9,
+        PropImgUrl10 = comm.PropImgUrl10,
+        PropImgUrl11 = comm.PropImgUrl11,
+        PropImgUrl12 = comm.PropImgUrl12,
+        PropImgUrl13 = comm.PropImgUrl13,
+        PropImgUrl14 = comm.PropImgUrl14,
+        PropImgUrl15 = comm.PropImgUrl15,
+        PropImgUrl16 = comm.PropImgUrl16,
+        PropImgUrl17 = comm.PropImgUrl17,
+        PropImgUrl18 = comm.PropImgUrl18,
+        PropImgUrl19 = comm.PropImgUrl19,
+        PropImgUrl20 = comm.PropImgUrl20,
+        PropImgUrl21 = comm.PropImgUrl21,
+        PropImgUrl22 = comm.PropImgUrl22,
+        PropImgUrl23 = comm.PropImgUrl23,
+        PropImgUrl24 = comm.PropImgUrl24,
+        PropImgUrl25 = comm.PropImgUrl25,
+        PropImgUrl26 = comm.PropImgUrl26,
+        PropImgUrl27 = comm.PropImgUrl27,
+        PropImgUrl28 = comm.PropImgUrl28,
+        PropImgUrl29 = comm.PropImgUrl29,
+        PropImgUrl30 = comm.PropImgUrl30
+    };
 
             var landQuery =
                 from land in _context.forSaleLandListings
@@ -266,8 +286,15 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     CreatedDate = land.CreatedDate,
                     Price = land.Price,
                     TitleDeedStatus = land.TitleDeedStatus,
-                    SourceType=2, //usage type 2 - > satılık arsa anlamına geliyor
+                    SourceType = 2, //usage type 2 - > satılık arsa anlamına geliyor
                     UsageTypeId = (int)lt.UsageType,
+
+//                    Highlights = new List<CardHighlightViewModel>
+//{
+//    new() { Icon = "icon-14", Text = $"{land.Area} m²" },
+//    new() { Icon = "icon-15", Text = $"{land.ZoningStatus} " },
+//    new() { Icon = "icon-16", Text = $"{land.PricePerSquareMeter} TL/m²" }
+//},
 
                     City = land.City,
                     District = land.District,
@@ -1126,7 +1153,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             return listing;
         }
 
-      
+
         public async Task<List<ListingTypeFacetDto>> GetForSaleListingTypeFacetsAsync()
         {
             const int ForSaleUsageType = 1;
@@ -1177,7 +1204,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             s = s.Trim();
 
-        
+
             if (string.Equals(s, "string", StringComparison.OrdinalIgnoreCase))
                 return null;
 
@@ -1185,7 +1212,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         }
         public async Task<List<ForSalePropertyForListingViewModel>> GetFilteredForSalePropertyForListing(PropertyFilterRequest filter)
         {
-           
+
             var query = BuildForSaleListingQuery().AsNoTracking();
             filter.City = Normalize(filter.City);
             filter.District = Normalize(filter.District);
@@ -1238,10 +1265,42 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 .Take(pageSize)
                 .ToListAsync();
         }
-    public async Task<ForSaleFilterResponseResult> GetFilteredForSalePropertyForListingWithFacets(PropertyFilterRequest filter)
+        private static List<CardHighlightViewModel> BuildHighlights(ForSalePropertyForListingViewModel x)
+        {
+            var t = (x.ListingType ?? "").ToLowerInvariant();
+
+            if (t.Contains("konut"))
+            {
+                return new List<CardHighlightViewModel>
+        {
+            new() { Icon = "icon-14", Text = $"{x.NumberOfRoom ?? "-"} Oda" },
+            new() { Icon = "icon-15", Text = $"{(x.NumberOfBathRoom?.ToString() ?? "-")} Banyo" },
+            new() { Icon = "icon-16", Text = $"{(x.NetArea?.ToString() ?? x.GrossArea?.ToString() ?? "-")} m²" }
+        };
+            }
+
+            if (t.Contains("arsa"))
+            {
+                return new List<CardHighlightViewModel>
+        {
+            new() { Icon = "icon-14", Text = $"{(x.Area?.ToString() ?? "-")} m²" },
+            new() { Icon = "icon-15", Text = $"{(x.ZoningStatus ?? "-")}" },
+            new() { Icon = "icon-16", Text = $"{(x.PricePerSquareMeter?.ToString("N0") ?? "-")} TL/m²" }
+        };
+            }
+
+            // İşyeri
+            return new List<CardHighlightViewModel>
     {
-        // 1) Base query
-        var baseQuery = BuildForSaleListingQuery().AsNoTracking();
+        new() { Icon = "icon-14", Text = $"{(x.Area?.ToString() ?? x.GrossArea?.ToString() ?? "-")} m²" },
+        new() { Icon = "icon-15", Text = $"{(x.NumberOfFloors?.ToString() ?? "-")} Kat" },
+        new() { Icon = "icon-16", Text = $"{(x.NumberOfSection?.ToString() ?? "-")} Bölüm" }
+    };
+        }
+        public async Task<ForSaleFilterResponseResult> GetFilteredForSalePropertyForListingWithFacets(PropertyFilterRequest filter)
+        {
+            // 1) Base query
+            var baseQuery = BuildForSaleListingQuery().AsNoTracking();
 
             // 2) Normal filtreler
             if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
@@ -1249,52 +1308,52 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     filter.ListingTypeIds.Contains(x.ListingTypeId));
 
             if (!string.IsNullOrWhiteSpace(filter.City))
-            baseQuery = baseQuery.Where(x => x.City == filter.City);
+                baseQuery = baseQuery.Where(x => x.City == filter.City);
 
-        if (!string.IsNullOrWhiteSpace(filter.District))
-            baseQuery = baseQuery.Where(x => x.District == filter.District);
+            if (!string.IsNullOrWhiteSpace(filter.District))
+                baseQuery = baseQuery.Where(x => x.District == filter.District);
 
-        if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
-            baseQuery = baseQuery.Where(x => x.Neighborhood == filter.Neighborhood);
+            if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
+                baseQuery = baseQuery.Where(x => x.Neighborhood == filter.Neighborhood);
 
-        if (!string.IsNullOrWhiteSpace(filter.NumberOfRoom))
-            baseQuery = baseQuery.Where(x => x.NumberOfRoom == filter.NumberOfRoom);
+            if (!string.IsNullOrWhiteSpace(filter.NumberOfRoom))
+                baseQuery = baseQuery.Where(x => x.NumberOfRoom == filter.NumberOfRoom);
 
-        if (filter.MinPrice.HasValue)
-            baseQuery = baseQuery.Where(x => x.Price >= filter.MinPrice.Value);
+            if (filter.MinPrice.HasValue)
+                baseQuery = baseQuery.Where(x => x.Price >= filter.MinPrice.Value);
 
-        if (filter.MaxPrice.HasValue)
-            baseQuery = baseQuery.Where(x => x.Price <= filter.MaxPrice.Value);
+            if (filter.MaxPrice.HasValue)
+                baseQuery = baseQuery.Where(x => x.Price <= filter.MaxPrice.Value);
 
-        // 3) Amenities OR filtresi (ListingTypeId enum ile)
-        if (filter.SelectedAmenityIds != null && filter.SelectedAmenityIds.Any())
-        {
-            var selected = filter.SelectedAmenityIds;
+            // 3) Amenities OR filtresi (ListingTypeId enum ile)
+            if (filter.SelectedAmenityIds != null && filter.SelectedAmenityIds.Any())
+            {
+                var selected = filter.SelectedAmenityIds;
 
-            baseQuery = baseQuery.Where(x =>
-                (x.ListingTypeId == (int)PropertyListingType.ForSaleHousingListing &&
-                    _context.ForSaleHousingListingAmenities
-                        .Any(ha => ha.ForSaleHousingListId == x.ListingId && selected.Contains(ha.AmenityId)))
+                baseQuery = baseQuery.Where(x =>
+                    (x.ListingTypeId == (int)PropertyListingType.ForSaleHousingListing &&
+                        _context.ForSaleHousingListingAmenities
+                            .Any(ha => ha.ForSaleHousingListId == x.ListingId && selected.Contains(ha.AmenityId)))
 
-                ||
+                    ||
 
-                (x.ListingTypeId == (int)PropertyListingType.ForSaleLandListing &&
-                    _context.ForSaleLandListingAmenities
-                        .Any(la => la.ForSaleLandListId == x.ListingId && selected.Contains(la.AmenityId)))
+                    (x.ListingTypeId == (int)PropertyListingType.ForSaleLandListing &&
+                        _context.ForSaleLandListingAmenities
+                            .Any(la => la.ForSaleLandListId == x.ListingId && selected.Contains(la.AmenityId)))
 
-                ||
+                    ||
 
-                (x.ListingTypeId == (int)PropertyListingType.ForSaleCommercialPropertyListing &&
-                    _context.ForSaleCommercialListingAmenities
-                        .Any(ca => ca.ForSaleCommercialListingId     == x.ListingId && selected.Contains(ca.AmenityId)))
-            );
-        }
+                    (x.ListingTypeId == (int)PropertyListingType.ForSaleCommercialPropertyListing &&
+                        _context.ForSaleCommercialListingAmenities
+                            .Any(ca => ca.ForSaleCommercialListingId == x.ListingId && selected.Contains(ca.AmenityId)))
+                );
+            }
 
-        // 4) Total (pagination öncesi)
-        var total = await baseQuery.CountAsync();
+            // 4) Total (pagination öncesi)
+            var total = await baseQuery.CountAsync();
 
-        // 5) Facet için ID’ler (pagination öncesi!)
-        var filteredIds = baseQuery.Select(x => new { x.ListingId, x.SourceType });
+            // 5) Facet için ID’ler (pagination öncesi!)
+            var filteredIds = baseQuery.Select(x => new { x.ListingId, x.SourceType });
 
             var housingIds = filteredIds.Where(x => x.SourceType == 1).Select(x => x.ListingId);
             var landIds = filteredIds.Where(x => x.SourceType == 2).Select(x => x.ListingId);
@@ -1305,27 +1364,27 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             .GroupBy(ha => ha.AmenityId)
             .Select(g => new { AmenityId = g.Key, Count = g.Count() });
 
-        var landFacet = _context.ForSaleLandListingAmenities
-            .Where(la => landIds.Contains(la.ForSaleLandListId))
-            .GroupBy(la => la.AmenityId)
-            .Select(g => new { AmenityId = g.Key, Count = g.Count() });
+            var landFacet = _context.ForSaleLandListingAmenities
+                .Where(la => landIds.Contains(la.ForSaleLandListId))
+                .GroupBy(la => la.AmenityId)
+                .Select(g => new { AmenityId = g.Key, Count = g.Count() });
 
-        var commFacet = _context.ForSaleCommercialListingAmenities
-            .Where(ca => commIds.Contains(ca.ForSaleCommercialListingId))
-            .GroupBy(ca => ca.AmenityId)
-            .Select(g => new { AmenityId = g.Key, Count = g.Count() });
+            var commFacet = _context.ForSaleCommercialListingAmenities
+                .Where(ca => commIds.Contains(ca.ForSaleCommercialListingId))
+                .GroupBy(ca => ca.AmenityId)
+                .Select(g => new { AmenityId = g.Key, Count = g.Count() });
 
-        var mergedFacet = housingFacet
-            .Concat(landFacet)
-            .Concat(commFacet)
-            .GroupBy(x => x.AmenityId)
-            .Select(g => new { AmenityId = g.Key, Count = g.Sum(x => x.Count) });
+            var mergedFacet = housingFacet
+                .Concat(landFacet)
+                .Concat(commFacet)
+                .GroupBy(x => x.AmenityId)
+                .Select(g => new { AmenityId = g.Key, Count = g.Sum(x => x.Count) });
 
-        var selectedSet = (filter.SelectedAmenityIds ?? new List<int>()).ToHashSet();
+            var selectedSet = (filter.SelectedAmenityIds ?? new List<int>()).ToHashSet();
 
             var defs = await _context.AmenityDefinitions
     .AsNoTracking()
-    .Where(d => d.isActive) 
+    .Where(d => d.isActive)
     .Select(d => new
     {
         d.AmenityId,
@@ -1362,34 +1421,39 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             // 8) Sorting + Pagination (Items)
             var query = baseQuery; // baseQuery aynı filtre seti
 
-        var sortBy = (filter.SortBy ?? "CreatedDate").ToLowerInvariant();
-        var sortDir = (filter.SortDir ?? "desc").ToLowerInvariant();
+            var sortBy = (filter.SortBy ?? "CreatedDate").ToLowerInvariant();
+            var sortDir = (filter.SortDir ?? "desc").ToLowerInvariant();
 
-        query = (sortBy, sortDir) switch
-        {
-            ("price", "asc") => query.OrderBy(x => x.Price),
-            ("price", "desc") => query.OrderByDescending(x => x.Price),
-            ("createddate", "asc") => query.OrderBy(x => x.CreatedDate),
-            _ => query.OrderByDescending(x => x.CreatedDate),
-        };
+            query = (sortBy, sortDir) switch
+            {
+                ("price", "asc") => query.OrderBy(x => x.Price),
+                ("price", "desc") => query.OrderByDescending(x => x.Price),
+                ("createddate", "asc") => query.OrderBy(x => x.CreatedDate),
+                _ => query.OrderByDescending(x => x.CreatedDate),
+            };
 
-        var page = filter.Page < 1 ? 1 : filter.Page;
-        var pageSize = filter.PageSize is < 1 or > 100 ? 20 : filter.PageSize;
+            var page = filter.Page < 1 ? 1 : filter.Page;
+            var pageSize = filter.PageSize is < 1 or > 100 ? 20 : filter.PageSize;
 
-        var itemsVm = await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+            var itemsVm = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
-        // 9) Response (Items mapping Handler’da)
-        return new ForSaleFilterResponseResult
-        {
-            Total = total,
-            Items = itemsVm,          
-            Amenties = amenities   
-        };
+            foreach (var item in itemsVm)
+            {
+                item.Highlights = BuildHighlights(item);
+            }
+
+            // 9) Response (Items mapping Handler’da)
+            return new ForSaleFilterResponseResult
+            {
+                Total = total,
+                Items = itemsVm,
+                Amenties = amenities
+            };
+        }
     }
 }
-    }
-    
+
 

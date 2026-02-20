@@ -99,6 +99,8 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 SortDir = sortDir,
                 Page = page,
                 PageSize = pageSize
+                
+                
             };
 
 
@@ -132,6 +134,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 SelectedListingTypeIds = selectedIds,
 
                 Amenities = amenities, 
+                
 
                 CityId = cityId,
                 DistrictId = districtId,
