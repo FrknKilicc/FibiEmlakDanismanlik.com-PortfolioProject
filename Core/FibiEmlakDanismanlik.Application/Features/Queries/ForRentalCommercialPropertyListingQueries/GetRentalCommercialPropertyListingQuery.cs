@@ -8,13 +8,8 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Queries.RentalCommercialPropertyListingQueries
 {
-    public class GetRentalCommercialPropertyListingByIdQueryResult:IRequest<GetRentalCommercialPropertyListingByIdResult>
+    public class GetRentalCommercialPropertyListingQuery:IRequest<List<GetRentalCommercialPropertyListingResult>>
     {
-        public int Id { get; set; }
 
-        public GetRentalCommercialPropertyListingByIdQueryResult(int id)
-        {
-            Id = id;
-        }
     }
 }

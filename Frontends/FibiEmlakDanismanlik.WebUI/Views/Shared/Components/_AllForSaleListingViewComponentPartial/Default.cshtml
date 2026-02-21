@@ -21,7 +21,7 @@
         </div>
     </div>
 </section>
-<section class="property-page-section property-grid" style="padding:50px!important;">
+<section class="property-page-section property-grid" style="padding:110px 0 50px 0!important;">
     <div class="auto-container">
         <div class="row clearfix">
             <div class="col-lg-4 col-md-12 col-sm-12 sidebar-side">
@@ -176,7 +176,7 @@
             <div class="col-lg-8 col-md-12 col-sm-12 content-side">
                 <div class="property-content-side">
                     <div class="item-shorting clearfix">
-                        <div class="left-column pull-left">
+                        <div class="right-column pull-left">
                         <h5>Sonuç: <span>@Model.Total ilan bulundu</span></h5>
                         </div>
                         <div class="right-column pull-right clearfix">
@@ -215,8 +215,11 @@
                                             <div class="inner-box">
                                                 <div class="image-box">
                                                     <figure class="image"><img src="@item.PropImgUrl1" alt="image"></figure>
-                                                    <div class="batch"><i class="icon-11"></i></div>
-                                                    <span class="category">Featured</span>
+                                                    @if (item.BestDeals == true)
+                                                    {
+                                                        <div class="batch"><i class="icon-11"></i></div>
+                                                        <span class="category">En İyi Fiyat</span>
+                                                    }
                                                 </div>
                                                 <div class="lower-content">
                                                     <div class="author-info clearfix">
@@ -228,7 +231,7 @@
                                                             <a href="@Url.Action("Index","AllForSalePage")">@UsageBadgeText(item.UsageTypeId)</a>
                                                         </div>
                                                     </div>
-                                                    <div class="title-text"><h4><a asp-action="Index" asp-controller="AllForSaleDetailPageController" asp-route-id="@item.ListingId">@item.PropertyName</a></h4></div>
+                                                    <div class="title-text"><h4><a asp-action="Index" asp-controller="AllForSaleDetailPage" asp-route-id="@item.ListingId">@item.PropertyName</a></h4></div>
                                                     <div class="price-box clearfix">
                                                         <div class="price-info pull-left">
                                                             <h6>Fiyat</h6>
@@ -270,14 +273,12 @@
         </div>
     </div>
 </section>
-
 <style>
     .category-list li.disabled a,
     .category-list a.disabled {
         pointer-events: none;
         opacity: .45;
     }
-
     .category-list li:not(.disabled):not(.active) > a {
         color: #4b5563; /* koyu gri */
     }
@@ -288,18 +289,14 @@
         font-weight: 600;
         border-radius: 6px;
     }
-
         .category-list li.active > a span {
             color: #fff;
             opacity: .95;
         }
-
         .category-list li.active > a::before {
             border-color: #fff !important;
             background-color: #fff !important;
         }
-
-
     .category-list li.active::before {
         border-color: #fff !important;
         background-color: #fff !important;
@@ -312,12 +309,10 @@
         border-radius: 7px;
         
     }
-
     .category-list li.active > a,
     .category-list li.active > a * {
         color: #fff !important;
     }
-
         .category-list li.active > a span,
         .category-list li.active > a span * {
             color: #fff !important;
@@ -328,8 +323,6 @@
         .category-list li.active > a::after {
             color: #fff !important;
         }
-
-
 </style>
 
 

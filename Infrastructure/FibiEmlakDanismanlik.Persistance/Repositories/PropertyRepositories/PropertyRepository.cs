@@ -77,7 +77,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         DevelopmentRight = null,
         LandLoan = null,
         Exchange = null,
-        BestDeals = null,
+        BestDeals = house.BestDeals,
         LandCategoryId = null,
 
 
@@ -197,7 +197,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         DevelopmentRight = null,
         LandLoan = null,
         Exchange = null,
-        BestDeals = null,
+        BestDeals = comm.BestDeals,
         LandCategoryId = null,
 
 

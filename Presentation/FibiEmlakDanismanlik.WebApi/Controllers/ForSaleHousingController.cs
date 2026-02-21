@@ -28,7 +28,8 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         public async Task<IActionResult> CreateForSaleHousingListing(CreateForSaleHousingCommand command)
         {
             await _mediator.Send(command);
-            return Ok("Kayıt Başarıyla Eklendi");    
+            return Ok("Kayıt Başarıyla Eklendi");
         }
+
     }
 }

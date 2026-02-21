@@ -134,5 +134,28 @@ price-range alanı */
         color: #6b7280;
         pointer-events: none;
     }
+.property-page-section .item-shorting .left-column {
+    float: left; 
+}
+.property-page-section .item-shorting .right-column {
+    float: right; 
+}
+.property-page-section .item-shorting .short-box {
+    width: 260px;
+}
+.property-page-section .item-shorting .nice-select {
+    width: 100%;
+}
+.property-page-section .item-shorting .left-column {
+    text-align: left !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+}
 
+    .property-page-section .item-shorting .left-column h5 {
+        margin-left: 0 !important;
+    }
+.property-page-section .item-shorting {
+    text-align: left;
+}
 

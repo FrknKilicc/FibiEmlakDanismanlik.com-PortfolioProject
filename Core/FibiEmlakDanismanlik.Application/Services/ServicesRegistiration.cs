@@ -14,6 +14,7 @@ namespace FibiEmlakDanismanlik.Application.Services
         public static void AddApplicationService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(ServicesRegistiration).Assembly));
+            services.AddAutoMapper(typeof(ServicesRegistiration).Assembly);
         }
 
 

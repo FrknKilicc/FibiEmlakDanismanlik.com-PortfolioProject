@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FibiEmlakDanismanlik.Application.Features.Queries.RentalPropertyQueries
+namespace FibiEmlakDanismanlik.Application.Features.Queries.ForRentalPropertyQueries
 {
     public class GetLast10RentalPropertyQuery:IRequest<List<RentalPropertyBaseViewModel>>
     {

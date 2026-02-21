@@ -24,7 +24,10 @@
                         <div class="inner-box align-items-center">
                             <div style="height:100%" class="image-box">
                                 <figure style="height:100%" class="image"><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId"><img style="height:100%; object-fit:cover;" src="@item.BlogImgUrl" alt=""></a></figure>
-                                <a asp-controller ="Blog" asp-action="Detail" asp-route-id="@item.BlogId" class="feature">Öne Çıkanlar</a>
+                                @if (item.TopNews)
+                                {
+                                    <a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId" class="feature">Öne Çıkanlar</a>
+                                }
                             </div>
                             <div class="content-box">
                                 <h4><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">@item.BlogTitle</a></h4>

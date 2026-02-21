@@ -23,7 +23,10 @@
                         <div class="inner-box">
                             <div class="image-box">
                                 <figure class="image"><img src="@Model.BlogImgUrl" alt=""></figure>
-                                <span class="category">Featured</span>
+                                @if (Model.TopNews)
+                                {
+                                    <span class="category">Öne Çıkanlar</span>
+                                }
                             </div>
                             <div class="lower-content">
                                 <h3>@Model.BlogTitle.</h3>

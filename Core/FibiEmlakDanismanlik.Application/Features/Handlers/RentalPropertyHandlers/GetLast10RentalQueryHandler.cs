@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Queries.RentalPropertyQueries;
+﻿using FibiEmlakDanismanlik.Application.Features.Queries.ForRentalPropertyQueries;
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces;
 using FibiEmlakDanismanlik.Application.ViewModels;

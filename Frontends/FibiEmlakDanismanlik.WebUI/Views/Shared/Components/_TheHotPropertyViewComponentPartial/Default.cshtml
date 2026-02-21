@@ -14,9 +14,13 @@
                         <div class="col-lg-6 col-md-6 col-sm-12 deals-block">
                             <div class="image-box">
                                 <figure class="image"><img src="@item.PropImgUrl1" alt=""></figure>
-                                <div class="batch"><i class="icon-11"></i></div>
-                                <span class="category">Featured</span>
-                                <div class="buy-btn"><a href="/Realshed/property-details.html">For Buy</a></div>
+                              
+                                @if (item.BestDeals == true)
+                                {
+                                    <div class="batch"><i class="icon-11"></i></div>
+                                    <span class="category">En İyi Fiyat</span>
+                                }
+                                    <div class="buy-btn"><a href="/Realshed/property-details.html">For Buy</a></div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 deals-block">
