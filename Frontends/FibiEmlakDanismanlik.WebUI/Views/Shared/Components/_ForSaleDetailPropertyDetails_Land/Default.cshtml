@@ -1,0 +1,82 @@
+﻿@model FibiEmlakDanismanlik.Dto.PropertyDtos.ResultAllForSaleListinForPageDto
+
+@functions {
+    string YesNo(bool? v) => v == null ? "" : (v.Value ? "Evet" : "Hayır");
+    bool Has(string? s) => !string.IsNullOrWhiteSpace(s);
+}
+
+
+<ul class="list clearfix">
+
+    @if (Model.Area != null)
+    {
+        <li>Arsa Alanı (m²): <span>@Model.Area</span></li>
+    }
+    @if (Model.PricePerSquareMeter != null)
+    {
+        <li>
+            m² Birim Fiyatı:
+            <span>
+                @Model.PricePerSquareMeter.Value
+                .ToString("N2", new CultureInfo("tr-TR")) ₺
+            </span>
+        </li>
+    }
+
+    @* Tapu / İmar *@
+    @if (Has(Model.TitleDeedStatus))
+    {
+        <li>Tapu Durumu: <span>@Model.TitleDeedStatus</span></li>
+    }
+    @if (Has(Model.ZoningStatus))
+    {
+        <li>İmar Durumu: <span>@Model.ZoningStatus</span></li>
+    }
+    @if (Has(Model.ZoningPlan))
+    {
+        <li>İmar Planı: <span>@Model.ZoningPlan</span></li>
+    }
+
+    @* Ada/Parsel/Pafta *@
+    @if (Model.PlotNumber != null)
+    {
+        <li>Ada No: <span>@Model.PlotNumber</span></li>
+    }
+    @if (Model.ParcelNumber != null)
+    {
+        <li>Parsel No: <span>@Model.ParcelNumber</span></li>
+    }
+    @if (Model.MapSheetNumber != null)
+    {
+        <li>Pafta No: <span>@Model.MapSheetNumber</span></li>
+    }
+
+    @* Emsal bilgileri *@
+    @if (Model.FloorAreaRatio != null)
+    {
+        <li>KAKS (Emsal): <span>@Model.FloorAreaRatio</span></li>
+    }
+    @if (Model.BaseAreaRatio != null)
+    {
+        <li>TAKS: <span>@Model.BaseAreaRatio</span></li>
+    }
+
+    @* Diğer *@
+    @if (Model.SharePercentage != null)
+    {
+        <li>Hisse Oranı (%): <span>@Model.SharePercentage</span></li>
+    }
+    @if (Model.DevelopmentRight != null)
+    {
+        <li>Yapılaşma Hakkı: <span>@Model.DevelopmentRight</span></li>
+    }
+    @if (Model.LandLoan != null)
+    {
+        <li>Krediye Uygun: <span>@YesNo(Model.LandLoan)</span></li>
+    }
+    @if (Model.Exchange != null)
+    {
+        <li>Takas: <span>@YesNo(Model.Exchange)</span></li>
+    }
+
+</ul>

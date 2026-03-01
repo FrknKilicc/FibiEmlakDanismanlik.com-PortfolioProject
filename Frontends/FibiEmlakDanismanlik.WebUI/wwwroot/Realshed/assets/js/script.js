@@ -153,18 +153,6 @@
 	}
 
 
-	//LightBox / Fancybox
-	if($('.lightbox-image').length) {
-		$('.lightbox-image').fancybox({
-			openEffect  : 'fade',
-			closeEffect : 'fade',
-			helpers : {
-				media : {}
-			}
-		});
-	}
-
-
 	//Tabs Box
 	if($('.tabs-box').length){
 		$('.tabs-box .tab-buttons .tab-btn').on('click', function(e) {
@@ -183,9 +171,6 @@
 			}
 		});
 	}
-
-
-
 	//Accordion Box
 	if($('.accordion-box').length){
 		$(".accordion-box").on('click', '.acc-btn', function() {
@@ -208,8 +193,6 @@
 			}
 		});	
 	}
-
-
     //two-column-carousel
 	if ($('.two-column-carousel').length) {
 		$('.two-column-carousel').owlCarousel({
@@ -239,7 +222,6 @@
 		});    		
 	}
 
-
     //three-item-carousel
 	if ($('.three-item-carousel').length) {
 		$('.three-item-carousel').owlCarousel({
@@ -268,8 +250,6 @@
 			}
 		});    		
 	}
-
-
 	// Five Item Carousel
 	if ($('.five-item-carousel').length) {
 		$('.five-item-carousel').owlCarousel({
@@ -298,7 +278,6 @@
 			}
 		});    		
 	}
-
 	// Four Item Carousel
 	if ($('.four-item-carousel').length) {
 		$('.four-item-carousel').owlCarousel({
@@ -328,40 +307,53 @@
 		});    		
 	}
 
-
-	// single-item-carousel
-	if ($('.single-item-carousel').length) {
-		$('.single-item-carousel').owlCarousel({
-			loop:true,
-			margin:30,
-			nav:false,
-			smartSpeed: 500,
-			autoplay: 1000,
-			navText: [ '<span class="far fa-angle-left"></span>', '<span class="far fa-angle-right"></span>' ],
-			responsive:{
-				0:{
-					items:1
-				},
-				480:{
-					items:1
-				},
-				600:{
-					items:1
-				},
-				800:{
-					items:1
-				},			
-				1200:{
-					items:1
+	$(function () {
+		// Owl init
+		if ($.fn.owlCarousel) {
+			$('.single-item-carousel').each(function () {
+				var $el = $(this);
+				if (!$el.hasClass('owl-loaded')) {
+					$el.owlCarousel({
+						items: 1,
+						loop: true,
+						nav: true,
+						dots: false
+					});
 				}
+			});
+		} else {
+			console.warn('owlCarousel plugin yuklenmedi (dosya eksik veya 404).');
+		}
 
-			}
-		});    		
-	}
+		// Fancybox init (genel)
+		if ($.fn.fancybox) {
+			$('[data-fancybox]').fancybox({
+				buttons: ["zoom", "slideShow", "thumbs", "close"],
+				loop: true,
+				protect: true
+			});
+		}
+	});
+	$(document)
+		.off('click.fibiLightbox2')
+		.on('click.fibiLightbox2', '.single-item-carousel .image-box, .single-item-carousel .image-box img', function (e) {
 
+			e.preventDefault();
+			e.stopPropagation();
 
+			var $a = $(this).find('a.lightbox-image').first();
+			if (!$a.length) return;
 
+			var group = $a.attr('data-fancybox');
+			var $items = $('[data-fancybox="' + group + '"]');
+			var index = $items.index($a);
 
+			$.fancybox.open($items, {
+				buttons: ["zoom", "slideShow", "thumbs", "close"],
+				loop: true,
+				protect: true
+			}, index);
+		});
 	// deals Carousel
 	if ($('.deals-carousel').length) {
 		$('.deals-carousel').owlCarousel({
@@ -390,8 +382,6 @@
 			}
 		});    		
 	}
-
-
 	// banner-carousel
 	if ($('.banner-carousel').length) {
         $('.banner-carousel').owlCarousel({
@@ -420,13 +410,10 @@
             }
         });
     }
-
-
 	//Add One Page nav
 	if($('.scroll-nav').length) {
 		$('.scroll-nav').onePageNav();
 	}
-
 	//Sortable Masonary with Filters
 	function enableMasonry() {
 		if($('.sortable-masonry').length){
@@ -446,7 +433,6 @@
 					easing:'linear'
 				}
 			});
-			
 	
 			// Isotope Filter 
 			$filter.find('li').on('click', function(){
@@ -466,8 +452,6 @@
 				}
 				return false;
 			});
-	
-	
 			winDow.on('resize', function(){
 				var selector = $filter.find('li.active').attr('data-filter');
 
@@ -480,8 +464,6 @@
 					}
 				});
 			});
-	
-	
 			var filterItemA	= $('.filter-btns li');
 	
 			filterItemA.on('click', function(){
@@ -495,8 +477,6 @@
 	}
 	
 	enableMasonry();
-
-
 	//Price Range Slider
 	if($('.price-range-slider').length){
 		$( ".price-range-slider" ).slider({
@@ -527,7 +507,6 @@
 		$( "input.area-range" ).val( $( ".area-range-slider" ).slider( "values", 0 ) + " - sq ft" + $( ".area-range-slider" ).slider( "values", 1 ) );	
 	}
 
-
     // Progress Bar
 	if ($('.count-bar').length) {
 		$('.count-bar').appear(function(){
@@ -538,9 +517,9 @@
 
 	}
 
-
 	$(document).ready(function() {
       $('select:not(.ignore)').niceSelect();
+
     });
 
 
@@ -564,7 +543,6 @@
 	  	};
 	}
 
-
 	// page direction
 	function directionswitch() {
 	  	if ($('.page_direction').length) {
@@ -576,7 +554,6 @@
 			});
 	  	};
 	}
-
 
 	if($('.paroller').length){
 		$('.paroller').paroller({
@@ -602,8 +579,6 @@
 	        $('#datepicker').datepicker();
 	    };
 	}
-
-
 
 	// Time picker
 	function timepicker () {
@@ -642,8 +617,6 @@
 		})(jQuery);
 	});
 
-
-
 	/* ==========================================================================
    When document is Scrollig, do
    ========================================================================== */
@@ -651,8 +624,6 @@
 	$(window).on('scroll', function() {
 		headerStyle();
 	});
-
-	
 	
 	/* ==========================================================================
    When document is loaded, do
@@ -663,6 +634,5 @@
 		enableMasonry();
 	});
 
-	
-
 })(window.jQuery);
+

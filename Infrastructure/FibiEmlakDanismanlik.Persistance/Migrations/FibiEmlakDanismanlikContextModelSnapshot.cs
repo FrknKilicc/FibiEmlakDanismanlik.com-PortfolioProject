@@ -393,7 +393,7 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<bool>("LandLoan")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ListingTypeId")
+                    b.Property<int>("ListingTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Neighborhood")
@@ -604,7 +604,7 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<bool>("IsElevator")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ListingTypeId")
+                    b.Property<int>("ListingTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Neighborhood")
@@ -833,7 +833,7 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<bool?>("LandLoan")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ListingTypeId")
+                    b.Property<int>("ListingTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("MapSheetNumber")
@@ -1035,12 +1035,7 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MainCategoryId")
-                        .HasColumnType("int");
-
                     b.HasKey("HousingCategoryId");
-
-                    b.HasIndex("MainCategoryId");
 
                     b.ToTable("HousingCategories");
                 });
@@ -1057,12 +1052,7 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MainCategoryId")
-                        .HasColumnType("int");
-
                     b.HasKey("LandCategoryId");
-
-                    b.HasIndex("MainCategoryId");
 
                     b.ToTable("LandCategories");
                 });
@@ -1107,23 +1097,6 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("MainBanners");
                 });
 
-            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.MainCategory", b =>
-                {
-                    b.Property<int>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CategoryId");
-
-                    b.ToTable("MainCategories");
-                });
-
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", b =>
                 {
                     b.Property<int>("NeighborhoodId")
@@ -1145,6 +1118,29 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasIndex("DistrictId", "Name");
 
                     b.ToTable("Neighborhoods");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalCommercialListingAmenities", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AmenityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RentalCommercialListId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AmenityId");
+
+                    b.HasIndex("RentalCommercialListId");
+
+                    b.ToTable("RentalCommercialListingAmenities");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalCommercialPropertyListing", b =>
@@ -1553,6 +1549,29 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("rentalHousingListings");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalHousingListingAmenities", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AmenityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RentalHousingListId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AmenityId");
+
+                    b.HasIndex("RentalHousingListId");
+
+                    b.ToTable("RentalHousingListingAmenities");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalLandListing", b =>
                 {
                     b.Property<int>("RentalLandListingId")
@@ -1748,6 +1767,29 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("rentalLandListings");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalLandListingAmenities", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AmenityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RentalLandListingId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AmenityId");
+
+                    b.HasIndex("RentalLandListingId");
+
+                    b.ToTable("RentalLandListingAmenities");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.Service", b =>
                 {
                     b.Property<int>("ServiceId")
@@ -1861,7 +1903,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.ListingType", "ListingType")
                         .WithMany()
-                        .HasForeignKey("ListingTypeId");
+                        .HasForeignKey("ListingTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Agent");
 
@@ -1884,7 +1928,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.ListingType", "ListingType")
                         .WithMany()
-                        .HasForeignKey("ListingTypeId");
+                        .HasForeignKey("ListingTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Agent");
 
@@ -1928,7 +1974,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.ListingType", "ListingType")
                         .WithMany()
-                        .HasForeignKey("ListingTypeId");
+                        .HasForeignKey("ListingTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Agent");
 
@@ -1956,28 +2004,6 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Navigation("ForSaleLandListing");
                 });
 
-            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.HousingCategory", b =>
-                {
-                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.MainCategory", "MainCategory")
-                        .WithMany()
-                        .HasForeignKey("MainCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MainCategory");
-                });
-
-            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.LandCategory", b =>
-                {
-                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.MainCategory", "MainCategory")
-                        .WithMany()
-                        .HasForeignKey("MainCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MainCategory");
-                });
-
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", b =>
                 {
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.District", "District")
@@ -1987,6 +2013,25 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("District");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalCommercialListingAmenities", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.AmenityDefinition", "AmenityDefinition")
+                        .WithMany()
+                        .HasForeignKey("AmenityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.RentalCommercialPropertyListing", "RentalCommercialPropertyListing")
+                        .WithMany()
+                        .HasForeignKey("RentalCommercialListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AmenityDefinition");
+
+                    b.Navigation("RentalCommercialPropertyListing");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalCommercialPropertyListing", b =>
@@ -2031,6 +2076,25 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Navigation("ListingType");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalHousingListingAmenities", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.AmenityDefinition", "AmenityDefinition")
+                        .WithMany()
+                        .HasForeignKey("AmenityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.RentalHousingListing", "RentalHousingListing")
+                        .WithMany()
+                        .HasForeignKey("RentalHousingListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AmenityDefinition");
+
+                    b.Navigation("RentalHousingListing");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalLandListing", b =>
                 {
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Agent", "Agent")
@@ -2054,6 +2118,25 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Navigation("LandCategory");
 
                     b.Navigation("ListingType");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalLandListingAmenities", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.AmenityDefinition", "AmenityDefinition")
+                        .WithMany()
+                        .HasForeignKey("AmenityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.RentalLandListing", "RentalLandListing")
+                        .WithMany()
+                        .HasForeignKey("RentalLandListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AmenityDefinition");
+
+                    b.Navigation("RentalLandListing");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.Blog", b =>

@@ -1,4 +1,5 @@
-﻿using FibiEmlakDanismanlik.Domain.Entities;
+﻿using FibiEmlakDanismanlik.Application.ViewModels;
+using FibiEmlakDanismanlik.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -77,11 +78,14 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResul
         public string? AgentName { get; set; }
         public string? AgentTitle { get; set; }
         public string? AgentImgUrl { get; set; }
+        public string? AgentPhoneNumber { get; set; }
+        public string? Mail { get; set; }
 
         // İlan Türü
 
         [ForeignKey("ListingTypeId")]
         public string? ListingType { get; set; } // gerekbilir, arsa , konut,ticari
+        public List<AmenityItemViewModel> Amenities { get; set; } = new();
 
         //Images  
         public string? PropImgUrl1 { get; set; }

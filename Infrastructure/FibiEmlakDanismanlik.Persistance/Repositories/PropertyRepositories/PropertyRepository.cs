@@ -1,6 +1,7 @@
 ﻿using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
 using FibiEmlakDanismanlik.Application.Features.Results.AmenityFacetResults;
+using FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
 using FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces;
 using FibiEmlakDanismanlik.Application.ViewModels;
@@ -8,6 +9,7 @@ using FibiEmlakDanismanlik.Domain.DTOs;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
+using FibiEmlakDanismanlik.Persistence.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
@@ -56,12 +58,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         SourceType = 1,  // usage type 1 satılık konut 3 ise kiralık konut 
         UsageTypeId = (int)lt.UsageType,
 
-//        Highlights = new List<CardHighlightViewModel>
-//{
-//    new() { Icon = "icon-14", Text = $"{house.NumberOfRoom} Oda" },
-//    new() { Icon = "icon-15", Text = $"{house.NumberOfBathRoom} Banyo" },
-//    new() { Icon = "icon-16", Text = $"{house.NetArea} m²" }
-//},
+
 
         // arsa boş
         Area = null,
@@ -171,12 +168,12 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         UsageTypeId = (int)lt.UsageType,
 
 
-//        Highlights = new List<CardHighlightViewModel>
-//{
-//    new() { Icon = "icon-14", Text = $"{comm.Area} m²" },
-//    new() { Icon = "icon-15", Text = $"{comm.NumberOfFloors} Kat" },
-//    new() { Icon = "icon-16", Text = $"{comm.NumberOfSection} Bölüm" }
-//},
+        //        Highlights = new List<CardHighlightViewModel>
+        //{
+        //    new() { Icon = "icon-14", Text = $"{comm.Area} m²" },
+        //    new() { Icon = "icon-15", Text = $"{comm.NumberOfFloors} Kat" },
+        //    new() { Icon = "icon-16", Text = $"{comm.NumberOfSection} Bölüm" }
+        //},
 
         City = comm.City,
         District = comm.District,
@@ -289,12 +286,12 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     SourceType = 2, //usage type 2 - > satılık arsa anlamına geliyor
                     UsageTypeId = (int)lt.UsageType,
 
-//                    Highlights = new List<CardHighlightViewModel>
-//{
-//    new() { Icon = "icon-14", Text = $"{land.Area} m²" },
-//    new() { Icon = "icon-15", Text = $"{land.ZoningStatus} " },
-//    new() { Icon = "icon-16", Text = $"{land.PricePerSquareMeter} TL/m²" }
-//},
+                    //                    Highlights = new List<CardHighlightViewModel>
+                    //{
+                    //    new() { Icon = "icon-14", Text = $"{land.Area} m²" },
+                    //    new() { Icon = "icon-15", Text = $"{land.ZoningStatus} " },
+                    //    new() { Icon = "icon-16", Text = $"{land.PricePerSquareMeter} TL/m²" }
+                    //},
 
                     City = land.City,
                     District = land.District,
@@ -575,9 +572,25 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
         public async Task<ForSalePropertyForListingViewModel> GetUnifiedForSalePropertyById(int id)
         {
+            List<AmenityItemViewModel> amenities = new();
+
             var housingById = await _context.forSaleHousingPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleHousingListId == id);
+
             if (housingById != null)
             {
+                amenities = await _context.ForSaleHousingListingAmenities
+            .Where(x => x.ForSaleHousingListId == id && x.AmenityDefinition.isActive == true)
+            .Include(x => x.AmenityDefinition)
+            .Select(x => new AmenityItemViewModel
+            {
+                Id = x.AmenityDefinition.AmenityId,
+                Text = x.AmenityDefinition.Name,
+                Group = x.AmenityDefinition.GroupName,
+                SortOrder = x.AmenityDefinition.SortOrder
+            })
+            .OrderBy(x => x.Group)
+            .ThenBy(x => x.SortOrder)
+            .ToListAsync();
                 return new ForSalePropertyForListingViewModel
                 {
                     ListingId = housingById.ForSaleHousingListId,
@@ -617,6 +630,10 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     AgentImgUrl = housingById.Agent.AgentImgUrl,
                     BestDeals = housingById.BestDeals,
                     ListingType = "Konut",
+                    Amenities = amenities,
+                    AgentPhoneNumber =housingById.Agent.AgentPhoneNumber,
+                    Mail = housingById.Agent.Mail,
+                    
                     //Images
                     PropImgUrl1 = housingById.PropImgUrl1,
                     PropImgUrl10 = housingById.PropImgUrl10,
@@ -652,11 +669,26 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                 };
 
+
             }
             var land = await _context.forSaleLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x => x.LandCategory).FirstOrDefaultAsync(x => x.ForSaleLandListingId == id);
+            
 
             if (land != null)
             {
+                amenities = await _context.ForSaleLandListingAmenities
+            .Where(x => x.ForSaleLandListId == id && x.AmenityDefinition.isActive == true)
+            .Include(x => x.AmenityDefinition)
+            .Select(x => new AmenityItemViewModel
+            {
+                Id = x.AmenityDefinition.AmenityId,          
+                Text = x.AmenityDefinition.Name,
+                Group = x.AmenityDefinition.GroupName,
+                SortOrder = x.AmenityDefinition.SortOrder
+            })
+            .OrderBy(x => x.Group)
+            .ThenBy(x => x.SortOrder)
+            .ToListAsync();
                 return new ForSalePropertyForListingViewModel
                 {
                     ListingId = land.ForSaleLandListingId,
@@ -691,6 +723,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     AgentTitle = land.Agent.AgentTitle,
                     BestDeals = land.BestDeals,
                     ListingType = "Arsa",
+                    AgentPhoneNumber = land.Agent.AgentPhoneNumber,
+                    Mail = land.Agent.Mail,
 
                     //Images 
                     PropImgUrl1 = land.PropImgUrl1,
@@ -731,6 +765,19 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             var commercialById = await _context.forSaleCommercialPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleCommercialListingId == id);
             if (commercialById != null)
             {
+                amenities = await _context.ForSaleCommercialListingAmenities
+            .Where(x => x.ForSaleCommercialListingId == id && x.AmenityDefinition.isActive== true)
+            .Include(x => x.AmenityDefinition)
+            .Select(x => new AmenityItemViewModel
+            {
+                Id = x.AmenityDefinition.AmenityId,         
+                Text = x.AmenityDefinition.Name,
+                Group = x.AmenityDefinition.GroupName,
+                SortOrder = x.AmenityDefinition.SortOrder
+            })
+            .OrderBy(x => x.Group)
+            .ThenBy(x => x.SortOrder)
+            .ToListAsync();
                 return new ForSalePropertyForListingViewModel
                 {
                     ListingId = commercialById.ForSaleCommercialListingId,
@@ -762,6 +809,9 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     AgentImgUrl = commercialById.Agent.AgentImgUrl,
                     AgentTitle = commercialById.Agent.AgentTitle,
                     ListingType = "İşyeri",
+                    Amenities=amenities,
+                    Mail =commercialById.Agent.Mail,
+                    AgentPhoneNumber =commercialById.Agent.AgentPhoneNumber,
                     //Images 
                     PropImgUrl1 = commercialById.PropImgUrl1,
                     PropImgUrl10 = commercialById.PropImgUrl10,
@@ -1452,6 +1502,444 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 Items = itemsVm,
                 Amenties = amenities
             };
+        }
+
+        public async Task<List<ListingTypeFacetDto>> GetForRentalListingTypeFacetsAsync()
+        {
+            var activeStatuses = PropertyStatuses.ActiveSet;
+
+            var listingTypes = await _context.listingTypes
+                .AsNoTracking()
+                .Where(x => x.UsageType == UsageType.ForRent)
+                .Select(x => new { x.ListingTypeId, x.Name })
+                .ToListAsync();
+
+            var housingTypeIds = _context.rentalHousingListings.AsNoTracking()
+.Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null).Select(x => x.ListingTypeId);
+
+            var landTypeIds = _context.rentalLandListings.AsNoTracking()
+.Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null).Select(x => x.ListingTypeId);
+
+            var commTypeIds = _context.rentalCommercialPropertyListings.AsNoTracking()
+.Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null).Select(x => x.ListingTypeId);
+
+            var groupedCounts = await housingTypeIds.Concat(landTypeIds).Concat(commTypeIds)
+                .Where(id => id != null)
+                .GroupBy(id => id!)
+                .Select(g => new { ListingTypeId = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            return listingTypes
+                .Select(lt => new ListingTypeFacetDto
+                {
+                    ListingTypeId = lt.ListingTypeId,
+                    Name = lt.Name,
+                    Count = groupedCounts.FirstOrDefault(x => x.ListingTypeId == lt.ListingTypeId)?.Count ?? 0
+                })
+                .OrderBy(x => x.ListingTypeId)
+                .ToList();
+        }
+        private static List<string> CollectImages(params string?[] urls)
+        {
+            return urls.Where(u => !string.IsNullOrWhiteSpace(u)).ToList()!;
+        }
+        private IQueryable<RentalHousingListingResult> BuildRentalHousingQuery(PropertyFilterRequest filter)
+        {
+            var activeStatuses = PropertyStatuses.ActiveSet;
+
+            var query =
+                from h in _context.rentalHousingListings
+                join a in _context.Agents on h.AgentId equals a.AgentId
+                join lt in _context.listingTypes on h.ListingTypeId equals lt.ListingTypeId
+                where lt.UsageType == UsageType.ForRent
+                      && h.PropertyStatus != null
+                      && activeStatuses.Contains(h.PropertyStatus)
+                select new RentalHousingListingResult
+                {
+                    ItemType = "housing",
+                    ListingId = h.RentalHousingListId,
+                    ListingTypeId = h.ListingTypeId ?? 0,
+                    UsageTypeId = (int)lt.UsageType,
+
+                    PropertyNo = h.PropertyNo,
+                    PropertyName = h.PropertyName,
+                    PropertyDescription = h.PropertyDescription,
+                    PropertyStatus = h.PropertyStatus,
+                    CreatedDate = h.CreatedDate,
+
+                    Price = h.Rent,
+
+                    Deposit = h.Deposit,
+
+                    BestDeals = h.BestDeals,
+
+                    City = h.City,
+                    District = h.District,
+                    Neighborhood = h.Neighborhood,
+                    AddressDesc = h.AddressDesc,
+
+                    AgentId = h.AgentId,
+                    AgentName = a.AgentName,
+                    AgentTitle = a.AgentTitle,
+                    AgentImgUrl = a.AgentImgUrl,
+
+                    ImageUrls = CollectImages(
+                        h.PropImgUrl1, h.PropImgUrl2, h.PropImgUrl3, h.PropImgUrl4, h.PropImgUrl5,
+                        h.PropImgUrl6, h.PropImgUrl7, h.PropImgUrl8, h.PropImgUrl9, h.PropImgUrl10,
+                        h.PropImgUrl11, h.PropImgUrl12, h.PropImgUrl13, h.PropImgUrl14, h.PropImgUrl15,
+                        h.PropImgUrl16, h.PropImgUrl17, h.PropImgUrl18, h.PropImgUrl19, h.PropImgUrl20,
+                        h.PropImgUrl21, h.PropImgUrl22, h.PropImgUrl23, h.PropImgUrl24, h.PropImgUrl25,
+                        h.PropImgUrl26, h.PropImgUrl27, h.PropImgUrl28, h.PropImgUrl29, h.PropImgUrl30
+                    ),
+
+                    // Konut özel alanlar
+                    HousingCategoryId = h.HousingCategoryId,
+                    Facade = h.Facade,
+                    IsElevator = h.IsElevator,
+                    GrossArea = h.GrossArea,
+                    NetArea = h.NetArea,
+                    OpenArea = h.OpenArea,
+                    BuildingAge = h.BuildingAge,
+                    TotalNumberOfFloor = h.TotalNumberOfFloor,
+                    NumberOfFloors = h.NumberOfFloors,
+                    NumberOfBathRoom = h.NumberOfBathRoom,
+                    NumberOfRoom = h.NumberOfRoom,
+                    Heating = h.Heating,
+                    BlackBox = h.BlackBox,
+                    NumberOfBalconies = h.NumberOfBalconies,
+                    ParkingLot = h.ParkingLot,
+                    Furnished = h.Furnished,
+                    WithinTheComplex = h.WithinTheComplex,
+                    Dues = h.Dues
+                };
+
+            if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
+                query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
+
+            if (!string.IsNullOrWhiteSpace(filter.City))
+                query = query.Where(x => x.City == filter.City);
+
+            if (!string.IsNullOrWhiteSpace(filter.District))
+                query = query.Where(x => x.District == filter.District);
+
+            if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
+                query = query.Where(x => x.Neighborhood == filter.Neighborhood);
+
+            if (filter.MinPrice.HasValue)
+                query = query.Where(x => x.Price >= filter.MinPrice.Value);
+
+            if (filter.MaxPrice.HasValue)
+                query = query.Where(x => x.Price <= filter.MaxPrice.Value);
+
+            if (!string.IsNullOrWhiteSpace(filter.NumberOfRoom))
+                query = query.Where(x => x.NumberOfRoom == filter.NumberOfRoom);
+
+            return query;
+        }
+        private IQueryable<RentalLandListingResult> BuildRentalLandQuery(PropertyFilterRequest filter)
+        {
+            var activeStatuses = PropertyStatuses.ActiveSet;
+
+            var query =
+                from l in _context.rentalLandListings
+                join a in _context.Agents on l.AgentId equals a.AgentId
+                join lt in _context.listingTypes on l.ListingTypeId equals lt.ListingTypeId
+                where lt.UsageType == UsageType.ForRent
+                      && l.PropertyStatus != null
+                      && activeStatuses.Contains(l.PropertyStatus)
+                select new RentalLandListingResult
+                {
+                    ItemType = "land",
+                    ListingId = l.RentalLandListingId,
+                    ListingTypeId = l.ListingTypeId ?? 0,
+                    UsageTypeId = (int)lt.UsageType,
+
+                    PropertyNo = l.PropertyNo,
+                    PropertyName = l.PropertyName,
+                    PropertyDescription = l.PropertyDescription,
+                    PropertyStatus = l.PropertyStatus,
+                    CreatedDate = l.CreatedDate,
+
+                    Price = l.Rent,
+                    BestDeals = l.BestDeals,
+
+                    City = l.City,
+                    District = l.District,
+                    Neighborhood = l.Neighborhood,
+                    AddressDesc = l.AddressDesc,
+
+                    AgentId = l.AgentId,
+                    AgentName = a.AgentName,
+                    AgentTitle = a.AgentTitle,
+                    AgentImgUrl = a.AgentImgUrl,
+
+                    ImageUrls = CollectImages(l.PropImgUrl1),
+
+                    // Arsa özel
+                    LandCategoryId = l.LandCategoryId,
+                    ZoningStatus = l.ZoningStatus,
+                    Area = l.Area,
+                    PricePerSquareMeter = l.PricePerSquareMeter,
+                    ParcelNumber = l.ParcelNumber,
+                    PlotNumber = l.PlotNumber,
+                    MapSheetNumber = l.MapSheetNumber,
+                    FloorAreaRatio = l.FloorAreaRatio,
+                    BaseAreaRatio = l.BaseAreaRatio,
+                    ZoningPlan = l.ZoningPlan,
+                    DevelopmentRight = l.DevelopmentRight
+                };
+
+            // Ortak filtreler
+            if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
+                query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
+
+            if (!string.IsNullOrWhiteSpace(filter.City))
+                query = query.Where(x => x.City == filter.City);
+
+            if (!string.IsNullOrWhiteSpace(filter.District))
+                query = query.Where(x => x.District == filter.District);
+
+            if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
+                query = query.Where(x => x.Neighborhood == filter.Neighborhood);
+
+            if (filter.MinPrice.HasValue)
+                query = query.Where(x => x.Price >= filter.MinPrice.Value);
+
+            if (filter.MaxPrice.HasValue)
+                query = query.Where(x => x.Price <= filter.MaxPrice.Value);
+
+            return query;
+        }
+        private IQueryable<RentalCommercialListingResult> BuildRentalCommercialQuery(PropertyFilterRequest filter)
+        {
+            var activeStatuses = PropertyStatuses.ActiveSet;
+
+            var query =
+                from c in _context.rentalCommercialPropertyListings
+                join a in _context.Agents on c.AgentId equals a.AgentId
+                join lt in _context.listingTypes on c.ListingTypeId equals lt.ListingTypeId
+                where lt.UsageType == UsageType.ForRent
+                      && c.PropertyStatus != null
+                      && activeStatuses.Contains(c.PropertyStatus)
+                select new RentalCommercialListingResult
+                {
+                    ItemType = "commercial",
+                    ListingId = c.RentalCommercialListId,
+                    ListingTypeId = c.ListingTypeId ?? 0,
+                    UsageTypeId = (int)lt.UsageType,
+
+                    PropertyNo = c.PropertyNo,
+                    PropertyName = c.PropertyName,
+                    PropertyDescription = c.PropertyDescription,
+                    PropertyStatus = c.PropertyStatus,
+                    CreatedDate = c.CreatedDate,
+
+                    Price = c.Rent,
+
+                    Deposit = c.Deposit,
+
+                    BestDeals = c.BestDeals,
+
+                    City = c.City,
+                    District = c.District,
+                    Neighborhood = c.Neighborhood,
+                    AddressDesc = c.AddressDesc,
+
+                    AgentId = c.AgentId,
+                    AgentName = a.AgentName,
+                    AgentTitle = a.AgentTitle,
+                    AgentImgUrl = a.AgentImgUrl,
+
+                    ImageUrls = CollectImages(c.PropImgUrl1),
+
+                    // İşyeri özel
+                    Facade = c.Facade,
+                    NumberOfSection = c.NumberOfSection,
+                    NumberOfKitchens = c.NumberOfKitchens,
+                    NumberOfBathrooms = c.NumberOfBathrooms,
+                    NumberOfFloors = c.NumberOfFloors,
+                    GrossArea = c.GrossArea,
+                    NetArea = c.NetArea,
+                    BuildingAge = c.BuildingAge,
+                    Heating = c.Heating
+                };
+
+            // Ortak filtreler
+            if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
+                query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
+
+            if (!string.IsNullOrWhiteSpace(filter.City))
+                query = query.Where(x => x.City == filter.City);
+
+            if (!string.IsNullOrWhiteSpace(filter.District))
+                query = query.Where(x => x.District == filter.District);
+
+            if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
+                query = query.Where(x => x.Neighborhood == filter.Neighborhood);
+
+            if (filter.MinPrice.HasValue)
+                query = query.Where(x => x.Price >= filter.MinPrice.Value);
+
+            if (filter.MaxPrice.HasValue)
+                query = query.Where(x => x.Price <= filter.MaxPrice.Value);
+
+            return query;
+        }
+        public async Task<RentalListingFilterResponseResult> GetFilteredForRentalPropertyForListingWithFacets(PropertyFilterRequest filter)
+        {
+            var selectedIds = (filter.SelectedAmenityIds ?? new List<int>()).Distinct().ToArray();
+            var selectedCount = selectedIds.Length;
+            var selectedSet = selectedIds.ToHashSet();
+
+
+            var baseHousingQuery = BuildRentalHousingQuery(filter);
+            var baseLandQuery = BuildRentalLandQuery(filter);
+            var baseCommercialQuery = BuildRentalCommercialQuery(filter);
+
+            if (selectedCount > 0)
+            {
+                var housingMatchedIds =
+                    _context.RentalHousingListingAmenities
+                        .Where(x => selectedIds.Contains(x.AmenityId))
+                        .GroupBy(x => x.RentalHousingListId)
+                        .Where(g => g.Select(x => x.AmenityId).Distinct().Count() == selectedCount)
+                        .Select(g => g.Key);
+
+                var landMatchedIds =
+                    _context.RentalLandListingAmenities
+                        .Where(x => selectedIds.Contains(x.AmenityId))
+                        .GroupBy(x => x.RentalLandListingId)
+                        .Where(g => g.Select(x => x.AmenityId).Distinct().Count() == selectedCount)
+                        .Select(g => g.Key);
+
+                var commercialMatchedIds =
+                    _context.RentalCommercialListingAmenities
+                        .Where(x => selectedIds.Contains(x.AmenityId))
+                        .GroupBy(x => x.RentalCommercialListId)
+                        .Where(g => g.Select(x => x.AmenityId).Distinct().Count() == selectedCount)
+                        .Select(g => g.Key);
+
+                baseHousingQuery = baseHousingQuery.Where(x => housingMatchedIds.Contains(x.ListingId));
+                baseLandQuery = baseLandQuery.Where(x => landMatchedIds.Contains(x.ListingId));
+                baseCommercialQuery = baseCommercialQuery.Where(x => commercialMatchedIds.Contains(x.ListingId));
+            }
+
+            var baseHousingIds = baseHousingQuery.Select(x => x.ListingId);
+            var baseLandIds = baseLandQuery.Select(x => x.ListingId);
+            var baseCommercialIds = baseCommercialQuery.Select(x => x.ListingId);
+
+            var housingList = await baseHousingQuery.AsNoTracking().ToListAsync();
+            var landList = await baseLandQuery.AsNoTracking().ToListAsync();
+            var commercialList = await baseCommercialQuery.AsNoTracking().ToListAsync();
+
+
+            var all = new List<RentalListingBaseResult>();
+            all.AddRange(housingList);
+            all.AddRange(landList);
+            all.AddRange(commercialList);
+
+
+            var housingCounts = await _context.RentalHousingListingAmenities
+                .Where(x => baseHousingIds.Contains(x.RentalHousingListId))
+                .GroupBy(x => x.AmenityId)
+                .Select(g => new { AmenityId = g.Key, Cnt = g.Select(x => x.RentalHousingListId).Distinct().Count() })
+                .ToListAsync();
+
+            var landCounts = await _context.RentalLandListingAmenities
+                .Where(x => baseLandIds.Contains(x.RentalLandListingId))
+                .GroupBy(x => x.AmenityId)
+                .Select(g => new { AmenityId = g.Key, Cnt = g.Select(x => x.RentalLandListingId).Distinct().Count() })
+                .ToListAsync();
+
+            var commercialCounts = await _context.RentalCommercialListingAmenities
+                .Where(x => baseCommercialIds.Contains(x.RentalCommercialListId))
+                .GroupBy(x => x.AmenityId)
+                .Select(g => new { AmenityId = g.Key, Cnt = g.Select(x => x.RentalCommercialListId).Distinct().Count() })
+                .ToListAsync();
+
+            var countMap = new Dictionary<int, int>();
+
+            foreach (var x in housingCounts) countMap[x.AmenityId] = countMap.GetValueOrDefault(x.AmenityId) + x.Cnt;
+            foreach (var x in landCounts) countMap[x.AmenityId] = countMap.GetValueOrDefault(x.AmenityId) + x.Cnt;
+            foreach (var x in commercialCounts) countMap[x.AmenityId] = countMap.GetValueOrDefault(x.AmenityId) + x.Cnt;
+
+            var total = all.Count;
+
+            // Sort 
+            var sortBy = (filter.SortBy ?? "CreatedDate").ToLowerInvariant();
+            var sortDir = (filter.SortDir ?? "desc").ToLowerInvariant();
+
+            IEnumerable<RentalListingBaseResult> sorted = (sortBy, sortDir) switch
+            {
+                ("price", "asc") => all.OrderBy(x => x.Price),
+                ("price", "desc") => all.OrderByDescending(x => x.Price),
+                ("createddate", "asc") => all.OrderBy(x => x.CreatedDate),
+                _ => all.OrderByDescending(x => x.CreatedDate),
+            };
+
+            // Pagination 
+            var page = filter.Page < 1 ? 1 : filter.Page;
+            var pageSize = filter.PageSize is < 1 or > 100 ? 20 : filter.PageSize;
+
+            var items = sorted
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+            foreach (var item in items)
+                item.Highlights = BuildHighlightsForRental(item);
+            var defs = await _context.AmenityDefinitions
+                .AsNoTracking()
+                .Where(d => d.isActive)
+                .Select(d => new { d.AmenityId, d.Name, d.GroupName, d.SortOrder })
+                .ToListAsync();
+            var amenities = defs
+                .Select(d =>
+                {
+                    var cnt = countMap.GetValueOrDefault(d.AmenityId);
+                    return new AmenityFacetResult
+                    {
+                        Id = d.AmenityId,
+                        Text = d.Name,
+                        Group = d.GroupName,
+                        SortOrder = d.SortOrder,
+                        Count = cnt,
+                        Selected = selectedSet.Contains(d.AmenityId),
+                        Disabled = cnt == 0
+                    };
+                })
+                .OrderBy(x => x.Group)
+                .ThenBy(x => x.SortOrder)
+                .ThenBy(x => x.Text)
+                .ToList();
+            return new RentalListingFilterResponseResult
+            {
+                Total = total,
+                Items = items,
+                Amenties = amenities
+            };
+        }
+
+        private static List<string> BuildHighlightsForRental(RentalListingBaseResult item)
+        {
+            var list = new List<string>();
+
+            if (item.Price.HasValue) list.Add($"{item.Price.Value:n0} ₺");
+
+            if (item is RentalHousingListingResult h)
+            {
+                if (!string.IsNullOrWhiteSpace(h.NumberOfRoom)) list.Add(h.NumberOfRoom);
+                if (h.GrossArea.HasValue) list.Add($"{h.GrossArea.Value:n0} m²");
+            }
+            else if (item is RentalLandListingResult l)
+            {
+                if (l.Area.HasValue) list.Add($"{l.Area.Value:n0} m²");
+            }
+            else if (item is RentalCommercialListingResult c)
+            {
+                if (c.GrossArea.HasValue) list.Add($"{c.GrossArea.Value:n0} m²");
+            }
+
+            return list;
         }
     }
 }

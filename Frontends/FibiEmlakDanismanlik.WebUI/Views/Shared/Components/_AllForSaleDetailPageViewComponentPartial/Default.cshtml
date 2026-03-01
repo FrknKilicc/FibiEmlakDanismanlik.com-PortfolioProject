@@ -1,8 +1,5 @@
-﻿   
- @model ResultAllForSaleListinForPageDto
+﻿ @model ResultAllForSaleListinForPageDto
 
-<!--Page Title-->
-<<!--Page Title-->
 <section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
     <div class="auto-container">
         <div class="content-box clearfix">
@@ -39,7 +36,7 @@
             <div class="right-column pull-right clearfix">
                 <div class="price-inner clearfix">
                     <ul class="category clearfix pull-left">
-                        <li><a href="property-details.html">Bina</a></li>
+                        <li><a href="property-details.html">@Model.ListingType</a></li>
                         <li><a href="property-details.html">@Model.PropertyStatus</a></li>
                     </ul>
                     <div class="price-box pull-right">
@@ -57,12 +54,50 @@
         <div class="row clearfix">
             <div class="col-lg-8 col-md-12 col-sm-12 content-side">
                 <div class="property-details-content">
+                    @using System.Linq
+                    @{
+                        var imgs = new List<string?> {
+                                        Model.PropImgUrl1, Model.PropImgUrl2, Model.PropImgUrl3, Model.PropImgUrl4,
+                                        Model.PropImgUrl5, Model.PropImgUrl6, Model.PropImgUrl7, Model.PropImgUrl8,
+                                        Model.PropImgUrl9, Model.PropImgUrl10,
+                                        Model.PropImgUrl11, Model.PropImgUrl12, Model.PropImgUrl13, Model.PropImgUrl14, Model.PropImgUrl15,
+                                        Model.PropImgUrl16, Model.PropImgUrl17, Model.PropImgUrl18, Model.PropImgUrl19, Model.PropImgUrl20,
+                                        Model.PropImgUrl21, Model.PropImgUrl22, Model.PropImgUrl23, Model.PropImgUrl24, Model.PropImgUrl25,
+                                        Model.PropImgUrl26, Model.PropImgUrl27, Model.PropImgUrl28, Model.PropImgUrl29, Model.PropImgUrl30
+                                        }
+                        .Where(x => !string.IsNullOrWhiteSpace(x) && x != "string")
+                        .Distinct()
+                        .ToList();
+
+                        string NormalizeImgUrl(string raw)
+                        {
+                            raw = raw.Trim();
+
+                            // zaten full url ise dokunma
+                            if (raw.StartsWith("http://") || raw.StartsWith("https://"))
+                                return raw;
+
+                            // "/uploads/a.jpg" gibi ise "~" ile absolute yap
+                            if (raw.StartsWith("/"))
+                                return Url.Content("~" + raw);
+
+                            // "uploads/a.jpg" gibi ise kökten başlat
+                            return Url.Content("~/" + raw);
+                        }
+                    }
+
                     <div class="carousel-inner">
                         <div class="single-item-carousel owl-carousel owl-theme owl-dots-none">
-                            <figure class="image-box"><img src="@Model.PropImgUrl1" alt=""></figure>
-                            <figure class="image-box"><img src="@Model.PropImgUrl2" alt=""></figure>
-                            <figure class="image-box"><img src="@Model.PropImgUrl3" alt=""></figure>
-                            <figure class="image-box"><img src="@Model.PropImgUrl4" alt=""></figure>
+                            @foreach (var url in imgs)
+                            {
+                                var fixedUrl = NormalizeImgUrl(url!);
+
+                                <figure class="image-box">
+                                    <a class="lightbox-image" href="@fixedUrl" data-fancybox="property-gallery">
+                                        <img src="@fixedUrl" alt="">
+                                    </a>
+                                </figure>
+                            }
                         </div>
                     </div>
                     <div class="discription-box content-widget">
@@ -77,38 +112,31 @@
                         <div class="title-box">
                             <h4>İlan Detayları</h4>
                         </div>
-                        <ul class="list clearfix">
-                            <li>İlan ID: <span>@Model.PropertyNo</span></li>
-                            <li>Rooms: <span>06</span></li>
-                            <li>Garage Size: <span>200 Sq Ft</span></li>
-                            <li>Fiyat:<span>@Model.Price.ToString("N0") TL</span></li>
-                            <li>Bedrooms: <span>04</span></li>
-                            <li>Year Built: <span>01 April, 2019</span></li>
-                            <li>Property Type: <span>Apertment</span></li>
-                            <li>Bathrooms: <span>03</span></li>
-                            <li>Property Status: <span>For Sale</span></li>
-                            <li>Property Size: <span>2024 Sq Ft</span></li>
-                            <li>Garage: <span>01</span></li>
-                        </ul>
+                        @{
+                            var lt = Model?.ListingType?.Trim();
+                        }
+                        @if (lt == "Konut")
+                        {
+                            @await Html.PartialAsync("~/Views/Shared/Components/_ForSaleDetailPropertyDetails_Housing/Default.cshtml", Model)
+                        }
+                        else if (lt == "Arsa")
+                        {
+                            @await Html.PartialAsync("~/Views/Shared/Components/_ForSaleDetailPropertyDetails_Land/Default.cshtml", Model)
+                        }
+                        else if (lt == "İşyeri")
+                        {
+                            @await Html.PartialAsync("~/Views/Shared/Components/_ForSaleDetailPropertyDetails_Commercial/Default.cshtml", Model)
+                        }
                     </div>
-                    <div class="amenities-box content-widget">
-                        <div class="title-box">
-                            <h4>Amenities</h4>
-                        </div>
-                        <ul class="list clearfix">
-                            <li>Air Conditioning</li>
-                            <li>Cleaning Service</li>
-                            <li>Dishwasher</li>
-                            <li>Hardwood Flows</li>
-                            <li>Swimming Pool</li>
-                            <li>Outdoor Shower</li>
-                            <li>Microwave</li>
-                            <li>Pet Friendly</li>
-                            <li>Basketball Court</li>
-                            <li>Refrigerator</li>
-                            <li>Gym</li>
-                        </ul>
+                    @if (Model?.Amenities != null && Model.Amenities.Any())
+                    {
+                        <div class="amenities-box content-widget">
+                            <div class="title-box">
+                                <h4>@Model.ListingType  Özellikler</h4>
+                            </div>
+                            @await Html.PartialAsync("~/Views/Shared/Components/_AmenitiesListViewComponentPartial/Default.cshtml", Model.Amenities)
                     </div>
+                                        }
                     <div class="floorplan-inner content-widget">
                         <div class="title-box">
                             <h4>Kat Planı</h4>
@@ -160,15 +188,13 @@
                     </div>
                     <div class="location-box content-widget">
                         <div class="title-box">
-                            <h4>Location</h4>
+                            <h4>Lokasyon</h4>
                         </div>
                         <ul class="info clearfix">
-                            <li><span>Address:</span> Virginia temple hills</li>
-                            <li><span>Country:</span> United State</li>
-                            <li><span>State/county:</span> California</li>
-                            <li><span>Neighborhood:</span> Andersonville</li>
-                            <li><span>Zip/Postal Code:</span> 2403</li>
-                            <li><span>City:</span> Brooklyn</li>
+                            <li><span>Address:</span> @Model.AddressDesc</li>
+                            <li><span>İl:</span> @Model.City</li>
+                            <li><span>İlçe:</span> @Model.District</li>
+                            <li><span>Mahalle:</span> @Model.Neighborhood</li>
                         </ul>
                         <div class="google-map-area">
                             <div class="google-map"
@@ -359,16 +385,17 @@
                 <div class="property-sidebar default-sidebar">
                     <div class="author-widget sidebar-widget">
                         <div class="author-box">
-                            <figure class="author-thumb"><img src="assets/images/resource/author-1.jpg" alt=""></figure>
+                            <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt=""></figure>
                             <div class="inner">
                                 <h4>@Model.AgentName</h4>
                                 <ul class="info clearfix">
                                     <li>
-                                        <i class="fas fa-map-marker-alt"></i> Telsiz, 85/2. Sk. 3A, 34020 Zeytinburnu/İstanbu
+                                        <i class="fas fa-map-marker-alt"></i> Telsiz, 85/2. Sk.3A,34020 Zeytinburnu/İstanbul
                                     </li>
-                                    <li><i class="fas fa-phone"></i><a href="tel:0212 5100114">0212 510 01 14</a></li>
+                                    <li><i class="fas fa-phone"></i><a href="tel:@Model.AgentPhoneNumber">@Model.AgentPhoneNumber</a></li>
+                                    <li><i class="fas fa-envelope"></i><a href="tel:@Model.Mail">@Model.Mail</a></li>
+
                                 </ul>
-                                <div class="btn-box"><a href="agents-details.html">View Listing</a></div>
                             </div>
                         </div>
                         <div class="form-inner">
@@ -391,40 +418,10 @@
                             </form>
                         </div>
                     </div>
-                    <div class="calculator-widget sidebar-widget">
-                        <div class="calculate-inner">
-                            <div class="widget-title">
-                                <h4>Kredi Hesapla</h4>
-                            </div>
-                           
-                            <form method="post" action="mortgage-calculator.html" class="default-form">
-                                <div class="form-group">
-                                    <i class="fas fa-lira-sign"></i>
-                                    <input type="number" name="total_amount" placeholder="Toplam Tutar">
-                                </div>
-                                <div class="form-group">
-                                    <i class="fas fa-lira-sign"></i>
-                                    <input type="number" name="down_payment" placeholder="Peşinat Tutarı">
-                                </div>
-                                <div class="form-group">
-                                    <i class="fas fa-percent"></i>
-                                    <input type="number" name="interest_rate" placeholder="Faiz Oranı">
-                                </div>
-                                <div class="form-group">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <input type="number" name="loan" placeholder="Vade (Yıl)">
-                                </div>
-                                
-                                <div class="form-group message-btn">
-                                    <button type="submit" class="theme-btn btn-one">Hesapla</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
-        <div class="similar-content">
+@*         <div class="similar-content">
             <div class="title">
                 <h4>Similar Properties</h4>
             </div>
@@ -433,7 +430,7 @@
                     <div class="feature-block-one wow fadeInUp animated" data-wow-delay="00ms" data-wow-duration="1500ms">
                         <div class="inner-box">
                             <div class="image-box">
-                                <figure class="image"><img src="assets/images/feature/feature-1.jpg" alt=""></figure>
+                                <figure class="image"><img src="@Url.Content("~/Realshed/assets/images/feature/feature-1.jpg")" alt=""></figure>
                                 <div class="batch"><i class="icon-11"></i></div>
                                 <span class="category">Featured</span>
                             </div>
@@ -545,9 +542,6 @@
                 </div>
             </div>
         </div>
-    </div>
+ *@    </div>
 </section>
 
-<!-- property-details end -->
-<!-- property-details end -->
-<!-- property-details end -->

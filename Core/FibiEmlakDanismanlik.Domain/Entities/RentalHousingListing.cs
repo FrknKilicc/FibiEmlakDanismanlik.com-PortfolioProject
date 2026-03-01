@@ -73,6 +73,8 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 
         [ForeignKey("ListingTypeId")]
         public ListingType ListingType { get; set; }
+
+
         //relational
 
         //Images

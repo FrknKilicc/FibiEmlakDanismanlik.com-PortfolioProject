@@ -1,0 +1,10 @@
+﻿@{
+    ViewData["Title"] = "Kiralık İlanlar";
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+}
+
+@await Component.InvokeAsync("_AllForRentalListingViewComponentPartial")
+
+@section Scripts {
+    <script src="/js/for-rental-listing-filters.js"></script>
+}

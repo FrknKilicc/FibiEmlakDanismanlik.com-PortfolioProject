@@ -1,0 +1,15 @@
+﻿@using System.Linq
+@model List<FibiEmlakDanismanlik.Dto.PropertyDtos.AmenityItemDto>
+
+@if (Model != null && Model.Any())
+{
+    <ul class="list clearfix">
+        @foreach (var a in Model
+            .OrderBy(x => x.Group)
+            .ThenBy(x => x.SortOrder)
+            .ThenBy(x => x.Text))
+        {
+            <li>@a.Text</li>
+        }
+    </ul>
+}

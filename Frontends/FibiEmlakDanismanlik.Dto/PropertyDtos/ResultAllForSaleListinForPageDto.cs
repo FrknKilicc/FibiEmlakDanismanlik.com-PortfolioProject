@@ -75,6 +75,8 @@ namespace FibiEmlakDanismanlik.Dto.PropertyDtos
         public string AgentName { get; set; }
         public string AgentTitle { get; set; }
         public string AgentImgUrl { get; set; }
+        public string AgentPhoneNumber { get; set; }
+        public string Mail {  get; set; }
 
 
         // İlan Türü: Arsa, Konut, Ticari
@@ -85,6 +87,7 @@ namespace FibiEmlakDanismanlik.Dto.PropertyDtos
 
         public int UsageTypeId { get; set; } // usage type enumı 1=ForSale, 2=ForRent, 3=Both
         public List<ResultCardHighlightDto> Highlights { get; set; } = new();
+        public List<AmenityItemDto> Amenities { get; set; }
 
         //Images  Top10
         public string? PropImgUrl1 { get; set; }

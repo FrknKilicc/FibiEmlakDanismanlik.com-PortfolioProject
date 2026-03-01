@@ -1,4 +1,5 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Queries.ForRentalPropertyQueries;
+using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,21 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         {
             var query = await mediator.Send(new GetLast10RentalPropertyQuery());
             return Ok(query);
+        }
+        [HttpGet("GetForRentalListingTypeFacets")]
+        public async Task<IActionResult> GetForRentalListingTypeFacets()
+        {
+            var result = await mediator.Send(new GetForRentalListingTypeFacetsQuery());
+            return Ok(result);
+        }
+        [HttpPost("ForRentalFilter")]
+        public async Task<IActionResult> ForRentalFilter([FromBody] PropertyFilterRequest request)
+        {
+            if (request.MinPrice.HasValue && request.MaxPrice.HasValue && request.MinPrice > request.MaxPrice)
+                return BadRequest("Min Fiyat, Max Fiyat'dan büyük olamaz");
+
+            var result = await mediator.Send(new GetFilteredForRentalPropertiesForListingQuery(request));
+            return Ok(result);
         }
     }
 }

@@ -26,9 +26,7 @@
         <div class="row clearfix">
             <div class="col-lg-4 col-md-12 col-sm-12 sidebar-side">
                 <div class="default-sidebar property-sidebar">
-
                     <div id="forSaleFilterRoot" data-api="@ViewBag.ApiUrl"></div>
-
                     <!-- PROPERTY -->
                     <div class="filter-widget sidebar-widget">
                         <div class="widget-title"><h5>İlan Türü</h5></div>
@@ -43,7 +41,6 @@
                                 }
                             </ul>
                         </div>
-                    </div>
                     <!-- LOKASYON -->
                     <div class="filter-widget sidebar-widget">
                         <div class="widget-title"><h5>Lokasyon</h5></div>
@@ -106,7 +103,6 @@
 
                         </div>
                     </div>
-
                     <!-- ODA -->
                     <div class="filter-widget sidebar-widget">
                         <div class="widget-title"><h5>Oda</h5></div>
@@ -172,6 +168,7 @@
                         Filtrele
                     </button>
                 </div>
+            </div>
             </div>
             <div class="col-lg-8 col-md-12 col-sm-12 content-side">
                 <div class="property-content-side">
@@ -242,7 +239,13 @@
                                                             <li><a href="property-details.html"><i class="icon-13"></i></a></li>
                                                         </ul>
                                                     </div>
-                                                    <p>@item.PropertyDescription</p>
+                                                    @{
+                                                        var desc = item.PropertyDescription ?? "";
+                                                        var shortDesc = desc.Length > 90
+                                                        ? desc.Substring(0, 90) + "..."
+                                                        : desc;
+                                                    }
+                                                    <p>@shortDesc</p>
                                                     @using FibiEmlakDanismanlik.Dto.PropertyDtos
 
                                                 <ul class="more-details clearfix">

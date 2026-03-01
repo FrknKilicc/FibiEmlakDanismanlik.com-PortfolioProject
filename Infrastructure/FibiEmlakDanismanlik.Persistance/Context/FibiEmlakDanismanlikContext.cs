@@ -94,6 +94,9 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<City> Cities { get; set; }
         public DbSet<District> Districts { get; set; }
         public DbSet<Neighborhood> Neighborhoods { get; set; }
+        public DbSet<RentalHousingListingAmenities> RentalHousingListingAmenities { get; set; }
+        public DbSet<RentalLandListingAmenities> RentalLandListingAmenities { get; set; }
+        public DbSet<RentalCommercialListingAmenities> RentalCommercialListingAmenities { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -164,7 +167,8 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             modelBuilder.Entity<RentalLandListing>()
                 .Property(f => f.PropertyNo)
                 .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalLandListings_Table");
-           
+
+
             // Tag
             modelBuilder.Entity<Tag>(entity =>
             {

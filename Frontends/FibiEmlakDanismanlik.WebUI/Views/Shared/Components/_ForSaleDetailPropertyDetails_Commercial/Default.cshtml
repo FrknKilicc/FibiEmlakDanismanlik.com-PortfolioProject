@@ -1,0 +1,59 @@
+﻿@model FibiEmlakDanismanlik.Dto.PropertyDtos.ResultAllForSaleListinForPageDto
+
+@functions {
+    string YesNo(bool? v) => v == null ? "" : (v.Value ? "Evet" : "Hayır");
+    bool Has(string? s) => !string.IsNullOrWhiteSpace(s);
+}
+
+
+<ul class="list clearfix">
+
+    @* Alan *@
+    @if (Model.GrossArea != null)
+    {
+        <li>Brüt Alan (m²): <span>@Model.GrossArea</span></li>
+    }
+    @if (Model.Area != null)
+    {
+        <li>Net Alan (m²): <span>@Model.Area</span></li>
+    }
+
+    @* İşyeri iç düzen *@
+    @if (Model.NumberOfSection != null)
+    {
+        <li>Bölüm/Oda Sayısı: <span>@Model.NumberOfSection</span></li>
+    }
+    @if (Model.NumberOfKitchens != null)
+    {
+        <li>Mutfak: <span>@Model.NumberOfKitchens</span></li>
+    }
+    @if (Model.NumberOfBathrooms != null)
+    {
+        <li>WC Sayısı: <span>@Model.NumberOfBathrooms</span></li>
+    }
+
+    @* Bina/Kat *@
+    @if (Model.NumberOfFloors != null)
+    {
+        <li>Bulunduğu Kat: <span>@Model.NumberOfFloors</span></li>
+    }
+    @if (Has(Model.Facade))
+    {
+        <li>Cephe: <span>@Model.Facade</span></li>
+    }
+
+    @* Finans *@
+    @if (Model.Transferable != null)
+    {
+        <li>Devren: <span>@YesNo(Model.Transferable)</span></li>
+    }
+    @if (Model.Exchange != null)
+    {
+        <li>Takas: <span>@YesNo(Model.Exchange)</span></li>
+    }
+    @if (Model.LandLoan != null)
+    {
+        <li>Krediye Uygun: <span>@YesNo(Model.LandLoan)</span></li>
+    }
+
+</ul>

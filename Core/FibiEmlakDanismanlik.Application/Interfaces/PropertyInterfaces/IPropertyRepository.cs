@@ -1,4 +1,5 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
+using FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
 using FibiEmlakDanismanlik.Application.ViewModels;
 using FibiEmlakDanismanlik.Domain.DTOs;
@@ -22,5 +23,8 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces
         public Task<List<ForSalePropertyForListingViewModel>> GetAllForSalePropertyForListing();
         public Task<List<ForSalePropertyForListingViewModel>> GetFilteredForSalePropertyForListing(PropertyFilterRequest filter);
         public Task<ForSaleFilterResponseResult> GetFilteredForSalePropertyForListingWithFacets(PropertyFilterRequest filter);
+
+        public Task<List<ListingTypeFacetDto>> GetForRentalListingTypeFacetsAsync();
+        public Task<RentalListingFilterResponseResult> GetFilteredForRentalPropertyForListingWithFacets(PropertyFilterRequest filter);
     }
 }
