@@ -23,7 +23,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         {
             public FibiEmlakDanismanlikContext CreateDbContext(string[] args)
             {
-                
+
                 var solutionRoot = FindSolutionRoot();
                 var webApiAppSettings = Path.Combine(solutionRoot, "Presentation", "FibiEmlakDanismanlik.WebApi", "appsettings.json");
 
@@ -56,7 +56,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             {
                 var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
 
-               
+
                 while (dir != null && dir.GetFiles("*.sln").Length == 0)
                     dir = dir.Parent;
 
@@ -87,7 +87,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<MainBanner> MainBanners { get; set; }
         public DbSet<FrequentlyAskedQuestion> frequentlyAskedQuestions { get; set; }
         public DbSet<Service> services { get; set; }
-        public DbSet<ListingType>  listingTypes { get; set; }
+        public DbSet<ListingType> listingTypes { get; set; }
         public DbSet<CustomerContact> customerContacts { get; set; }
         public DbSet<BlogTag> BlogTags { get; set; }
         public DbSet<Tag> Tags { get; set; }
@@ -97,8 +97,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<RentalHousingListingAmenities> RentalHousingListingAmenities { get; set; }
         public DbSet<RentalLandListingAmenities> RentalLandListingAmenities { get; set; }
         public DbSet<RentalCommercialListingAmenities> RentalCommercialListingAmenities { get; set; }
-
-
+        public DbSet<ListingImageSelection> ListingImageSelections { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //İlişkisel lokasyon / şehir silinince ona bağlı il ilçe de silinmemeli restirict bu işi yapacak
@@ -167,7 +166,9 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             modelBuilder.Entity<RentalLandListing>()
                 .Property(f => f.PropertyNo)
                 .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalLandListings_Table");
-
+            modelBuilder.Entity<ListingImageSelection>()
+    .HasIndex(x => new { x.ListingId, x.SectionKey, x.ImageNo })
+    .IsUnique();
 
             // Tag
             modelBuilder.Entity<Tag>(entity =>
@@ -175,8 +176,8 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.Property(x => x.Name)
                       .IsRequired()
                       .HasMaxLength(80);
-                
-               
+
+
             });
 
             // BlogTag 
@@ -208,7 +209,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.HasKey(x => new { x.ForSaleHousingListId, x.AmenityId });
 
                 entity.HasOne(x => x.forSaleHousingListing)
-                      .WithMany() 
+                      .WithMany()
                       .HasForeignKey(x => x.ForSaleHousingListId)
                       .OnDelete(DeleteBehavior.Cascade);
 

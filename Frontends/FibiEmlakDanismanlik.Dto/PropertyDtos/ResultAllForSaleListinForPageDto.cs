@@ -84,7 +84,8 @@ namespace FibiEmlakDanismanlik.Dto.PropertyDtos
         [ForeignKey("ListingTypeId")]
         public int ListingTypeId { get; set; }
         public string ListingType { get; set; } // arsa , konut,ticari
-
+        public List<string> FloorPlanImages { get; set; } = new();
+        public List<SelectedImageItemDto> FloorPlanImageItems { get; set; } = new();
         public int UsageTypeId { get; set; } // usage type enumı 1=ForSale, 2=ForRent, 3=Both
         public List<ResultCardHighlightDto> Highlights { get; set; } = new();
         public List<AmenityItemDto> Amenities { get; set; }

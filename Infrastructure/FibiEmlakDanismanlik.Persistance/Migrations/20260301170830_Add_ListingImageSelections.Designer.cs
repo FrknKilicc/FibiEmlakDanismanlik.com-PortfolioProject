@@ -4,6 +4,7 @@ using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FibiEmlakDanismanlik.Persistence.Migrations
 {
     [DbContext(typeof(FibiEmlakDanismanlikContext))]
-    partial class FibiEmlakDanismanlikContextModelSnapshot : ModelSnapshot
+    [Migration("20260301170830_Add_ListingImageSelections")]
+    partial class Add_ListingImageSelections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1074,9 +1077,6 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<string>("SectionKey")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SlotKey")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");

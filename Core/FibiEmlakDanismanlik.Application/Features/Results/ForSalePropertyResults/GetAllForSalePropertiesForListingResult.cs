@@ -87,6 +87,16 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResul
         public string? ListingType { get; set; } // gerekbilir, arsa , konut,ticari
         public List<AmenityItemViewModel> Amenities { get; set; } = new();
 
+        //görsel planı seçimi
+        public class SelectedImageDto
+        {
+            public string Title { get; set; } = ""; // Mutfak / Banyo...
+            public string Url { get; set; } = "";
+            public int SortOrder { get; set; }
+        }
+
+        public List<SelectedImageDto> DetailSelectedImages { get; set; } = new();
+
         //Images  
         public string? PropImgUrl1 { get; set; }
         public string? PropImgUrl2 { get; set; }
@@ -119,5 +129,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResul
         public string? PropImgUrl29 { get; set; }
         public string? PropImgUrl30 { get; set; }
         //Images
+        public List<SelectedImageDto> FloorPlanImageItems { get; set; }
+    = new();
     }
 }

@@ -1941,6 +1941,20 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             return list;
         }
+
+        public async Task<List<ListingSelectedImageRowDto>> GetSelectedImagesAsync(int listingId, string sectionKey)
+        {
+            return await _context.ListingImageSelections
+        .Where(x => x.ListingId == listingId && x.SectionKey == sectionKey)
+        .OrderBy(x => x.SortOrder)
+        .Select(x => new ListingSelectedImageRowDto
+        {
+            ImageNo = x.ImageNo,
+            SlotKey = x.SlotKey,
+            SortOrder = x.SortOrder
+        })
+        .ToListAsync();
+        }
     }
 }
 
