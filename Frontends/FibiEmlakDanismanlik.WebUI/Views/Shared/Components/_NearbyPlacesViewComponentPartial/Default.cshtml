@@ -1,0 +1,64 @@
+﻿@model List<FibiEmlakDanismanlik.WebUI.Models.Nearby.NearbyCategoryGroupVm>
+
+@functions {
+    int ClampStars(byte? s)
+    {
+        if (!s.HasValue) return 0;
+        if (s.Value > 5) return 5;
+        return s.Value;
+    }
+}
+
+<div class="nearby-box content-widget">
+    <div class="title-box">
+        <h4>Konum Avantajı</h4>
+    </div>
+
+    <div class="inner-box">
+        @foreach (var cat in Model.OrderBy(x => x.SortOrder))
+        {
+            if (cat.Items == null || cat.Items.Count == 0)
+            {
+                continue;
+            }
+
+            <div class="single-item">
+                <div class="icon-box">
+                    <i class="@(string.IsNullOrWhiteSpace(cat.IconCss) ? "fas fa-map-marker-alt" : cat.IconCss)"></i>
+                </div>
+
+                <div class="inner">
+                    <h5>@cat.CategoryName:</h5>
+
+                    @foreach (var item in cat.Items.Take(3))
+                    {
+                        var stars = ClampStars(item.Stars);
+
+                        <div class="box clearfix">
+                            <div class="text pull-left">
+                                <h6>
+                                    @item.PlaceName
+                                    <span>(@item.DistanceKm.ToString("0.00") km)</span>
+                                </h6>
+                            </div>
+
+                            <ul class="rating pull-right clearfix">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= stars)
+                                    {
+                                        <li><i class="icon-39"></i></li>
+                                    }
+                                    else
+                                    {
+                                        <li><i class="icon-40"></i></li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

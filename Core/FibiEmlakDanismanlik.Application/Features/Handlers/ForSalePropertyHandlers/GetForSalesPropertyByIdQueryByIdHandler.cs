@@ -89,6 +89,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHand
                 Amenities = value.Amenities,
                 Mail = value.Mail,
                 AgentPhoneNumber = value.AgentPhoneNumber,
+                ListingTypeId = value.ListingTypeId,
+                UsageTypeId = value.UsageTypeId,
 
                 PropImgUrl1 = value.PropImgUrl1 ?? string.Empty,
                 PropImgUrl2 = value.PropImgUrl2 ?? string.Empty,

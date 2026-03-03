@@ -4,6 +4,7 @@ using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FibiEmlakDanismanlik.Persistence.Migrations
 {
     [DbContext(typeof(FibiEmlakDanismanlikContext))]
-    partial class FibiEmlakDanismanlikContextModelSnapshot : ModelSnapshot
+    [Migration("20260303170827_Add_NearbyPlaces")]
+    partial class Add_NearbyPlaces
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1108,7 +1111,7 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<int>("ListingId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ListingTypeId")
+                    b.Property<int>("ListingType")
                         .HasColumnType("int");
 
                     b.Property<int>("NearbyCategoryId")
@@ -1129,9 +1132,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasIndex("NearbyCategoryId", "IsActive");
 
-                    b.HasIndex("ListingId", "ListingTypeId", "IsActive");
+                    b.HasIndex("ListingId", "ListingType", "IsActive");
 
-                    b.HasIndex("ListingId", "ListingTypeId", "NearbyCategoryId", "PlaceName")
+                    b.HasIndex("ListingId", "ListingType", "NearbyCategoryId", "PlaceName")
                         .IsUnique();
 
                     b.ToTable("ListingNearbyPlaces");

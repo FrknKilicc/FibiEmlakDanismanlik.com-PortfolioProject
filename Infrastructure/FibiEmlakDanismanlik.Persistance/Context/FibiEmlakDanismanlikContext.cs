@@ -98,6 +98,9 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<RentalLandListingAmenities> RentalLandListingAmenities { get; set; }
         public DbSet<RentalCommercialListingAmenities> RentalCommercialListingAmenities { get; set; }
         public DbSet<ListingImageSelection> ListingImageSelections { get; set; }
+        public DbSet<NearbyCategory> NearbyCategories { get; set; }
+        public DbSet<ListingNearbyPlace> ListingNearbyPlaces { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //İlişkisel lokasyon / şehir silinince ona bağlı il ilçe de silinmemeli restirict bu işi yapacak
@@ -256,7 +259,34 @@ namespace FibiEmlakDanismanlik.Persistence.Context
 
                 entity.HasIndex(x => new { x.AmenityId, x.ForSaleCommercialListingId });
             });
+            // NearbyCategory
+            modelBuilder.Entity<NearbyCategory>(entity =>
+            {
+                entity.Property(x => x.Key).IsRequired().HasMaxLength(50);
+                entity.Property(x => x.Name).IsRequired().HasMaxLength(80);
+                entity.Property(x => x.IconCss).HasMaxLength(80);
 
+                entity.HasIndex(x => x.Key).IsUnique();
+                entity.HasIndex(x => new { x.IsActive, x.SortOrder });
+            });
+
+            // ListingNearbyPlace
+            modelBuilder.Entity<ListingNearbyPlace>(entity =>
+            {
+                entity.Property(x => x.PlaceName).IsRequired().HasMaxLength(120);
+
+                entity.Property(x => x.DistanceKm).HasColumnType("decimal(6,2)");
+
+                entity.HasOne(x => x.NearbyCategory)
+                      .WithMany(c => c.Places)
+                      .HasForeignKey(x => x.NearbyCategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => new { x.ListingId, x.ListingTypeId, x.IsActive });
+                entity.HasIndex(x => new { x.NearbyCategoryId, x.IsActive });
+
+                entity.HasIndex(x => new { x.ListingId, x.ListingTypeId, x.NearbyCategoryId, x.PlaceName }).IsUnique();
+            });
 
             base.OnModelCreating(modelBuilder);
         }

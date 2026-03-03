@@ -195,127 +195,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="nearby-box content-widget">
-                        <div class="title-box">
-                            <h4>What’s Nearby?</h4>
-                        </div>
-                        <div class="inner-box">
-                            <div class="single-item">
-                                <div class="icon-box"><i class="fas fa-book-reader"></i></div>
-                                <div class="inner">
-                                    <h5>Education:</h5>
-                                    <div class="box clearfix">
-                                        <div class="text pull-left">
-                                            <h6>Western Reserve University <span>(2.10 km)</span></h6>
-                                        </div>
-                                        <ul class="rating pull-right clearfix">
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-40"></i></li>
-                                        </ul>
-                                    </div>
-                                    <div class="box clearfix">
-                                        <div class="text pull-left">
-                                            <h6>Georgia Institute of Technology <span>(1.42 km)</span></h6>
-                                        </div>
-                                        <ul class="rating pull-right clearfix">
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-40"></i></li>
-                                        </ul>
-                                    </div>
-                                    <div class="box clearfix">
-                                        <div class="text pull-left">
-                                            <h6>Harvey Mudd College <span>(2.10 km)</span></h6>
-                                        </div>
-                                        <ul class="rating pull-right clearfix">
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-40"></i></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="single-item">
-                                <div class="icon-box"><i class="fas fa-coffee"></i></div>
-                                <div class="inner">
-                                    <h5>Restaurant:</h5>
-                                    <div class="box clearfix">
-                                        <div class="text pull-left">
-                                            <h6>SC Ranch Market <span>(3.10 km)</span></h6>
-                                        </div>
-                                        <ul class="rating pull-right clearfix">
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-40"></i></li>
-                                        </ul>
-                                    </div>
-                                    <div class="box clearfix">
-                                        <div class="text pull-left">
-                                            <h6>Chill On The Hill <span>(2.42 km)</span></h6>
-                                        </div>
-                                        <ul class="rating pull-right clearfix">
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-40"></i></li>
-                                        </ul>
-                                    </div>
-                                    <div class="box clearfix">
-                                        <div class="text pull-left">
-                                            <h6>Gordon Ramsay Hell's Kitchen <span>(1.22 km)</span></h6>
-                                        </div>
-                                        <ul class="rating pull-right clearfix">
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-40"></i></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="single-item">
-                                <div class="icon-box"><i class="fas fa-capsules"></i></div>
-                                <div class="inner">
-                                    <h5>Health & Medical:</h5>
-                                    <div class="box clearfix">
-                                        <div class="text pull-left">
-                                            <h6>North Star Medical Clinic <span> (2.10 km)</span></h6>
-                                        </div>
-                                        <ul class="rating pull-right clearfix">
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-40"></i></li>
-                                        </ul>
-                                    </div>
-                                    <div class="box clearfix">
-                                        <div class="text pull-left">
-                                            <h6>Clairvoyant Healing <span>(1.42 km)</span></h6>
-                                        </div>
-                                        <ul class="rating pull-right clearfix">
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-39"></i></li>
-                                            <li><i class="icon-40"></i></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @await Component.InvokeAsync("_NearbyPlacesViewComponentPartial",
+                    new { listingId = Model.ListingId, ListingTypeId = Model.ListingTypeId })
+
                     <div class="schedule-box content-widget">
                         <div class="title-box">
                             <h4>Görüşme Randevusu Talep Et</h4>
@@ -352,10 +234,10 @@
                                             <input type="tel" name="CustomerContactPhone" placeholder="Telefon" required inputmode="numeric" pattern="\d{10,15}">
                                         </div>
                                     </div>
-                                   
                                     <div class="col-lg-12 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-<textarea name="CustomerContactMessage" placeholder="Mesaj Yaz" maxlength="500"></textarea>
+                                            <textarea name="CustomerContactMessage" 
+                                             placeholder="Mesaj Yaz" maxlength="500"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-12 column">

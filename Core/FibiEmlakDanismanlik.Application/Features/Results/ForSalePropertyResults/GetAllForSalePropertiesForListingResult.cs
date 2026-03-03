@@ -65,7 +65,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResul
         public bool? WithinTheComplex { get; set; }
         public decimal? Dues { get; set; }
         public bool? HomeLoan { get; set; }
-
+        public int ListingTypeId { get; set; }
+        public int UsageTypeId { get; set; }
         // Ticari  Alanlar
         public int? NumberOfSection { get; set; }
         public int? NumberOfKitchens { get; set; }
