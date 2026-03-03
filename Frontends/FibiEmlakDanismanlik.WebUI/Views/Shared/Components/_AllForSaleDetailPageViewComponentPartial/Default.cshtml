@@ -145,7 +145,7 @@
                     {
                         <div class="floorplan-inner content-widget">
                             <div class="title-box">
-                                <h4>Kat Planı</h4>
+                                <h4>Plan</h4>
                             </div>
 
                             <ul class="accordion-box">
@@ -153,13 +153,11 @@
                                 {
                                     var isFirst = i == 0;
                                     var item = items[i];
-
                                     <li class="accordion block @(isFirst ? "active-block" : "")">
                                         <div class="acc-btn @(isFirst ? "active" : "")">
                                             <div class="icon-outer"><i class="fas fa-angle-down"></i></div>
                                             <h5>@item.Title</h5>
                                         </div>
-
                                         <div class="acc-content @(isFirst ? "current" : "")">
                                             <div class="content-box">
                                                 <figure class="image-box">
@@ -173,9 +171,6 @@
                         </div>
                     }
                    
-                    
-                    
-                    
                     <div class="location-box content-widget">
                         <div class="title-box">
                             <h4>Lokasyon</h4>
@@ -326,38 +321,51 @@
                             <h4>Görüşme Randevusu Talep Et</h4>
                         </div>
                         <div class="form-inner">
-                            <form action="property-details.html" method="post">
+                            <form asp-action="SendAppointment" asp-controller="Contact" method="post">
+                                <input type="hidden" name="PropertyListingId" value="@Model.ListingId" />
+                                <input type="hidden" name="PropertyListingTypeEnum" value="1" />
                                 <div class="row clearfix">
                                     <div class="col-lg-6 col-md-12 col-sm-12 column">
                                         <div class="form-group">
                                             <i class="far fa-calendar-alt"></i>
-                                            <input type="text" name="date" placeholder="Tarih" id="datepicker">
+                                            <input type="text" name="date" placeholder="Tarih" id="datepicker" autocomplete="off" class="theme-underline">
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-                                            <i class="far fa-clock"></i>
-                                            <input type="text" name="time" placeholder="Saat">
+                                            <i class="far fa-clock" id="timeIcon"></i>
+                                            <input type="time" name="time" required class="theme-time theme-underline" autocomplete="off" id="timeInput">
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-                                            <input type="text" name="name" placeholder="İsim" required="">
+                                            <input type="text" name="CustomerContactName" placeholder="İsim Soyisim" required>
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-                                            <input type="email" name="email" placeholder="E-Mail" required="">
+                                            <input type="email" name="CustomerContactMail" placeholder="E-Mail" >
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-                                            <input type="tel" name="phone" placeholder="Telefon" required="">
+                                            <input type="tel" name="CustomerContactPhone" placeholder="Telefon" required inputmode="numeric" pattern="\d{10,15}">
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="col-lg-12 col-md-12 col-sm-12 column">
+                                        <div class="form-group">
+<textarea name="CustomerContactMessage" placeholder="Mesaj Yaz" maxlength="500"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-12 column">
-                                        <div class="form-group">
-                                            <textarea name="message" placeholder="Mesaj Yaz"></textarea>
+                                        <div class="form-group kvkk-row">
+                                            <label class="kvkk-label">
+                                                <input type="checkbox" name="KvkkApproved" required>
+                                                <span>
+                                                    KVKK ve Aydınlatma Metnini okudum kabul ediyorum
+                                                </span>
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-12 column">
@@ -388,25 +396,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="form-inner">
-                            <form action="property-details.html" method="post" class="default-form">
-                                <div class="form-group">
-                                    <input type="text" name="name" placeholder="İsminiz" required="">
-                                </div>
-                                <div class="form-group">
-                                    <input type="email" name="email" placeholder="E-Mail" >
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" name="phone"  placeholder="Telefon" required="">
-                                </div>
-                                <div class="form-group">
-                                    <textarea name="message" placeholder="Mesajınız"></textarea>
-                                </div>
-                                <div class="form-group message-btn">
-                                    <button type="submit" class="theme-btn btn-one">Bize Ulaşın</button>
-                                </div>
-                            </form>
-                        </div>
+                        
                     </div>
                 </div>
             </div>

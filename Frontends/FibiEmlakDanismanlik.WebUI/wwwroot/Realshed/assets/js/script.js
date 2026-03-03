@@ -581,10 +581,10 @@
 	}
 
 	// Time picker
-	function timepicker () {
-	    if ($('input[name="time"]').length) {
-	        $('input[name="time"]').ptTimeSelect();
-	    }
+	function timepicker() {
+		if ($.fn.ptTimeSelect && $('input[name="time"]').length) {
+			$('input[name="time"]').ptTimeSelect();
+		}
 	}
 
 

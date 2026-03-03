@@ -78,7 +78,6 @@ namespace FibiEmlakDanismanlik.Dto.PropertyDtos
         public string AgentPhoneNumber { get; set; }
         public string Mail {  get; set; }
 
-
         // İlan Türü: Arsa, Konut, Ticari
 
         [ForeignKey("ListingTypeId")]

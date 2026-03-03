@@ -1,8 +1,48 @@
 ﻿   @model ResultAllForSaleListinForPageDto
 @{
-  
     ViewData["Title"] = "Index";
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
- 
 }
 @await Component.InvokeAsync("_AllForSaleDetailPageViewComponentPartial", new { id = Model.ListingId })
+@section Styles {
+    <link rel="stylesheet" href="/Realshed/assets/css/timePicker.css" />
+}
+@section Scripts {
+    <script>
+        // 1) Telefon sadece rakam
+        $(function () {
+            var $phone = $('input[name="CustomerContactPhone"]');
+            if ($phone.length) {
+                $phone.on('input', function () {
+                    this.value = this.value.replace(/\D/g, '');
+                });
+            }
+        });
+    </script>
+    <script>
+        $(function () {
+            if ($('#datepicker').length) {
+                $('#datepicker').datepicker({
+                    dateFormat: 'dd.mm.yy',
+                    firstDay: 1
+                });
+            }
+        });
+    </script>
+    <script>
+        $(function () {
+            const timeInput = document.getElementById('timeInput');
+            const timeIcon = document.getElementById('timeIcon');
+
+            if (timeInput && timeIcon) {
+                timeIcon.style.cursor = 'pointer';
+                const openPicker = () => {
+                    if (typeof timeInput.showPicker === 'function') timeInput.showPicker();
+                    else timeInput.focus();
+                };
+                timeIcon.addEventListener('click', openPicker);
+                timeInput.addEventListener('focus', openPicker);
+            }
+        });
+    </script>
+}

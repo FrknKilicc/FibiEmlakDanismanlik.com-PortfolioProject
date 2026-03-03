@@ -6,6 +6,7 @@
 <html lang="en">
 <head>
     @await Component.InvokeAsync("_HeadLayoutViewComponentPartial")
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
 
@@ -107,6 +108,7 @@
 
     <script src="/Realshed/assets/js/jQuery.style.switcher.min.js"></script>
     <script src="/Realshed/assets/js/jquery-ui.js"></script>
+    <script src="/Realshed/assets/js/datepicker-tr.js"></script>
     <script src="/Realshed/assets/js/jquery.paroller.min.js"></script>
     <script src="/Realshed/assets/js/owl.js"></script>
     <script src="/Realshed/assets/js/jquery.fancybox.js"></script>
@@ -116,12 +118,7 @@ x    <script src="/Realshed/assets/js/nav-tool.js"></script>
     <script src="/Realshed/assets/js/script.js"></script>
     <script src="/js/nice-select-search.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
     @await RenderSectionAsync("Scripts", required: false)
-
-
-
     <!-- End of .page_wrapper -->
 </body>
 

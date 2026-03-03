@@ -232,6 +232,7 @@
         });
     }
 
+
     function initApplyButton() {
         const btn = document.getElementById("applyFilters");
         if (!btn) return;

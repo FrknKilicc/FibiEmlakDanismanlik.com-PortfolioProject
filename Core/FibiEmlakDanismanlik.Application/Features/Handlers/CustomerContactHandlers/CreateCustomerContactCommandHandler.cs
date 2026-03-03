@@ -28,6 +28,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.CustomerContactHand
                 CustomerContactPhone = request.CustomerContactPhone,
                 CustomerContactMessage = request.CustomerContactMessage,
                 PropertyListingId = request.PropertyListingId,
+                AppointmentDateTime = request.AppointmentDateTime,
+                PropertyListingTypeEnum = request.PropertyListingTypeEnum,
+                
 
             });
         }
