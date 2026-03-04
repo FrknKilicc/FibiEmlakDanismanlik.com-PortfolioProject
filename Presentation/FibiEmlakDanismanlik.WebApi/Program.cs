@@ -1,6 +1,7 @@
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.LocationInterfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.MapInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.NearbyInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces;
 using FibiEmlakDanismanlik.Application.Services;
@@ -8,6 +9,7 @@ using FibiEmlakDanismanlik.Persistence.Context;
 using FibiEmlakDanismanlik.Persistence.Repositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.LocationRepositories;
+using FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.NearbyRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +47,7 @@ builder.Services.AddScoped(typeof(IPropertyRepository), typeof(PropertyRepositor
 builder.Services.AddScoped(typeof(IBlogRepository), typeof(BlogRepository));
 builder.Services.AddScoped(typeof(ILocationRepository), typeof(LocationRepository));
 builder.Services.AddScoped(typeof(INearbyRepository), typeof(NearbyRepository));
+builder.Services.AddScoped(typeof(IMapRepository), typeof(MapRepository));
 
 //Configure IRepositories
 

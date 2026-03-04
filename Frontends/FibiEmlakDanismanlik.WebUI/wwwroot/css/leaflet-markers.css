@@ -1,0 +1,42 @@
+﻿.fibi-marker {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: 3px solid white;
+    box-shadow: 0 6px 14px rgba(0,0,0,.25);
+    position: relative;
+}
+
+    .fibi-marker:after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 8px 6px 0 6px;
+        border-style: solid;
+        border-color: inherit transparent transparent transparent;
+    }
+
+    .fibi-marker i {
+        font-size: 18px;
+    }
+
+.fibi-sale {
+    background: #16a34a;
+}
+.fibi-rent {
+    background: #2563eb;
+}
+.fibi-both {
+    background: #7c3aed;
+}
+
+.fibi-passive {
+    filter: grayscale(1);
+    opacity: .55;
+}

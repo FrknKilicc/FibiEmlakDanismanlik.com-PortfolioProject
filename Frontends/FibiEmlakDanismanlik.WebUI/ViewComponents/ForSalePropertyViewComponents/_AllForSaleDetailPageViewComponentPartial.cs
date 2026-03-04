@@ -24,7 +24,8 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
                 var value = JsonConvert.DeserializeObject<ResultAllForSaleListinForPageDto>(jsonData);
-
+                var apiUrl = _configuration["Url:ApiUrl"];
+                ViewBag.ApiUrl = apiUrl;
                 return View(value);
             }
             else if(response==null || response.StatusCode.Equals(500))

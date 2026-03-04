@@ -100,6 +100,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<ListingImageSelection> ListingImageSelections { get; set; }
         public DbSet<NearbyCategory> NearbyCategories { get; set; }
         public DbSet<ListingNearbyPlace> ListingNearbyPlaces { get; set; }
+        public DbSet<ListingGeoPoint> ListingGeoPoints { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -196,6 +197,10 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                       .WithMany(x => x.BlogTags)
                       .HasForeignKey(x => x.TagId);
             });
+
+            modelBuilder.Entity<ListingGeoPoint>()
+    .HasIndex(x => new { x.ListingId, x.ListingTypeId })
+    .IsUnique();
 
             // AmenityDefinition
             modelBuilder.Entity<AmenityDefinition>(entity =>
