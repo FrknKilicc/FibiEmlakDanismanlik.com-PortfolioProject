@@ -1,0 +1,121 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FibiEmlakDanismanlik.Dto.PropertyDtos
+{
+    public class ResultAllForRentalListingForPageDto
+    {
+        public int ListingId { get; set; }
+
+        public int? PropertyNo { get; set; }
+        public string PropertyName { get; set; }
+        public string PropertyDescription { get; set; }
+        public string PropertyStatus { get; set; }
+        public DateTime CreatedDate { get; set; }
+
+        public decimal Rent { get; set; }
+        public decimal? Deposit { get; set; }
+        public bool? BestDeals { get; set; }
+        public string PropertyType { get; set; }
+
+        public string City { get; set; }
+        public string District { get; set; }
+        public string Neighborhood { get; set; }
+        public string? AddressDesc { get; set; }
+
+        public int AgentId { get; set; }
+        public string AgentName { get; set; }
+        public string? AgentTitle { get; set; }
+        public string AgentImgUrl { get; set; }
+        public string AgentDescription { get; set; }
+        public string AgentPhoneNumber { get; set; }
+        public string? Mail { get; set; }
+
+        public int? ListingTypeId { get; set; }
+        public string? ListingType { get; set; }
+        public string? ListingTypeName { get; set; }
+        public int? UsageTypeId { get; set; }
+
+        public int? RentalHousingListId { get; set; }
+        public int? RentalCommercialListId { get; set; }
+        public int? RentalLandListingId { get; set; }
+
+        public int? HousingCategoryId { get; set; }
+        public string? HousingCategoryName { get; set; }
+
+        public string? BuildingAge { get; set; }
+        public double? GrossArea { get; set; }
+        public double? NetArea { get; set; }
+        public string? Heating { get; set; }
+        public int? NumberOfFloors { get; set; }
+
+        public bool? IsElevator { get; set; }
+        public double? OpenArea { get; set; }
+        public int? TotalNumberOfFloor { get; set; }
+        public int? NumberOfBathRoom { get; set; }
+        public string? NumberOfRoom { get; set; }
+        public int? NumberOfBalconies { get; set; }
+        public bool? BlackBox { get; set; }
+        public bool? ParkingLot { get; set; }
+        public bool? Furnished { get; set; }
+        public bool? WithinTheComplex { get; set; }
+        public decimal? Dues { get; set; }
+
+        public string? Facade { get; set; }
+        public int? NumberOfSection { get; set; }
+        public int? NumberOfKitchens { get; set; }
+        public int? NumberOfBathrooms { get; set; }
+
+        public string? ZoningStatus { get; set; }
+        public double? Area { get; set; }
+        public decimal? PricePerSquareMeter { get; set; }
+        public string? ParcelNumber { get; set; }
+        public string? PlotNumber { get; set; }
+        public string? MapSheetNumber { get; set; }
+        public double? FloorAreaRatio { get; set; }
+        public double? BaseAreaRatio { get; set; }
+        public string? ZoningPlan { get; set; }
+        public string? DevelopmentRight { get; set; }
+        public int? LandCategoryId { get; set; }
+        public string? LandCategoryName { get; set; }
+
+        public string? TitleDeedStatus { get; set; }
+
+        public List<SelectedImageItemDto> FloorPlanImageItems { get; set; } = new();
+        public List<AmenityItemDto> Amenities { get; set; } = new();
+
+        public string? PropImgUrl1 { get; set; }
+        public string? PropImgUrl2 { get; set; }
+        public string? PropImgUrl3 { get; set; }
+        public string? PropImgUrl4 { get; set; }
+        public string? PropImgUrl5 { get; set; }
+        public string? PropImgUrl6 { get; set; }
+        public string? PropImgUrl7 { get; set; }
+        public string? PropImgUrl8 { get; set; }
+        public string? PropImgUrl9 { get; set; }
+        public string? PropImgUrl10 { get; set; }
+        public string? PropImgUrl11 { get; set; }
+        public string? PropImgUrl12 { get; set; }
+        public string? PropImgUrl13 { get; set; }
+        public string? PropImgUrl14 { get; set; }
+        public string? PropImgUrl15 { get; set; }
+        public string? PropImgUrl16 { get; set; }
+        public string? PropImgUrl17 { get; set; }
+        public string? PropImgUrl18 { get; set; }
+        public string? PropImgUrl19 { get; set; }
+        public string? PropImgUrl20 { get; set; }
+        public string? PropImgUrl21 { get; set; }
+        public string? PropImgUrl22 { get; set; }
+        public string? PropImgUrl23 { get; set; }
+        public string? PropImgUrl24 { get; set; }
+        public string? PropImgUrl25 { get; set; }
+        public string? PropImgUrl26 { get; set; }
+        public string? PropImgUrl27 { get; set; }
+        public string? PropImgUrl28 { get; set; }
+        public string? PropImgUrl29 { get; set; }
+        public string? PropImgUrl30 { get; set; }
+    }
+}

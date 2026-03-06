@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FibiEmlakDanismanlik.Application.Features.Handlers.RentalPropertyHandlers
+namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForRentalPropertyHandlers
 {
     public class GetLast10RentalQueryHandler : IRequestHandler<GetLast10RentalPropertyQuery, List<RentalPropertyBaseViewModel>>
     {

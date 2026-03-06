@@ -1,0 +1,81 @@
+﻿@model FibiEmlakDanismanlik.Dto.PropertyDtos.ResultAllForRentalListingForPageDto
+@using System.Globalization
+
+@functions {
+    bool Has(string? s) => !string.IsNullOrWhiteSpace(s);
+}
+
+<ul class="list clearfix">
+
+    @if (Has(Model.ZoningStatus))
+    {
+        <li>İmar Durumu: <span>@Model.ZoningStatus</span></li>
+    }
+
+    @if (Model.Area != null)
+    {
+        <li>m²: <span>@Model.Area</span></li>
+    }
+
+    @if (Model.PricePerSquareMeter != null)
+    {
+        <li>
+            m² Birim Fiyatı:
+            <span>@Model.PricePerSquareMeter.Value.ToString("N2", new CultureInfo("tr-TR")) ₺</span>
+        </li>
+    }
+
+    @if (Has(Model.ParcelNumber))
+    {
+        <li>Ada No: <span>@Model.ParcelNumber</span></li>
+    }
+
+    @if (Has(Model.PlotNumber))
+    {
+        <li>Parsel No: <span>@Model.PlotNumber</span></li>
+    }
+
+    @if (Has(Model.MapSheetNumber))
+    {
+        <li>Pafta No: <span>@Model.MapSheetNumber</span></li>
+    }
+
+    @if (Model.FloorAreaRatio != null)
+    {
+        <li>Emsal: <span>@Model.FloorAreaRatio</span></li>
+    }
+
+    @if (Model.BaseAreaRatio != null)
+    {
+        <li>Taban Alanı Katsayısı: <span>@Model.BaseAreaRatio</span></li>
+    }
+
+    @if (Has(Model.ZoningPlan))
+    {
+        <li>İmar Planı: <span>@Model.ZoningPlan</span></li>
+    }
+
+    @if (Has(Model.DevelopmentRight))
+    {
+        <li>Gabari: <span>@Model.DevelopmentRight</span></li>
+    }
+
+    @if (Has(Model.TitleDeedStatus))
+    {
+        <li>Tapu Durumu: <span>@Model.TitleDeedStatus</span></li>
+    }
+
+    @if (Has(Model.LandCategoryName))
+    {
+        <li>Arsa Tipi: <span>@Model.LandCategoryName</span></li>
+    }
+
+    @if (Model.Deposit != null)
+    {
+        <li>
+            Depozito:
+            <span>@Model.Deposit.Value.ToString("N2", new CultureInfo("tr-TR")) ₺</span>
+        </li>
+    }
+
+</ul>

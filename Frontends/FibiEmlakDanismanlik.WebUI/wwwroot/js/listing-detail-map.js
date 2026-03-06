@@ -17,7 +17,13 @@
     fetch(url)
         .then(r => r.ok ? r.json() : null)
         .then(data => {
-            if (!data) return;
+            if (!data) {
+                el.innerHTML =
+                    `<div style="padding:30px;text-align:center">
+                  Konum Bilgisi Alınıyor... Lütfen Bekleyiniz
+              </div>`;
+                return;
+            }
 
             const lat = Number(data.latitude);
             const lng = Number(data.longitude);

@@ -24,6 +24,7 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
 
         // Kategoriler
         public int? HousingCategoryId { get; set; }
+        public string HousingCategoryName { get; set; }
         public string? HousingCategory { get; set; } // mapping ile getirişcem
 
         // Konut
@@ -58,7 +59,9 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
         public string? DevelopmentRight { get; set; }
 
         public int? LandCategoryId { get; set; }
+        public string LandCategoryName { get; set; }
         public string? LandCategory { get; set; }
+
 
 
     }

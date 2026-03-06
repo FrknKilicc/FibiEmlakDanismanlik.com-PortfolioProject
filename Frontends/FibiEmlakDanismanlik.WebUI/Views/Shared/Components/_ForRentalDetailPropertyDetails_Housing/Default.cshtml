@@ -1,0 +1,116 @@
+﻿@model FibiEmlakDanismanlik.Dto.PropertyDtos.ResultAllForRentalListingForPageDto
+@using System.Globalization
+
+@functions {
+    string YesNo(bool? v) => v == null ? "" : (v.Value ? "Evet" : "Hayır");
+    string VarYok(bool? v) => v == null ? "" : (v.Value ? "Var" : "Yok");
+    bool Has(string? s) => !string.IsNullOrWhiteSpace(s);
+}
+
+<ul class="list clearfix">
+
+    @if (Model.NetArea != null)
+    {
+        <li>Net m²: <span>@Model.NetArea</span></li>
+    }
+
+    @if (Model.GrossArea != null)
+    {
+        <li>Brüt m²: <span>@Model.GrossArea</span></li>
+    }
+
+    @if (Model.OpenArea != null)
+    {
+        <li>Açık Alan m²: <span>@Model.OpenArea</span></li>
+    }
+
+    @if (Model.NumberOfRoom != null)
+    {
+        <li>Oda Sayısı: <span>@Model.NumberOfRoom</span></li>
+    }
+
+    @if (Model.NumberOfBathRoom != null)
+    {
+        <li>Banyo Sayısı: <span>@Model.NumberOfBathRoom</span></li>
+    }
+
+    @if (Model.NumberOfBalconies != null)
+    {
+        <li>Balkon Sayısı: <span>@Model.NumberOfBalconies</span></li>
+    }
+
+    @if (Model.BuildingAge != null)
+    {
+        <li>Bina Yaşı: <span>@Model.BuildingAge</span></li>
+    }
+
+    @if (Model.TotalNumberOfFloor != null)
+    {
+        <li>Bina Kat Sayısı: <span>@Model.TotalNumberOfFloor</span></li>
+    }
+
+    @if (Model.NumberOfFloors != null)
+    {
+        <li>Bulunduğu Kat: <span>@Model.NumberOfFloors</span></li>
+    }
+
+    @if (Has(Model.Facade))
+    {
+        <li>Cephe: <span>@Model.Facade</span></li>
+    }
+
+    @if (Has(Model.Heating))
+    {
+        <li>Isıtma: <span>@Model.Heating</span></li>
+    }
+
+    @if (Model.IsElevator != null)
+    {
+        <li>Asansör: <span>@VarYok(Model.IsElevator)</span></li>
+    }
+
+    @if (Model.Furnished != null)
+    {
+        <li>Eşyalı: <span>@YesNo(Model.Furnished)</span></li>
+    }
+
+    @if (Model.WithinTheComplex != null)
+    {
+        <li>Site İçinde: <span>@YesNo(Model.WithinTheComplex)</span></li>
+    }
+
+    @if (Model.ParkingLot != null)
+    {
+        <li>Otopark: <span>@VarYok(Model.ParkingLot)</span></li>
+    }
+
+    @if (Model.BlackBox != null)
+    {
+        <li>Kat Mülkiyeti: <span>@YesNo(Model.BlackBox)</span></li>
+    }
+
+    @if (Model.Dues != null)
+    {
+        <li>
+            Aidat:
+            <span>@Model.Dues.Value.ToString("N2", new CultureInfo("tr-TR")) ₺</span>
+        </li>
+    }
+
+    @if (Model.Deposit != null)
+    {
+        <li>
+            Depozito:
+            <span>@Model.Deposit.Value.ToString("N2", new CultureInfo("tr-TR")) ₺</span>
+        </li>
+    }
+
+    @if (Model.PricePerSquareMeter != null)
+    {
+        <li>
+            m² Birim Fiyatı:
+            <span>@Model.PricePerSquareMeter.Value.ToString("N2", new CultureInfo("tr-TR")) ₺</span>
+        </li>
+    }
+
+</ul>

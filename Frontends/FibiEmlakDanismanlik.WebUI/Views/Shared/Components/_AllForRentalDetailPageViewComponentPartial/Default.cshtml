@@ -1,12 +1,12 @@
-﻿ @model ResultAllForSaleListinForPageDto
+﻿@model ResultAllForRentalListingForPageDto
 
 <section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
     <div class="auto-container">
         <div class="content-box clearfix">
-            <h1>Satılık İlanlar</h1>
+            <h1>Kiralık İlanlar</h1>
             <ul class="bread-crumb clearfix">
                 <li><a href="@Url.Action("Index","UILayout")">Anasayfa</a></li>
-                <li><a href="@Url.Action("Index","AllForSalePage")">Satılık İlanlar</a></li>
+                <li><a href="@Url.Action("Index","AllForRentalPage")">Kiralık İlanlar</a></li>
                 <li>İlan Detayı</li>
             </ul>
         </div>
@@ -40,7 +40,7 @@
                         <li><a href="property-details.html">@Model.PropertyStatus</a></li>
                     </ul>
                     <div class="price-box pull-right">
-                        <h3>@Model.Price.ToString("N0") TL</h3>
+                        <h3>@Model.Rent.ToString("N0") TL</h3>
                     </div>
                 </div>
                 <ul class="other-option pull-right clearfix">
@@ -73,15 +73,12 @@
                         {
                             raw = raw.Trim();
 
-                            // zaten full url ise dokunma
                             if (raw.StartsWith("http://") || raw.StartsWith("https://"))
                                 return raw;
 
-                            // "/uploads/a.jpg" gibi ise "~" ile absolute yap
                             if (raw.StartsWith("/"))
                                 return Url.Content("~" + raw);
 
-                            // "uploads/a.jpg" gibi ise kökten başlat
                             return Url.Content("~/" + raw);
                         }
                     }
@@ -116,15 +113,15 @@
                         }
                         @if (lt == "Konut")
                         {
-                            @await Html.PartialAsync("~/Views/Shared/Components/_ForSaleDetailPropertyDetails_Housing/Default.cshtml", Model)
+                            @await Html.PartialAsync("~/Views/Shared/Components/_ForRentalDetailPropertyDetails_Housing/Default.cshtml", Model)
                         }
                         else if (lt == "Arsa")
                         {
-                            @await Html.PartialAsync("~/Views/Shared/Components/_ForSaleDetailPropertyDetails_Land/Default.cshtml", Model)
+                            @await Html.PartialAsync("~/Views/Shared/Components/_ForRentalDetailPropertyDetails_Land/Default.cshtml", Model)
                         }
                         else if (lt == "İşyeri")
                         {
-                            @await Html.PartialAsync("~/Views/Shared/Components/_ForSaleDetailPropertyDetails_Commercial/Default.cshtml", Model)
+                            @await Html.PartialAsync("~/Views/Shared/Components/_ForRentalDetailPropertyDetails_Commercial/Default.cshtml", Model)
                         }
                     </div>
                     @if (Model?.Amenities != null && Model.Amenities.Any())
@@ -134,8 +131,8 @@
                                 <h4>@Model.ListingType  Özellikler</h4>
                             </div>
                             @await Html.PartialAsync("~/Views/Shared/Components/_AmenitiesListViewComponentPartial/Default.cshtml", Model.Amenities)
-                    </div>
-                                        }
+                        </div>
+                    }
                     @{
                         var items = Model?.FloorPlanImageItems ?? new();
                     }
@@ -198,11 +195,15 @@
                         <div class="title-box">
                             <h4>Görüşme Randevusu Talep Et</h4>
                         </div>
+                        @{
+                            var propertyListingTypeEnum = Model.ListingType == "Arsa" ? 7
+                            : Model.ListingType == "Konut" ? 8
+                            : 9;
+                        }
                         <div class="form-inner">
                             <form asp-action="SendAppointment" asp-controller="Contact" method="post">
                                 <input type="hidden" name="PropertyListingId" value="@Model.ListingId" />
-                                <input type="hidden" name="PropertyListingTypeEnum" value="1" />
-                                <div class="row clearfix">
+                                <input type="hidden" name="PropertyListingTypeEnum" value="@propertyListingTypeEnum" />                                <div class="row clearfix">
                                     <div class="col-lg-6 col-md-12 col-sm-12 column">
                                         <div class="form-group">
                                             <i class="far fa-calendar-alt"></i>
@@ -222,7 +223,7 @@
                                     </div>
                                     <div class="col-lg-4 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-                                            <input type="email" name="CustomerContactMail" placeholder="E-Mail" >
+                                            <input type="email" name="CustomerContactMail" placeholder="E-Mail">
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-12 col-sm-12 column">
@@ -232,8 +233,8 @@
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-12 column">
                                         <div class="form-group">
-                                            <textarea name="CustomerContactMessage" 
-                                             placeholder="Mesaj Yaz" maxlength="500"></textarea>
+                                            <textarea name="CustomerContactMessage"
+                                                      placeholder="Mesaj Yaz" maxlength="500"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-sm-12 column">
@@ -274,12 +275,12 @@
                                 </ul>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
         </div>
-@*         <div class="similar-content">
+        @*         <div class="similar-content">
             <div class="title">
                 <h4>Similar Properties</h4>
             </div>

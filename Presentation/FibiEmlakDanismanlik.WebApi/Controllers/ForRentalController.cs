@@ -16,7 +16,6 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         {
             this.mediator = mediator;
         }
-
         [HttpGet("GetAllForRentalPropertyForListing")]
         public async Task<IActionResult> GetAllForRentalPropertyForListing()
         {
@@ -43,6 +42,13 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
 
             var result = await mediator.Send(new GetFilteredForRentalPropertiesForListingQuery(request));
             return Ok(result);
+        }
+
+        [HttpGet("GetUnifiedForRentalPropertyById/{id}")]
+        public async Task<IActionResult> GetUnifiedForRentalPropertyById(int id)
+        {
+            var value = await mediator.Send(new GetForRentalPropertyByIdQuery(id));
+            return Ok(value);
         }
     }
 }

@@ -1,0 +1,68 @@
+﻿@model FibiEmlakDanismanlik.Dto.PropertyDtos.ResultAllForRentalListingForPageDto
+@using System.Globalization
+
+@functions {
+    bool Has(string? s) => !string.IsNullOrWhiteSpace(s);
+}
+
+<ul class="list clearfix">
+
+    @if (Model.GrossArea != null)
+    {
+        <li>Brüt m²: <span>@Model.GrossArea</span></li>
+    }
+
+    @if (Model.NetArea != null)
+    {
+        <li>Net m²: <span>@Model.NetArea</span></li>
+    }
+
+    @if (Model.NumberOfSection != null)
+    {
+        <li>Bölüm Sayısı: <span>@Model.NumberOfSection</span></li>
+    }
+
+    @if (Model.NumberOfKitchens != null)
+    {
+        <li>Mutfak Sayısı: <span>@Model.NumberOfKitchens</span></li>
+    }
+
+    @if (Model.NumberOfBathrooms != null)
+    {
+        <li>Banyo Sayısı: <span>@Model.NumberOfBathrooms</span></li>
+    }
+
+    @if (Model.NumberOfFloors != null)
+    {
+        <li>Bulunduğu Kat: <span>@Model.NumberOfFloors</span></li>
+    }
+
+    @if (Has(Model.BuildingAge))
+    {
+        <li>Bina Yaşı: <span>@Model.BuildingAge</span></li>
+    }
+
+    @if (Has(Model.Heating))
+    {
+        <li>Isıtma: <span>@Model.Heating</span></li>
+    }
+
+    @if (Has(Model.Facade))
+    {
+        <li>Cephe: <span>@Model.Facade</span></li>
+    }
+
+    @if (Has(Model.TitleDeedStatus))
+    {
+        <li>Tapu Durumu: <span>@Model.TitleDeedStatus</span></li>
+    }
+
+    @if (Model.Deposit != null)
+    {
+        <li>
+            Depozito:
+            <span>@Model.Deposit.Value.ToString("N2", new CultureInfo("tr-TR")) ₺</span>
+        </li>
+    }
+
+</ul>

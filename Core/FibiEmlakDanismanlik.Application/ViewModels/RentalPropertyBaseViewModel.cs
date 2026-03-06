@@ -20,8 +20,15 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
         public bool? BestDeals { get; set; }
         public string PropertyType { get; set; }
         public decimal? Deposit { get; set; }
+        public string ListingType { get; set; }
 
+        public int ListingId { get; set; }                
+        public string? TitleDeedStatus { get; set; }      
+        public int? UsageTypeId { get; set; }             
+        public string? AgentTitle { get; set; }
+        public string? Mail { get; set; }
 
+        public List<AmenityItemViewModel> Amenities { get; set; } = new();
         // Adres 
         public string City { get; set; }
         public string District { get; set; }

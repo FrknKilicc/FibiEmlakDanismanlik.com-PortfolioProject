@@ -40,3 +40,7 @@
     filter: grayscale(1);
     opacity: .55;
 }
+#contact-google-map {
+    height: 420px;
+    width: 100%;
+}

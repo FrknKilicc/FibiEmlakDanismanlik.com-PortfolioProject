@@ -26,6 +26,7 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces
 
         public Task<List<ListingTypeFacetDto>> GetForRentalListingTypeFacetsAsync();
         public Task<RentalListingFilterResponseResult> GetFilteredForRentalPropertyForListingWithFacets(PropertyFilterRequest filter);
+        public Task<ForRentalPropertForListingViewModel> GetUnifiedForRentalPropertyById(int id);
 
         public Task<List<ListingSelectedImageRowDto>>
             GetSelectedImagesAsync(int listingId, string sectionKey);

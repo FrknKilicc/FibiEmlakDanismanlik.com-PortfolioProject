@@ -1961,6 +1961,294 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         })
         .ToListAsync();
         }
+
+        public async Task<ForRentalPropertForListingViewModel?> GetUnifiedForRentalPropertyById(int id)
+        {
+            List<AmenityItemViewModel> amenities = new();
+
+            var housingById = await _context.rentalHousingListings
+                .Include(x => x.Agent)
+                .Include(x => x.ListingType)
+                .Include(x => x.HousingCategory)
+                .FirstOrDefaultAsync(x => x.RentalHousingListId == id);
+
+            if (housingById != null)
+            {
+                amenities = await _context.RentalHousingListingAmenities
+            .Where(x => x.RentalHousingListId == id && x.AmenityDefinition.isActive == true)
+            .Include(x => x.AmenityDefinition)
+            .Select(x => new AmenityItemViewModel
+            {
+                Id = x.AmenityDefinition.AmenityId,
+                Text = x.AmenityDefinition.Name,
+                Group = x.AmenityDefinition.GroupName,
+                SortOrder = x.AmenityDefinition.SortOrder
+            })
+            .OrderBy(x => x.Group)
+            .ThenBy(x => x.SortOrder)
+            .ToListAsync();
+                return new ForRentalPropertForListingViewModel
+                {
+                    
+                    ListingId = housingById.RentalHousingListId,
+                    Deposit = housingById.Deposit,
+                    HousingCategoryId=housingById.HousingCategory.HousingCategoryId,
+                    HousingCategoryName=housingById.HousingCategory?.HousingCategoryName,
+                    AgentDescription =housingById.Agent.AgentDescription,
+                    ListingTypeName=housingById.ListingType.Name,
+                    PropertyNo = housingById.PropertyNo,
+                    PropertyName = housingById.PropertyName,
+                    PropertyDescription = housingById.PropertyDescription,
+                    PropertyStatus = housingById.PropertyStatus,
+                    CreatedDate = housingById.CreatedDate,
+                    City = housingById.City,
+                    District = housingById.District,
+                    Neighborhood = housingById.Neighborhood,
+                    AddressDesc = housingById.AddressDesc,
+                    Facade = housingById.Facade,
+                    IsElevator = housingById.IsElevator,
+                    GrossArea = housingById.GrossArea,
+                    NetArea = housingById.NetArea,
+                    OpenArea = housingById.OpenArea,
+                    BuildingAge = housingById.BuildingAge,
+                    TotalNumberOfFloor = housingById.TotalNumberOfFloor,
+                    NumberOfFloors = housingById.NumberOfFloors,
+                    NumberOfBathRoom = housingById.NumberOfBathRoom,
+                    Heating = housingById.Heating,
+                    BlackBox = housingById.BlackBox,
+                    NumberOfBalconies = housingById.NumberOfBalconies,
+                    ParkingLot = housingById.ParkingLot,
+                    Furnished = housingById.Furnished,
+                    WithinTheComplex = housingById.WithinTheComplex,
+                    Rent=housingById.Rent,
+                    Dues = housingById.Dues,
+                    AgentId = housingById.AgentId,
+                    AgentName = housingById.Agent.AgentName,
+                    AgentTitle = housingById.Agent.AgentTitle,
+                    AgentImgUrl = housingById.Agent.AgentImgUrl,
+                    BestDeals = housingById.BestDeals,
+                    ListingType = "Konut",
+                    PropertyType = "Kiralık",
+                    ListingTypeId = housingById.ListingTypeId,
+                    UsageTypeId = (int)housingById.ListingType.UsageType,
+                    Amenities = amenities,
+                    AgentPhoneNumber = housingById.Agent.AgentPhoneNumber,
+                    Mail = housingById.Agent.Mail,
+                    //Images
+                    PropImgUrl1 = housingById.PropImgUrl1,
+                    PropImgUrl10 = housingById.PropImgUrl10,
+                    PropImgUrl11 = housingById.PropImgUrl11,
+                    PropImgUrl12 = housingById.PropImgUrl12,
+                    PropImgUrl13 = housingById.PropImgUrl13,
+                    PropImgUrl14 = housingById.PropImgUrl14,
+                    PropImgUrl15 = housingById.PropImgUrl15,
+                    PropImgUrl16 = housingById.PropImgUrl16,
+                    PropImgUrl17 = housingById.PropImgUrl17,
+                    PropImgUrl18 = housingById.PropImgUrl18,
+                    PropImgUrl19 = housingById.PropImgUrl19,
+                    PropImgUrl2 = housingById.PropImgUrl2,
+                    PropImgUrl20 = housingById.PropImgUrl20,
+                    PropImgUrl21 = housingById.PropImgUrl21,
+                    PropImgUrl22 = housingById.PropImgUrl22,
+                    PropImgUrl23 = housingById.PropImgUrl23,
+                    PropImgUrl24 = housingById.PropImgUrl24,
+                    PropImgUrl25 = housingById.PropImgUrl25,
+                    PropImgUrl26 = housingById.PropImgUrl26,
+                    PropImgUrl27 = housingById.PropImgUrl27,
+                    PropImgUrl28 = housingById.PropImgUrl28,
+                    PropImgUrl29 = housingById.PropImgUrl29,
+                    PropImgUrl3 = housingById.PropImgUrl3,
+                    PropImgUrl30 = housingById.PropImgUrl30,
+                    PropImgUrl4 = housingById.PropImgUrl4,
+                    PropImgUrl5 = housingById.PropImgUrl5,
+                    PropImgUrl6 = housingById.PropImgUrl6,
+                    PropImgUrl7 = housingById.PropImgUrl7,
+                    PropImgUrl8 = housingById.PropImgUrl8,
+                    PropImgUrl9 = housingById.PropImgUrl9,
+                    //Images
+
+                };
+            }
+            var land = await _context.rentalLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x => x.LandCategory).FirstOrDefaultAsync(x => x.RentalLandListingId == id);
+            if (land != null)
+            {
+                amenities = await _context.RentalLandListingAmenities
+            .Where(x => x.RentalLandListingId == id && x.AmenityDefinition.isActive == true)
+            .Include(x => x.AmenityDefinition)
+            .Select(x => new AmenityItemViewModel
+            {
+                Id = x.AmenityDefinition.AmenityId,
+                Text = x.AmenityDefinition.Name,
+                Group = x.AmenityDefinition.GroupName,
+                SortOrder = x.AmenityDefinition.SortOrder
+            })
+            .OrderBy(x => x.Group)
+            .ThenBy(x => x.SortOrder)
+            .ToListAsync();
+                return new ForRentalPropertForListingViewModel
+                {
+                    ListingId = land.RentalLandListingId,
+                    PropertyNo = land.PropertyNo,
+                    PropertyName = land.PropertyName,
+                    PropertyDescription = land.PropertyDescription,
+                    PropertyStatus = land.PropertyStatus,
+                    CreatedDate = land.CreatedDate,
+                    City = land.City,
+                    District = land.District,
+                    Neighborhood = land.Neighborhood,
+                    AddressDesc = land.AddressDesc,
+                    ZoningStatus = land.ZoningStatus,
+                    Area = land.Area,
+                    PricePerSquareMeter = land.PricePerSquareMeter,
+                    ParcelNumber = land.ParcelNumber,
+                    PlotNumber = land.PlotNumber,
+                    MapSheetNumber = land.MapSheetNumber,
+                    FloorAreaRatio = land.FloorAreaRatio,
+                    BaseAreaRatio = land.BaseAreaRatio,
+                    ZoningPlan = land.ZoningPlan,
+                    DevelopmentRight = land.DevelopmentRight,
+                    LandCategoryId = land.LandCategory.LandCategoryId,
+                    LandCategoryName = land.LandCategory.LandCategoryName,
+                    ListingTypeName = land.ListingType.Name,
+                    AgentId = land.AgentId,
+                    AgentImgUrl = land.Agent.AgentImgUrl,
+                    AgentName = land.Agent.AgentName,
+                    AgentTitle = land.Agent.AgentTitle,
+                    AgentDescription=land.Agent.AgentDescription,
+                    BestDeals = land.BestDeals,
+                    TitleDeedStatus=land.TitleDeedStatus,
+                    ListingType = "Arsa",
+                    PropertyType = "Kiralık",
+                    ListingTypeId = land.ListingTypeId,
+                    UsageTypeId = (int)land.ListingType.UsageType,
+                    AgentPhoneNumber = land.Agent.AgentPhoneNumber,
+                    Mail = land.Agent.Mail,
+                    Rent=land.Rent,
+                    Amenities = amenities,
+                    //Images 
+                    PropImgUrl1 = land.PropImgUrl1,
+                    PropImgUrl10 = land.PropImgUrl10,
+                    PropImgUrl11 = land.PropImgUrl11,
+                    PropImgUrl12 = land.PropImgUrl12,
+                    PropImgUrl13 = land.PropImgUrl13,
+                    PropImgUrl14 = land.PropImgUrl14,
+                    PropImgUrl15 = land.PropImgUrl15,
+                    PropImgUrl16 = land.PropImgUrl16,
+                    PropImgUrl17 = land.PropImgUrl17,
+                    PropImgUrl18 = land.PropImgUrl18,
+                    PropImgUrl19 = land.PropImgUrl19,
+                    PropImgUrl2 = land.PropImgUrl2,
+                    PropImgUrl20 = land.PropImgUrl20,
+                    PropImgUrl21 = land.PropImgUrl21,
+                    PropImgUrl22 = land.PropImgUrl22,
+                    PropImgUrl23 = land.PropImgUrl23,
+                    PropImgUrl24 = land.PropImgUrl24,
+                    PropImgUrl25 = land.PropImgUrl25,
+                    PropImgUrl26 = land.PropImgUrl26,
+                    PropImgUrl27 = land.PropImgUrl27,
+                    PropImgUrl28 = land.PropImgUrl28,
+                    PropImgUrl29 = land.PropImgUrl29,
+                    PropImgUrl3 = land.PropImgUrl3,
+                    PropImgUrl30 = land.PropImgUrl30,
+                    PropImgUrl4 = land.PropImgUrl4,
+                    PropImgUrl5 = land.PropImgUrl5,
+                    PropImgUrl6 = land.PropImgUrl6,
+                    PropImgUrl7 = land.PropImgUrl7,
+                    PropImgUrl8 = land.PropImgUrl8,
+                    PropImgUrl9 = land.PropImgUrl9,
+                    //Images
+                };
+            }
+            var commercialById = await _context.rentalCommercialPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.RentalCommercialListId == id);
+            if (commercialById != null)
+            {
+                amenities = await _context.RentalCommercialListingAmenities
+            .Where(x => x.RentalCommercialListId == id && x.AmenityDefinition.isActive == true)
+            .Include(x => x.AmenityDefinition)
+            .Select(x => new AmenityItemViewModel
+            {
+                Id = x.AmenityDefinition.AmenityId,
+                Text = x.AmenityDefinition.Name,
+                Group = x.AmenityDefinition.GroupName,
+                SortOrder = x.AmenityDefinition.SortOrder
+            })
+            .OrderBy(x => x.Group)
+            .ThenBy(x => x.SortOrder)
+            .ToListAsync();
+                return new ForRentalPropertForListingViewModel
+                {
+                    ListingId = commercialById.RentalCommercialListId,
+                    PropertyNo = commercialById.PropertyNo,
+                    PropertyName = commercialById.PropertyName,
+                    PropertyDescription = commercialById.PropertyDescription,
+                    PropertyStatus = commercialById.PropertyStatus,
+                    CreatedDate = commercialById.CreatedDate,
+                    City = commercialById.City,
+                    District = commercialById.District,
+                    Neighborhood = commercialById.Neighborhood,
+                    AddressDesc = commercialById.AddressDesc,
+                    Facade = commercialById.Facade,
+                    NumberOfSection = commercialById.NumberOfSection,
+                    NumberOfKitchens = commercialById.NumberOfKitchens,
+                    NumberOfBathrooms = commercialById.NumberOfBathrooms,
+                    NumberOfFloors = commercialById.NumberOfFloors,
+                    GrossArea = commercialById.GrossArea,
+                    NetArea = commercialById.NetArea,
+                    BestDeals = commercialById.BestDeals,
+                    AgentId = commercialById.AgentId,
+                    AgentName = commercialById.Agent.AgentName,
+                    AgentImgUrl = commercialById.Agent.AgentImgUrl,
+                    AgentTitle = commercialById.Agent.AgentTitle,
+                    AgentDescription=commercialById.Agent.AgentDescription,
+                    BuildingAge=commercialById.BuildingAge,
+                    Heating=commercialById.Heating,
+                    TitleDeedStatus=commercialById.TitleDeedStatus,
+                    Rent=commercialById.Rent,
+                    ListingType = "İşyeri",
+                    PropertyType = "Kiralık",
+                    ListingTypeId = commercialById.ListingTypeId,
+                    UsageTypeId = (int)commercialById.ListingType.UsageType,
+                    ListingTypeName = commercialById.ListingType.Name,
+                    Amenities = amenities,
+                    Mail = commercialById.Agent.Mail,
+                    AgentPhoneNumber = commercialById.Agent.AgentPhoneNumber,
+                    Deposit=commercialById.Deposit,
+                    //Images 
+                    PropImgUrl1 = commercialById.PropImgUrl1,
+                    PropImgUrl10 = commercialById.PropImgUrl10,
+                    PropImgUrl11 = commercialById.PropImgUrl11,
+                    PropImgUrl12 = commercialById.PropImgUrl12,
+                    PropImgUrl13 = commercialById.PropImgUrl13,
+                    PropImgUrl14 = commercialById.PropImgUrl14,
+                    PropImgUrl15 = commercialById.PropImgUrl15,
+                    PropImgUrl16 = commercialById.PropImgUrl16,
+                    PropImgUrl17 = commercialById.PropImgUrl17,
+                    PropImgUrl18 = commercialById.PropImgUrl18,
+                    PropImgUrl19 = commercialById.PropImgUrl19,
+                    PropImgUrl2 = commercialById.PropImgUrl2,
+                    PropImgUrl20 = commercialById.PropImgUrl20,
+                    PropImgUrl21 = commercialById.PropImgUrl21,
+                    PropImgUrl22 = commercialById.PropImgUrl22,
+                    PropImgUrl23 = commercialById.PropImgUrl23,
+                    PropImgUrl24 = commercialById.PropImgUrl24,
+                    PropImgUrl25 = commercialById.PropImgUrl25,
+                    PropImgUrl26 = commercialById.PropImgUrl26,
+                    PropImgUrl27 = commercialById.PropImgUrl27,
+                    PropImgUrl28 = commercialById.PropImgUrl28,
+                    PropImgUrl29 = commercialById.PropImgUrl29,
+                    PropImgUrl3 = commercialById.PropImgUrl3,
+                    PropImgUrl30 = commercialById.PropImgUrl30,
+                    PropImgUrl4 = commercialById.PropImgUrl4,
+                    PropImgUrl5 = commercialById.PropImgUrl5,
+                    PropImgUrl6 = commercialById.PropImgUrl6,
+                    PropImgUrl7 = commercialById.PropImgUrl7,
+                    PropImgUrl8 = commercialById.PropImgUrl8,
+                    PropImgUrl9 = commercialById.PropImgUrl9,
+                    //Images 
+                };
+            }
+            return null;
+        }
     }
 }
 
