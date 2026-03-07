@@ -5,11 +5,15 @@
 }
 
 @await Component.InvokeAsync("_AllForRentalDetailPageViewComponentPartial", new { id = Model.ListingId })
+
 @section Styles {
+
     <link rel="stylesheet" href="/Realshed/assets/css/timePicker.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="/css/leaflet-markers.css" />
 }
+
+
 @section Scripts {
     <script>
         $(function () {
@@ -49,4 +53,5 @@
     </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="/js/listing-detail-map.js"></script>
+
 }

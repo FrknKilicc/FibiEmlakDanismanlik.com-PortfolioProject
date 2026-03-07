@@ -9825,3 +9825,27 @@ div#mCSB_1_container{
 .search-field .top-search .search-btn button i{
   margin-right: 8px;
 }
+
+
+/* TOASTR CUSTOM */
+
+.toast-top-center {
+    top: 80px;
+}
+
+#toast-container > .toast {
+    width: 420px;
+    font-size: 16px;
+    padding: 18px 18px 18px 55px;
+    border-radius: 8px;
+    opacity: 1;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+#toast-container > .toast-success {
+    background-color: #28a745;
+}
+
+#toast-container > .toast-error {
+    background-color: #dc3545;
+}

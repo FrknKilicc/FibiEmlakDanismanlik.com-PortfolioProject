@@ -41,14 +41,13 @@
                     </ul>
                     <div class="price-box pull-right">
                         <h3>@Model.Rent.ToString("N0") TL</h3>
+                        @if (Model.Deposit.HasValue)
+                        {
+                            <p class="deposit-text">Depozito : @Model.Deposit.Value.ToString("N0") TL</p>
+                        }
                     </div>
                 </div>
-                <ul class="other-option pull-right clearfix">
-                    <li><a href="property-details.html"><i class="icon-37"></i></a></li>
-                    <li><a href="property-details.html"><i class="icon-38"></i></a></li>
-                    <li><a href="property-details.html"><i class="icon-12"></i></a></li>
-                    <li><a href="property-details.html"><i class="icon-13"></i></a></li>
-                </ul>
+                @await Component.InvokeAsync("_PropertyDetailActionsViewComponentPartial")
             </div>
         </div>
         <div class="row clearfix">
@@ -203,7 +202,8 @@
                         <div class="form-inner">
                             <form asp-action="SendAppointment" asp-controller="Contact" method="post">
                                 <input type="hidden" name="PropertyListingId" value="@Model.ListingId" />
-                                <input type="hidden" name="PropertyListingTypeEnum" value="@propertyListingTypeEnum" />                                <div class="row clearfix">
+                                <input type="hidden" name="PropertyListingTypeEnum" value="@propertyListingTypeEnum" />                                
+                                <div class="row clearfix">
                                     <div class="col-lg-6 col-md-12 col-sm-12 column">
                                         <div class="form-group">
                                             <i class="far fa-calendar-alt"></i>
@@ -402,5 +402,6 @@
             </div>
         </div>
  *@    </div>
+
 </section>
 

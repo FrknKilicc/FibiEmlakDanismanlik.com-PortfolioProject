@@ -36,34 +36,49 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
 
         [HttpPost]
         public async Task<IActionResult> SendAppointment(
-      CreateCustomerContactCommand model,
-      string date,
-      string time)
+    CreateCustomerContactCommand model,
+    string date,
+    string time)
         {
-            if (!string.IsNullOrEmpty(date) && !string.IsNullOrEmpty(time))
+            try
             {
-                model.AppointmentDateTime = DateTime.ParseExact(
-                    $"{date} {time}",
-                    "dd.MM.yyyy HH:mm",
-                    System.Globalization.CultureInfo.InvariantCulture);
-            }
-            var client = _httpClientFactory.CreateClient();
-            var apiUrl = _configuration["Url:ApiUrl"];
-            var response = await client.PostAsJsonAsync($"{apiUrl}CustomerContact", model);
-            var body = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(date) && !string.IsNullOrWhiteSpace(time))
+                {
+                    model.AppointmentDateTime = DateTime.ParseExact(
+                        $"{date} {time}",
+                        "dd.MM.yyyy HH:mm",
+                        System.Globalization.CultureInfo.InvariantCulture);
+                }
 
-            Console.WriteLine($"POST URL: {apiUrl}CustomerContact");
-            Console.WriteLine($"API Status: {(int)response.StatusCode} {response.StatusCode}");
-            Console.WriteLine($"API Body: {body}");
+                var client = _httpClientFactory.CreateClient();
+                var apiUrl = _configuration["Url:ApiUrl"];
+                var response = await client.PostAsJsonAsync($"{apiUrl}CustomerContact", model);
+                var body = await response.Content.ReadAsStringAsync();
 
-            if (!response.IsSuccessStatusCode)
-            {
-                TempData["Message"] = "Randevu talebi gönderilemedi";
+                Console.WriteLine($"POST URL: {apiUrl}CustomerContact");
+                Console.WriteLine($"API Status: {(int)response.StatusCode} {response.StatusCode}");
+                Console.WriteLine($"API Body: {body}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["MessageType"] = "error";
+                    TempData["Message"] = "Randevu talebi gönderilemedi";
+
+                    return Redirect(Request.Headers["Referer"].ToString());
+                }
+
+                TempData["MessageType"] = "success";
+                TempData["Message"] = "Randevu talebiniz alınmıştır";
+
                 return Redirect(Request.Headers["Referer"].ToString());
             }
-            TempData["Message"] = "Randevu talebiniz alınmıştır.";
+            catch (Exception)
+            {
+                TempData["MessageType"] = "error";
+                TempData["Message"] = "İşlem sırasında beklenmeyen bir hata oluştu";
 
-            return Redirect(Request.Headers["Referer"].ToString());
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
         }
     }
 }
