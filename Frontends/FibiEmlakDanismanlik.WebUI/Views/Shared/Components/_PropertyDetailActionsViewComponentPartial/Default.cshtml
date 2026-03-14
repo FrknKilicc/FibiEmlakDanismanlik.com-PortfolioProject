@@ -1,4 +1,6 @@
-﻿<ul class="other-option pull-right clearfix">
+﻿@model FibiEmlakDanismanlik.WebUI.Models.CompareActionButtonVm
+
+<ul class="other-option pull-right clearfix">
     <li>
         <a href="javascript:void(0)" title="Paylaş">
             <i class="icon-37"></i>
@@ -10,7 +12,13 @@
         </a>
     </li>
     <li>
-        <a href="javascript:void(0)" title="Karşılaştır">
+        <a href="javascript:void(0)"
+           class="js-compare-btn"
+           title="Karşılaştır"
+           data-listing-id="@Model.ListingId"
+           data-usage-type-id="@Model.UsageTypeId"
+           data-listing-type="@Model.ListingType"
+           data-compare-type-key="@Model.CompareTypeKey">
             <i class="icon-12"></i>
         </a>
     </li>

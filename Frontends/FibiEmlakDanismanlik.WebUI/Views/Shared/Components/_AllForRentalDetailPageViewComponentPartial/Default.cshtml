@@ -47,7 +47,12 @@
                         }
                     </div>
                 </div>
-                @await Component.InvokeAsync("_PropertyDetailActionsViewComponentPartial")
+                @await Component.InvokeAsync("_PropertyDetailActionsViewComponentPartial", new FibiEmlakDanismanlik.WebUI.Models.CompareActionButtonVm
+                {
+                    ListingId = Model.ListingId,
+                                UsageTypeId = Model.UsageTypeId ?? 2,
+                                ListingType = Model.ListingType ?? string.Empty
+                                })
             </div>
         </div>
         <div class="row clearfix">

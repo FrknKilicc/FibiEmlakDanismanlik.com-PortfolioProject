@@ -43,7 +43,12 @@
                         <h3>@Model.Price.ToString("N0") TL</h3>
                     </div>
                 </div>
-                @await Component.InvokeAsync("_PropertyDetailActionsViewComponentPartial")
+                @await Component.InvokeAsync("_PropertyDetailActionsViewComponentPartial", new FibiEmlakDanismanlik.WebUI.Models.CompareActionButtonVm
+                {
+                    ListingId = Model.ListingId,
+                                UsageTypeId = Model.UsageTypeId,
+                                ListingType = Model.ListingType
+                                })
             </div>
         </div>
         <div class="row clearfix">

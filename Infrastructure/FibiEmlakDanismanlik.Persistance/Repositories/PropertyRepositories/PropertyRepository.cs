@@ -314,6 +314,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Exchange = land.Exchange,
                     BestDeals = land.BestDeals,
                     LandCategoryId = land.LandCategoryId,
+                    
 
                     // konut boş
                     Facade = null,
@@ -1566,6 +1567,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     ListingId = h.RentalHousingListId,
                     ListingTypeId = h.ListingTypeId ?? 0,
                     UsageTypeId = (int)lt.UsageType,
+                    ListingType = h.ListingType.Name,
 
                     PropertyNo = h.PropertyNo,
                     PropertyName = h.PropertyName,
@@ -1659,6 +1661,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     ListingId = l.RentalLandListingId,
                     ListingTypeId = l.ListingTypeId ?? 0,
                     UsageTypeId = (int)lt.UsageType,
+                    ListingType = l.ListingType.Name,
 
                     PropertyNo = l.PropertyNo,
                     PropertyName = l.PropertyName,
@@ -1733,6 +1736,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     ListingId = c.RentalCommercialListId,
                     ListingTypeId = c.ListingTypeId ?? 0,
                     UsageTypeId = (int)lt.UsageType,
+                    ListingType = c.ListingType.Name,
 
                     PropertyNo = c.PropertyNo,
                     PropertyName = c.PropertyName,

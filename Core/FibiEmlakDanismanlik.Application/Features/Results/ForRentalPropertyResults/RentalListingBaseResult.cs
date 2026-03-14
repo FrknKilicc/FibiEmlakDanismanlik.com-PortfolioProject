@@ -13,6 +13,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyRes
         public int ListingId { get; set; }
         public int ListingTypeId { get; set; }
         public int UsageTypeId { get; set; } // ForRent : 7-89 olabilir
+        public string? ListingType { get; set; }
 
         public int? PropertyNo { get; set; }
         public string? PropertyName { get; set; }

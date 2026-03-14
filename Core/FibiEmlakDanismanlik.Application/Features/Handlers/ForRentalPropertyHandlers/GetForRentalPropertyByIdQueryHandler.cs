@@ -38,6 +38,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForRentalPropertyHa
 
                 ListingId = value.ListingId,
                 ListingType = value.ListingType,
+                
                 TitleDeedStatus = value.TitleDeedStatus,
                 UsageTypeId = value.UsageTypeId,
                 AgentTitle = value.AgentTitle,

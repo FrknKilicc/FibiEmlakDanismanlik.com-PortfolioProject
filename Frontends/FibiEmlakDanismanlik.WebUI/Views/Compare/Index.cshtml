@@ -1,0 +1,10 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+}
+@await Component.InvokeAsync("_CompareTableViewComponentPartial", new
+{
+    rawIds = Model.RawIds,
+    compareTypeKey = Model.CompareTypeKey
+})
+

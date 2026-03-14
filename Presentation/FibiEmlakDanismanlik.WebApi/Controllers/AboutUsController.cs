@@ -11,7 +11,6 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
     public class AboutUsController : ControllerBase
     {
         private readonly IMediator _mediator;
-
         public AboutUsController(IMediator mediator)
         {
             _mediator = mediator;

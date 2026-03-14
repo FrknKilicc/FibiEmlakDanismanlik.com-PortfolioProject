@@ -234,8 +234,31 @@
                                                             <h6>Fiyat</h6>
                                                             <h4>@item.Price.ToString("N0") TL</h4>
                                                         </div>
+                                                        @{
+                                                            var compareTypeKey = item.UsageTypeId switch
+                                                            {
+                                                                1 when item.ListingType == "Konut" => "forsale-housing",
+                                                                1 when item.ListingType == "Arsa" => "forsale-land",
+                                                                1 when item.ListingType == "İşyeri" => "forsale-commercial",
+                                                                2 when item.ListingType == "Konut" => "forrent-housing",
+                                                                2 when item.ListingType == "Arsa" => "forrent-land",
+                                                                2 when item.ListingType == "İşyeri" => "forrent-commercial",
+                                                                _ => "unknown"
+                                                            };
+                                                        }
+
                                                         <ul class="other-option pull-right clearfix">
-                                                            <li><a href="property-details.html"><i class="icon-12"></i></a></li>
+                                                            <li>
+                                                                <a href="javascript:void(0)"
+                                                                   class="js-compare-btn"
+                                                                   title="Karşılaştır"
+                                                                   data-listing-id="@item.ListingId"
+                                                                   data-usage-type-id="@item.UsageTypeId"
+                                                                   data-listing-type="@item.ListingType"
+                                                                   data-compare-type-key="@compareTypeKey">
+                                                                    <i class="icon-12"></i>
+                                                                </a>
+                                                            </li>
                                                             <li><a href="property-details.html"><i class="icon-13"></i></a></li>
                                                         </ul>
                                                     </div>

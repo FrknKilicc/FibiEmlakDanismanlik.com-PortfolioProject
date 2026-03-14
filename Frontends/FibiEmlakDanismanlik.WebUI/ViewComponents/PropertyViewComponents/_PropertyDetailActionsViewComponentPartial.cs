@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FibiEmlakDanismanlik.WebUI.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents
 {
     public class _PropertyDetailActionsViewComponentPartial:ViewComponent
     {
-        public IViewComponentResult Invoke()
+        public IViewComponentResult Invoke(CompareActionButtonVm model)
         {
-            return View();
+            return View(model);
         }
     }
 }

@@ -20,6 +20,7 @@ namespace FibiEmlakDanismanlik.Dto.PropertyDtos
         public int ListingId { get; set; }
 
         public int ListingTypeId { get; set; }
+        public string? ListingType { get; set; }
 
         public int UsageTypeId { get; set; }
 

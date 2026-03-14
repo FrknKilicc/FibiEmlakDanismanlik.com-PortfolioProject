@@ -1,0 +1,68 @@
+﻿@model FibiEmlakDanismanlik.WebUI.Models.CompareTableVm
+
+<section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
+    <div class="auto-container">
+        <div class="content-box clearfix">
+            <h1>İlan Karşılaştır</h1>
+            <ul class="bread-crumb clearfix">
+                <li><a href="@Url.Action("Index","UILayout")">Anasayfa</a></li>
+                <li>İlan Karşılaştır</li>
+            </ul>
+        </div>
+    </div>
+</section>
+<section class="properties-section centred">
+    <div class="auto-container">
+        @if (Model.HasError)
+        {
+            <div class="alert alert-warning">
+                @Model.ErrorMessage
+            </div>
+        }
+        else if (Model.Items == null || Model.Items.Count < 2)
+        {
+            <div class="alert alert-warning">
+                Karşılaştırılacak yeterli ilan bulunamadı
+            </div>
+        }
+        else
+        {
+            <div class="table-outer">
+                <table class="properties-table">
+                    <thead class="table-header">
+                        <tr>
+                            <th>İlan Bilgisi</th>
+                            @foreach (var item in Model.Items)
+                            {
+                                <th>
+                                    <figure class="image-box compare-image-box">
+                                        <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "/Realshed/assets/images/resource/table-img-1.jpg" : item.ImageUrl)" alt="">
+                                    </figure>
+                                    <div class="title">@item.PropertyName</div>
+                                    <div class="price">@item.Price.ToString("N0") TL</div>
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var field in Model.Fields)
+                        {
+                            <tr>
+                                <td>
+                                    <p>@field.Label</p>
+                                </td>
+
+                                @foreach (var value in field.Values)
+                                {
+                                    <td>
+                                        <p>@value</p>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>
