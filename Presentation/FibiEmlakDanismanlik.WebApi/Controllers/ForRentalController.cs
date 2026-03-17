@@ -50,5 +50,11 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await mediator.Send(new GetForRentalPropertyByIdQuery(id));
             return Ok(value);
         }
+        [HttpGet("GetSimilarForRentalProperties/{id}")]
+        public async Task<IActionResult> GetSimilarForRentalProperties(int id)
+        {
+            var result = await mediator.Send(new GetSimilarForRentalPropertiesQuery(id));
+            return Ok(result);
+        }
     }
 }

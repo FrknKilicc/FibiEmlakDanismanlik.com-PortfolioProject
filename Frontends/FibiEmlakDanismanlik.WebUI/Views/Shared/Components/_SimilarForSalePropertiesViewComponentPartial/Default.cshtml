@@ -1,0 +1,113 @@
+﻿@model List<FibiEmlakDanismanlik.Dto.PropertyDtos.SimilarPropertyItemDto>
+
+@if (Model != null && Model.Any())
+{
+    <div class="similar-content">
+        <div class="title">
+            <h4>Similar Properties</h4>
+        </div>
+        <div class="row clearfix">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var item = Model[i];
+                var delay = i * 300;
+
+                var imageUrl = !string.IsNullOrWhiteSpace(item.CoverImageUrl)
+                ? item.CoverImageUrl
+                : Url.Content("~/Realshed/assets/images/feature/feature-1.jpg");
+
+                var agentImageUrl = !string.IsNullOrWhiteSpace(item.AgentImageUrl)
+                ? item.AgentImageUrl
+                : Url.Content("~/Realshed/assets/images/feature/author-1.jpg");
+
+                var description = !string.IsNullOrWhiteSpace(item.PropertyDescription)
+                ? (item.PropertyDescription.Length > 120
+                ? item.PropertyDescription.Substring(0, 120) + "..."
+                : item.PropertyDescription)
+                : "İlan açıklaması bulunmuyor.";
+
+                var locationText = string.Join(" / ",
+                new[] { item.Neighborhood, item.District, item.City }
+                .Where(x => !string.IsNullOrWhiteSpace(x)));
+
+                var agentName = !string.IsNullOrWhiteSpace(item.AgentName)
+                ? item.AgentName
+                : "Danışman";
+
+                var propertyStatus = !string.IsNullOrWhiteSpace(item.PropertyStatus)
+                ? item.PropertyStatus
+                : "Satılık";
+
+                var detailUrl = Url.Action("Index", "ForSalePropertyDetail", new { id = item.ListingId });
+
+                <div class="col-lg-4 col-md-6 col-sm-12 feature-block">
+                    <div class="feature-block-one wow fadeInUp animated" data-wow-delay="@($"{delay}ms")" data-wow-duration="1500ms">
+                        <div class="inner-box">
+                            <div class="image-box">
+                                <figure class="image">
+                                    <img src="@imageUrl" alt="@item.PropertyName">
+                                </figure>
+                                <div class="batch"><i class="icon-11"></i></div>
+                                <span class="category">@item.ListingType</span>
+                            </div>
+                            <div class="lower-content">
+                                <div class="author-info clearfix">
+                                    <div class="author pull-left">
+                                        <figure class="author-thumb">
+                                            <img src="@agentImageUrl" alt="@agentName">
+                                        </figure>
+                                        <h6>@agentName</h6>
+                                    </div>
+                                    <div class="buy-btn pull-right">
+                                        <a href="@detailUrl">@propertyStatus</a>
+                                    </div>
+                                </div>
+                                <div class="title-text">
+                                    <h4>
+                                        <a href="@detailUrl">@item.PropertyName</a>
+                                    </h4>
+                                </div>
+                                <div class="price-box clearfix">
+                                    <div class="price-info pull-left">
+                                        <h6>Fiyat</h6>
+                                        <h4>
+                                            @(item.Price.HasValue
+                                                                                ? item.Price.Value.ToString("N0") + " ₺"
+                                                                                : "Fiyat Yok")
+                                </h4>
+                            </div>
+                            <ul class="other-option pull-right clearfix">
+                                <li><a href="@detailUrl"><i class="icon-12"></i></a></li>
+                                <li><a href="@detailUrl"><i class="icon-13"></i></a></li>
+                            </ul>
+                        </div>
+                        <p>@description</p>
+                        <ul class="more-details clearfix">
+                            @if (!string.IsNullOrWhiteSpace(item.NumberOfRoom))
+                                    {
+                                        <li><i class="icon-14"></i>@item.NumberOfRoom</li>
+                                    }
+
+                                <li>
+                                    <i class="icon-16"></i>
+                                    @(item.SquareMeter.HasValue
+                                                                    ? item.SquareMeter.Value.ToString("N0") + " m²"
+                                                                    : "-")
+                            </li>
+
+                            @if (!string.IsNullOrWhiteSpace(locationText))
+                                    {
+                                        <li><i class="icon-15"></i>@locationText</li>
+                                    }
+                                </ul>
+                                <div class="btn-box">
+                                    <a href="@detailUrl" class="theme-btn btn-two">Detayları Gör</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

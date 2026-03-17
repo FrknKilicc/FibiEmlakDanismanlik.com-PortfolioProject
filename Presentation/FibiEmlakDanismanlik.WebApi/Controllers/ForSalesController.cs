@@ -54,6 +54,12 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _meditor.Send(new GetFilteredForSalePropertiesForListingQuery(request));
             return Ok(value);
         }
+        [HttpGet("GetSimilarForSaleProperties/{id}")]
+        public async Task<IActionResult> GetSimilarForSaleProperties(int id)
+        {
+            var result = await _meditor.Send(new GetSimilarForSalePropertiesQuery(id));
+            return Ok(result);
+        }
 
     }
 }

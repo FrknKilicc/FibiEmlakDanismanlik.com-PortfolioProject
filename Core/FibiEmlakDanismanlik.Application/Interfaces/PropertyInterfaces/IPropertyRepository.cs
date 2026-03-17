@@ -1,4 +1,5 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
+using FibiEmlakDanismanlik.Application.Features.Results.CommonPropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
 using FibiEmlakDanismanlik.Application.ViewModels;
@@ -30,5 +31,12 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces
 
         public Task<List<ListingSelectedImageRowDto>>
             GetSelectedImagesAsync(int listingId, string sectionKey);
+
+        public Task<SimilarPropertyReferenceResult?> GetForSaleSimilarReferenceAsync(int listingId);
+        public Task<List<SimilarPropertyCandidateResult>> GetForSaleSimilarCandidatesAsync(SimilarPropertyReferenceResult reference, int take);
+
+        public Task<SimilarPropertyReferenceResult?> GetForRentalSimilarReferenceAsync(int listingId);
+        public Task<List<SimilarPropertyCandidateResult>> GetForRentalSimilarCandidatesAsync(SimilarPropertyReferenceResult reference, int take);
+
     }
 }
