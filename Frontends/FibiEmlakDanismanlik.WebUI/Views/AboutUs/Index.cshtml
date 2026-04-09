@@ -1,8 +1,9 @@
-﻿
-@{
-    ViewData["Title"] = "Index";
-    Layout = "~/Views/UILayout/Index.cshtml";
+﻿@{
+    ViewData["Title"] = "Hakkımızda";
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
 
 <h1>Index</h1>
+
+@await Component.InvokeAsync("_TestimonialsViewComponentPartial")
 

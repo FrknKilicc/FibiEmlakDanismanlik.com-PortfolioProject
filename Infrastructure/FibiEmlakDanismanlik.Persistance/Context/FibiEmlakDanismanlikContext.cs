@@ -101,6 +101,8 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<NearbyCategory> NearbyCategories { get; set; }
         public DbSet<ListingNearbyPlace> ListingNearbyPlaces { get; set; }
         public DbSet<ListingGeoPoint> ListingGeoPoints { get; set; }
+        public DbSet<Testimonials> Testimonials { get; set; }
+        public DbSet<OurPartners> OurPartners { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

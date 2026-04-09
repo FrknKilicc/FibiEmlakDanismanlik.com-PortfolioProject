@@ -1,0 +1,56 @@
+﻿@model List<ResultFaqDto>
+
+
+<section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
+    <div class="auto-container">
+        <div class="content-box clearfix">
+            <h1>Sıkça Sorulan Sorular</h1>
+            <ul class="bread-crumb clearfix">
+                <li><a href="@Url.Action("Index", "UILayout")">Anasayfa</a></li>
+                <li>Sıkça Sorulan Sorular</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+    <section class="faq-page-section sec-pad">
+        <div class="auto-container">
+            <div class="row clearfix">
+            <div class="col-lg-10 col-md-12 col-sm-12 content-column">
+                    <div class="faq-content-side">
+                        <div class="sec-title">
+                         <h5>Fibi Rehber</h5>
+                        <h3>Aklınıza Takılan Her Şey</h3>
+                        <p>Fibi ile gayrimenkul süreçlerini daha hızlı ve güvenli yönetmek için bilmeniz gereken her şey burada</p>
+                        </div>
+                  
+                        <ul class="accordion-box">
+                        @{
+                            var index = 0;
+                        }
+
+                        @foreach (var item in Model)
+                        {
+                            var isActive = index == 0;
+
+                            <li class="accordion block @(isActive ? "active-block" : "")">
+                                <div class="acc-btn @(isActive ? "active" : "")">
+                                    <div class="icon-outer"><i class="fas fa-angle-down"></i></div>
+                                    <h5>@Html.Raw(item.Question)</h5>
+                                </div>
+                                <div class="acc-content @(isActive ? "current" : "")">
+                                    <div class="content-box">
+                                        @Html.Raw(item.Answer)
+                                    </div>
+                                </div>
+                            </li>
+
+                            index++;
+                        }
+
+                    </ul>
+                    </div>
+                </div>
+                </div>
+            </div>
+    </section>

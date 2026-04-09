@@ -1275,6 +1275,25 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("Neighborhoods");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.OurPartners", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PartnerLogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PartnerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OurPartners");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalCommercialListingAmenities", b =>
                 {
                     b.Property<int>("Id")
@@ -1986,6 +2005,31 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.Testimonials", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Testimonail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Testimonials");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.Blog", b =>

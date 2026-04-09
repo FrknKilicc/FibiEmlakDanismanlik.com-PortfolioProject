@@ -1,0 +1,28 @@
+﻿ <!-- testimonial-style-four -->
+@model List<ResultTestimonialDto>
+<!-- testimonial-style-four -->
+<section class="testimonial-style-four sec-pad centred">
+    <div class="auto-container">
+        <div class="sec-title">
+            <h5>Hakkımıda</h5>
+            <h2>Bizi Birde Onlardan Dinleyin </h2>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing sed do eiusmod tempor incididunt <br />labore dolore magna aliqua enim.</p>
+        </div>
+        <div class="three-item-carousel owl-carousel owl-theme owl-nav-none dots-style-one">
+            @foreach(var item in Model)
+            {
+                <div class="testimonial-block-three">
+                    <div class="inner-box">
+                        <div class="icon-box"><i class="@item.LogoUrl"></i></div>
+                        <h4>“@item.Testimonail”</h4>
+                        <h5>@item.Name</h5>
+                        <span class="designation">@item.Title</span>
+                    </div>
+                </div>
+
+            }
+        
+        </div>
+    </div>
+</section>
+<!-- testimonial-style-four end -->

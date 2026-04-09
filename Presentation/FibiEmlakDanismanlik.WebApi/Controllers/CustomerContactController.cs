@@ -17,7 +17,6 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             _mediator = mediator;
         }
 
-
         [HttpPost]
         public async Task<IActionResult> CreateCustomerContactRequest(CreateCustomerContactCommand command)
         {
