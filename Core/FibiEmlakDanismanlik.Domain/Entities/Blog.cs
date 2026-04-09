@@ -19,6 +19,8 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public bool TopNews { get; set; }
         public int AuthorId { get; set; }
         public Author Author { get; set; }
+        public int? BlogCategoryId { get; set; }
+        public BlogCategory BlogCategory { get; set; }
 
         public ICollection<BlogTag> BlogTags { get; set; } = new List<BlogTag>();
 

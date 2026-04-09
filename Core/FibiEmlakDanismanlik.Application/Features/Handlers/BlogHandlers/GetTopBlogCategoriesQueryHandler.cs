@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
 {
-    public class GetBlogListWithAuthorQueryHandler : IRequestHandler<GetBlogListWithAuthorQuery, List<GetBlogDetailWithAuthorResult?>>
+    public class GetTopBlogCategoriesQueryHandler : IRequestHandler<GetTopBlogCategoriesQuery, List<BlogCategoryCountResult>>
     {
         private readonly IBlogRepository _blogRepository;
 
-        public GetBlogListWithAuthorQueryHandler(IBlogRepository blogRepository)
+        public GetTopBlogCategoriesQueryHandler(IBlogRepository blogRepository)
         {
             _blogRepository = blogRepository;
         }
 
-        public async Task<List<GetBlogDetailWithAuthorResult?>> Handle(GetBlogListWithAuthorQuery request, CancellationToken cancellationToken)
+        public async Task<List<BlogCategoryCountResult>> Handle(GetTopBlogCategoriesQuery request, CancellationToken cancellationToken)
         {
-            return await _blogRepository.GetBlogListWithAuthor(request.BlogCategoryId);
+            return await _blogRepository.GetTopBlogCategories(request.Take);
         }
     }
 }

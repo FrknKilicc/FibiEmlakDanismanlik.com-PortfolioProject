@@ -74,16 +74,12 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
 
         [HttpGet("GetBlogListWithAuthor")]
 
-        public async Task<IActionResult> GetBlogListWithAuthor()
+        public async Task<IActionResult> GetBlogListWithAuthor([FromQuery] int? blogCategoryId)
         {
-            var value = await _mediator.Send(new GetBlogListWithAuthorQuery());
-            if (value == null)
             {
-                return NotFound("Blog Detayına erişilemiyor");
-                
+                var values = await _mediator.Send(new GetBlogListWithAuthorQuery(blogCategoryId));
+                return Ok(values);
             }
-
-            return Ok(value);
         }
 
         [HttpGet("SearchSuggestions")]
@@ -96,6 +92,12 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             }
             var result = await _mediator.Send(new GetBlogSuggestionsQuery(q, take));
             return Ok(result);
+        }
+        [HttpGet("GetTopBlogCategories")]
+        public async Task<IActionResult> GetTopBlogCategories([FromQuery] int take = 5)
+        {
+            var values = await _mediator.Send(new GetTopBlogCategoriesQuery(take));
+            return Ok(values);
         }
     }
 }

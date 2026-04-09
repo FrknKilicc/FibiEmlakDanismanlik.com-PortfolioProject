@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Queries.BlogQueries
 {
-    public class GetBlogListWithAuthorQuery : IRequest<List<GetBlogDetailWithAuthorResult?>>
+    public class GetTopBlogCategoriesQuery : IRequest<List<BlogCategoryCountResult>>
     {
-        public int? BlogCategoryId { get; set; }
+        public int Take { get; set; }
 
-        public GetBlogListWithAuthorQuery(int? blogCategoryId = null)
+        public GetTopBlogCategoriesQuery(int take = 5)
         {
-            BlogCategoryId = blogCategoryId;
+            Take = take;
         }
     }
 }

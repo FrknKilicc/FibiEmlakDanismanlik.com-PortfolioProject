@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace FibiEmlakDanismanlik.WebUI.ViewComponents.BlogViewComponents
 {
-    public class _BlogListViewComponentPartial: ViewComponent
+    public class _BlogListViewComponentPartial : ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
@@ -38,8 +38,24 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.BlogViewComponents
             var page = ReadIntQuery(Request, "page", 1, 1, int.MaxValue);
             var pageSize = ReadIntQuery(Request, "pageSize", 3, 1, 100);
 
+            int? blogCategoryId = null;
+            if (Request.Query.TryGetValue("blogCategoryId", out var categoryValue))
+            {
+                if (int.TryParse(categoryValue.ToString(), out var parsedCategoryId) && parsedCategoryId > 0)
+                {
+                    blogCategoryId = parsedCategoryId;
+                }
+            }
+
             var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_configuration["Url:ApiUrl"]}Blog/GetBlogListWithAuthor");
+
+            var apiUrl = $"{_configuration["Url:ApiUrl"]}Blog/GetBlogListWithAuthor";
+            if (blogCategoryId.HasValue)
+            {
+                apiUrl += $"?blogCategoryId={blogCategoryId.Value}";
+            }
+
+            var responseMessage = await client.GetAsync(apiUrl);
 
             if (!responseMessage.IsSuccessStatusCode)
             {
@@ -68,7 +84,10 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.BlogViewComponents
                 PageSize = pageSize
             };
 
+            ViewBag.SelectedBlogCategoryId = blogCategoryId;
+
             return View(vm);
         }
+
     }
 }

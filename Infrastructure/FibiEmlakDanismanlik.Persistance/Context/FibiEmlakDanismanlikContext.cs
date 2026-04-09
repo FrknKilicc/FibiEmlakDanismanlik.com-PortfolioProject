@@ -103,6 +103,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<ListingGeoPoint> ListingGeoPoints { get; set; }
         public DbSet<Testimonials> Testimonials { get; set; }
         public DbSet<OurPartners> OurPartners { get; set; }
+        public DbSet<BlogCategory> BlogCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -198,6 +199,26 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.HasOne(x => x.Tag)
                       .WithMany(x => x.BlogTags)
                       .HasForeignKey(x => x.TagId);
+            });
+            //BlogCat
+            modelBuilder.Entity<BlogCategory>(entity =>
+            {
+                entity.HasKey(x => x.BlogCategoryId);
+
+                entity.Property(x => x.CategoryName)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.HasIndex(x => x.CategoryName)
+                      .IsUnique();
+            });
+
+            modelBuilder.Entity<Blog>(entity =>
+            {
+                entity.HasOne(x => x.BlogCategory)
+                      .WithMany(x => x.Blogs)
+                      .HasForeignKey(x => x.BlogCategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
 
             modelBuilder.Entity<ListingGeoPoint>()

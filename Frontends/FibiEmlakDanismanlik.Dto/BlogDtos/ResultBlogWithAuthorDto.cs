@@ -19,6 +19,9 @@ namespace FibiEmlakDanismanlik.Dto.BlogDtos
         public string AuthorName { get; set; }
         public string AuthorImgUrl { get; set; }
 
+        public int? BlogCategoryId { get; set; }
+        public string? BlogCategoryName { get; set; }
+
         public List<ResultBlogTagDto> Tags { get; set; } = new();
 
 

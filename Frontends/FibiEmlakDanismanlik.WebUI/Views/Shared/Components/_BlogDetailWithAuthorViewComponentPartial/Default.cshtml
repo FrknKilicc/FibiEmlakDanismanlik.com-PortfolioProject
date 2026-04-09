@@ -46,7 +46,7 @@
                                         <li><h5>Etiketler:</h5></li>
                                         @foreach (var tag in Model.Tags)
                                         {
-                                           <li><a href="blog-details.html">@tag.Name</a></li>
+                                           <li><a>@tag.Name</a></li>
                                         }
                                         
                                     </ul>
@@ -98,20 +98,7 @@
                             <li><a href="https://www.instagram.com/fibiemlak/" target="_blank"><i class="fab fa-instagram"></i></a></li>
                         </ul>
                     </div>
-                    <div class="sidebar-widget category-widget">
-                        <div class="widget-title">
-                            <h4>Category</h4>
-                        </div>
-                        <div class="widget-content">
-                            <ul class="category-list clearfix">
-                                <li><a href="blog-details.html">Home improvement<span>(9)</span></a></li>
-                                <li><a href="blog-details.html">Architecture<span>(5)</span></a></li>
-                                <li><a href="blog-details.html">Tips and advice<span>(2)</span></a></li>
-                                <li><a href="blog-details.html">Interior<span>(7)</span></a></li>
-                                <li><a href="blog-details.html">Real Estate<span>(3)</span></a></li>
-                            </ul>
-                        </div>
-                    </div>
+                    @await Component.InvokeAsync("_BlogCategoriesViewComponentPartial")
                     @await Component.InvokeAsync("_GetLast3BlogWithAuthorViewComponentPartial")
                 </div>
             </div>

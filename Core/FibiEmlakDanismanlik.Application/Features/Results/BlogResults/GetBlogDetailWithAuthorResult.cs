@@ -15,11 +15,14 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.BlogResults
         public DateTime CreatedDate { get; set; }
         public bool TopNews { get; set; }
 
-        // Author props
         public int AuthorId { get; set; }
         public string AuthorName { get; set; }
         public string AuthorImgUrl { get; set; }
-        public List<BlogTagItemResult> Tags { get; set; }
+
+        public int? BlogCategoryId { get; set; }
+        public string BlogCategoryName { get; set; }
+
+        public List<BlogTagItemResult> Tags { get; set; } = new();
 
     }
 }

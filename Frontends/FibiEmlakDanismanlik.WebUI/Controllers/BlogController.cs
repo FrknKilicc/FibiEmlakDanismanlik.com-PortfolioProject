@@ -16,8 +16,11 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
             _configuration = configuration;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? blogCategoryId, int page = 1, int pageSize = 3)
         {
+            ViewBag.SelectedBlogCategoryId = blogCategoryId;
+            ViewBag.Page = page;
+            ViewBag.PageSize = pageSize;
             return View();
         }
         [HttpGet("/Blog/Detail/{id:int}")]

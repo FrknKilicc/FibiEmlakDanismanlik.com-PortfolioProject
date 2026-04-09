@@ -1,0 +1,18 @@
+﻿@model List<FibiEmlakDanismanlik.Dto.BlogDtos.BlogCategoryCountDto>
+
+<div class="sidebar-widget category-widget">
+    <div class="widget-title">
+        <h4>Category</h4>
+    </div>
+    <div class="widget-content">
+        <ul class="category-list clearfix">
+            @foreach (var item in Model)
+            {
+                <li><a href="@Url.Action("Index", "Blog", new { blogCategoryId = item.BlogCategoryId })"> @item.CategoryName<span>(@item.BlogCount)</span></a></li>
+            }
+
+        </ul>
+    </div>
+</div>
+
+

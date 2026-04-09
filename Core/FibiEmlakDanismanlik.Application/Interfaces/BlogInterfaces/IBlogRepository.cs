@@ -9,10 +9,11 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces
 {
     public interface IBlogRepository
     {
-        public Task<GetBlogDetailWithAuthorResult?> GetBlogDetailWithAuthorById(int blogId);
-        public Task<List<GetBlogDetailWithAuthorResult?>> GetLast3BlogWithAuthor();
-        public Task<List<GetBlogDetailWithAuthorResult?>> GetBlogListWithAuthor();
-        public Task<List<BlogSuggestionResult>> SearchBlogSuggestion(string q , int take = 6);
+       public Task<GetBlogDetailWithAuthorResult?> GetBlogDetailWithAuthorById(int blogId);
+       public Task<List<GetBlogDetailWithAuthorResult?>> GetLast3BlogWithAuthor();
+       public Task<List<GetBlogDetailWithAuthorResult?>> GetBlogListWithAuthor(int? blogCategoryId = null);
+        public Task<List<BlogCategoryCountResult>> GetTopBlogCategories(int take = 5);
+        public Task<List<BlogSuggestionResult>> SearchBlogSuggestion(string q, int take = 6);
 
     }
 }

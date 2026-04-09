@@ -1,4 +1,8 @@
 ﻿@model FibiEmlakDanismanlik.WebUI.Models.BlogListingPageVm
+@{
+    var selectedBlogCategoryId = ViewBag.SelectedBlogCategoryId;
+    var totalPages = (int)Math.Ceiling((double)Model.Total / Model.PageSize);
+}
 
 <!--Page Title-->
 <section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
