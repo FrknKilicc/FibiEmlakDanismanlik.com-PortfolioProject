@@ -1,9 +1,162 @@
 ﻿@{
-    ViewData["Title"] = "Hakkımızda";
+    ViewData["Title"] = "Index";
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
 
-<h1>Index</h1>
+<section class="page-title centred" style="background-image: url(/Realshed/assets/images/background/Modern-şehir-manzarası-ve-ofis-atmosferi.png);">
+    <div class="auto-container">
+        <div class="content-box clearfix">
+            <h1>Hakkımızda</h1>
+            <ul class="bread-crumb clearfix">
+                <li><a href="@Url.Action("Index","UIlayout")">Anasayfa</a></li>
+                <li><a href="@Url.Action("Index","AboutUs")">Hakkımızda</a></li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+@await Component.InvokeAsync("_GetAboutUsPageViewComponentPartial")
+
+<!-- feature-style-three -->
+<section class="feature-style-three centred pb-110">
+    <div class="auto-container">
+        <div class="sec-title">
+            <h5>Hakkımızda</h5>
+            <h2>Fibi Emlak Danışmanlık</h2>
+        </div>
+        <div class="three-item-carousel owl-carousel owl-theme owl-nav-none dots-style-one">
+
+            <div class="feature-block-two">
+                <div class="inner-box">
+                    <div class="icon-box"><i class="icon-1"></i></div>
+                    <h4>Güvene Dayalı Yaklaşım</h4>
+                    <p>Gayrimenkul bizim için sadece alım satım değil, hayatınızı etkileyen önemli bir karardır ve bu süreçte her zaman şeffaf ve güven odaklı ilerleriz.</p>
+                </div>
+            </div>
+
+            <div class="feature-block-two">
+                <div class="inner-box">
+                    <div class="icon-box"><i class="icon-26"></i></div>
+                    <h4>Stratejik Danışmanlık</h4>
+                    <p>Size sadece seçenek sunmakla kalmaz, doğru kararı vermeniz için analiz eder ve ihtiyaçlarınıza en uygun çözümleri profesyonel şekilde sunarız.</p>
+                </div>
+            </div>
+
+            <div class="feature-block-two">
+                <div class="inner-box">
+                    <div class="icon-box"><i class="icon-21"></i></div>
+                    <h4>Sürdürülebilir Değer</h4>
+                    <p>Amacımız yalnızca bugünü değil geleceğinizi de kazandırmaktır, bu yüzden yatırımlarınızın uzun vadede değer üretmesini öncelikli hedef olarak görürüz.</p>
+                </div>
+            </div>
+
+            <div class="feature-block-two">
+                <div class="inner-box">
+                    <div class="icon-box"><i class="icon-1"></i></div>
+                    <h4>Güvene Dayalı Yaklaşım</h4>
+                    <p>Gayrimenkul bizim için sadece alım satım değil, hayatınızı etkileyen önemli bir karardır ve bu süreçte her zaman şeffaf ve güven odaklı ilerleriz.</p>
+                </div>
+            </div>
+
+            <div class="feature-block-two">
+                <div class="inner-box">
+                    <div class="icon-box"><i class="icon-26"></i></div>
+                    <h4>Stratejik Danışmanlık</h4>
+                    <p>Size sadece seçenek sunmakla kalmaz, doğru kararı vermeniz için analiz eder ve ihtiyaçlarınıza en uygun çözümleri profesyonel şekilde sunarız.</p>
+                </div>
+            </div>
+
+            <div class="feature-block-two">
+                <div class="inner-box">
+                    <div class="icon-box"><i class="icon-21"></i></div>
+                    <h4>Sürdürülebilir Değer</h4>
+                    <p>Amacımız yalnızca bugünü değil geleceğinizi de kazandırmaktır, bu yüzden yatırımlarınızın uzun vadede değer üretmesini öncelikli hedef olarak görürüz.</p>
+                </div>
+            </div>
+
+            <div class="feature-block-two">
+                <div class="inner-box">
+                    <div class="icon-box"><i class="icon-1"></i></div>
+                    <h4>Güvene Dayalı Yaklaşım</h4>
+                    <p>Gayrimenkul bizim için sadece alım satım değil, hayatınızı etkileyen önemli bir karardır ve bu süreçte her zaman şeffaf ve güven odaklı ilerleriz.</p>
+                </div>
+            </div>
+
+            <div class="feature-block-two">
+                <div class="inner-box">
+                    <div class="icon-box"><i class="icon-26"></i></div>
+                    <h4>Stratejik Danışmanlık</h4>
+                    <p>Size sadece seçenek sunmakla kalmaz, doğru kararı vermeniz için analiz eder ve ihtiyaçlarınıza en uygun çözümleri profesyonel şekilde sunarız.</p>
+                </div>
+            </div>
+
+            <div class="feature-block-two">
+                <div class="inner-box">
+                    <div class="icon-box"><i class="icon-21"></i></div>
+                    <h4>Sürdürülebilir Değer</h4>
+                    <p>Amacımız yalnızca bugünü değil geleceğinizi de kazandırmaktır, bu yüzden yatırımlarınızın uzun vadede değer üretmesini öncelikli hedef olarak görürüz.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- feature-style-three end -->
+<!-- cta-section -->
+<section class="cta-section alternate-2 pb-240 centred" style="background-image: url(realshed/assets/images/background/Yeni-evin-mutluluğu.png);">
+    <div class="auto-container">
+        <div class="inner-box clearfix">
+            <div class="text">
+                <h2>Gayrimenkul Almak, Satmak veya Yatırım Yapmak mı İstiyorsunuz?</h2>
+            </div>
+            <div class="btn-box">
+                <a href="@Url.Action("Index","AllForRentalPage")" class="theme-btn btn-three">Kiralık İlanları</a>
+                <a href="@Url.Action("Index", "AllForSalePage")" class="theme-btn btn-one">Satılık İlanları</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- cta-section end -->
+@await Component.InvokeAsync("_OurPartnersViewComponentPartial")
 
 @await Component.InvokeAsync("_TestimonialsViewComponentPartial")
 
+
+@await Component.InvokeAsync("_MeetOurAgentsViewComponentPartial")
+
+
+<!-- download-section -->
+<section class="download-section bg-color-3">
+    <div class="pattern-layer" style="background-image: url(assets/images/shape/shape-3.png);"></div>
+    <div class="auto-container">
+        <div class="row clearfix">
+            <div class="col-lg-6 col-md-6 col-sm-12 image-column">
+                <div class="image-box">
+                    <figure class="image image-1 wow fadeInUp animated" data-wow-delay="00ms" data-wow-duration="1500ms"><img src="assets/images/resource/download-1.png" alt=""></figure>
+                    <figure class="image image-2 wow fadeInUp animated" data-wow-delay="300ms" data-wow-duration="1500ms"><img src="assets/images/resource/download-2.png" alt=""></figure>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 content-column">
+                <div class="content_block_1">
+                    <div class="content-box">
+                        <span>Download</span>
+                        <h2>Download Our Android and IOS App for Experience</h2>
+                        <div class="download-btn">
+                            <a href="index.html" class="app-store">
+                                <i class="fab fa-apple"></i>
+                                <p>Download on</p>
+                                <h4>App Store</h4>
+                            </a>
+                            <a href="index.html" class="google-play">
+                                <i class="fab fa-google-play"></i>
+                                <p>Get It On</p>
+                                <h4>Google Play</h4>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- download-section end -->

@@ -1,11 +1,10 @@
 ﻿using FibiEmlakDanismanlik.Dto.FaqDtos;
-using FibiEmlakDanismanlik.Dto.MainBannerDtos;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace FibiEmlakDanismanlik.WebUI.ViewComponents.FrequentlyAskedQuestionViewComponents
 {
-    public class _FAQPageViewComponentPartial:ViewComponent
+    public class _FAQPageViewComponentPartial : ViewComponent
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
