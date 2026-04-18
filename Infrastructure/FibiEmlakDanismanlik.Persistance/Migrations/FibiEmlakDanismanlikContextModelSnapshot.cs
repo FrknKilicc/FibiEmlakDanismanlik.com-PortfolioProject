@@ -266,6 +266,47 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("Cities");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.CityGalleryImage", b =>
+                {
+                    b.Property<int>("CityGalleryImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CityGalleryImageId"));
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<int>("DisplayOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("CityGalleryImageId");
+
+                    b.HasIndex("CityId");
+
+                    b.ToTable("CityGalleryImages");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.Contact", b =>
                 {
                     b.Property<int>("ContactId")
@@ -2095,6 +2136,17 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Navigation("Tag");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.CityGalleryImage", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", "City")
+                        .WithMany("CityGalleryImages")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.District", b =>
                 {
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", "City")
@@ -2394,6 +2446,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.City", b =>
                 {
+                    b.Navigation("CityGalleryImages");
+
                     b.Navigation("Districts");
                 });
 

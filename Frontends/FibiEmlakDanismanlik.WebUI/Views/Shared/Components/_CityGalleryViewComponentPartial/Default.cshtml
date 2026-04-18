@@ -1,0 +1,45 @@
+﻿@model List<ResultCityGalleryImageDto>
+@{
+    var cities = Model
+        .Where(x => !string.IsNullOrWhiteSpace(x.CitySlug))
+        .GroupBy(x => new { x.CityId, x.CityName, x.CitySlug })
+        .Select(g => g.Key)
+        .OrderBy(x => x.CityName)
+        .ToList();
+}
+<!-- gallery-style-one -->
+<section class="gallery-style-one centred">
+    <div class="auto-container">
+        <div class="sec-title">
+            <h5>Ofislerimiz</h5>
+            <h2>Hizmet Verdiğimiz Lokasyonlar</h2>
+        </div>
+        <div class="sortable-masonry">
+            <div class="filters">
+                <ul class="filter-tabs filter-btns clearfix">
+                    <li class="active filter" data-role="button" data-filter="*">Tümü</li>
+                    @foreach (var city in cities)
+                    {
+                        <li class="filter" data-role="button" data-filter=".@city.CitySlug">@city.CityName</li>
+                    }
+                </ul>
+            </div>
+            <div class="items-container row clearfix">
+                @foreach (var item in Model.Where(x => !string.IsNullOrWhiteSpace(x.ImageUrl)))
+                {
+                <div class="col-lg-4 col-md-6 col-sm-12 masonry-item small-column all @item.CitySlug">
+                    <div class="gallery-block-one">
+                        <div class="inner-box">
+                            <div class="image-box">
+                                    <figure class="image"><img src="@item.ImageUrl" alt="@(string.IsNullOrWhiteSpace(item.Title) ? item.CityName : item.Title)"></figure>
+                                    <a href="@item.ImageUrl" class="lightbox-image" data-fancybox="gallery"><i class="icon-31"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+<!-- gallery-style-one end -->

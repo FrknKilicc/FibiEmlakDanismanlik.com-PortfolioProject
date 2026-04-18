@@ -12,6 +12,8 @@ using FibiEmlakDanismanlik.Persistence.Repositories.LocationRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.NearbyRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories;
+using FibiEmlakDanismanlik.Application.Interfaces.CityGalleryInterfaces;
+using FibiEmlakDanismanlik.Persistence.Repositories.CityGalleryRepositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,7 +50,7 @@ builder.Services.AddScoped(typeof(IBlogRepository), typeof(BlogRepository));
 builder.Services.AddScoped(typeof(ILocationRepository), typeof(LocationRepository));
 builder.Services.AddScoped(typeof(INearbyRepository), typeof(NearbyRepository));
 builder.Services.AddScoped(typeof(IMapRepository), typeof(MapRepository));
-
+builder.Services.AddScoped(typeof(ICityGalleryRepository), typeof(CityGalleryRepository));
 //Configure IRepositories
 
 //MediaTR tried

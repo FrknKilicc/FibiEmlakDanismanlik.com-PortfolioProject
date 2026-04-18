@@ -104,6 +104,8 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<Testimonials> Testimonials { get; set; }
         public DbSet<OurPartners> OurPartners { get; set; }
         public DbSet<BlogCategory> BlogCategories { get; set; }
+        public DbSet<CityGalleryImage> CityGalleryImages { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -200,6 +202,37 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                       .WithMany(x => x.BlogTags)
                       .HasForeignKey(x => x.TagId);
             });
+
+            //citygalleryimage
+
+            modelBuilder.Entity<CityGalleryImage>(builder =>
+            {
+                builder.HasKey(x => x.CityGalleryImageId);
+
+                builder.Property(x => x.ImageUrl)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                builder.Property(x => x.Title)
+                    .HasMaxLength(150)
+                    .IsRequired(false);
+
+                builder.Property(x => x.Description)
+                    .HasMaxLength(300)
+                    .IsRequired(false);
+
+                builder.Property(x => x.DisplayOrder)
+                    .HasDefaultValue(0);
+
+                builder.Property(x => x.IsActive)
+                    .HasDefaultValue(true);
+
+                builder.HasOne(x => x.City)
+                    .WithMany(x => x.CityGalleryImages)
+                    .HasForeignKey(x => x.CityId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             //BlogCat
             modelBuilder.Entity<BlogCategory>(entity =>
             {

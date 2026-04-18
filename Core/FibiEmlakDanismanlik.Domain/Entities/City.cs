@@ -16,5 +16,6 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string Name { get; set; }
         public int? PlaceCode { get; set; }
         public ICollection<District> Districts { get; set; } = new List<District>();
+        public ICollection<CityGalleryImage> CityGalleryImages { get; set; } = new List<CityGalleryImage>();
     }
 }

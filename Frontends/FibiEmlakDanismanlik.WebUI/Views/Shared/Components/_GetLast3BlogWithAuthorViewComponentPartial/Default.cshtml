@@ -13,7 +13,7 @@
             <div class="post">
                 <figure class="post-thumb"><a asp-action="Detail" asp-controller="Blog" asp-route-id="@item.BlogId" ><img src="@item.BlogImgUrl" alt=""></a></figure>
                 <h5><a asp-action="Detail" asp-controller="Blog" asp-route-id="@item.BlogId">@item.BlogTitle</a></h5>
-                <span class="post-date">@item.CreatedDate.ToString("dd M yyyy")</span>
+                <span class="post-date">@item.CreatedDate.ToString("dd.MM.yyyy")</span>
             </div>
             
         </div>
