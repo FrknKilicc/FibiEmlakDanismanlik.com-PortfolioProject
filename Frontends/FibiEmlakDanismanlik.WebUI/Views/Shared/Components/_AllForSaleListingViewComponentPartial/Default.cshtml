@@ -228,7 +228,17 @@
                                                             <a href="@Url.Action("Index","AllForSalePage")">@UsageBadgeText(item.UsageTypeId)</a>
                                                         </div>
                                                     </div>
-                                                    <div class="title-text"><h4><a asp-action="Index" asp-controller="AllForSaleDetailPage" asp-route-id="@item.ListingId">@item.PropertyName</a></h4></div>
+                                                <div class="title-text">
+                                                    <h4>
+                                                        <a asp-action="Index" asp-controller="AllForSaleDetailPage" asp-route-id="@item.ListingId">
+                                                            @(string.IsNullOrWhiteSpace(item.PropertyName)
+                                                                                                                        ? "İlan Başlığı"
+                                                                                                                        : item.PropertyName.Length > 45
+                                                                                                                        ? item.PropertyName.Substring(0, 45) + "..."
+                                                                                                                        : item.PropertyName)
+                                                        </a>
+                                                    </h4>
+                                                </div>
                                                     <div class="price-box clearfix">
                                                         <div class="price-info pull-left">
                                                             <h6>Fiyat</h6>

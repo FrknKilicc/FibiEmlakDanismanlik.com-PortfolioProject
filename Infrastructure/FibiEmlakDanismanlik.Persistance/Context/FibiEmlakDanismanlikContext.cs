@@ -105,6 +105,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<OurPartners> OurPartners { get; set; }
         public DbSet<BlogCategory> BlogCategories { get; set; }
         public DbSet<CityGalleryImage> CityGalleryImages { get; set; }
+        public DbSet<SocialMedia> SocialMedias { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -185,8 +186,6 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.Property(x => x.Name)
                       .IsRequired()
                       .HasMaxLength(80);
-
-
             });
 
             // BlogTag 
@@ -201,6 +200,30 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.HasOne(x => x.Tag)
                       .WithMany(x => x.BlogTags)
                       .HasForeignKey(x => x.TagId);
+            });
+
+            modelBuilder.Entity<SocialMedia>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Name)
+                      .IsRequired()
+                      .HasMaxLength(50);
+
+                entity.Property(x => x.Url)
+                      .IsRequired();
+
+                entity.Property(x => x.Icon)
+                      .HasMaxLength(50);
+
+                entity.Property(x => x.Order)
+                      .IsRequired();
+
+                entity.Property(x => x.IsActive)
+                      .HasDefaultValue(true);
+
+                entity.Property(x => x.CreatedDate)
+                      .HasDefaultValueSql("GETDATE()");
             });
 
             //citygalleryimage

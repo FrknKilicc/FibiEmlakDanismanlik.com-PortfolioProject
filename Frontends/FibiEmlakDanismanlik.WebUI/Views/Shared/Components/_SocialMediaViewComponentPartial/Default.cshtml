@@ -1,0 +1,15 @@
+﻿@model List<ResultSocialMediaDto>
+
+<ul class="social-links clearfix">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <li>
+                <a href="@item.Url" target="_blank" title="@item.Name">
+                    <i class="@item.Icon"></i>
+                </a>
+            </li>
+        }
+    }
+</ul>

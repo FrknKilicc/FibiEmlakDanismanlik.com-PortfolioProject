@@ -71,9 +71,7 @@
                                            name="q"
                                            placeholder="Blog Ara"
                                            autocomplete="off">
-
                                     <button type="button"><i class="fas fa-search"></i></button>
-                                    
                                     <div id="blogSuggestBox"
                                          class="widget-content"
                                          style="display:none; position:absolute; left:0; right:0; top:100%; z-index:999; background:#fff;">
@@ -90,13 +88,7 @@
                         <div class="widget-title">
                             <h4>Bizi Takip Edin</h4>
                         </div>
-                        <ul class="social-links clearfix">
-                            <li><a href="https://www.facebook.com/ankayapiemlakk/?locale=tr_TR" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
-                            <li><a href="blog-1.html" target="_blank"><i class="fab fa-google-plus-g"></i></a></li>
-                            <li><a href="@Url.Action("Index", "UIlayout")" target="_blank"><i class="fab fa-twitter"></i></a></li>
-                            <li><a href="https://www.linkedin.com/in/fibi-emlak-danışmanlık-589173302/?originalSubdomain=tr" target="_blank"><i class="fab fa-linkedin-in"></i></a></li>
-                            <li><a href="https://www.instagram.com/fibiemlak/" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                        </ul>
+                        @await Component.InvokeAsync("_SocialMediaViewComponentPartial")
                     </div>
                     @await Component.InvokeAsync("_BlogCategoriesViewComponentPartial")
                     @await Component.InvokeAsync("_GetLast3BlogWithAuthorViewComponentPartial")

@@ -94,7 +94,6 @@
 }
 /*
 price-range alanı */
-
 .price-range {
     display: grid;
     grid-template-columns: 1fr 1fr;

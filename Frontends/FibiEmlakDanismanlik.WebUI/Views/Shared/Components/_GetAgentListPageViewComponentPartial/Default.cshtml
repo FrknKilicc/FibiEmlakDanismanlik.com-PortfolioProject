@@ -1,4 +1,13 @@
-﻿  @model List<ResultAgentDto>
+﻿@model List<ResultAgentDto>
+
+@{
+    var selectedStatus = Context.Request.Query["status"].ToString();
+
+    if (string.IsNullOrWhiteSpace(selectedStatus))
+    {
+        selectedStatus = "forRent";
+    }
+}
 
 
 
@@ -37,7 +46,6 @@
                                                 <option value="@item.AgentId">@item.AgentName</option>
                                                 
                                             }
-                                            
                                         </select>
                                     </div>
                                 </div>
@@ -47,9 +55,32 @@
                             </form>
                         </div>
                     </div>
-                    
+                    <div class="category-widget sidebar-widget">
+                        <div class="widget-title">
+                            <h5>İlan Kategorisi</h5>
+                        </div>
+                        <ul class="category-list clearfix">
+                            <li>
+                                <a href="@Url.Action("Index", "Agent", new { status = "forRent" })"
+                                   class="@(selectedStatus == "forRent" ? "active" : "")">
+                                    Kiralık
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Index", "Agent", new { status = "forSale" })"
+                                   class="@(selectedStatus == "forSale" ? "active" : "")">
+                                    Satılık
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                     <div class="featured-widget sidebar-widget">
-                        @await Component.InvokeAsync("_TopFeaturedPropertyForAgentPageViewComponentPartial")
+                        @await Component.InvokeAsync("_TopFeaturedPropertyForAgentPageViewComponentPartial", new { status = selectedStatus })
+                    </div>
+                    <div class="featured-widget sidebar-widget">
+                        <div class="blog-sidebar"> 
+                        @await Component.InvokeAsync("_GetLast3BlogWithAuthorViewComponentPartial")
+                        </div>
                     </div>
                 </div>
             </div>
@@ -90,21 +121,23 @@
                                                     <h4><a href="agency-details.html">@item.AgentName</a></h4>
                                                     <span class="designation">@item.AgentTitle</span>
                                                 </div>
-                                                <ul class="social-list pull-right clearfix">
+                                               @*  <ul class="social-list pull-right clearfix">
                                                     <li><a href="agents-list.html"><i class="fab fa-facebook-f"></i></a></li>
                                                     <li><a href="agents-list.html"><i class="fab fa-twitter"></i></a></li>
                                                     <li><a href="agents-list.html"><i class="fab fa-linkedin-in"></i></a></li>
-                                                </ul>
+                                                </ul> *@
                                             </div>
                                             <div class="text">
                                                 <p>@item.AgentDescription</p>
                                             </div>
                                             <ul class="info clearfix">
-                                                <li><i class="fab fa fa-envelope"></i><a href="mailto:info@property.com">@item.Mail</a></li>
-                                                <li><i class="fab fa fa-phone"></i><a href="tel:03030571965">@item.AgentPhoneNumber</a></li>
+                                                <li><i class="fab fa fa-envelope"></i><a href="mailto:@item.Mail">@item.Mail</a></li>
+                                                <li><i class="fab fa fa-phone"></i><a href="tel:@item.AgentPhoneNumber">@item.AgentPhoneNumber</a></li>
                                             </ul>
                                             <div class="btn-box">
-                                                <a href="profile.html" class="theme-btn btn-two">Profili Gör</a>
+                                                <a href="@Url.Action("Index", "Contact")#contact-message-form" class="theme-btn btn-two">
+                                                    Bizimle İletişime Geçin
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

@@ -9849,3 +9849,31 @@ div#mCSB_1_container{
 #toast-container > .toast-error {
     background-color: #dc3545;
 }
+.blog-equal-cards .news-block-one .inner-box {
+    display: flex;
+    height: 100%;
+}
+
+.blog-equal-cards .news-block-one .image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.blog-equal-cards .news-block-one .lower-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+    .blog-equal-cards .news-block-one .lower-content .btn-box {
+        margin-top: auto;
+    }
+
+    .blog-equal-cards .news-block-one .lower-content h3 {
+        min-height: 90px;
+    }
+
+    .blog-equal-cards .news-block-one .lower-content .text {
+        min-height: 110px;
+    }
