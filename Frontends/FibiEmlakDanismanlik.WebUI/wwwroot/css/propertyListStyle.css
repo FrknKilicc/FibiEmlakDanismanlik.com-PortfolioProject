@@ -157,4 +157,79 @@ price-range alanı */
 .property-page-section .item-shorting {
     text-align: left;
 }
+.quick-property-widget .quick-property-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.quick-property-widget .quick-property-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 15px;
+    border: 1px solid #e5e8ec;
+    border-radius: 8px;
+    background: #ffffff;
+    transition: all 0.3s ease;
+}
+
+    .quick-property-widget .quick-property-link:hover {
+        border-color: #2eca6a;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+
+.quick-property-widget .quick-property-icon {
+    min-width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #f0fbf5;
+    color: #2eca6a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quick-property-widget .quick-property-content {
+    flex: 1;
+    line-height: 1.3;
+}
+
+    .quick-property-widget .quick-property-content strong {
+        display: block;
+        color: #1b1d21;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .quick-property-widget .quick-property-content small {
+        display: block;
+        color: #6c757d;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+.quick-property-widget .quick-property-arrow {
+    color: #a0a6ad;
+    transition: all 0.3s ease;
+}
+
+.quick-property-widget .quick-property-link:hover .quick-property-arrow {
+    color: #2eca6a;
+    transform: translateX(3px);
+}
+
+@media only screen and (max-width: 991px) {
+    .quick-property-widget .quick-property-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media only screen and (max-width: 575px) {
+    .quick-property-widget .quick-property-list {
+        grid-template-columns: 1fr;
+    }
+}
 

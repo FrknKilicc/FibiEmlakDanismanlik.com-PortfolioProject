@@ -242,6 +242,7 @@
 
             [
                 "listingTypeIds",
+                "listingTypeName",
                 "cityId", "districtId", "neighborhoodId",
                 "city", "district", "neighborhood",
                 "minPrice", "maxPrice", "numberOfRoom",

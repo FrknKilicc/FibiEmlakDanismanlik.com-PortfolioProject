@@ -83,10 +83,21 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForRentalPropertyViewCompone
                     var json = await facetResp.Content.ReadAsStringAsync();
                     facets = JsonConvert.DeserializeObject<List<ListingTypeFacetVm>>(json) ?? new();
                 }
-                foreach (var f in facets)
-                    f.Selected = selectedIds.Contains(f.ListingTypeId);
+            var listingTypeName = TryStr("listingTypeName");
 
-                var request = new PropertyFilterRequest
+            if (!string.IsNullOrWhiteSpace(listingTypeName) && !selectedIds.Any())
+            {
+                var matchedListingType = facets
+                    .FirstOrDefault(x => x.Name.Equals(listingTypeName, StringComparison.OrdinalIgnoreCase));
+
+                if (matchedListingType != null)
+                    selectedIds.Add(matchedListingType.ListingTypeId);
+            }
+
+            foreach (var f in facets)
+                f.Selected = selectedIds.Contains(f.ListingTypeId);
+
+            var request = new PropertyFilterRequest
                 {
                     ListingTypeIds = selectedIds.Any() ? selectedIds : null,
                     SelectedAmenityIds = selectedAmenityIds.Any() ? selectedAmenityIds : null,
