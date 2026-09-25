@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Queries.LocationQueries;
+using FibiEmlakDanismanlik.Application.Features.Queries.LocationQueries;
 using FibiEmlakDanismanlik.Persistence.Context;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -30,5 +30,13 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         [HttpGet("neighborhoods")]
         public async Task<IActionResult> GetNeighborhoods([FromQuery] int districtId, [FromQuery] string? q)
             => Ok(await _mediator.Send(new GetNeighborhoodsQuery(districtId, q)));
+
+        [HttpGet("available-cities")]
+        public async Task<IActionResult> GetAvailableCities([FromQuery] int usageType, [FromQuery] int listingTypeId, [FromQuery] string? q)
+            => Ok(await _mediator.Send(new GetAvailableCitiesQuery(usageType, listingTypeId, q)));
+
+        [HttpGet("available-districts")]
+        public async Task<IActionResult> GetAvailableDistricts([FromQuery] int cityId, [FromQuery] int usageType, [FromQuery] int listingTypeId, [FromQuery] string? q)
+            => Ok(await _mediator.Send(new GetAvailableDistrictsQuery(cityId, usageType, listingTypeId, q)));
     }
 }

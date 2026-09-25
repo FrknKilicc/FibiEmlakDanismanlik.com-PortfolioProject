@@ -1,4 +1,4 @@
-ï»¿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
 using FibiEmlakDanismanlik.Application.Features.Results.AmenityFacetResults;
 using FibiEmlakDanismanlik.Application.Features.Results.CommonPropertyResults;
@@ -56,12 +56,12 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         District = house.District,
         Neighborhood = house.Neighborhood,
         AddressDesc = house.AddressDesc,
-        SourceType = 1,  // usage type 1 satÄ±lÄ±k konut 3 ise kiralÄ±k konut 
+        SourceType = 1,  // usage type 1 satýlýk konut 3 ise kiralýk konut 
         UsageTypeId = (int)lt.UsageType,
 
 
 
-        // arsa boÅŸ
+        // arsa boþ
         Area = null,
         SharePercentage = null,
         PricePerSquareMeter = null,
@@ -100,7 +100,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         Dues = house.Dues,
         HomeLoan = house.HomeLoan,
 
-        // ticari boÅŸ
+        // ticari boþ
         NumberOfSection = null,
         NumberOfKitchens = null,
         NumberOfBathrooms = null,
@@ -165,15 +165,15 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         CreatedDate = comm.CreatedDate,
         Price = comm.Price,
         TitleDeedStatus = comm.TitleDeedStatus,
-        SourceType = 3, // usage type 3 kullanarak satÄ±lÄ±k iÅŸyeri anlamÄ±na geliyor.
+        SourceType = 3, // usage type 3 kullanarak satýlýk iþyeri anlamýna geliyor.
         UsageTypeId = (int)lt.UsageType,
 
 
         //        Highlights = new List<CardHighlightViewModel>
         //{
-        //    new() { Icon = "icon-14", Text = $"{comm.Area} mÂ²" },
+        //    new() { Icon = "icon-14", Text = $"{comm.Area} m²" },
         //    new() { Icon = "icon-15", Text = $"{comm.NumberOfFloors} Kat" },
-        //    new() { Icon = "icon-16", Text = $"{comm.NumberOfSection} BÃ¶lÃ¼m" }
+        //    new() { Icon = "icon-16", Text = $"{comm.NumberOfSection} Bölüm" }
         //},
 
         City = comm.City,
@@ -181,7 +181,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         Neighborhood = comm.Neighborhood,
         AddressDesc = comm.AddressDesc,
 
-        // arsa boÅŸ
+        // arsa boþ
         Area = null,
         SharePercentage = null,
         PricePerSquareMeter = null,
@@ -199,7 +199,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         LandCategoryId = null,
 
 
-        // konut boÅŸ
+        // konut boþ
         Facade = null,
         IsElevator = null,
         GrossArea = null,
@@ -231,7 +231,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         AgentTitle = agent.AgentTitle,
         AgentImgUrl = agent.AgentImgUrl,
 
-        ListingType = "Ä°ÅŸyeri",
+        ListingType = "Ýþyeri",
 
         PropImgUrl1 = comm.PropImgUrl1,
         PropImgUrl2 = comm.PropImgUrl2,
@@ -284,14 +284,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     CreatedDate = land.CreatedDate,
                     Price = land.Price,
                     TitleDeedStatus = land.TitleDeedStatus,
-                    SourceType = 2, //usage type 2 - > satÄ±lÄ±k arsa anlamÄ±na geliyor
+                    SourceType = 2, //usage type 2 - > satýlýk arsa anlamýna geliyor
                     UsageTypeId = (int)lt.UsageType,
 
                     //                    Highlights = new List<CardHighlightViewModel>
                     //{
-                    //    new() { Icon = "icon-14", Text = $"{land.Area} mÂ²" },
+                    //    new() { Icon = "icon-14", Text = $"{land.Area} m²" },
                     //    new() { Icon = "icon-15", Text = $"{land.ZoningStatus} " },
-                    //    new() { Icon = "icon-16", Text = $"{land.PricePerSquareMeter} TL/mÂ²" }
+                    //    new() { Icon = "icon-16", Text = $"{land.PricePerSquareMeter} TL/m²" }
                     //},
 
                     City = land.City,
@@ -317,7 +317,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     LandCategoryId = land.LandCategoryId,
                     
 
-                    // konut boÅŸ
+                    // konut boþ
                     Facade = null,
                     IsElevator = null,
                     GrossArea = null,
@@ -338,7 +338,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Dues = null,
                     HomeLoan = null,
 
-                    // ticari boÅŸ
+                    // ticari boþ
                     NumberOfSection = null,
                     NumberOfKitchens = null,
                     NumberOfBathrooms = null,
@@ -432,7 +432,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                     join agent in _context.Agents on commercial.AgentId equals agent.AgentId
                                     select new ForSalePropertyViewModel
                                     {
-                                        PropertyType = "Ä°ÅŸyeri",
+                                        PropertyType = "Ýþyeri",
                                         PropertyName = commercial.PropertyName,
                                         Price = commercial.Price,
                                         PropertyDescription = commercial.PropertyDescription,
@@ -460,7 +460,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                               join agent in _context.Agents on rentalCommercial.AgentId equals agent.AgentId
                                               select new RentalCommercialPropertyViewModel
                                               {
-                                                  PropertyType = "Ä°ÅŸ Yeri",
+                                                  PropertyType = "Ýþ Yeri",
                                                   PropertyName = rentalCommercial.PropertyName,
                                                   PropertyStatus = rentalCommercial.PropertyStatus,
                                                   PropertyDescription = rentalCommercial.PropertyDescription,
@@ -814,7 +814,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     AgentName = commercialById.Agent.AgentName,
                     AgentImgUrl = commercialById.Agent.AgentImgUrl,
                     AgentTitle = commercialById.Agent.AgentTitle,
-                    ListingType = "Ä°ÅŸyeri",
+                    ListingType = "Ýþyeri",
                     ListingTypeId = commercialById.ListingTypeId,
                     UsageTypeId = (int)commercialById.ListingType.UsageType,
                     Amenities=amenities,
@@ -906,7 +906,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                         RentalCommercialListId = null,
                                         RentalLandListingId = null,
 
-                                        // Arsa alanlarÄ± boÅŸ
+                                        // Arsa alanlarý boþ
                                         Area = null,
                                         PricePerSquareMeter = null,
                                         ParcelNumber = null,
@@ -920,7 +920,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                         BestDeals = rentalHouse.BestDeals,
                                         LandCategoryId = null,
 
-                                        // // Ä°ÅŸyeri alanlrÄ± boÅŸ  
+                                        // // Ýþyeri alanlrý boþ  
                                         Facade = null,
                                         NumberOfSection = null,
                                         NumberOfKitchens = null,
@@ -988,7 +988,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                            CreatedDate = rentalCommercial.CreatedDate,
                                            Rent = rentalCommercial.Rent,
                                            BestDeals = rentalCommercial.BestDeals,
-                                           PropertyType = "Ä°ÅŸyeri",
+                                           PropertyType = "Ýþyeri",
                                            Deposit = rentalCommercial.Deposit,
 
 
@@ -1333,7 +1333,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         {
             new() { Icon = "icon-14", Text = $"{x.NumberOfRoom ?? "-"} Oda" },
             new() { Icon = "icon-15", Text = $"{(x.NumberOfBathRoom?.ToString() ?? "-")} Banyo" },
-            new() { Icon = "icon-16", Text = $"{(x.NetArea?.ToString() ?? x.GrossArea?.ToString() ?? "-")} mÂ²" }
+            new() { Icon = "icon-16", Text = $"{(x.NetArea?.ToString() ?? x.GrossArea?.ToString() ?? "-")} m²" }
         };
             }
 
@@ -1341,18 +1341,18 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             {
                 return new List<CardHighlightViewModel>
         {
-            new() { Icon = "icon-14", Text = $"{(x.Area?.ToString() ?? "-")} mÂ²" },
+            new() { Icon = "icon-14", Text = $"{(x.Area?.ToString() ?? "-")} m²" },
             new() { Icon = "icon-15", Text = $"{(x.ZoningStatus ?? "-")}" },
-            new() { Icon = "icon-16", Text = $"{(x.PricePerSquareMeter?.ToString("N0") ?? "-")} TL/mÂ²" }
+            new() { Icon = "icon-16", Text = $"{(x.PricePerSquareMeter?.ToString("N0") ?? "-")} TL/m²" }
         };
             }
 
-            // Ä°ÅŸyeri
+            // Ýþyeri
             return new List<CardHighlightViewModel>
     {
-        new() { Icon = "icon-14", Text = $"{(x.Area?.ToString() ?? x.GrossArea?.ToString() ?? "-")} mÂ²" },
+        new() { Icon = "icon-14", Text = $"{(x.Area?.ToString() ?? x.GrossArea?.ToString() ?? "-")} m²" },
         new() { Icon = "icon-15", Text = $"{(x.NumberOfFloors?.ToString() ?? "-")} Kat" },
-        new() { Icon = "icon-16", Text = $"{(x.NumberOfSection?.ToString() ?? "-")} BÃ¶lÃ¼m" }
+        new() { Icon = "icon-16", Text = $"{(x.NumberOfSection?.ToString() ?? "-")} Bölüm" }
     };
         }
         public async Task<ForSaleFilterResponseResult> GetFilteredForSalePropertyForListingWithFacets(PropertyFilterRequest filter)
@@ -1407,10 +1407,10 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 );
             }
 
-            // 4) Total (pagination Ã¶ncesi)
+            // 4) Total (pagination öncesi)
             var total = await baseQuery.CountAsync();
 
-            // 5) Facet iÃ§in IDâ€™ler (pagination Ã¶ncesi!)
+            // 5) Facet için ID’ler (pagination öncesi!)
             var filteredIds = baseQuery.Select(x => new { x.ListingId, x.SourceType });
 
             var housingIds = filteredIds.Where(x => x.SourceType == 1).Select(x => x.ListingId);
@@ -1477,7 +1477,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
 
             // 8) Sorting + Pagination (Items)
-            var query = baseQuery; // baseQuery aynÄ± filtre seti
+            var query = baseQuery; // baseQuery ayný filtre seti
 
             var sortBy = (filter.SortBy ?? "CreatedDate").ToLowerInvariant();
             var sortDir = (filter.SortDir ?? "desc").ToLowerInvariant();
@@ -1503,7 +1503,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 item.Highlights = BuildHighlights(item);
             }
 
-            // 9) Response (Items mapping Handlerâ€™da)
+            // 9) Response (Items mapping Handler’da)
             return new ForSaleFilterResponseResult
             {
                 Total = total,
@@ -1601,7 +1601,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                         h.PropImgUrl26, h.PropImgUrl27, h.PropImgUrl28, h.PropImgUrl29, h.PropImgUrl30
                     ),
 
-                    // Konut Ã¶zel alanlar
+                    // Konut özel alanlar
                     HousingCategoryId = h.HousingCategoryId,
                     Facade = h.Facade,
                     IsElevator = h.IsElevator,
@@ -1685,7 +1685,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                     ImageUrls = CollectImages(l.PropImgUrl1),
 
-                    // Arsa Ã¶zel
+                    // Arsa özel
                     LandCategoryId = l.LandCategoryId,
                     ZoningStatus = l.ZoningStatus,
                     Area = l.Area,
@@ -1763,7 +1763,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                     ImageUrls = CollectImages(c.PropImgUrl1),
 
-                    // Ä°ÅŸyeri Ã¶zel
+                    // Ýþyeri özel
                     Facade = c.Facade,
                     NumberOfSection = c.NumberOfSection,
                     NumberOfKitchens = c.NumberOfKitchens,
@@ -1934,20 +1934,20 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         {
             var list = new List<string>();
 
-            if (item.Price.HasValue) list.Add($"{item.Price.Value:n0} â‚º");
+            if (item.Price.HasValue) list.Add($"{item.Price.Value:n0} ?");
 
             if (item is RentalHousingListingResult h)
             {
                 if (!string.IsNullOrWhiteSpace(h.NumberOfRoom)) list.Add(h.NumberOfRoom);
-                if (h.GrossArea.HasValue) list.Add($"{h.GrossArea.Value:n0} mÂ²");
+                if (h.GrossArea.HasValue) list.Add($"{h.GrossArea.Value:n0} m²");
             }
             else if (item is RentalLandListingResult l)
             {
-                if (l.Area.HasValue) list.Add($"{l.Area.Value:n0} mÂ²");
+                if (l.Area.HasValue) list.Add($"{l.Area.Value:n0} m²");
             }
             else if (item is RentalCommercialListingResult c)
             {
-                if (c.GrossArea.HasValue) list.Add($"{c.GrossArea.Value:n0} mÂ²");
+                if (c.GrossArea.HasValue) list.Add($"{c.GrossArea.Value:n0} m²");
             }
 
             return list;
@@ -2033,7 +2033,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     AgentImgUrl = housingById.Agent.AgentImgUrl,
                     BestDeals = housingById.BestDeals,
                     ListingType = "Konut",
-                    PropertyType = "KiralÄ±k",
+                    PropertyType = "Kiralýk",
                     ListingTypeId = housingById.ListingTypeId,
                     UsageTypeId = (int)housingById.ListingType.UsageType,
                     Amenities = amenities,
@@ -2123,7 +2123,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     BestDeals = land.BestDeals,
                     TitleDeedStatus=land.TitleDeedStatus,
                     ListingType = "Arsa",
-                    PropertyType = "KiralÄ±k",
+                    PropertyType = "Kiralýk",
                     ListingTypeId = land.ListingTypeId,
                     UsageTypeId = (int)land.ListingType.UsageType,
                     AgentPhoneNumber = land.Agent.AgentPhoneNumber,
@@ -2209,8 +2209,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Heating=commercialById.Heating,
                     TitleDeedStatus=commercialById.TitleDeedStatus,
                     Rent=commercialById.Rent,
-                    ListingType = "Ä°ÅŸyeri",
-                    PropertyType = "KiralÄ±k",
+                    ListingType = "Ýþyeri",
+                    PropertyType = "Kiralýk",
                     ListingTypeId = commercialById.ListingTypeId,
                     UsageTypeId = (int)commercialById.ListingType.UsageType,
                     ListingTypeName = commercialById.ListingType.Name,
@@ -2521,7 +2521,40 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 .Take(take)
                 .ToListAsync();
         }
+
+        public async Task<System.Collections.Generic.List<FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto>> GetPropertySuggestionsAsync(int usageType, int? listingTypeId, string searchTerm)
+        {
+            var results = new System.Collections.Generic.List<FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto>();
+            if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm.Length < 3)
+                return results;
+
+            var term = searchTerm.ToLower();
+
+            if (usageType == 1)
+            {
+                var q1 = _context.forSaleHousingPropertyListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.ForSaleHousingListId, Title = x.PropertyNo + " - " + x.PropertyName });
+                var q2 = _context.forSaleLandListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.ForSaleLandListingId, Title = x.PropertyNo + " - " + x.PropertyName });
+                var q3 = _context.forSaleCommercialPropertyListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.ForSaleCommercialListingId, Title = x.PropertyNo + " - " + x.PropertyName });
+                
+                results.AddRange(await q1.Take(5).ToListAsync());
+                results.AddRange(await q2.Take(5).ToListAsync());
+                results.AddRange(await q3.Take(5).ToListAsync());
+            }
+            else
+            {
+                var q1 = _context.rentalHousingListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.RentalHousingListId, Title = x.PropertyNo + " - " + x.PropertyName });
+                var q2 = _context.rentalLandListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.RentalLandListingId, Title = x.PropertyNo + " - " + x.PropertyName });
+                var q3 = _context.rentalCommercialPropertyListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.RentalCommercialListId, Title = x.PropertyNo + " - " + x.PropertyName });
+
+                results.AddRange(await q1.Take(5).ToListAsync());
+                results.AddRange(await q2.Take(5).ToListAsync());
+                results.AddRange(await q3.Take(5).ToListAsync());
+            }
+
+            return results.Take(10).ToList();
+        }
     }
 }
+
 
 

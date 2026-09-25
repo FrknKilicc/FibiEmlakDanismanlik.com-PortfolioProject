@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+using FibiEmlakDanismanlik.Application.Features.Queries.ListingTypeQueries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using FibiEmlakDanismanlik.Persistence.Context;
-using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
 {
@@ -10,19 +8,20 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
     [ApiController]
     public class ListingTypesController : ControllerBase
     {
-        private readonly FibiEmlakDanismanlikContext _dbContext;
+        private readonly IMediator _mediator;
 
-        public ListingTypesController(FibiEmlakDanismanlikContext dbContext)
+        public ListingTypesController(IMediator mediator)
         {
-            _dbContext = dbContext;
+            _mediator = mediator;
         }
 
         [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] int usageType)
+            => Ok(await _mediator.Send(new GetListingTypesByUsageQuery(usageType)));
 
-        public async Task<IActionResult> Get([FromQuery] int usageTypes)
-        {
-            var types = await _dbContext.listingTypes.Where(x => (int)x.UsageType == usageTypes).ToListAsync();
-            return Ok(types);
-        }
+        [HttpGet("advanced-filters")]
+        public async Task<IActionResult> GetAdvancedFilters([FromQuery] int listingTypeId)
+            => Ok(await _mediator.Send(new GetAdvancedFiltersByListingTypeQuery(listingTypeId)));
     }
 }
+

@@ -1,5 +1,6 @@
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.ListingTypeInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.LocationInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.MapInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.NearbyInterfaces;
@@ -8,6 +9,7 @@ using FibiEmlakDanismanlik.Application.Services;
 using FibiEmlakDanismanlik.Persistence.Context;
 using FibiEmlakDanismanlik.Persistence.Repositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories;
+using FibiEmlakDanismanlik.Persistence.Repositories.ListingTypeRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.LocationRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.NearbyRepositories;
@@ -51,6 +53,7 @@ builder.Services.AddScoped(typeof(ILocationRepository), typeof(LocationRepositor
 builder.Services.AddScoped(typeof(INearbyRepository), typeof(NearbyRepository));
 builder.Services.AddScoped(typeof(IMapRepository), typeof(MapRepository));
 builder.Services.AddScoped(typeof(ICityGalleryRepository), typeof(CityGalleryRepository));
+builder.Services.AddScoped(typeof(IListingTypeRepository), typeof(ListingTypeRepository));
 //Configure IRepositories
 
 //MediaTR tried

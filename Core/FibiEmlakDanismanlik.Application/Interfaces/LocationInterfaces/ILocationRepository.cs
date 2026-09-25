@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Results.LocationResults;
+using FibiEmlakDanismanlik.Application.Features.Results.LocationResults;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +12,7 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.LocationInterfaces
         public Task<List<LocationOptionResult>> GetCitiesAsync(string? q);
         public Task<List<LocationOptionResult>> GetDistrictsAsync(int cityId, string? q);
         public Task<List<LocationOptionResult>> GetNeighborhoodsAsync(int districtId, string? q);
+        public Task<List<LocationOptionResult>> GetAvailableCitiesAsync(int usageType, int listingTypeId, string? q);
+        public Task<List<LocationOptionResult>> GetAvailableDistrictsAsync(int cityId, int usageType, int listingTypeId, string? q);
     }
 }

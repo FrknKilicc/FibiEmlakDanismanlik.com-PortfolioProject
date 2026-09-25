@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
+using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
 using FibiEmlakDanismanlik.Application.Features.Results.CommonPropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
@@ -38,5 +38,6 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces
         public Task<SimilarPropertyReferenceResult?> GetForRentalSimilarReferenceAsync(int listingId);
         public Task<List<SimilarPropertyCandidateResult>> GetForRentalSimilarCandidatesAsync(SimilarPropertyReferenceResult reference, int take);
 
+        public Task<List<FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto>> GetPropertySuggestionsAsync(int usageType, int? listingTypeId, string searchTerm);
     }
 }
