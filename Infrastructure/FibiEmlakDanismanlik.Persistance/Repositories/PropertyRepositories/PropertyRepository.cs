@@ -2526,26 +2526,67 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         public async Task<System.Collections.Generic.List<FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto>> GetPropertySuggestionsAsync(int usageType, int? listingTypeId, string searchTerm)
         {
             var results = new System.Collections.Generic.List<FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto>();
-            if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm.Length < 3)
+            if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm.Trim().Length < 3)
                 return results;
 
-            var term = searchTerm.ToLower();
+            var term = searchTerm.Trim();
+            var activeStatuses = PropertyStatuses.ActiveSet;
 
-            if (usageType == 1)
+            if (usageType == (int)UsageType.ForSale)
             {
-                var q1 = _context.forSaleHousingPropertyListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.ForSaleHousingListId, Title = x.PropertyNo + " - " + x.PropertyName });
-                var q2 = _context.forSaleLandListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.ForSaleLandListingId, Title = x.PropertyNo + " - " + x.PropertyName });
-                var q3 = _context.forSaleCommercialPropertyListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.ForSaleCommercialListingId, Title = x.PropertyNo + " - " + x.PropertyName });
-                
+                var q1 = from x in _context.forSaleHousingPropertyListings.AsNoTracking()
+                         join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                         where lt.UsageType == UsageType.ForSale
+                               && x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
+                               && (!listingTypeId.HasValue || x.ListingTypeId == listingTypeId.Value)
+                               && (x.PropertyName.Contains(term) || (x.PropertyNo != null && x.PropertyNo.ToString() == term))
+                         select new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.ForSaleHousingListId, Title = x.PropertyNo + " - " + x.PropertyName };
+
+                var q2 = from x in _context.forSaleLandListings.AsNoTracking()
+                         join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                         where lt.UsageType == UsageType.ForSale
+                               && x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
+                               && (!listingTypeId.HasValue || x.ListingTypeId == listingTypeId.Value)
+                               && (x.PropertyName.Contains(term) || (x.PropertyNo != null && x.PropertyNo.ToString() == term))
+                         select new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.ForSaleLandListingId, Title = x.PropertyNo + " - " + x.PropertyName };
+
+                var q3 = from x in _context.forSaleCommercialPropertyListings.AsNoTracking()
+                         join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                         where lt.UsageType == UsageType.ForSale
+                               && x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
+                               && (!listingTypeId.HasValue || x.ListingTypeId == listingTypeId.Value)
+                               && (x.PropertyName.Contains(term) || (x.PropertyNo != null && x.PropertyNo.ToString() == term))
+                         select new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.ForSaleCommercialListingId, Title = x.PropertyNo + " - " + x.PropertyName };
+
                 results.AddRange(await q1.Take(5).ToListAsync());
                 results.AddRange(await q2.Take(5).ToListAsync());
                 results.AddRange(await q3.Take(5).ToListAsync());
             }
-            else
+            else if (usageType == (int)UsageType.ForRent)
             {
-                var q1 = _context.rentalHousingListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.RentalHousingListId, Title = x.PropertyNo + " - " + x.PropertyName });
-                var q2 = _context.rentalLandListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.RentalLandListingId, Title = x.PropertyNo + " - " + x.PropertyName });
-                var q3 = _context.rentalCommercialPropertyListings.AsNoTracking().Where(x => x.PropertyName.ToLower().Contains(term) || x.PropertyNo.ToString() == term).Select(x => new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.RentalCommercialListId, Title = x.PropertyNo + " - " + x.PropertyName });
+                var q1 = from x in _context.rentalHousingListings.AsNoTracking()
+                         join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                         where lt.UsageType == UsageType.ForRent
+                               && x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
+                               && (!listingTypeId.HasValue || x.ListingTypeId == listingTypeId.Value)
+                               && (x.PropertyName.Contains(term) || (x.PropertyNo != null && x.PropertyNo.ToString() == term))
+                         select new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.RentalHousingListId, Title = x.PropertyNo + " - " + x.PropertyName };
+
+                var q2 = from x in _context.rentalLandListings.AsNoTracking()
+                         join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                         where lt.UsageType == UsageType.ForRent
+                               && x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
+                               && (!listingTypeId.HasValue || x.ListingTypeId == listingTypeId.Value)
+                               && (x.PropertyName.Contains(term) || (x.PropertyNo != null && x.PropertyNo.ToString() == term))
+                         select new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.RentalLandListingId, Title = x.PropertyNo + " - " + x.PropertyName };
+
+                var q3 = from x in _context.rentalCommercialPropertyListings.AsNoTracking()
+                         join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                         where lt.UsageType == UsageType.ForRent
+                               && x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
+                               && (!listingTypeId.HasValue || x.ListingTypeId == listingTypeId.Value)
+                               && (x.PropertyName.Contains(term) || (x.PropertyNo != null && x.PropertyNo.ToString() == term))
+                         select new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.PropertySuggestionDto { Id = x.RentalCommercialListId, Title = x.PropertyNo + " - " + x.PropertyName };
 
                 results.AddRange(await q1.Take(5).ToListAsync());
                 results.AddRange(await q2.Take(5).ToListAsync());
