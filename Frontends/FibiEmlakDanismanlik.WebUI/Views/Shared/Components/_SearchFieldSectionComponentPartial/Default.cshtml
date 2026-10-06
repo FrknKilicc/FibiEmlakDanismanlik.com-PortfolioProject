@@ -258,7 +258,10 @@
     }
 </style>
 
-<section class="search-field-section">
+<section class="search-field-section" id="homeSearchRoot"
+         data-api="@ViewBag.ApiUrl"
+         data-sale-url="@Url.Action("Index","AllForSalePage")"
+         data-rent-url="@Url.Action("Index","AllForRentalPage")">
     <div class="auto-container">
         <div class="inner-container">
             <div class="search-field">
@@ -281,7 +284,7 @@
                                                 <div class="form-group">
                                                     <label>İlan Tipi</label>
                                                     <div class="select-box">
-                                                        <select id="listingTypeDropdown-forsale">
+                                                        <select id="listingTypeDropdown-forsale" class="ignore">
                                                             <option value="">İlan Tipi Seçiniz</option>
                                                         </select>
                                                     </div>
@@ -291,8 +294,8 @@
                                                 <div class="form-group">
                                                     <label>İl</label>
                                                     <div class="select-box">
-                                                        <select id="cityDropdown-forsale" disabled>
-                                                            <option value="">Önce İlan Tipi Seçin</option>
+                                                        <select id="cityDropdown-forsale" class="ignore" disabled>
+                                                            <option value="">Önce ilan tipi seçin</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -301,8 +304,8 @@
                                                 <div class="form-group">
                                                     <label>İlçe</label>
                                                     <div class="select-box">
-                                                        <select id="districtDropdown-forsale" disabled>
-                                                            <option value="">Önce İl Seçin</option>
+                                                        <select id="districtDropdown-forsale" class="ignore" disabled>
+                                                            <option value="">Önce il seçin</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -330,24 +333,30 @@
                                         <div class="close-btn">
                                             <a href="javascript:void(0)" class="close-side-widget"><i class="far fa-times"></i></a>
                                         </div>
+                                        <div class="adv-type-notice" id="advTypeNotice-forsale" style="padding:10px 15px;margin-bottom:15px;border-radius:6px;background:#f7f9f7;border:1px solid #e0e8e0;color:#555;font-size:13px;">
+                                            Detaylı filtreler için önce ilan tipi seçin
+                                        </div>
                                         <div class="row clearfix">
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-sort">
-                                                <div class="form-group"><label>Sıralama</label><div class="select-box"><select id="sortDropdown-forsale"><option value="">Sıralama Seçin</option><option value="popular">En Popüler</option><option value="newest">En Yeni</option><option value="oldest">En Eski</option><option value="luxury">Lüks</option></select></div></div>
+                                                <div class="form-group"><label>Sıralama</label><div class="select-box"><select id="sortDropdown-forsale" class="ignore"><option value="">Sıralama Seçin</option><option value="CreatedDate|desc">En Yeni</option><option value="CreatedDate|asc">En Eski</option><option value="Price|asc">Fiyat Artan</option><option value="Price|desc">Fiyat Azalan</option></select></div></div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-room" id="roomFilterContainer-forsale" data-filter-type="room-section">
-                                                <div class="form-group"><label id="roomLabel-forsale" data-default-label="Oda Sayısı" data-commercial-label="Bölüm Sayısı">Oda Sayısı</label><div class="select-box"><select id="roomDropdown-forsale" disabled><option value="">Önce İlan Tipi Seçin</option></select></div></div>
+                                                <div class="form-group"><label id="roomLabel-forsale" data-default-label="Oda Sayısı" data-commercial-label="Bölüm Sayısı">Oda Sayısı</label><div class="select-box"><select id="roomDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance">
-                                                <div class="form-group"><label>Konuma Uzaklık</label><div class="select-box"><select id="distanceDropdown-forsale"><option value="">Mesafe Seçin</option><option value="1">1 km İçinde</option><option value="3">3 km İçinde</option><option value="5">5 km İçinde</option><option value="10">10 km İçinde</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance" style="display:none;">
+                                                <div class="form-group"><label>Konuma Uzaklık</label><div class="select-box"><select id="distanceDropdown-forsale" class="ignore"><option value="">Mesafe Seçin</option><option value="1">1 km İçinde</option><option value="3">3 km İçinde</option><option value="5">5 km İçinde</option><option value="10">10 km İçinde</option></select></div></div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-agency" id="agencyFilterContainer-forsale">
-                                                <div class="form-group"><label>Danışman / Ofis</label><div class="select-box"><select id="agentDropdown-forsale" disabled><option value="">Önce İlan Tipi Seçin</option></select></div></div>
+                                                <div class="form-group"><label>Danışman / Ofis</label><div class="select-box"><select id="agentDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-bath" id="bathFilterContainer-forsale" data-filter-type="bath">
-                                                <div class="form-group"><label>Banyo Sayısı</label><div class="select-box"><select id="bathDropdown-forsale" disabled><option value="">Önce İlan Tipi Seçin</option></select></div></div>
+                                                <div class="form-group"><label id="bathLabel-forsale">Banyo Sayısı</label><div class="select-box"><select id="bathDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-floor">
-                                                <div class="form-group"><label>Kat</label><div class="select-box"><select id="floorDropdown-forsale" disabled><option value="">Önce İlan Tipi Seçin</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-floor" id="floorFilterContainer-forsale">
+                                                <div class="form-group"><label>Kat</label><div class="select-box"><select id="floorDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-zoning" id="zoningFilterContainer-forsale" style="display:none;">
+                                                <div class="form-group"><label>İmar Durumu</label><div class="select-box"><select id="zoningDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
                                         </div>
                                         <div class="range-box">
@@ -375,7 +384,7 @@
                                                 <div class="form-group">
                                                     <label>İlan Tipi</label>
                                                     <div class="select-box">
-                                                        <select id="listingTypeDropdown-forrent">
+                                                        <select id="listingTypeDropdown-forrent" class="ignore">
                                                             <option value="">İlan Tipi Seçiniz</option>
                                                         </select>
                                                     </div>
@@ -385,8 +394,8 @@
                                                 <div class="form-group">
                                                     <label>İl</label>
                                                     <div class="select-box">
-                                                        <select id="cityDropdown-forrent" disabled>
-                                                            <option value="">Önce İlan Tipi Seçin</option>
+                                                        <select id="cityDropdown-forrent" class="ignore" disabled>
+                                                            <option value="">Önce ilan tipi seçin</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -395,8 +404,8 @@
                                                 <div class="form-group">
                                                     <label>İlçe</label>
                                                     <div class="select-box">
-                                                        <select id="districtDropdown-forrent" disabled>
-                                                            <option value="">Önce İl Seçin</option>
+                                                        <select id="districtDropdown-forrent" class="ignore" disabled>
+                                                            <option value="">Önce il seçin</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -424,24 +433,30 @@
                                         <div class="close-btn">
                                             <a href="javascript:void(0)" class="close-side-widget"><i class="far fa-times"></i></a>
                                         </div>
+                                        <div class="adv-type-notice" id="advTypeNotice-forrent" style="padding:10px 15px;margin-bottom:15px;border-radius:6px;background:#f7f9f7;border:1px solid #e0e8e0;color:#555;font-size:13px;">
+                                            Detaylı filtreler için önce ilan tipi seçin
+                                        </div>
                                         <div class="row clearfix">
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-sort">
-                                                <div class="form-group"><label>Sıralama</label><div class="select-box"><select id="sortDropdown-forrent"><option value="">Sıralama Seçin</option><option value="popular">En Popüler</option><option value="newest">En Yeni</option><option value="oldest">En Eski</option><option value="luxury">Lüks</option></select></div></div>
+                                                <div class="form-group"><label>Sıralama</label><div class="select-box"><select id="sortDropdown-forrent" class="ignore"><option value="">Sıralama Seçin</option><option value="CreatedDate|desc">En Yeni</option><option value="CreatedDate|asc">En Eski</option><option value="Price|asc">Fiyat Artan</option><option value="Price|desc">Fiyat Azalan</option></select></div></div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-room" id="roomFilterContainer-forrent" data-filter-type="room-section">
-                                                <div class="form-group"><label id="roomLabel-forrent" data-default-label="Oda Sayısı" data-commercial-label="Bölüm Sayısı">Oda Sayısı</label><div class="select-box"><select id="roomDropdown-forrent" disabled><option value="">Önce İlan Tipi Seçin</option></select></div></div>
+                                                <div class="form-group"><label id="roomLabel-forrent" data-default-label="Oda Sayısı" data-commercial-label="Bölüm Sayısı">Oda Sayısı</label><div class="select-box"><select id="roomDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance">
-                                                <div class="form-group"><label>Konuma Uzaklık</label><div class="select-box"><select id="distanceDropdown-forrent"><option value="">Mesafe Seçin</option><option value="1">1 km İçinde</option><option value="3">3 km İçinde</option><option value="5">5 km İçinde</option><option value="10">10 km İçinde</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance" style="display:none;">
+                                                <div class="form-group"><label>Konuma Uzaklık</label><div class="select-box"><select id="distanceDropdown-forrent" class="ignore"><option value="">Mesafe Seçin</option><option value="1">1 km İçinde</option><option value="3">3 km İçinde</option><option value="5">5 km İçinde</option><option value="10">10 km İçinde</option></select></div></div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-agency" id="agencyFilterContainer-forrent">
-                                                <div class="form-group"><label>Danışman / Ofis</label><div class="select-box"><select id="agentDropdown-forrent" disabled><option value="">Önce İlan Tipi Seçin</option></select></div></div>
+                                                <div class="form-group"><label>Danışman / Ofis</label><div class="select-box"><select id="agentDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-bath" id="bathFilterContainer-forrent" data-filter-type="bath">
-                                                <div class="form-group"><label>Banyo Sayısı</label><div class="select-box"><select id="bathDropdown-forrent" disabled><option value="">Önce İlan Tipi Seçin</option></select></div></div>
+                                                <div class="form-group"><label id="bathLabel-forrent">Banyo Sayısı</label><div class="select-box"><select id="bathDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-floor">
-                                                <div class="form-group"><label>Kat</label><div class="select-box"><select id="floorDropdown-forrent" disabled><option value="">Önce İlan Tipi Seçin</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-floor" id="floorFilterContainer-forrent">
+                                                <div class="form-group"><label>Kat</label><div class="select-box"><select id="floorDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-zoning" id="zoningFilterContainer-forrent" style="display:none;">
+                                                <div class="form-group"><label>İmar Durumu</label><div class="select-box"><select id="zoningDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
                                         </div>
                                         <div class="range-box">
@@ -465,610 +480,4 @@
         </div>
     </div>
 </section>
-
-<script>
-(function () {
-    'use strict';
-
-    function initSearchModule() {
-        if (typeof window.jQuery === 'undefined' || !window.jQuery.fn) {
-            return false;
-        }
-
-        var $ = window.jQuery;
-        $(document).ready(function ($) {
-            var API = '@ViewBag.ApiUrl';
-
-            function fetchJson(url) {
-                return fetch(url).then(function (r) {
-                    if (!r.ok) throw new Error('HTTP ' + r.status);
-                    return r.json();
-                }).catch(function (e) {
-                    console.error('[SearchModule] Fetch error:', url, e);
-                    return [];
-                });
-            }
-
-            function debounce(fn, ms) {
-                var t;
-                return function () {
-                    var c = this, a = arguments;
-                    clearTimeout(t);
-                    t = setTimeout(function () { fn.apply(c, a); }, ms);
-                };
-            }
-
-            function formatTL(n) {
-                return Number(n).toLocaleString('tr-TR') + ' \u20BA';
-            }
-
-            function formatM2(n) {
-                return Number(n).toLocaleString('tr-TR') + ' m\u00B2';
-            }
-
-            function formatSliderText(val1, val2, formatter) {
-                var vMin = Math.min(val1, val2);
-                var vMax = Math.max(val1, val2);
-                return formatter(vMin) + ' - ' + formatter(vMax);
-            }
-
-            function loadSelect2Lib(cb) {
-                if ($.fn.select2) { cb(); return; }
-                if (!document.getElementById('select2-css-v4')) {
-                    var lnk = document.createElement('link');
-                    lnk.id = 'select2-css-v4';
-                    lnk.rel = 'stylesheet';
-                    lnk.href = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
-                    document.head.appendChild(lnk);
-                }
-                var scr = document.createElement('script');
-                scr.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
-                scr.onload = cb;
-                document.body.appendChild(scr);
-            }
-
-            function killNiceSelect(el) {
-                var $el = $(el), $ns = $el.next('.nice-select');
-                if ($ns.length) $ns.remove();
-                $el.css('display', '').removeClass('nice-select wide');
-            }
-
-            function s2Init(id, ph, opts) {
-                var $el = $('#' + id);
-                if (!$el.length) return;
-                killNiceSelect($el[0]);
-                if ($el.hasClass('select2-hidden-accessible')) $el.select2('destroy');
-                $el.select2($.extend({
-                    placeholder: ph,
-                    allowClear: true,
-                    width: '100%',
-                    minimumResultsForSearch: 10
-                }, opts || {}));
-            }
-
-            function s2Reset(id, ph, dis) {
-                var el = document.getElementById(id);
-                if (!el) return;
-                el.innerHTML = '<option value="">' + ph + '</option>';
-                $(el).prop('disabled', !!dis);
-                s2Init(id, ph);
-            }
-
-            function s2Fill(id, data, ph, dis) {
-                var el = document.getElementById(id);
-                if (!el) return;
-                el.innerHTML = '<option value="">' + ph + '</option>';
-                if (Array.isArray(data)) {
-                    data.forEach(function (item) {
-                        var o = document.createElement('option');
-                        o.value = item.id || item.agentId || item.value || '';
-                        o.textContent = item.text || item.name || item.agentName || '';
-                        el.appendChild(o);
-                    });
-                }
-                $(el).prop('disabled', !!dis);
-                s2Init(id, ph);
-            }
-
-            function initSlider(sId, dId, min, max, step, vals, fmt) {
-                var $s = $('#' + sId), $d = $('#' + dId);
-                if (!$s.length || !$.fn.slider) return;
-                if ($s.hasClass('ui-slider')) $s.slider('destroy');
-                $s.slider({
-                    range: true,
-                    min: min,
-                    max: max,
-                    step: step,
-                    values: vals,
-                    slide: function (e, ui) {
-                        $d.val(formatSliderText(ui.values[0], ui.values[1], fmt));
-                    }
-                });
-                $d.val(formatSliderText(vals[0], vals[1], fmt));
-            }
-
-            function updateSliderLimits(sId, dId, newMax, newMin, step, fmt) {
-                var $s = $('#' + sId);
-                if (!$s.length || !$s.hasClass('ui-slider')) return;
-                newMin = newMin || 0;
-                $s.slider('option', 'min', newMin);
-                $s.slider('option', 'max', newMax);
-                $s.slider('option', 'step', step);
-                $s.slider('values', [newMin, newMax]);
-                $('#' + dId).val(formatSliderText(newMin, newMax, fmt));
-            }
-
-            function createTabModule(cfg) {
-                var ut = cfg.usageType, sfx = cfg.suffix, tabSel = cfg.tabSelector;
-                var ID = {
-                    lt: 'listingTypeDropdown-' + sfx,
-                    city: 'cityDropdown-' + sfx,
-                    dist: 'districtDropdown-' + sfx,
-                    search: 'searchInput-' + sfx,
-                    sugg: 'suggestions-' + sfx,
-                    sort: 'sortDropdown-' + sfx,
-                    room: 'roomDropdown-' + sfx,
-                    roomLabel: 'roomLabel-' + sfx,
-                    roomContainer: 'roomFilterContainer-' + sfx,
-                    bath: 'bathDropdown-' + sfx,
-                    bathContainer: 'bathFilterContainer-' + sfx,
-                    floor: 'floorDropdown-' + sfx,
-                    agent: 'agentDropdown-' + sfx,
-                    distance: 'distanceDropdown-' + sfx,
-                    ps: 'priceSlider-' + sfx,
-                    pd: 'priceDisplay-' + sfx,
-                    as: 'areaSlider-' + sfx,
-                    ad: 'areaDisplay-' + sfx
-                };
-
-                // 1) Load listing types
-                fetchJson(API + 'listingtypes?usageType=' + ut).then(function (d) {
-                    s2Fill(ID.lt, d, '\u0130lan Tipi Se\u00E7iniz', false);
-                });
-
-                // 2) Sub-filters initial state: DISABLED
-                s2Init(ID.city, '\u00D6nce \u0130lan Tipi Se\u00E7in');
-                s2Init(ID.dist, '\u00D6nce \u0130l Se\u00E7in');
-                s2Init(ID.sort, 'S\u0131ralama Se\u00E7in');
-                s2Init(ID.distance, 'Mesafe Se\u00E7in');
-                s2Init(ID.room, '\u00D6nce \u0130lan Tipi Se\u00E7in');
-                s2Init(ID.bath, '\u00D6nce \u0130lan Tipi Se\u00E7in');
-                s2Init(ID.floor, '\u00D6nce \u0130lan Tipi Se\u00E7in');
-                s2Init(ID.agent, '\u00D6nce \u0130lan Tipi Se\u00E7in');
-
-                // 3) Default sliders
-                var defPMax = ut === 1 ? 50000000 : 250000;
-                var defPStep = ut === 1 ? 50000 : 1000;
-                var defAMax = 5000;
-                initSlider(ID.ps, ID.pd, 0, defPMax, defPStep, [0, defPMax], formatTL);
-                initSlider(ID.as, ID.ad, 0, defAMax, 10, [0, defAMax], formatM2);
-                $('#' + ID.pd).val('');
-                $('#' + ID.ad).val('');
-
-                // ═══════════════════════════════════════
-                // MASTER TRIGGER: İlan Tipi Değiştiğinde
-                // ═══════════════════════════════════════
-                $(document).on('change', '#' + ID.lt + ', #ilanTipiDropdown', function () {
-                    try {
-                        var $select = $(this);
-                        var ltId = $select.val();
-                        var $tab = $(tabSel);
-                        var selectedText = ($select.find('option:selected').text() || '').trim();
-
-                        if (!ltId) {
-                            $('.adv-filter-room label, #' + ID.roomLabel).text('Oda Sayısı');
-                            $('.adv-filter-bath, #' + ID.bathContainer).show();
-                            s2Reset(ID.city, 'Önce İlan Tipi Seçin', true);
-                            s2Reset(ID.dist, 'Önce İl Seçin', true);
-                            s2Reset(ID.room, 'Önce İlan Tipi Seçin', true);
-                            s2Reset(ID.bath, 'Önce İlan Tipi Seçin', true);
-                            s2Reset(ID.floor, 'Önce İlan Tipi Seçin', true);
-                            s2Reset(ID.agent, 'Önce İlan Tipi Seçin', true);
-                            $('#' + ID.pd).val('');
-                            $('#' + ID.ad).val('');
-                            return;
-                        }
-
-                        // Basit ve güvenli metin kontrolü (İşyeri / İş Yeri)
-                        if (selectedText.indexOf('İşyeri') !== -1 || selectedText.indexOf('İş Yeri') !== -1) {
-                            // 1. Banyo filtresini gizle
-                            $('.adv-filter-bath, #' + ID.bathContainer).hide();
-
-                            // 2. "Oda Sayısı" etiketini "Bölüm Sayısı" yap
-                            $('.adv-filter-room label, #' + ID.roomLabel).text('Bölüm Sayısı');
-
-                        // 2. AJAX ile dinamik verileri çek (Ham Entity Dizisi: [ {ilan1}, {ilan2} ])
-                        var transType = (ut === 1) ? 'Sale' : 'Rent';
-                        var apiBase = (typeof API !== 'undefined' && API ? API : '@ViewBag.ApiUrl') || 'https://localhost:7015/api/';
-                        if (!apiBase.endsWith('/')) { apiBase += '/'; }
-                        var requestUrl = apiBase + 'CommercialSearch/filters?transactionType=' + transType;
-
-                        $.ajax({
-                            url: requestUrl,
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function (data) {
-                                try {
-                                    if (!Array.isArray(data) || data.length === 0) return;
-
-                                    var cities = [];
-                                    var districts = [];
-                                    var sections = [];
-                                    var floors = [];
-                                    var agents = [];
-
-                                    var citySet = {};
-                                    var districtSet = {};
-                                    var sectionSet = {};
-                                    var floorSet = {};
-                                    var agentSet = {};
-
-                                    var minPrice = Infinity;
-                                    var maxPrice = -Infinity;
-                                    var minArea = Infinity;
-                                    var maxArea = -Infinity;
-
-                                    // Dizideki tüm ilanları gez; eşsiz değerleri ve min-max aralıklarını bul
-                                    for (var i = 0; i < data.length; i++) {
-                                        var item = data[i];
-                                        if (!item) continue;
-
-                                        // Fiyat (Satılık: price, Kiralık: rent)
-                                        var p = (item.price !== undefined && item.price !== null) ? item.price :
-                                                ((item.Price !== undefined && item.Price !== null) ? item.Price :
-                                                ((item.rent !== undefined && item.rent !== null) ? item.rent : item.Rent));
-                                        if (p !== undefined && p !== null && !isNaN(p)) {
-                                            p = Number(p);
-                                            if (p < minPrice) minPrice = p;
-                                            if (p > maxPrice) maxPrice = p;
-                                        }
-
-                                        // Metrekare (GrossArea / Area)
-                                        var a = (item.grossArea !== undefined && item.grossArea !== null) ? item.grossArea :
-                                                ((item.GrossArea !== undefined && item.GrossArea !== null) ? item.GrossArea :
-                                                ((item.area !== undefined && item.area !== null) ? item.area : item.Area));
-                                        if (a !== undefined && a !== null && !isNaN(a)) {
-                                            a = Number(a);
-                                            if (a < minArea) minArea = a;
-                                            if (a > maxArea) maxArea = a;
-                                        }
-
-                                        // Şehir
-                                        var c = item.city || item.City;
-                                        if (c && !citySet[c]) {
-                                            citySet[c] = true;
-                                            cities.push(c);
-                                        }
-
-                                        // İlçe
-                                        var d = item.district || item.District;
-                                        if (d && !districtSet[d]) {
-                                            districtSet[d] = true;
-                                            districts.push(d);
-                                        }
-
-                                        // Bölüm Sayısı
-                                        var s = (item.numberOfSection !== undefined && item.numberOfSection !== null) ? item.numberOfSection : item.NumberOfSection;
-                                        if (s !== undefined && s !== null && s !== '' && !sectionSet[s]) {
-                                            sectionSet[s] = true;
-                                            sections.push(Number(s));
-                                        }
-
-                                        // Kat (NumberOfFloors)
-                                        var f = (item.numberOfFloors !== undefined && item.numberOfFloors !== null) ? item.numberOfFloors : item.NumberOfFloors;
-                                        if (f !== undefined && f !== null && f !== '' && !floorSet[f]) {
-                                            floorSet[f] = true;
-                                            floors.push(Number(f));
-                                        }
-
-                                        // Danışman (Agent)
-                                        var agId = item.agentId || item.AgentId;
-                                        var agObj = item.agent || item.Agent;
-                                        var agName = agObj ? (agObj.name || agObj.Name || agObj.title || agObj.Title) : null;
-                                        if (agId && !agentSet[agId]) {
-                                            agentSet[agId] = true;
-                                            agents.push({ id: agId, name: agName || ('Danışman #' + agId) });
-                                        }
-                                    }
-
-                                    // Sayısal ve alfabetik sıralama
-                                    sections.sort(function (a, b) { return a - b; });
-                                    floors.sort(function (a, b) { return a - b; });
-                                    cities.sort();
-                                    districts.sort();
-
-                                    // 1. Bölüm Sayısı Dropdown'ını Doldur
-                                    var $roomSelect = $('#roomDropdown-' + sfx);
-                                    if ($roomSelect.length) {
-                                        $roomSelect.empty().append('<option value="">Bölüm Sayısı Seçin</option>');
-                                        for (var si = 0; si < sections.length; si++) {
-                                            $roomSelect.append('<option value="' + sections[si] + '">' + sections[si] + ' Bölüm</option>');
-                                        }
-                                        $roomSelect.prop('disabled', false).trigger('change');
-                                    }
-
-                                    // 2. Danışman Dropdown'ını Doldur
-                                    var $agentSelect = $('#agentDropdown-' + sfx);
-                                    if ($agentSelect.length) {
-                                        $agentSelect.empty().append('<option value="">Tüm Danışmanlar</option>');
-                                        for (var ai = 0; ai < agents.length; ai++) {
-                                            $agentSelect.append('<option value="' + agents[ai].id + '">' + agents[ai].name + '</option>');
-                                        }
-                                        $agentSelect.prop('disabled', false).trigger('change');
-                                    }
-
-                                    // 3. Kat Dropdown'ını Doldur
-                                    var $floorSelect = $('#floorDropdown-' + sfx);
-                                    if ($floorSelect.length) {
-                                        $floorSelect.empty().append('<option value="">Kat Seçin</option>');
-                                        for (var fi = 0; fi < floors.length; fi++) {
-                                            var flVal = floors[fi];
-                                            var flText = flVal === 0 ? 'Zemin Kat' : (flVal + '. Kat');
-                                            $floorSelect.append('<option value="' + flVal + '">' + flText + '</option>');
-                                        }
-                                        $floorSelect.prop('disabled', false).trigger('change');
-                                    }
-
-                                    // 4. Şehir Dropdown'ını Doldur
-                                    var $citySelect = $('#cityDropdown-' + sfx);
-                                    if ($citySelect.length && cities.length > 0) {
-                                        $citySelect.empty().append('<option value="">İl Seçiniz</option>');
-                                        for (var ci = 0; ci < cities.length; ci++) {
-                                            $citySelect.append('<option value="' + cities[ci] + '">' + cities[ci] + '</option>');
-                                        }
-                                        $citySelect.prop('disabled', false).trigger('change');
-                                    }
-
-                                    // 5. İlçe Dropdown'ını Doldur
-                                    var $distSelect = $('#districtDropdown-' + sfx);
-                                    if ($distSelect.length && districts.length > 0) {
-                                        $distSelect.empty().append('<option value="">İlçe Seçiniz</option>');
-                                        for (var di = 0; di < districts.length; di++) {
-                                            $distSelect.append('<option value="' + districts[di] + '">' + districts[di] + '</option>');
-                                        }
-                                        $distSelect.prop('disabled', false).trigger('change');
-                                    }
-
-                                    // 6. Fiyat Slider ve Text Güncelleme
-                                    if (minPrice === Infinity) minPrice = 0;
-                                    if (maxPrice === -Infinity) maxPrice = (ut === 1 ? 50000000 : 250000);
-
-                                    var formattedPrice = Number(minPrice).toLocaleString('tr-TR') + ' ₺ - ' + Number(maxPrice).toLocaleString('tr-TR') + ' ₺';
-                                    $('#priceDisplay-' + sfx).val(formattedPrice).text(formattedPrice);
-
-                                    var $priceSlider = $('#priceSlider-' + sfx);
-                                    if ($priceSlider.length && $priceSlider.hasClass('ui-slider')) {
-                                        $priceSlider.slider('option', 'min', minPrice);
-                                        $priceSlider.slider('option', 'max', maxPrice);
-                                        $priceSlider.slider('values', [minPrice, maxPrice]);
-                                    }
-
-                                    // 7. Metrekare Slider ve Text Güncelleme
-                                    if (minArea === Infinity) minArea = 0;
-                                    if (maxArea === -Infinity) maxArea = 5000;
-
-                                    var formattedArea = Number(minArea).toLocaleString('tr-TR') + ' m² - ' + Number(maxArea).toLocaleString('tr-TR') + ' m²';
-                                    $('#areaDisplay-' + sfx).val(formattedArea).text(formattedArea);
-
-                                    var $areaSlider = $('#areaSlider-' + sfx);
-                                    if ($areaSlider.length && $areaSlider.hasClass('ui-slider')) {
-                                        $areaSlider.slider('option', 'min', minArea);
-                                        $areaSlider.slider('option', 'max', maxArea);
-                                        $areaSlider.slider('values', [minArea, maxArea]);
-                                    }
-
-                                } catch (innerEx) {
-                                    console.error('[CommercialSearch] Veri işleme hatası:', innerEx);
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.error('[CommercialSearch] API çağrısı başarısız:', error);
-                            }
-                        });
-                        } else {
-                            // ── KONUT / DİĞER MOD ──
-                            $('.adv-filter-room label, #' + ID.roomLabel).text('Oda Sayısı');
-                            $('.adv-filter-bath, #' + ID.bathContainer).show();
-
-                            fetchJson(API + 'Location/available-cities?usageType=' + ut + '&listingTypeId=' + ltId).then(function (c) {
-                                s2Fill(ID.city, c, 'İl Seçiniz', false);
-                                s2Reset(ID.dist, 'Önce İl Seçin', true);
-                            });
-
-                            fetchJson(API + 'listingtypes/advanced-filters?listingTypeId=' + ltId).then(function (f) {
-                                if (!f) return;
-
-                                $tab.find('.adv-filter-room').toggle(!!f.showRooms);
-                                $tab.find('.adv-filter-bath').toggle(!!f.showBath);
-                                $tab.find('.adv-filter-floor').toggle(!!f.showFloor);
-                                $tab.find('.adv-filter-price').toggle(!!f.showPrice);
-                                $tab.find('.adv-filter-area').toggle(!!f.showArea);
-                                $tab.find('.adv-filter-distance').toggle(!!f.showDistance);
-
-                                if (f.showRooms && f.roomOptions && f.roomOptions.length > 0) {
-                                    s2Fill(ID.room, f.roomOptions, 'Oda Seçin', false);
-                                } else {
-                                    s2Reset(ID.room, 'Oda Seçin', true);
-                                }
-
-                                if (f.showBath && f.bathOptions && f.bathOptions.length > 0) {
-                                    s2Fill(ID.bath, f.bathOptions, 'Banyo Seçin', false);
-                                } else {
-                                    s2Reset(ID.bath, 'Banyo Seçin', true);
-                                }
-
-                                if (f.showFloor && f.floorOptions && f.floorOptions.length > 0) {
-                                    s2Fill(ID.floor, f.floorOptions, 'Kat Seçin', false);
-                                } else {
-                                    s2Reset(ID.floor, 'Kat Seçin', true);
-                                }
-
-                                if (f.maxPrice) {
-                                    var pStep = f.maxPrice > 1000000 ? 50000 : (f.maxPrice > 10000 ? 1000 : 100);
-                                    updateSliderLimits(ID.ps, ID.pd, f.maxPrice, f.minPrice || 0, pStep, formatTL);
-                                }
-                                if (f.maxArea) {
-                                    var aStep = f.maxArea > 1000 ? 25 : 10;
-                                    updateSliderLimits(ID.as, ID.ad, f.maxArea, f.minArea || 0, aStep, formatM2);
-                                }
-                            });
-
-                            fetchJson(API + 'Agent').then(function (a) {
-                                s2Fill(ID.agent, a, 'Tüm Danışmanlar', false);
-                            });
-                        }
-                    } catch (e) {
-                        console.error('İlan tipi değişim hatası:', e);
-                    }
-                });
-
-                // ═══════════════════════════
-                // İl Değiştiğinde -> İlçe Yükle
-                // ═══════════════════════════
-                $(document).on('change', '#' + ID.city, function () {
-                    var cId = $(this).val(), ltId = $('#' + ID.lt).val();
-                    if (!cId || !ltId) {
-                        s2Reset(ID.dist, '\u00D6nce \u0130l Se\u00E7in', true);
-                        return;
-                    }
-                    fetchJson(API + 'Location/available-districts?cityId=' + cId + '&usageType=' + ut + '&listingTypeId=' + ltId).then(function (d) {
-                        s2Fill(ID.dist, d, '\u0130l\u00E7e Se\u00E7iniz', false);
-                    });
-                });
-
-                // ═══════════════════════════════
-                // Mülk Ara - Auto-Suggest (Debounced)
-                // ═══════════════════════════════
-                var hs = debounce(function (e) {
-                    var $i = $(e.target);
-                    if (!$i.closest('.tab').hasClass('active-tab')) return;
-                    var t = $i.val(), $l = $('#' + ID.sugg), lt = $('#' + ID.lt).val() || '';
-                    if (t.length < 3) { $l.hide().empty(); return; }
-                    var u = API + 'search/suggestions?usageType=' + ut + '&searchTerm=' + encodeURIComponent(t);
-                    if (lt) u += '&listingTypeId=' + lt;
-                    fetchJson(u).then(function (r) {
-                        $l.empty();
-                        if (r.length > 0) {
-                            r.forEach(function (x) {
-                                var $li = $('<li></li>').text(x.title || x.text || x.name);
-                                $li.on('click', function () {
-                                    $i.val(x.title || x.text || x.name);
-                                    $l.hide();
-                                    $i.siblings('.clear-search').show();
-                                });
-                                $l.append($li);
-                            });
-                            $l.show();
-                        } else {
-                            $l.hide();
-                        }
-                    });
-                }, 300);
-
-                $(document).on('keyup', '#' + ID.search, hs);
-                $(document).on('input', '#' + ID.search, function () {
-                    $(this).siblings('.clear-search').toggle($(this).val().length > 0);
-                });
-
-                // ═══════════════════════════════
-                // Ara Butonu - Query String Builder
-                // ═══════════════════════════════
-                $(document).on('click', '.js-search-btn[data-tab="' + sfx + '"]', function () {
-                    var p = { usageType: ut };
-                    var v;
-                    v = $('#' + ID.lt).val(); if (v) p.listingTypeId = v;
-                    v = $('#' + ID.city).val(); if (v) p.cityId = v;
-                    v = $('#' + ID.dist).val(); if (v) p.districtId = v;
-                    v = $('#' + ID.search).val(); if (v) p.searchTerm = v;
-                    v = $('#' + ID.sort).val(); if (v) p.sortBy = v;
-                    v = $('#' + ID.room).val(); if (v) p.rooms = v;
-                    v = $('#' + ID.bath).val(); if (v) p.baths = v;
-                    v = $('#' + ID.floor).val(); if (v) p.floor = v;
-                    v = $('#' + ID.agent).val(); if (v) p.agentId = v;
-                    v = $('#' + ID.distance).val(); if (v) p.distance = v;
-                    var $ps = $('#' + ID.ps);
-                    if ($ps.hasClass('ui-slider')) {
-                        var pVals = $ps.slider('values');
-                        p.minPrice = Math.min(pVals[0], pVals[1]);
-                        p.maxPrice = Math.max(pVals[0], pVals[1]);
-                    }
-                    var $as = $('#' + ID.as);
-                    if ($as.hasClass('ui-slider')) {
-                        var aVals = $as.slider('values');
-                        p.minArea = Math.min(aVals[0], aVals[1]);
-                        p.maxArea = Math.max(aVals[0], aVals[1]);
-                    }
-                    var qs = Object.keys(p).map(function (k) {
-                        return encodeURIComponent(k) + '=' + encodeURIComponent(p[k]);
-                    }).join('&');
-                    console.log('[SearchModule] Filtre Query String:', qs);
-                    console.log('[SearchModule] Filtre Parametreleri:', p);
-                });
-            }
-
-            // ── Clear Search Input ──
-            $(document).on('click', '.clear-search', function () {
-                var $inp = $(this).siblings('.search-field-input');
-                $inp.val('');
-                $(this).hide();
-                $(this).closest('.form-group').find('.suggestions-list').hide().empty();
-            });
-
-            // ── Close suggestions on outside click ──
-            $(document).on('click.searchSuggest', function (e) {
-                if (!$(e.target).closest('.form-group').length) {
-                    $('.suggestions-list').hide();
-                }
-            });
-
-            // ── Gelişmiş Arama Panel Toggle (Bidirectional Toggle & Close) ──
-            $(document).on('click', '.search__toggler', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var $btn = $(this);
-                var $wrapper = $btn.closest('.switch_btn_one');
-                var isOpen = $wrapper.hasClass('active');
-
-                // Close any other tab's open advanced search panel
-                $('.switch_btn_one').not($wrapper).removeClass('active').find('.search__toggler i').removeClass('fa-angle-up').addClass('fa-angle-down');
-
-                if (isOpen) {
-                    $wrapper.removeClass('active');
-                    $btn.find('i').removeClass('fa-angle-up').addClass('fa-angle-down');
-                } else {
-                    $wrapper.addClass('active');
-                    $btn.find('i').removeClass('fa-angle-down').addClass('fa-angle-up');
-                }
-            });
-
-            $(document).on('click', '.switch_btn_one .close-side-widget, .switch_btn_one .close-btn', function (e) {
-                e.preventDefault();
-                var $wrapper = $(this).closest('.switch_btn_one');
-                $wrapper.removeClass('active');
-                $wrapper.find('.search__toggler i').removeClass('fa-angle-up').addClass('fa-angle-down');
-            });
-
-            // ── Bootstrap ──
-            loadSelect2Lib(function () {
-                createTabModule({ usageType: 1, suffix: 'forsale', tabSelector: '#tab-1' });
-                createTabModule({ usageType: 2, suffix: 'forrent', tabSelector: '#tab-2' });
-            });
-        });
-        return true;
-    }
-
-    if (!initSearchModule()) {
-        var pollTimer = setInterval(function () {
-            if (initSearchModule()) {
-                clearInterval(pollTimer);
-            }
-        }, 20);
-        window.addEventListener('load', function () {
-            if (initSearchModule()) {
-                clearInterval(pollTimer);
-            }
-        });
-    }
-})();
-</script>
 
