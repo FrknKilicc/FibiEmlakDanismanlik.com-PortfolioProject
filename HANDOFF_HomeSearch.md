@@ -206,6 +206,9 @@
 | 2026-10-06 18:59 | Gemini 3.8 Flash | Durum doğrulama (§7) | Tamam | 7fb8655 | Build: 0 hata, 2 uyarı; çalışma ağacı temiz (`.localpilot/` hariç); 7015/7012 durduruldu, boşta | HANDOFF repoda yoktu, eklendi. Sıradaki: **1A** |
 | 2026-10-06 19:05 | Gemini 3.8 Flash | Smoke baseline (§4) | Tamam | 7fb8655 | 12/12 sayfa HTTP 200, render=true (console err baseline: Home=0, Sale=0, Rent=0, SaleDet=1, RentDet=0, Blog=1, BlogDet=1, Agent=7, Contact=0, About=3, FAQ=0, Compare=0) | `smoke_baseline.json` scratch'e kaydedildi |
 | 2026-10-06 19:11 | Gemini 3.8 Flash | 1A (Tek init + toggle) | Tamam | bb50812 | F1 PASS (handler=1, err=0), F2 PASS, Smoke 12/12 PASS | `home-search.js` taşındı, `.ignore` eklendi |
-| 2026-10-06 19:16 | Gemini 3.8 Flash | 1B (Cascade state machine) | Tamam | (1B) | F3–F6 PASS, Kayseri "Tüm ilçeler" PASS, Smoke 12/12 PASS | `setSelectState`, `select2:select/clear`, `reqSeq`, 180ms debounce |
+| 2026-10-06 19:16 | Gemini 3.8 Flash | 1B (Cascade state machine) | Tamam | 6e63644 | F3–F6 PASS, Kayseri "Tüm ilçeler" PASS, Smoke 12/12 PASS | `setSelectState`, `select2:select/clear`, `reqSeq`, 180ms debounce |
+| 2026-10-06 19:34 | Gemini 3.8 Flash | T (DB yedek + test verisi) | Tamam | - | Backup OK (`fibiemlak_pre_test.bak`), 5 test kaydı + 1 LandCategory eklendi | IDs: `LandCategoryId=1`, `ForSaleLandListingId=5`, `RentalLandListingId=2`, `ForSaleHousingListId=13(Pasif),14(Opsiyonlu)`, `RentalCommercialListId=9(Pasif)`. Öncesi sayılar: LandCat=0, SaleHousing=1, SaleLand=0, SaleComm=2, RentHousing=1, RentLand=0, RentComm=4 |
+| 2026-10-06 19:36 | Gemini 3.8 Flash | 2A (LocationRepo + ListingTypes) | Tamam | (2A) | B1 PASS, F3–F6 PASS, Smoke 12/12 PASS | `PropertyStatuses.ActiveSet`, `UsageType` join, tek SQL `EXISTS`, `onlyWithActiveListings` |
+
 
 

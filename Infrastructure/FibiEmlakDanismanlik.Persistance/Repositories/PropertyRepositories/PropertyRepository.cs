@@ -1671,6 +1671,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     CreatedDate = l.CreatedDate,
 
                     Price = l.Rent,
+                    Deposit = 0,
                     BestDeals = l.BestDeals,
 
                     City = l.City,

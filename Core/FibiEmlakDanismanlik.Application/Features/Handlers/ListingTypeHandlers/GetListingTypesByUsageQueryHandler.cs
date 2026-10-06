@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingTypeHandlers
@@ -24,7 +25,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingTypeHandlers
             GetListingTypesByUsageQuery request,
             CancellationToken cancellationToken)
         {
-            return _listingTypeRepository.GetByUsageTypeAsync(request.UsageType);
+            return _listingTypeRepository.GetByUsageTypeAsync(request.UsageType, request.OnlyWithActiveListings);
         }
     }
 }
