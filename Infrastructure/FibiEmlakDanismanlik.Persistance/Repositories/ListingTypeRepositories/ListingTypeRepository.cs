@@ -25,7 +25,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingTypeRepositories
                 .AsNoTracking()
                 .Where(x => (int)x.UsageType == usageType || (int)x.UsageType == 3)
                 .OrderBy(x => x.Name)
-                .Select(x => new ListingTypeResult(x.ListingTypeId, x.Name))
+                .Select(x => new ListingTypeResult(x.ListingTypeId, x.Name, (int)x.UsageType))
                 .ToListAsync();
         }
 
@@ -33,7 +33,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingTypeRepositories
         {
             var entity = await _context.listingTypes.FindAsync(id);
             if (entity == null) return null;
-            return new ListingTypeResult(entity.ListingTypeId, entity.Name);
+            return new ListingTypeResult(entity.ListingTypeId, entity.Name, (int)entity.UsageType);
         }
     }
 }
