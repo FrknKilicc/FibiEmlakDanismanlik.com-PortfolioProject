@@ -314,14 +314,22 @@
                     var minP = Number(f.minPrice) || 0;
                     var maxP = Number(f.maxPrice) || 0;
                     var pStep = maxP > 1000000 ? 50000 : (maxP > 10000 ? 1000 : 100);
-                    if (maxP <= minP) maxP = minP + pStep;
+                    if (maxP <= minP) {
+                        maxP = minP + pStep;
+                    } else if ((maxP - minP) % pStep !== 0) {
+                        maxP = minP + Math.ceil((maxP - minP) / pStep) * pStep;
+                    }
                     initSlider(ID.ps, ID.pd, minP, maxP, pStep, [minP, maxP], formatTL, function () { sliderTouched.price = true; });
                     if ($('#' + ID.ps).hasClass('ui-slider')) $('#' + ID.ps).slider('enable');
 
                     var minA = Number(f.minArea) || 0;
                     var maxA = Number(f.maxArea) || 0;
-                    var aStep = maxA > 1000 ? 25 : 10;
-                    if (maxA <= minA) maxA = minA + aStep;
+                    var aStep = maxA > 1000 ? 10 : 5;
+                    if (maxA <= minA) {
+                        maxA = minA + aStep;
+                    } else if ((maxA - minA) % aStep !== 0) {
+                        maxA = minA + Math.ceil((maxA - minA) / aStep) * aStep;
+                    }
                     initSlider(ID.as, ID.ad, minA, maxA, aStep, [minA, maxA], formatM2, function () { sliderTouched.area = true; });
                     if ($('#' + ID.as).hasClass('ui-slider')) $('#' + ID.as).slider('enable');
                 }).catch(function (err) {
