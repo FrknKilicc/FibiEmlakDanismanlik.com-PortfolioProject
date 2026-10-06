@@ -1383,6 +1383,40 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (filter.MaxPrice.HasValue)
                 baseQuery = baseQuery.Where(x => x.Price <= filter.MaxPrice.Value);
 
+            if (filter.MinArea.HasValue)
+                baseQuery = baseQuery.Where(x => (x.Area ?? x.GrossArea) >= filter.MinArea.Value);
+
+            if (filter.MaxArea.HasValue)
+                baseQuery = baseQuery.Where(x => (x.Area ?? x.GrossArea) <= filter.MaxArea.Value);
+
+            if (filter.NumberOfBathRoom.HasValue)
+                baseQuery = baseQuery.Where(x => (x.NumberOfBathRoom ?? x.NumberOfBathrooms) == filter.NumberOfBathRoom.Value);
+
+            if (filter.Floor.HasValue)
+                baseQuery = baseQuery.Where(x => x.NumberOfFloors == filter.Floor.Value);
+
+            if (filter.NumberOfSection.HasValue)
+                baseQuery = baseQuery.Where(x => x.NumberOfSection == filter.NumberOfSection.Value);
+
+            if (filter.AgentId.HasValue)
+                baseQuery = baseQuery.Where(x => x.AgentId == filter.AgentId.Value);
+
+            if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
+                baseQuery = baseQuery.Where(x => x.ZoningStatus == filter.ZoningStatus);
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var term = filter.SearchTerm.Trim();
+                var dashIdx = term.IndexOf(" - ", StringComparison.Ordinal);
+                var namePart = dashIdx >= 0 ? term.Substring(dashIdx + 3).Trim() : term;
+                baseQuery = baseQuery.Where(x =>
+                    (x.PropertyName != null && (x.PropertyName.Contains(term) || (namePart.Length > 0 && x.PropertyName.Contains(namePart))))
+                    || (x.PropertyNo != null && x.PropertyNo.ToString() == term)
+                    || (x.City != null && x.City.Contains(term))
+                    || (x.District != null && x.District.Contains(term))
+                    || (x.Neighborhood != null && x.Neighborhood.Contains(term)));
+            }
+
             // 3) Amenities OR filtresi (ListingTypeId enum ile)
             if (filter.SelectedAmenityIds != null && filter.SelectedAmenityIds.Any())
             {
@@ -1643,6 +1677,40 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (!string.IsNullOrWhiteSpace(filter.NumberOfRoom))
                 query = query.Where(x => x.NumberOfRoom == filter.NumberOfRoom);
 
+            if (filter.MinArea.HasValue)
+                query = query.Where(x => x.GrossArea >= filter.MinArea.Value);
+
+            if (filter.MaxArea.HasValue)
+                query = query.Where(x => x.GrossArea <= filter.MaxArea.Value);
+
+            if (filter.NumberOfBathRoom.HasValue)
+                query = query.Where(x => x.NumberOfBathRoom == filter.NumberOfBathRoom.Value);
+
+            if (filter.Floor.HasValue)
+                query = query.Where(x => x.NumberOfFloors == filter.Floor.Value);
+
+            if (filter.NumberOfSection.HasValue)
+                query = query.Where(x => false);
+
+            if (filter.AgentId.HasValue)
+                query = query.Where(x => x.AgentId == filter.AgentId.Value);
+
+            if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
+                query = query.Where(x => false);
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var term = filter.SearchTerm.Trim();
+                var dashIdx = term.IndexOf(" - ", StringComparison.Ordinal);
+                var namePart = dashIdx >= 0 ? term.Substring(dashIdx + 3).Trim() : term;
+                query = query.Where(x =>
+                    (x.PropertyName != null && (x.PropertyName.Contains(term) || (namePart.Length > 0 && x.PropertyName.Contains(namePart))))
+                    || (x.PropertyNo != null && x.PropertyNo.ToString() == term)
+                    || (x.City != null && x.City.Contains(term))
+                    || (x.District != null && x.District.Contains(term))
+                    || (x.Neighborhood != null && x.Neighborhood.Contains(term)));
+            }
+
             return query;
         }
         private IQueryable<RentalLandListingResult> BuildRentalLandQuery(PropertyFilterRequest filter)
@@ -1719,6 +1787,40 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (filter.MaxPrice.HasValue)
                 query = query.Where(x => x.Price <= filter.MaxPrice.Value);
 
+            if (filter.MinArea.HasValue)
+                query = query.Where(x => x.Area >= filter.MinArea.Value);
+
+            if (filter.MaxArea.HasValue)
+                query = query.Where(x => x.Area <= filter.MaxArea.Value);
+
+            if (filter.NumberOfBathRoom.HasValue)
+                query = query.Where(x => false);
+
+            if (filter.Floor.HasValue)
+                query = query.Where(x => false);
+
+            if (filter.NumberOfSection.HasValue)
+                query = query.Where(x => false);
+
+            if (filter.AgentId.HasValue)
+                query = query.Where(x => x.AgentId == filter.AgentId.Value);
+
+            if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
+                query = query.Where(x => x.ZoningStatus == filter.ZoningStatus);
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var term = filter.SearchTerm.Trim();
+                var dashIdx = term.IndexOf(" - ", StringComparison.Ordinal);
+                var namePart = dashIdx >= 0 ? term.Substring(dashIdx + 3).Trim() : term;
+                query = query.Where(x =>
+                    (x.PropertyName != null && (x.PropertyName.Contains(term) || (namePart.Length > 0 && x.PropertyName.Contains(namePart))))
+                    || (x.PropertyNo != null && x.PropertyNo.ToString() == term)
+                    || (x.City != null && x.City.Contains(term))
+                    || (x.District != null && x.District.Contains(term))
+                    || (x.Neighborhood != null && x.Neighborhood.Contains(term)));
+            }
+
             return query;
         }
         private IQueryable<RentalCommercialListingResult> BuildRentalCommercialQuery(PropertyFilterRequest filter)
@@ -1794,6 +1896,40 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             if (filter.MaxPrice.HasValue)
                 query = query.Where(x => x.Price <= filter.MaxPrice.Value);
+
+            if (filter.MinArea.HasValue)
+                query = query.Where(x => x.GrossArea >= filter.MinArea.Value);
+
+            if (filter.MaxArea.HasValue)
+                query = query.Where(x => x.GrossArea <= filter.MaxArea.Value);
+
+            if (filter.NumberOfBathRoom.HasValue)
+                query = query.Where(x => x.NumberOfBathrooms == filter.NumberOfBathRoom.Value);
+
+            if (filter.Floor.HasValue)
+                query = query.Where(x => x.NumberOfFloors == filter.Floor.Value);
+
+            if (filter.NumberOfSection.HasValue)
+                query = query.Where(x => x.NumberOfSection == filter.NumberOfSection.Value);
+
+            if (filter.AgentId.HasValue)
+                query = query.Where(x => x.AgentId == filter.AgentId.Value);
+
+            if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
+                query = query.Where(x => false);
+
+            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+            {
+                var term = filter.SearchTerm.Trim();
+                var dashIdx = term.IndexOf(" - ", StringComparison.Ordinal);
+                var namePart = dashIdx >= 0 ? term.Substring(dashIdx + 3).Trim() : term;
+                query = query.Where(x =>
+                    (x.PropertyName != null && (x.PropertyName.Contains(term) || (namePart.Length > 0 && x.PropertyName.Contains(namePart))))
+                    || (x.PropertyNo != null && x.PropertyNo.ToString() == term)
+                    || (x.City != null && x.City.Contains(term))
+                    || (x.District != null && x.District.Contains(term))
+                    || (x.Neighborhood != null && x.Neighborhood.Contains(term)));
+            }
 
             return query;
         }

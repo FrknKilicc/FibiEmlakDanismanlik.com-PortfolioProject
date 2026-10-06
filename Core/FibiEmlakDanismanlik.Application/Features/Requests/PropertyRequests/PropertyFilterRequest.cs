@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +27,15 @@ namespace FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests
         public string? SortDir { get; set; } = "desc";
 
         public List<int>? SelectedAmenityIds{ get; set; }
+
+        public double? MinArea { get; set; }
+        public double? MaxArea { get; set; }
+        public int? NumberOfBathRoom { get; set; }
+        public int? Floor { get; set; }
+        public int? NumberOfSection { get; set; }
+        public int? AgentId { get; set; }
+        public string? ZoningStatus { get; set; }
+        public string? SearchTerm { get; set; }
 
     }
     }
