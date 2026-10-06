@@ -311,8 +311,8 @@
                     sliderTouched.price = false;
                     sliderTouched.area = false;
 
-                    var minP = Number(f.minPrice) || 0;
-                    var maxP = Number(f.maxPrice) || 0;
+                    var minP = Math.floor(Number(f.minPrice) || 0);
+                    var maxP = Math.ceil(Number(f.maxPrice) || 0);
                     var pStep = maxP > 1000000 ? 50000 : (maxP > 10000 ? 1000 : 100);
                     if (maxP <= minP) {
                         maxP = minP + pStep;
@@ -322,8 +322,8 @@
                     initSlider(ID.ps, ID.pd, minP, maxP, pStep, [minP, maxP], formatTL, function () { sliderTouched.price = true; });
                     if ($('#' + ID.ps).hasClass('ui-slider')) $('#' + ID.ps).slider('enable');
 
-                    var minA = Number(f.minArea) || 0;
-                    var maxA = Number(f.maxArea) || 0;
+                    var minA = Math.floor(Number(f.minArea) || 0);
+                    var maxA = Math.ceil(Number(f.maxArea) || 0);
                     var aStep = maxA > 1000 ? 10 : 5;
                     if (maxA <= minA) {
                         maxA = minA + aStep;
@@ -573,8 +573,8 @@
                 if (sliderTouched.price && $('#' + ID.ps).hasClass('ui-slider')) {
                     var pVals = $('#' + ID.ps).slider('values');
                     if (Array.isArray(pVals) && pVals.length === 2) {
-                        params.set('minPrice', String(Math.min(pVals[0], pVals[1])));
-                        params.set('maxPrice', String(Math.max(pVals[0], pVals[1])));
+                        params.set('minPrice', String(Math.floor(Math.min(pVals[0], pVals[1]))));
+                        params.set('maxPrice', String(Math.ceil(Math.max(pVals[0], pVals[1]))));
                     }
                 }
 
