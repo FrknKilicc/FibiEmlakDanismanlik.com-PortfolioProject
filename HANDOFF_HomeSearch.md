@@ -210,7 +210,8 @@
 | 2026-10-06 19:34 | Gemini 3.8 Flash | T (DB yedek + test verisi) | Tamam | - | Backup OK (`fibiemlak_pre_test.bak`), 5 test kaydı + 1 LandCategory eklendi | IDs: `LandCategoryId=1`, `ForSaleLandListingId=5`, `RentalLandListingId=2`, `ForSaleHousingListId=13(Pasif),15(Opsiyonlu)`, `RentalCommercialListId=9(Pasif)`. Öncesi sayılar: LandCat=0, SaleHousing=1, SaleLand=0, SaleComm=2, RentHousing=1, RentLand=0, RentComm=4 |
 | 2026-10-06 19:36 | Gemini 3.8 Flash | 2A (LocationRepo + ListingTypes) | Tamam | 53f1072 | B1 PASS, F3–F6 PASS, Smoke 12/12 PASS | `PropertyStatuses.ActiveSet`, `UsageType` join, tek SQL `EXISTS`, `onlyWithActiveListings` |
 | 2026-10-06 19:49 | Gemini 3.8 Flash | 2B (Gelişmiş filtreler veriden) | Tamam | dbd4824 | B2–B5 PASS, Smoke 12/12 PASS | `GetSearchFilterFacetsAsync`, `PropertyListingType` enum, `api/Agent` kaldırıldı |
-| 2026-10-06 19:56 | Gemini 3.8 Flash | 2C (Temizlik + öneriler + tr-TR) | Tamam | (2C) | Suggestions PASS, `tr-TR` TitleCase PASS, Smoke 12/12 PASS | `CommercialSearchController` silindi, `TurkishTextHelper` eklendi |
+| 2026-10-06 19:56 | Gemini 3.8 Flash | 2C (Temizlik + öneriler + tr-TR) | Tamam | 2358be8 | Suggestions PASS, `tr-TR` TitleCase PASS, Smoke 12/12 PASS | `CommercialSearchController` silindi, `TurkishTextHelper` eklendi |
+| 2026-10-06 20:00 | Gemini 3.8 Flash | 2D (Sidebar il/ilçe/mahalle tr-TR) | Tamam | (2D) | Sidebar `tr-TR` TitleCase PASS, CI collation eşleşme PASS, Smoke 12/12 PASS | `GetCities` / `GetDistricts` / `GetNeighborhood` handler'ları güncellendi. Sıradaki: **R (Rapor & Onay Bekle)** |
 
 
 
