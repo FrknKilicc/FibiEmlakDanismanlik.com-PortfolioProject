@@ -205,4 +205,7 @@
 | 2026-10-06 18:45 | Claude Opus 5.5 | Faz 0 + baseline commit | Faz 0 tamam | 7fb8655 | Build: 0 hata, 2 uyarı (NU1903) | Model kotası doldu, devir |
 | 2026-10-06 18:59 | Gemini 3.8 Flash | Durum doğrulama (§7) | Tamam | 7fb8655 | Build: 0 hata, 2 uyarı; çalışma ağacı temiz (`.localpilot/` hariç); 7015/7012 durduruldu, boşta | HANDOFF repoda yoktu, eklendi. Sıradaki: **1A** |
 | 2026-10-06 19:05 | Gemini 3.8 Flash | Smoke baseline (§4) | Tamam | 7fb8655 | 12/12 sayfa HTTP 200, render=true (console err baseline: Home=0, Sale=0, Rent=0, SaleDet=1, RentDet=0, Blog=1, BlogDet=1, Agent=7, Contact=0, About=3, FAQ=0, Compare=0) | `smoke_baseline.json` scratch'e kaydedildi |
+| 2026-10-06 19:11 | Gemini 3.8 Flash | 1A (Tek init + toggle) | Tamam | bb50812 | F1 PASS (handler=1, err=0), F2 PASS, Smoke 12/12 PASS | `home-search.js` taşındı, `.ignore` eklendi |
+| 2026-10-06 19:16 | Gemini 3.8 Flash | 1B (Cascade state machine) | Tamam | (1B) | F3–F6 PASS, Kayseri "Tüm ilçeler" PASS, Smoke 12/12 PASS | `setSelectState`, `select2:select/clear`, `reqSeq`, 180ms debounce |
+
 
