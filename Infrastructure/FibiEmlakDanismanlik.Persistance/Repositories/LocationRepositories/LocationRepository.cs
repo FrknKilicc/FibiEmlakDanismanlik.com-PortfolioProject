@@ -1,5 +1,7 @@
+using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Results.LocationResults;
 using FibiEmlakDanismanlik.Application.Interfaces.LocationInterfaces;
+using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,14 +13,96 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Persistence.Repositories.LocationRepositories
 {
-    
     public class LocationRepository : ILocationRepository
     {
         private readonly FibiEmlakDanismanlikContext _context;
 
+        private sealed class ActiveLocationProjection
+        {
+            public string? City { get; set; }
+            public string? District { get; set; }
+        }
+
         public LocationRepository(FibiEmlakDanismanlikContext context)
         {
             _context = context;
+        }
+
+        private IQueryable<ActiveLocationProjection>? BuildActiveLocationQuery(int usageType, int listingTypeId)
+        {
+            var activeStatuses = PropertyStatuses.ActiveSet;
+
+            if (usageType == (int)UsageType.ForSale)
+            {
+                return (PropertyListingType)listingTypeId switch
+                {
+                    PropertyListingType.ForSaleLandListing =>
+                        from x in _context.forSaleLandListings.AsNoTracking()
+                        join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                        where lt.UsageType == UsageType.ForSale
+                              && x.ListingTypeId == listingTypeId
+                              && x.PropertyStatus != null
+                              && activeStatuses.Contains(x.PropertyStatus)
+                        select new ActiveLocationProjection { City = x.City, District = x.District },
+
+                    PropertyListingType.ForSaleHousingListing =>
+                        from x in _context.forSaleHousingPropertyListings.AsNoTracking()
+                        join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                        where lt.UsageType == UsageType.ForSale
+                              && x.ListingTypeId == listingTypeId
+                              && x.PropertyStatus != null
+                              && activeStatuses.Contains(x.PropertyStatus)
+                        select new ActiveLocationProjection { City = x.City, District = x.District },
+
+                    PropertyListingType.ForSaleCommercialPropertyListing =>
+                        from x in _context.forSaleCommercialPropertyListings.AsNoTracking()
+                        join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                        where lt.UsageType == UsageType.ForSale
+                              && x.ListingTypeId == listingTypeId
+                              && x.PropertyStatus != null
+                              && activeStatuses.Contains(x.PropertyStatus)
+                        select new ActiveLocationProjection { City = x.City, District = x.District },
+
+                    _ => null
+                };
+            }
+
+            if (usageType == (int)UsageType.ForRent)
+            {
+                return (PropertyListingType)listingTypeId switch
+                {
+                    PropertyListingType.RentalLandListing =>
+                        from x in _context.rentalLandListings.AsNoTracking()
+                        join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                        where lt.UsageType == UsageType.ForRent
+                              && x.ListingTypeId == listingTypeId
+                              && x.PropertyStatus != null
+                              && activeStatuses.Contains(x.PropertyStatus)
+                        select new ActiveLocationProjection { City = x.City, District = x.District },
+
+                    PropertyListingType.RentalHousingListing =>
+                        from x in _context.rentalHousingListings.AsNoTracking()
+                        join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                        where lt.UsageType == UsageType.ForRent
+                              && x.ListingTypeId == listingTypeId
+                              && x.PropertyStatus != null
+                              && activeStatuses.Contains(x.PropertyStatus)
+                        select new ActiveLocationProjection { City = x.City, District = x.District },
+
+                    PropertyListingType.RentalCommercialPropertyListing =>
+                        from x in _context.rentalCommercialPropertyListings.AsNoTracking()
+                        join lt in _context.listingTypes.AsNoTracking() on x.ListingTypeId equals lt.ListingTypeId
+                        where lt.UsageType == UsageType.ForRent
+                              && x.ListingTypeId == listingTypeId
+                              && x.PropertyStatus != null
+                              && activeStatuses.Contains(x.PropertyStatus)
+                        select new ActiveLocationProjection { City = x.City, District = x.District },
+
+                    _ => null
+                };
+            }
+
+            return null;
         }
 
         public async Task<List<LocationOptionResult>> GetCitiesAsync(string? q)
@@ -64,77 +148,51 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.LocationRepositories
 
         public async Task<List<LocationOptionResult>> GetAvailableCitiesAsync(int usageType, int listingTypeId, string? q)
         {
-            var listingType = await _context.listingTypes.FindAsync(listingTypeId);
-            if (listingType == null) return new List<LocationOptionResult>();
+            var activeLocations = BuildActiveLocationQuery(usageType, listingTypeId);
+            if (activeLocations == null)
+                return new List<LocationOptionResult>();
 
-            List<string> validCityNames = new List<string>();
-
-            if (usageType == 1) // Satılık
-            {
-                if (listingType.Name.Contains("Konut", StringComparison.OrdinalIgnoreCase))
-                    validCityNames = await _context.forSaleHousingPropertyListings.Select(x => x.City).Distinct().ToListAsync();
-                else if (listingType.Name.Contains("Arsa", StringComparison.OrdinalIgnoreCase))
-                    validCityNames = await _context.forSaleLandListings.Select(x => x.City).Distinct().ToListAsync();
-                else if (listingType.Name.Contains("İş", StringComparison.OrdinalIgnoreCase))
-                    validCityNames = await _context.forSaleCommercialPropertyListings.Select(x => x.City).Distinct().ToListAsync();
-            }
-            else // Kiralık
-            {
-                if (listingType.Name.Contains("Konut", StringComparison.OrdinalIgnoreCase))
-                    validCityNames = await _context.rentalHousingListings.Select(x => x.City).Distinct().ToListAsync();
-                else if (listingType.Name.Contains("Arsa", StringComparison.OrdinalIgnoreCase))
-                    validCityNames = await _context.rentalLandListings.Select(x => x.City).Distinct().ToListAsync();
-                else if (listingType.Name.Contains("İş", StringComparison.OrdinalIgnoreCase))
-                    validCityNames = await _context.rentalCommercialPropertyListings.Select(x => x.City).Distinct().ToListAsync();
-            }
-
-            var query = _context.Cities.AsNoTracking().Where(c => validCityNames.Contains(c.Name));
+            var query = _context.Cities.AsNoTracking()
+                .Where(c => activeLocations.Any(p => p.City != null && p.City.Trim() == c.Name.Trim()));
 
             if (!string.IsNullOrWhiteSpace(q))
-                query = query.Where(x => x.Name.Contains(q));
+            {
+                var term = q.Trim();
+                query = query.Where(c => c.Name.Contains(term));
+            }
 
             return await query
-                .OrderBy(x => x.Name)
-                .Select(x => new LocationOptionResult(x.CityId, x.Name))
+                .OrderBy(c => c.Name)
+                .Select(c => new LocationOptionResult(c.CityId, c.Name))
                 .ToListAsync();
         }
 
         public async Task<List<LocationOptionResult>> GetAvailableDistrictsAsync(int cityId, int usageType, int listingTypeId, string? q)
         {
-            var listingType = await _context.listingTypes.FindAsync(listingTypeId);
-            var city = await _context.Cities.FindAsync(cityId);
-            if (listingType == null || city == null) return new List<LocationOptionResult>();
+            var activeLocations = BuildActiveLocationQuery(usageType, listingTypeId);
+            if (activeLocations == null)
+                return new List<LocationOptionResult>();
 
-            List<string> validDistrictNames = new List<string>();
-
-            if (usageType == 1) // Satılık
-            {
-                if (listingType.Name.Contains("Konut", StringComparison.OrdinalIgnoreCase))
-                    validDistrictNames = await _context.forSaleHousingPropertyListings.Where(x => x.City == city.Name).Select(x => x.District).Distinct().ToListAsync();
-                else if (listingType.Name.Contains("Arsa", StringComparison.OrdinalIgnoreCase))
-                    validDistrictNames = await _context.forSaleLandListings.Where(x => x.City == city.Name).Select(x => x.District).Distinct().ToListAsync();
-                else if (listingType.Name.Contains("İş", StringComparison.OrdinalIgnoreCase))
-                    validDistrictNames = await _context.forSaleCommercialPropertyListings.Where(x => x.City == city.Name).Select(x => x.District).Distinct().ToListAsync();
-            }
-            else // Kiralık
-            {
-                if (listingType.Name.Contains("Konut", StringComparison.OrdinalIgnoreCase))
-                    validDistrictNames = await _context.rentalHousingListings.Where(x => x.City == city.Name).Select(x => x.District).Distinct().ToListAsync();
-                else if (listingType.Name.Contains("Arsa", StringComparison.OrdinalIgnoreCase))
-                    validDistrictNames = await _context.rentalLandListings.Where(x => x.City == city.Name).Select(x => x.District).Distinct().ToListAsync();
-                else if (listingType.Name.Contains("İş", StringComparison.OrdinalIgnoreCase))
-                    validDistrictNames = await _context.rentalCommercialPropertyListings.Where(x => x.City == city.Name).Select(x => x.District).Distinct().ToListAsync();
-            }
-
-            var query = _context.Districts.AsNoTracking().Where(d => d.CityId == cityId && validDistrictNames.Contains(d.Name));
+            var query =
+                from d in _context.Districts.AsNoTracking()
+                join c in _context.Cities.AsNoTracking() on d.CityId equals c.CityId
+                where d.CityId == cityId
+                      && activeLocations.Any(p =>
+                          p.City != null && p.City.Trim() == c.Name.Trim() &&
+                          p.District != null && p.District.Trim() == d.Name.Trim())
+                select d;
 
             if (!string.IsNullOrWhiteSpace(q))
-                query = query.Where(x => x.Name.Contains(q));
+            {
+                var term = q.Trim();
+                query = query.Where(d => d.Name.Contains(term));
+            }
 
             return await query
-                .OrderBy(x => x.Name)
-                .Select(x => new LocationOptionResult(x.DistrictId, x.Name))
+                .OrderBy(d => d.Name)
+                .Select(d => new LocationOptionResult(d.DistrictId, d.Name))
                 .ToListAsync();
         }
     }
 }
+

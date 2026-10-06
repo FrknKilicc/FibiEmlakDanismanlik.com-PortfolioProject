@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     "use strict";
 
     function getApiUrl() {
@@ -246,6 +246,7 @@
                 "cityId", "districtId", "neighborhoodId",
                 "city", "district", "neighborhood",
                 "minPrice", "maxPrice", "numberOfRoom",
+                "minArea", "maxArea", "numberOfBathRoom", "floor", "numberOfSection", "agentId", "zoningStatus", "searchTerm",
                 "page"
             ].forEach(p => url.searchParams.delete(p));
 

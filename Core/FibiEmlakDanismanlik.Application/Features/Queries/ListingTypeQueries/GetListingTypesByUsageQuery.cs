@@ -8,6 +8,6 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Queries.ListingTypeQueries
 {
-    public record GetListingTypesByUsageQuery(int UsageType) : IRequest<List<ListingTypeResult>>;
+    public record GetListingTypesByUsageQuery(int UsageType, bool OnlyWithActiveListings = false) : IRequest<List<ListingTypeResult>>;
 }
 

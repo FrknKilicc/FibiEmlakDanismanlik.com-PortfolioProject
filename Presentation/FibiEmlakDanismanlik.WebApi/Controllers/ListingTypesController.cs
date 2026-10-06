@@ -16,12 +16,16 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] int usageType)
-            => Ok(await _mediator.Send(new GetListingTypesByUsageQuery(usageType)));
+        public async Task<IActionResult> Get([FromQuery] int usageType, [FromQuery] bool onlyWithActiveListings = false)
+            => Ok(await _mediator.Send(new GetListingTypesByUsageQuery(usageType, onlyWithActiveListings)));
 
         [HttpGet("advanced-filters")]
-        public async Task<IActionResult> GetAdvancedFilters([FromQuery] int listingTypeId)
-            => Ok(await _mediator.Send(new GetAdvancedFiltersByListingTypeQuery(listingTypeId)));
+        public async Task<IActionResult> GetAdvancedFilters(
+            [FromQuery] int listingTypeId,
+            [FromQuery] int usageType = 0,
+            [FromQuery] int? cityId = null,
+            [FromQuery] int? districtId = null)
+            => Ok(await _mediator.Send(new GetAdvancedFiltersByListingTypeQuery(listingTypeId, usageType, cityId, districtId)));
     }
 }
 
