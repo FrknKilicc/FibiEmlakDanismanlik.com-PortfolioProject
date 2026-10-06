@@ -182,6 +182,8 @@
             var defAMax = 5000;
 
             function resetAdvancedFiltersToS0() {
+                $tab.attr('data-category', '');
+                $tab.attr('data-total-count', '0');
                 $('#' + ID.notice).show();
                 $('#' + ID.roomLabel).text('Oda Sayısı');
                 $('#' + ID.bathLabel).text('Banyo Sayısı');
@@ -501,6 +503,114 @@
                 .off('input.homeSearch_' + sfx, '#' + ID.search)
                 .on('input.homeSearch_' + sfx, '#' + ID.search, function () {
                     $(this).siblings('.clear-search').toggle($(this).val().length > 0);
+                });
+
+            function submitSearch() {
+                var targetBase = ut === 1
+                    ? ($root.attr('data-sale-url') || '/AllForSalePage')
+                    : ($root.attr('data-rent-url') || '/AllForRentalPage');
+
+                var params = new URLSearchParams();
+                var ltId = $('#' + ID.lt).val();
+                if (ltId) {
+                    params.set('listingTypeIds', String(ltId));
+                }
+
+                var $city = $('#' + ID.city);
+                var cityId = $city.val();
+                if (cityId) {
+                    params.set('cityId', String(cityId));
+                    var cityText = ($city.find('option:selected').text() || '').trim();
+                    if (cityText) params.set('city', cityText);
+                }
+
+                var $dist = $('#' + ID.dist);
+                var distId = $dist.val();
+                if (distId) {
+                    params.set('districtId', String(distId));
+                    var distText = ($dist.find('option:selected').text() || '').trim();
+                    if (distText) params.set('district', distText);
+                }
+
+                var category = $tab.attr('data-category') || '';
+                var roomOrSec = $('#' + ID.room).val();
+                if (roomOrSec) {
+                    if (category === 'commercial') {
+                        params.set('numberOfSection', String(roomOrSec));
+                    } else if (category !== 'land') {
+                        params.set('numberOfRoom', String(roomOrSec));
+                    }
+                }
+
+                var bathVal = $('#' + ID.bath).val();
+                if (bathVal && category !== 'land') {
+                    params.set('numberOfBathRoom', String(bathVal));
+                }
+
+                var floorVal = $('#' + ID.floor).val();
+                if (floorVal !== null && floorVal !== undefined && floorVal !== '' && category !== 'land') {
+                    params.set('floor', String(floorVal));
+                }
+
+                var zoningVal = $('#' + ID.zoning).val();
+                if (zoningVal && category === 'land') {
+                    params.set('zoningStatus', String(zoningVal));
+                }
+
+                var agentVal = $('#' + ID.agent).val();
+                if (agentVal) {
+                    params.set('agentId', String(agentVal));
+                }
+
+                if (sliderTouched.price && $('#' + ID.ps).hasClass('ui-slider')) {
+                    var pVals = $('#' + ID.ps).slider('values');
+                    if (Array.isArray(pVals) && pVals.length === 2) {
+                        params.set('minPrice', String(Math.min(pVals[0], pVals[1])));
+                        params.set('maxPrice', String(Math.max(pVals[0], pVals[1])));
+                    }
+                }
+
+                if (sliderTouched.area && $('#' + ID.as).hasClass('ui-slider')) {
+                    var aVals = $('#' + ID.as).slider('values');
+                    if (Array.isArray(aVals) && aVals.length === 2) {
+                        params.set('minArea', String(Math.min(aVals[0], aVals[1])));
+                        params.set('maxArea', String(Math.max(aVals[0], aVals[1])));
+                    }
+                }
+
+                var searchVal = ($('#' + ID.search).val() || '').trim();
+                if (searchVal) {
+                    params.set('searchTerm', searchVal);
+                }
+
+                var sortVal = $('#' + ID.sort).val();
+                if (sortVal && String(sortVal).indexOf('|') > -1) {
+                    var sp = String(sortVal).split('|');
+                    if (sp[0]) params.set('sortBy', sp[0]);
+                    if (sp[1]) params.set('sortDir', sp[1]);
+                }
+
+                params.set('page', '1');
+
+                var qs = params.toString();
+                window.location.href = targetBase + (qs ? ('?' + qs) : '');
+            }
+
+            $(document)
+                .off('click.homeSearch_' + sfx, '.js-search-btn[data-tab="' + sfx + '"]')
+                .on('click.homeSearch_' + sfx, '.js-search-btn[data-tab="' + sfx + '"]', function (e) {
+                    e.preventDefault();
+                    submitSearch();
+                });
+
+            $(document)
+                .off('keydown.homeSearch_' + sfx, '#' + ID.search)
+                .on('keydown.homeSearch_' + sfx, '#' + ID.search, function (e) {
+                    if (e.key === 'Enter' || e.which === 13) {
+                        e.preventDefault();
+                        $('#' + ID.sugg).hide();
+                        submitSearch();
+                    }
                 });
         }
 

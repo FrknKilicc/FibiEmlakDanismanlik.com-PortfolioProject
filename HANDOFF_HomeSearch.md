@@ -211,7 +211,6 @@
 | 2026-10-06 19:36 | Gemini 3.8 Flash | 2A (LocationRepo + ListingTypes) | Tamam | 53f1072 | B1 PASS, F3–F6 PASS, Smoke 12/12 PASS | `PropertyStatuses.ActiveSet`, `UsageType` join, tek SQL `EXISTS`, `onlyWithActiveListings` |
 | 2026-10-06 19:49 | Gemini 3.8 Flash | 2B (Gelişmiş filtreler veriden) | Tamam | dbd4824 | B2–B5 PASS, Smoke 12/12 PASS | `GetSearchFilterFacetsAsync`, `PropertyListingType` enum, `api/Agent` kaldırıldı |
 | 2026-10-06 19:56 | Gemini 3.8 Flash | 2C (Temizlik + öneriler + tr-TR) | Tamam | 2358be8 | Suggestions PASS, `tr-TR` TitleCase PASS, Smoke 12/12 PASS | `CommercialSearchController` silindi, `TurkishTextHelper` eklendi |
-| 2026-10-06 20:00 | Gemini 3.8 Flash | 2D (Sidebar il/ilçe/mahalle tr-TR) | Tamam | (2D) | Sidebar `tr-TR` TitleCase PASS, CI collation eşleşme PASS, Smoke 12/12 PASS | `GetCities` / `GetDistricts` / `GetNeighborhood` handler'ları güncellendi. Sıradaki: **R (Rapor & Onay Bekle)** |
-
-
+| 2026-10-06 20:00 | Gemini 3.8 Flash | 2D (Sidebar il/ilçe/mahalle tr-TR) | Tamam | c19362b | Sidebar `tr-TR` TitleCase PASS, CI collation eşleşme PASS, Smoke 12/12 PASS | `GetCities` / `GetDistricts` / `GetNeighborhood` handler'ları güncellendi. Sıradaki: **R (Rapor & Onay Bekle)** |
+| 2026-10-06 20:19 | Gemini 3.8 Flash | 3A (home-search.js submitSearch) | Tamam | (3A) | `URLSearchParams` submit PASS (`3%2B1`, dokunulmamış slider dahil edilmez, Enter tuşu çalışır), Smoke 13/13 PASS | `.js-search-btn` click + `#searchInput-*` Enter bağlandı |
 
