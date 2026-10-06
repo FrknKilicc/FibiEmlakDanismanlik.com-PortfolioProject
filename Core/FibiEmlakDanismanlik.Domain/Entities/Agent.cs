@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -38,6 +38,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         [Display(Name = "Şifre")]
         [DataType(DataType.Password)]
         [MinLength(6, ErrorMessage = "Şifre en az 6 karakter olmalıdır.")]
+        [System.Text.Json.Serialization.JsonIgnore]
         public string Password { get; set; }
 
     }
