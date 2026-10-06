@@ -2554,6 +2554,270 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             return results.Take(10).ToList();
         }
+
+        private sealed class FacetProjection
+        {
+            public decimal? Price { get; set; }
+            public double? Area { get; set; }
+            public string? Room { get; set; }
+            public int? Bathroom { get; set; }
+            public int? Floor { get; set; }
+            public int? Section { get; set; }
+            public string? ZoningStatus { get; set; }
+            public int? AgentId { get; set; }
+            public string? AgentName { get; set; }
+        }
+
+        public async Task<FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.SearchFilterFacetsResult> GetSearchFilterFacetsAsync(
+            int usageType,
+            int listingTypeId,
+            int? cityId,
+            int? districtId)
+        {
+            var result = new FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.SearchFilterFacetsResult();
+
+            if (!Enum.IsDefined(typeof(UsageType), usageType))
+                return result;
+
+            string? cityName = null;
+            if (cityId.HasValue)
+            {
+                cityName = await _context.Cities
+                    .AsNoTracking()
+                    .Where(c => c.CityId == cityId.Value)
+                    .Select(c => c.Name.Trim())
+                    .FirstOrDefaultAsync();
+
+                if (string.IsNullOrWhiteSpace(cityName))
+                    return result;
+            }
+
+            string? districtName = null;
+            if (districtId.HasValue)
+            {
+                districtName = await _context.Districts
+                    .AsNoTracking()
+                    .Where(d => d.DistrictId == districtId.Value && (!cityId.HasValue || d.CityId == cityId.Value))
+                    .Select(d => d.Name.Trim())
+                    .FirstOrDefaultAsync();
+
+                if (string.IsNullOrWhiteSpace(districtName))
+                    return result;
+            }
+
+            var activeStatuses = PropertyStatuses.ActiveSet;
+            var typeEnum = (PropertyListingType)listingTypeId;
+            IQueryable<FacetProjection>? query = null;
+
+            if (usageType == (int)UsageType.ForSale)
+            {
+                switch (typeEnum)
+                {
+                    case PropertyListingType.ForSaleHousingListing:
+                    {
+                        var q = BuildForSaleListingQuery()
+                            .AsNoTracking()
+                            .Where(x => x.ListingTypeId == listingTypeId);
+                        if (cityName != null)
+                            q = q.Where(x => x.City != null && x.City.Trim() == cityName);
+                        if (districtName != null)
+                            q = q.Where(x => x.District != null && x.District.Trim() == districtName);
+                        query = q.Select(x => new FacetProjection
+                        {
+                            Price = x.Price,
+                            Area = x.GrossArea,
+                            Room = x.NumberOfRoom,
+                            Bathroom = x.NumberOfBathRoom,
+                            Floor = x.NumberOfFloors,
+                            AgentId = x.AgentId,
+                            AgentName = x.AgentName
+                        });
+                        break;
+                    }
+                    case PropertyListingType.ForSaleLandListing:
+                    {
+                        var q = BuildForSaleListingQuery()
+                            .AsNoTracking()
+                            .Where(x => x.ListingTypeId == listingTypeId);
+                        if (cityName != null)
+                            q = q.Where(x => x.City != null && x.City.Trim() == cityName);
+                        if (districtName != null)
+                            q = q.Where(x => x.District != null && x.District.Trim() == districtName);
+                        query = q.Select(x => new FacetProjection
+                        {
+                            Price = x.Price,
+                            Area = x.Area,
+                            ZoningStatus = x.ZoningStatus,
+                            AgentId = x.AgentId,
+                            AgentName = x.AgentName
+                        });
+                        break;
+                    }
+                    case PropertyListingType.ForSaleCommercialPropertyListing:
+                    {
+                        var q =
+                            from comm in _context.forSaleCommercialPropertyListings.AsNoTracking()
+                            join agent in _context.Agents.AsNoTracking() on comm.AgentId equals agent.AgentId
+                            join lt in _context.listingTypes.AsNoTracking() on comm.ListingTypeId equals lt.ListingTypeId
+                            where lt.UsageType == UsageType.ForSale
+                                  && comm.ListingTypeId == listingTypeId
+                                  && comm.PropertyStatus != null
+                                  && activeStatuses.Contains(comm.PropertyStatus)
+                            select new
+                            {
+                                comm.City,
+                                comm.District,
+                                comm.Price,
+                                comm.GrossArea,
+                                comm.NumberOfSection,
+                                comm.NumberOfBathrooms,
+                                comm.NumberOfFloors,
+                                comm.AgentId,
+                                agent.AgentName
+                            };
+                        if (cityName != null)
+                            q = q.Where(x => x.City != null && x.City.Trim() == cityName);
+                        if (districtName != null)
+                            q = q.Where(x => x.District != null && x.District.Trim() == districtName);
+                        query = q.Select(x => new FacetProjection
+                        {
+                            Price = x.Price,
+                            Area = x.GrossArea,
+                            Section = x.NumberOfSection,
+                            Bathroom = x.NumberOfBathrooms,
+                            Floor = x.NumberOfFloors,
+                            AgentId = x.AgentId,
+                            AgentName = x.AgentName
+                        });
+                        break;
+                    }
+                }
+            }
+            else if (usageType == (int)UsageType.ForRent)
+            {
+                var baseFilter = new PropertyFilterRequest { ListingTypeIds = new List<int> { listingTypeId } };
+                switch (typeEnum)
+                {
+                    case PropertyListingType.RentalHousingListing:
+                    {
+                        var q = BuildRentalHousingQuery(baseFilter).AsNoTracking();
+                        if (cityName != null)
+                            q = q.Where(x => x.City != null && x.City.Trim() == cityName);
+                        if (districtName != null)
+                            q = q.Where(x => x.District != null && x.District.Trim() == districtName);
+                        query = q.Select(x => new FacetProjection
+                        {
+                            Price = x.Price,
+                            Area = x.GrossArea,
+                            Room = x.NumberOfRoom,
+                            Bathroom = x.NumberOfBathRoom,
+                            Floor = x.NumberOfFloors,
+                            AgentId = x.AgentId,
+                            AgentName = x.AgentName
+                        });
+                        break;
+                    }
+                    case PropertyListingType.RentalLandListing:
+                    {
+                        var q = BuildRentalLandQuery(baseFilter).AsNoTracking();
+                        if (cityName != null)
+                            q = q.Where(x => x.City != null && x.City.Trim() == cityName);
+                        if (districtName != null)
+                            q = q.Where(x => x.District != null && x.District.Trim() == districtName);
+                        query = q.Select(x => new FacetProjection
+                        {
+                            Price = x.Price,
+                            Area = x.Area,
+                            ZoningStatus = x.ZoningStatus,
+                            AgentId = x.AgentId,
+                            AgentName = x.AgentName
+                        });
+                        break;
+                    }
+                    case PropertyListingType.RentalCommercialPropertyListing:
+                    {
+                        var q = BuildRentalCommercialQuery(baseFilter).AsNoTracking();
+                        if (cityName != null)
+                            q = q.Where(x => x.City != null && x.City.Trim() == cityName);
+                        if (districtName != null)
+                            q = q.Where(x => x.District != null && x.District.Trim() == districtName);
+                        query = q.Select(x => new FacetProjection
+                        {
+                            Price = x.Price,
+                            Area = x.GrossArea,
+                            Section = x.NumberOfSection,
+                            Bathroom = x.NumberOfBathrooms,
+                            Floor = x.NumberOfFloors,
+                            AgentId = x.AgentId,
+                            AgentName = x.AgentName
+                        });
+                        break;
+                    }
+                }
+            }
+
+            if (query == null)
+                return result;
+
+            var rows = await query.ToListAsync();
+            result.TotalCount = rows.Count;
+            if (rows.Count == 0)
+                return result;
+
+            var prices = rows.Where(r => r.Price.HasValue).Select(r => r.Price!.Value).ToList();
+            if (prices.Count > 0)
+            {
+                result.MinPrice = prices.Min();
+                result.MaxPrice = prices.Max();
+            }
+
+            var areas = rows.Where(r => r.Area.HasValue && r.Area.Value > 0).Select(r => r.Area!.Value).ToList();
+            if (areas.Count > 0)
+            {
+                result.MinArea = areas.Min();
+                result.MaxArea = areas.Max();
+            }
+
+            result.Rooms = rows
+                .Where(r => !string.IsNullOrWhiteSpace(r.Room))
+                .Select(r => r.Room!.Trim())
+                .Distinct()
+                .ToList();
+
+            result.Bathrooms = rows
+                .Where(r => r.Bathroom.HasValue)
+                .Select(r => r.Bathroom!.Value)
+                .Distinct()
+                .ToList();
+
+            result.Floors = rows
+                .Where(r => r.Floor.HasValue)
+                .Select(r => r.Floor!.Value)
+                .Distinct()
+                .ToList();
+
+            result.Sections = rows
+                .Where(r => r.Section.HasValue)
+                .Select(r => r.Section!.Value)
+                .Distinct()
+                .ToList();
+
+            result.ZoningStatuses = rows
+                .Where(r => !string.IsNullOrWhiteSpace(r.ZoningStatus))
+                .Select(r => r.ZoningStatus!.Trim())
+                .Distinct()
+                .ToList();
+
+            result.Agents = rows
+                .Where(r => r.AgentId.HasValue && !string.IsNullOrWhiteSpace(r.AgentName))
+                .GroupBy(r => r.AgentId!.Value)
+                .Select(g => new FibiEmlakDanismanlik.Application.Features.Results.ListingTypeResults.FilterOptionDto(
+                    g.Key.ToString(),
+                    g.First().AgentName!.Trim()))
+                .ToList();
+
+            return result;
+        }
     }
 }
 

@@ -252,6 +252,9 @@
                     $('#' + ID.roomLabel).text(rLabel);
                     $('#' + ID.bathLabel).text(bLabel);
 
+                    $tab.attr('data-category', f.category || '');
+                    $tab.attr('data-total-count', typeof f.totalCount === 'number' ? f.totalCount : 0);
+
                     $tab.find('.adv-filter-room').toggle(!!f.showRooms);
                     $tab.find('.adv-filter-bath').toggle(!!f.showBath);
                     $tab.find('.adv-filter-floor').toggle(!!f.showFloor);
@@ -296,31 +299,12 @@
                         });
                     }
 
-                    if (Array.isArray(f.agentOptions)) {
-                        setSelectState($('#' + ID.agent), {
-                            options: f.agentOptions,
-                            placeholder: f.agentOptions.length > 0 ? 'Danışman Seçiniz' : 'Bu seçimde aktif ilan yok',
-                            disabled: f.agentOptions.length === 0
-                        });
-                    } else {
-                        fetchJson(API + 'Agent').then(function (agents) {
-                            if (seq !== reqSeq.filters) return;
-                            var aList = Array.isArray(agents) ? agents : [];
-                            setSelectState($('#' + ID.agent), {
-                                options: aList,
-                                placeholder: aList.length > 0 ? 'Danışman Seçiniz' : 'Bu seçimde aktif ilan yok',
-                                disabled: aList.length === 0
-                            });
-                        }).catch(function (err) {
-                            if (seq !== reqSeq.filters) return;
-                            console.error('[HomeSearch] Danışman listesi yüklenemedi:', err);
-                            setSelectState($('#' + ID.agent), {
-                                options: [],
-                                placeholder: 'Yüklenemedi, tekrar deneyin',
-                                disabled: true
-                            });
-                        });
-                    }
+                    var aOpts = Array.isArray(f.agentOptions) ? f.agentOptions : [];
+                    setSelectState($('#' + ID.agent), {
+                        options: aOpts,
+                        placeholder: aOpts.length > 0 ? 'Danışman Seçiniz' : 'Bu seçimde aktif ilan yok',
+                        disabled: aOpts.length === 0
+                    });
 
                     sliderTouched.price = false;
                     sliderTouched.area = false;
