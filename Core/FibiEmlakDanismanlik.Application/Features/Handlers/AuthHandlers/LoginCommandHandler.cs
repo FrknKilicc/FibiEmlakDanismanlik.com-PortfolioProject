@@ -1,8 +1,7 @@
 using FibiEmlakDanismanlik.Application.Features.Commands.AuthCommands;
 using FibiEmlakDanismanlik.Application.Features.Results.AuthResults;
 using FibiEmlakDanismanlik.Application.Helpers;
-using FibiEmlakDanismanlik.Application.Interfaces;
-using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Application.Interfaces.AgentInterfaces;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 
@@ -12,12 +11,12 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthHandlers
     {
         private static readonly Lazy<string> DummyHash = new(() => BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString()));
 
-        private readonly IRepository<Agent> _repository;
+        private readonly IAgentRepository _agentRepository;
         private readonly IConfiguration _configuration;
 
-        public LoginCommandHandler(IRepository<Agent> repository, IConfiguration configuration)
+        public LoginCommandHandler(IAgentRepository agentRepository, IConfiguration configuration)
         {
-            _repository = repository;
+            _agentRepository = agentRepository;
             _configuration = configuration;
         }
 
@@ -27,8 +26,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthHandlers
                 return null;
 
             var mail = request.Mail.Trim();
-            var agents = await _repository.GetAllAsync();
-            var agent = agents.FirstOrDefault(x => string.Equals(x.Mail?.Trim(), mail, StringComparison.OrdinalIgnoreCase));
+            var agent = await _agentRepository.GetByMailAsync(mail);
             if (agent == null || string.IsNullOrEmpty(agent.Password))
             {
                 // Kayıtlı olmayan e-posta da aynı sürede yanıt alsın (e-posta tahmini zorlaşsın).

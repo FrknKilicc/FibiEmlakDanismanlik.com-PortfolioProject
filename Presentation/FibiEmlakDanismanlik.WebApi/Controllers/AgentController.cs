@@ -1,4 +1,5 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.AgentCommands;
+using FibiEmlakDanismanlik.Application.Exceptions;
+using FibiEmlakDanismanlik.Application.Features.Commands.AgentCommands;
 using FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers;
 using FibiEmlakDanismanlik.Application.Features.Queries.AgentQueries;
 using MediatR;
@@ -34,15 +35,29 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAgent(CreateAgentCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Personel Kaydı Başarıyla Gerçekleştirildi.");
+            try
+            {
+                await _mediator.Send(command);
+                return Ok("Personel Kaydı Başarıyla Gerçekleştirildi.");
+            }
+            catch (DuplicateAgentMailException ex)
+            {
+                return Conflict(ex.Message);
+            }
         }
         [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateAgent(UpdateAgentCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Personel Güncelleme Başarılı");
+            try
+            {
+                await _mediator.Send(command);
+                return Ok("Personel Güncelleme Başarılı");
+            }
+            catch (DuplicateAgentMailException ex)
+            {
+                return Conflict(ex.Message);
+            }
         }
         [Authorize]
         [HttpDelete]

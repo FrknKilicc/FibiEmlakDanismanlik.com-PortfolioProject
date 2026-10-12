@@ -380,6 +380,13 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.HasIndex(x => new { x.ListingId, x.ListingTypeId, x.NearbyCategoryId, x.PlaceName }).IsUnique();
             });
 
+            // Agent: e-posta benzersiz (login e-postayla yapılır)
+            modelBuilder.Entity<Agent>(entity =>
+            {
+                entity.Property(x => x.Mail).IsRequired().HasMaxLength(256);
+                entity.HasIndex(x => x.Mail).IsUnique();
+            });
+
             base.OnModelCreating(modelBuilder);
         }
 

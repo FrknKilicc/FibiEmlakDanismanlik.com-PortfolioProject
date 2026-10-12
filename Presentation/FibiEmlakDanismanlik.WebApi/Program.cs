@@ -17,6 +17,8 @@ using FibiEmlakDanismanlik.Persistence.Repositories.NearbyRepositories;
 using FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories;
 using FibiEmlakDanismanlik.Application.Interfaces.CityGalleryInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.CityGalleryRepositories;
+using FibiEmlakDanismanlik.Application.Interfaces.AgentInterfaces;
+using FibiEmlakDanismanlik.Persistence.Repositories.AgentRepositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -93,6 +95,7 @@ builder.Services.AddScoped(typeof(INearbyRepository), typeof(NearbyRepository));
 builder.Services.AddScoped(typeof(IMapRepository), typeof(MapRepository));
 builder.Services.AddScoped(typeof(ICityGalleryRepository), typeof(CityGalleryRepository));
 builder.Services.AddScoped(typeof(IListingTypeRepository), typeof(ListingTypeRepository));
+builder.Services.AddScoped(typeof(IAgentRepository), typeof(AgentRepository));
 //Configure IRepositories
 
 //MediaTR tried

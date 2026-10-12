@@ -167,7 +167,7 @@ Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/g
 - [x] **[KRİTİK]** sa şifresini değiştir, ayrı SQL login aç (2026-10-12)
 - [x] **[KRİTİK]** JWT + [Authorize] tüm write endpoint'lere (2026-10-12)
 - [x] **[KRİTİK]** Agent şifrelerini BCrypt ile hash'le (2026-10-12)
-- [ ] Agents.Mail için unique index + migration (login aynı mailli ilk kaydı seçiyor)
+- [x] Agents.Mail için unique index + migration; Create/UpdateAgent aynı maile 409 döner (2026-10-12)
 - [ ] Html.Raw alanlarına HtmlSanitizer ekle (G4)
 - [ ] Global exception middleware + handler'larda null kontrolü (G9)
 - [ ] PropertyLocationController → Query/Handler/Result (G5)
