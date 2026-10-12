@@ -2,6 +2,7 @@
 using FibiEmlakDanismanlik.Application.Features.Queries.RentalCommercialPropertyListingQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
@@ -16,6 +17,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         {
             _mediator = mediator;
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateRentalCommercialPropertyListing(CreateRentalCommercialPropertyListingCommand command)
         {

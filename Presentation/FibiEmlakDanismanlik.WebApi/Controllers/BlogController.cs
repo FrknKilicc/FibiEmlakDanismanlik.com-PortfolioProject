@@ -3,6 +3,7 @@ using FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers;
 using FibiEmlakDanismanlik.Application.Features.Queries.BlogQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
@@ -29,12 +30,14 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _mediator.Send(new GetBlogByIdQuery(id));
             return Ok(value);
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateBlog(CreateBlogCommand command)
         {
             await _mediator.Send(command);
             return Ok("Blog Bilgisi Başarıyla Eklendi");
         }
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateBlog(UpdateBlogCommand command)
         {
@@ -42,6 +45,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok("Blog Bilgisi Başarıyla Güncellendi");
 
         }
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> RemoveBlog(int id)
         {

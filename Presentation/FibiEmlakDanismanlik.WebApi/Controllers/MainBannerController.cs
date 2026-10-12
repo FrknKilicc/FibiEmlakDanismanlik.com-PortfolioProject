@@ -3,6 +3,7 @@ using FibiEmlakDanismanlik.Application.Features.Queries.AgentQueries;
 using FibiEmlakDanismanlik.Application.Features.Queries.MainBannerQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
@@ -30,12 +31,14 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _mediator.Send(new GetMainBannerByIdQuery(id));
             return Ok(value);
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateMainBanner(CreateMainBannerCommand command)
         {
             await _mediator.Send(command);
             return Ok("Banner Bilgisi Başarıyla Eklendi");
         }
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateMainBanner(UpdateMainBannerCommand command)
         {
@@ -43,6 +46,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok("Banner Bilgisi Başarıyla Güncellendi");
 
         }
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> RemoveMainBanner(int id)
         {
