@@ -96,7 +96,7 @@ Dto projesinde `Result{X}Dto` kullanılır. Realshed teması bozulmaz.
 
 - **G1 KRİTİK:** Tüm POST/PUT/DELETE uçları kimliksiz — JWT + [Authorize] eklenmeli
 - **G2 KRİTİK:** Agent şifreleri plain text — BCrypt ile hash'lenmeli
-- **G3 KRİTİK:** `sa` şifresi git geçmişinde — connection string User Secrets'ta
+- ~~**G3 KRİTİK:** `sa` şifresi git geçmişinde~~ — ÇÖZÜLDÜ (2026-10-12): uygulama `fibiemlak_app` login'iyle bağlanır (yalnızca db_datareader + db_datawriter), connection string User Secrets'ta; `sa` şifresi değiştirildi ve devre dışı
 - **G4:** `@Html.Raw` kullanan alanlar XSS açığı — HtmlSanitizer eklenecek
 - Yeni yazılan tüm write endpoint'lere `[Authorize]` eklenir
 - Plain text şifre asla DB'ye yazılmaz, asla log'a düşmez
@@ -162,7 +162,7 @@ Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/g
 
 ## Aktif TODO (Öncelik Sırasıyla)
 
-- [ ] **[KRİTİK]** sa şifresini değiştir, ayrı SQL login aç
+- [x] **[KRİTİK]** sa şifresini değiştir, ayrı SQL login aç (2026-10-12)
 - [ ] **[KRİTİK]** JWT + [Authorize] tüm write endpoint'lere
 - [ ] **[KRİTİK]** Agent şifrelerini BCrypt ile hash'le
 - [ ] Html.Raw alanlarına HtmlSanitizer ekle (G4)
@@ -207,4 +207,13 @@ dotnet ef migrations add <MigrationName> --project Infrastructure/FibiEmlakDanis
 
 # DB güncelle
 dotnet ef database update --project Infrastructure/FibiEmlakDanismanlik.Persistance --startup-project Presentation/FibiEmlakDanismanlik.WebApi
+```
+
+Uygulama login'i (`fibiemlak_app`) yalnızca okuma/yazma yetkisine sahip, şema değiştiremez.
+`dotnet ef database update` için Windows kimlik doğrulamasıyla bağlan; DbContext bu ortam değişkenini User Secrets'tan önce okur (PowerShell):
+
+```powershell
+$env:ConnectionStrings__DefaultConnection = "Server=<SUNUCU>\<INSTANCE>;Database=fibiemlak.com;Integrated Security=True;TrustServerCertificate=True"
+dotnet ef database update --project Infrastructure/FibiEmlakDanismanlik.Persistance --startup-project Presentation/FibiEmlakDanismanlik.WebApi
+Remove-Item Env:ConnectionStrings__DefaultConnection
 ```
