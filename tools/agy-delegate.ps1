@@ -86,6 +86,12 @@ foreach ($model in $modelOrder) {
         exit 4
     }
 
+    if ($run.Status -eq "SUCCESS" -and $run.Result.response -match 'Awaiting subagent') {
+        Write-Output "AGY_INCOMPLETE (model=$model): agy returned before its subagent finished."
+        Write-Output "CONVERSATION_ID=$($run.Result.conversation_id)"
+        exit 1
+    }
+
     if ($run.ExitCode -eq 0 -and $run.Status -eq "SUCCESS") {
         Write-Output "AGY_SUCCESS"
         Write-Output "MODEL=$model"

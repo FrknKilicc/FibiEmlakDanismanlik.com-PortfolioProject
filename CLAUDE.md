@@ -134,7 +134,7 @@ Kod yazma gerektiren her görevi önce Antigravity CLI'a (`agy`) yaptır. Sen y�
 ### Akış
 
 1. `dev`'den `feature/antigravity-<konu>` branch'i aç.
-2. Görevi tek, net bir prompt olarak yaz: amaç, dokunulacak dosyalar, uyulacak kalıp (bu dosyadaki kurallar). Prompt'un sonuna her zaman şunu ekle: "Terminal komutu çalıştırma; sadece dosya okuma ve yazma araçlarını kullan. Build ve testi ben çalıştıracağım." (Headless modda komutlar izinsiz reddediliyor; build/test/git işini sen yaparsın.)
+2. Görevi tek, net bir prompt olarak yaz: amaç, uyulacak kalıp (bu dosyadaki kurallar) ve dokunulacak dosyaların **tam yolları**. Keşfi (hangi dosyalar, nerede ne var) sen yap ve gereken bağlamı prompt'a koy; Antigravity'den dosya araması veya proje taraması isteme (headless modda arama aracı yok, dosyaları tek tek açarak 15 dakikalık zaman aşımına takılıyor). Prompt'un sonuna her zaman şunu ekle: "Terminal komutu çalıştırma; sadece dosya okuma ve yazma araçlarını kullan. Build ve testi ben çalıştıracağım." (Headless modda komutlar izinsiz reddediliyor; build/test/git işini sen yaparsın.)
 3. Çalıştır:
    `powershell -ExecutionPolicy Bypass -File tools/agy-delegate.ps1 -Task "<prompt>"`
    Betik `tools/agy-models.txt`'teki modelleri sırayla dener; bir modelin kotası biterse sıradakine geçer.
