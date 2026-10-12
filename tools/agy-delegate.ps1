@@ -109,10 +109,30 @@ function Set-UseG1CreditsFalse($settings) {
     else { $settings | Add-Member -NotePropertyName useG1Credits -NotePropertyValue $false }
 }
 
-# A fingerprint of the working tree, to see whether a run changed any file.
+# A fingerprint of the working tree, including status, diff, and untracked
+# file contents, to see whether a run changed any file.
 function Get-TreeFingerprint {
-    $state = (& git -C $RepoRoot status --porcelain=v1 -uall 2>$null) + (& git -C $RepoRoot diff HEAD 2>$null) | Out-String
     $sha = [System.Security.Cryptography.SHA256]::Create()
+
+    $rawUntracked = (& git -C $RepoRoot ls-files --others --exclude-standard -z 2>$null) -join ""
+    $untrackedFiles = @($rawUntracked -split "`0" | Where-Object { $_ -ne "" })
+    $untrackedLines = foreach ($file in $untrackedFiles) {
+        $fullPath = Join-Path $RepoRoot $file
+        $fileHash = $null
+        try {
+            $bytes = [System.IO.File]::ReadAllBytes($fullPath)
+            $fileHash = [BitConverter]::ToString($sha.ComputeHash($bytes))
+        } catch { }
+        if ($fileHash) {
+            "$file $fileHash"
+        } else {
+            $file
+        }
+    }
+
+    $status = & git -C $RepoRoot status --porcelain=v1 -uall 2>$null
+    $diff = & git -C $RepoRoot diff HEAD 2>$null
+    $state = (@($status) + @($diff) + @($untrackedLines)) | Out-String
     return [BitConverter]::ToString($sha.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($state)))
 }
 

@@ -170,13 +170,16 @@ Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/g
 - [x] Agents.Mail için unique index + migration; Create/UpdateAgent aynı maile 409 döner (2026-10-12)
 - [ ] Html.Raw alanlarına HtmlSanitizer ekle (G4)
 - [ ] Admin paneli eklenince: login ekranı + JWT'nin saklanması (HttpOnly cookie / sunucu tarafı oturum) ve write isteklerinde `Authorization: Bearer` gönderilmesi; süre dolunca yeniden login
+- [ ] Admin paneli eklenince: ilan formunda "Vitrin ilanı" (BestDeals) checkbox'ı; satılık ve kiralıkta ayrı ayrı en fazla 5 (BestDealConstants.MaxPerUsageType) uyarısı. BestDeals şu an sadece Create komutlarında ve ForSaleCommercial Update'te var; diğer Update komutlarına eklenmeli
+- [ ] Detay linklerine ilan türü ekle (id + listingTypeId): şu an detay sayfası yalnızca id ile konut/arsa/ticari tablolarına sırayla bakıyor; çakışma id aralıklarıyla (konut 1M+, arsa 2M+, ticari 3M+) geçici olarak önlendi
+- [ ] Veri: kırık ilan görselleri (imaj.emlakjet.com URL'leri 404) gerçek görsellerle değiştirilmeli; harici sitelere hotlink yerine görseller kendi depolamamıza alınmalı
 - [ ] Global exception middleware + handler'larda null kontrolü (G9)
 - [ ] PropertyLocationController → Query/Handler/Result (G5)
 - [ ] FluentValidation + MediatR ValidationBehavior pipeline (G6)
 - [ ] ListingImageSelection.ListingTypeId alanı + migration (H1)
 - [ ] Admin: 2 hatalı ilanın ilçesini düzelt (Kayseri-Ayazağa, Giresun-Ceyhan)
 - [ ] İlan giriş formunda il/ilçe cascade dropdown
-- [ ] LandCategories tablosunu doldur
+- [x] LandCategories tablosunu doldur (2026-10-12, migration ListingIdRangesAndLandCategories)
 - [ ] Teknik borç: kiralık listeleme bellekten DB sorgusuna taşı (T2)
 - [ ] Teknik borç: facet sayaçları null statüyü sayıyor (T3)
 - [ ] localhost:7015 hardcode'ları appsettings'e taşı (G11)
