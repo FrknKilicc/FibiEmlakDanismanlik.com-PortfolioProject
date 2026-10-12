@@ -150,6 +150,8 @@ Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/g
    - `10` (tüm modeller kota hatası verdi) veya `3` (agy yok / oturum kapalı) → yarım kalan değişiklikleri `git stash` ile kenara al, `feature/claude-<konu>` branch'ine geç, işi kendin yap. Kullanıcıya tek satırla "Antigravity modellerinin kotası bitti, devam ediyorum" (ya da "agy çalışmıyor, devam ediyorum") de.
    - `4` (izin), `5` (yarım kaldı), `1` (genel hata) → betik bunları zaten sıradaki modelle denedi; bu kodlar **liste bittiği hâlde** en az bir model kota dışı bir sebeple başarısız olduğunda döner. Kodu kendin yazma: çıktıdaki hataları özetleyip kullanıcıya bildir ve nasıl devam edileceğini sor (prompt'u düzeltip yeniden göndermek gibi).
 
+Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline erken kesilirse betik yarıda ölür, `finally` çalışmaz ve geçici `write_file` izni `settings.json`'da kalır. Çıktıyı değişkene al, sonra kırp.
+
 ### Kontrol et, test et, onay ver
 
 1. `git diff` ile değişiklikleri incele: bu dosyadaki kurallar, Makro Değişiklik Kuralları (bağımlılıklar güncellenmiş mi), güvenlik kuralları.
@@ -183,6 +185,9 @@ Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/g
 - [ ] Teknik borç: kiralık listeleme bellekten DB sorgusuna taşı (T2)
 - [ ] Teknik borç: facet sayaçları null statüyü sayıyor (T3)
 - [ ] localhost:7015 hardcode'ları appsettings'e taşı (G11)
+- [ ] Kiralık fiyat gösteriminde dönem belirsiz: "Kira: 25.000 ₺" aylık mı yıllık mı? Karar verilince vitrin ve ilan sayfalarına "/ay" vb. eklenmeli
+- [ ] Ana sayfa vitrini: kiralık vitrin 5 sınırında dolu (4 işyeri + 1 arsa); yeni işaretlenen ilan en eski işaretliyi düşürür
+- [ ] Repo temizliği: dev'e birleşmiş feature branch'leri (yerel + origin) silinsin mi karar ver; `.claude/launch.json` commit'lenecek mi yoksa .gitignore'a mı eklenecek
 
 ---
 
@@ -195,10 +200,17 @@ Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/g
 - 12 deneme-yanılma migration — production öncesi squash (T9)
 - BaseEntity yok — her entity kendi Id'sini taşıyor (T10)
 - Soft delete yok — fiziksel silme yapılıyor (T10)
+- ~570 derleme uyarısı, çoğu nullable (CS8618/CS8602/CS8603); yeni kodda yenisi eklenmemeli (T11)
+- Detay sayfası ilanı yalnızca id ile buluyor; tablolar arası çakışma şimdilik identity aralıklarıyla önleniyor (T12, TODO'da)
+- İlan görselleri harici sitelere hotlink (emlakjet, depositphotos, unsplash); kaynak silinince kırılıyor (T13)
+- Kiralık entity'lerde `ListingTypeId` int?, satılıklarda int — tutarsız (T14)
+- `GetUnifiedForSale/RentalPropertyById` ve listeleme sorguları PropertyRepository içinde tekrar ediyor; BestDealRepository ayrı tutuldu (T1 ile birlikte ele alınmalı)
 
 ---
 
 ## Çalışma Komutları
+
+Kullanıcı Visual Studio'da hata ayıklarken `bin` klasörleri kilitlidir: CLI'dan derleme gerekiyorsa `-p:OutDir=<scratchpad>/` ile ayrı klasöre derle, iş bitince `dotnet build-server shutdown`. Test için başlatılan WebApi/WebUI süreçleri iş biter bitmez kapatılır; VS oturumu açıkken sunucu başlatmadan önce kullanıcıya sorulur.
 
 ```bash
 # WebApi çalıştır
