@@ -169,6 +169,7 @@ Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/g
 - [x] **[KRİTİK]** Agent şifrelerini BCrypt ile hash'le (2026-10-12)
 - [x] Agents.Mail için unique index + migration; Create/UpdateAgent aynı maile 409 döner (2026-10-12)
 - [ ] Html.Raw alanlarına HtmlSanitizer ekle (G4)
+- [ ] Admin paneli eklenince: login ekranı + JWT'nin saklanması (HttpOnly cookie / sunucu tarafı oturum) ve write isteklerinde `Authorization: Bearer` gönderilmesi; süre dolunca yeniden login
 - [ ] Global exception middleware + handler'larda null kontrolü (G9)
 - [ ] PropertyLocationController → Query/Handler/Result (G5)
 - [ ] FluentValidation + MediatR ValidationBehavior pipeline (G6)
