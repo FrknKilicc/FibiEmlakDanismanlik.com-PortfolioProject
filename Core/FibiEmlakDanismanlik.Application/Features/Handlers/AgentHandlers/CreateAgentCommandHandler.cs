@@ -29,7 +29,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers
                 AgentPhoneNumber = request.AgentPhoneNumber,
                 AgentTitle = request.AgentTitle,
                 Mail = request.Mail,
-                Password = request.Password,
+                Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
             });
         }
     }

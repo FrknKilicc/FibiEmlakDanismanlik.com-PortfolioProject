@@ -94,8 +94,8 @@ Dto projesinde `Result{X}Dto` kullanılır. Realshed teması bozulmaz.
 
 ## Güvenlik Kuralları
 
-- **G1 KRİTİK:** Tüm POST/PUT/DELETE uçları kimliksiz — JWT + [Authorize] eklenmeli
-- **G2 KRİTİK:** Agent şifreleri plain text — BCrypt ile hash'lenmeli
+- ~~**G1 KRİTİK:** Tüm POST/PUT/DELETE uçları kimliksiz~~ — ÇÖZÜLDÜ (2026-10-12): JWT (`POST api/Auth/login`, Agent Mail + şifre) ve 29 write ucunda `[Authorize]`. Bilerek anonim: `CustomerContact` (iletişim formu), `ForSales/filter`, `ForRental/filter`. İmzalama anahtarı User Secrets'ta `Jwt:Key` (en az 32 bayt), Issuer/Audience/süre appsettings'te
+- ~~**G2 KRİTİK:** Agent şifreleri plain text~~ — ÇÖZÜLDÜ (2026-10-12): Create/UpdateAgent BCrypt ile hash'ler, mevcut kayıtlar hash'lendi
 - ~~**G3 KRİTİK:** `sa` şifresi git geçmişinde~~ — ÇÖZÜLDÜ (2026-10-12): uygulama `fibiemlak_app` login'iyle bağlanır (yalnızca db_datareader + db_datawriter), connection string User Secrets'ta; `sa` şifresi değiştirildi ve devre dışı
 - **G4:** `@Html.Raw` kullanan alanlar XSS açığı — HtmlSanitizer eklenecek
 - Yeni yazılan tüm write endpoint'lere `[Authorize]` eklenir
@@ -163,8 +163,9 @@ Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/g
 ## Aktif TODO (Öncelik Sırasıyla)
 
 - [x] **[KRİTİK]** sa şifresini değiştir, ayrı SQL login aç (2026-10-12)
-- [ ] **[KRİTİK]** JWT + [Authorize] tüm write endpoint'lere
-- [ ] **[KRİTİK]** Agent şifrelerini BCrypt ile hash'le
+- [x] **[KRİTİK]** JWT + [Authorize] tüm write endpoint'lere (2026-10-12)
+- [x] **[KRİTİK]** Agent şifrelerini BCrypt ile hash'le (2026-10-12)
+- [ ] Agents.Mail için unique index + migration (login aynı mailli ilk kaydı seçiyor)
 - [ ] Html.Raw alanlarına HtmlSanitizer ekle (G4)
 - [ ] Global exception middleware + handler'larda null kontrolü (G9)
 - [ ] PropertyLocationController → Query/Handler/Result (G5)
@@ -207,6 +208,13 @@ dotnet ef migrations add <MigrationName> --project Infrastructure/FibiEmlakDanis
 
 # DB güncelle
 dotnet ef database update --project Infrastructure/FibiEmlakDanismanlik.Persistance --startup-project Presentation/FibiEmlakDanismanlik.WebApi
+```
+
+Yeni makinede WebApi'nin açılması için JWT imzalama anahtarı gerekir (yoksa uygulama başlarken hata verir):
+
+```powershell
+cd Presentation/FibiEmlakDanismanlik.WebApi
+dotnet user-secrets set "Jwt:Key" "<en az 32 baytlık rastgele değer>"
 ```
 
 Uygulama login'i (`fibiemlak_app`) yalnızca okuma/yazma yetkisine sahip, şema değiştiremez.

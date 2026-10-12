@@ -3,6 +3,7 @@ using FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers;
 using FibiEmlakDanismanlik.Application.Features.Queries.AgentQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
@@ -29,18 +30,21 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _mediator.Send(new GetAgentByIdQuery(id));
             return Ok(value);
         }
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateAgent(CreateAgentCommand command)
         {
             await _mediator.Send(command);
             return Ok("Personel Kaydı Başarıyla Gerçekleştirildi.");
         }
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> UpdateAgent(UpdateAgentCommand command)
         {
             await _mediator.Send(command);
             return Ok("Personel Güncelleme Başarılı");
         }
+        [Authorize]
         [HttpDelete]
         public async Task<IActionResult> RemoveAgent(int id)
         {

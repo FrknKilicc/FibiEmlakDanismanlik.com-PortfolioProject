@@ -28,7 +28,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers
             value.AgentImgUrl = request.AgentImgUrl;
             value.AgentPhoneNumber = request.AgentPhoneNumber;
             value.AgentId = request.AgentId;
-            value.Password = request.Password;
+            // Şifre boş gönderilirse mevcut hash korunur.
+            if (!string.IsNullOrWhiteSpace(request.Password))
+                value.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
             value.Mail=request.Mail;
             await _repository.UpdateAsync(value);
         }
