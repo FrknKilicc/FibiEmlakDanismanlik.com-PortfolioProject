@@ -127,6 +127,37 @@ master          ← production (stabil)
 
 ---
 
+## Antigravity'ye iş devri (önce Antigravity modelleri, hepsi bitince Claude)
+
+Kod yazma gerektiren her görevi önce Antigravity CLI'a (`agy`) yaptır. Sen yönetici ve kontrolcüsün: görevi yaz, çıktıyı kontrol et, test et, onay ver, hata varsa düzelttir. Kodu kendin ancak bütün Antigravity modellerinin kotası bittiğinde yaz.
+
+### Akış
+
+1. `dev`'den `feature/antigravity-<konu>` branch'i aç.
+2. Görevi tek, net bir prompt olarak yaz: amaç, dokunulacak dosyalar, uyulacak kalıp (bu dosyadaki kurallar). Prompt'un sonuna her zaman şunu ekle: "Terminal komutu çalıştırma; sadece dosya okuma ve yazma araçlarını kullan. Build ve testi ben çalıştıracağım." (Headless modda komutlar izinsiz reddediliyor; build/test/git işini sen yaparsın.)
+3. Çalıştır:
+   `powershell -ExecutionPolicy Bypass -File tools/agy-delegate.ps1 -Task "<prompt>"`
+   Betik `tools/agy-models.txt`'teki modelleri sırayla dener; bir modelin kotası biterse sıradakine geçer.
+4. Çıkış koduna göre:
+   - `0` → **Kontrol et** (aşağıda). Çıktıdaki `CONVERSATION_ID`'yi not al.
+   - `10` (tüm modellerin kotası bitti), `3` (agy yok / oturum kapalı), `4` (izin bekliyor) → yarım kalan değişiklikleri `git stash` ile kenara al, `feature/claude-<konu>` branch'ine geç, işi kendin yap. Kullanıcıya tek satırla "Antigravity modellerinin kotası bitti, devam ediyorum" de.
+   - `1` → hata mesajını oku; geçici bir hataysa bir kez tekrar dene, değilse kendin yap.
+
+### Kontrol et, test et, onay ver
+
+1. `git diff` ile değişiklikleri incele: bu dosyadaki kurallar, Makro Değişiklik Kuralları (bağımlılıklar güncellenmiş mi), güvenlik kuralları.
+2. `dotnet build` çalıştır. Test projesi varsa `dotnet test` çalıştır.
+3. Sorun varsa düzeltmeyi yine Antigravity'ye yaptır, aynı konuşmada:
+   `powershell -ExecutionPolicy Bypass -File tools/agy-delegate.ps1 -Task "Şu hataları düzelt: <build/test çıktısı ve inceleme notların>" -Conversation <CONVERSATION_ID>`
+4. En fazla 3 düzeltme turu. Üçüncüden sonra hâlâ sorun varsa ya da bu sırada kod `10` gelirse kalan düzeltmeyi kendin yap.
+5. Her şey geçince commit at, `dev`'e PR aç; PR açıklamasında işi hangi modelin yaptığını ve kaç düzeltme turu gerektiğini yaz.
+
+### Ne zaman devretme
+
+Tek satırlık düzeltme, soru cevaplama, kod okuma gibi küçük işleri kendin yap: bunları devretmek, kendin yapmaktan daha pahalı.
+
+---
+
 ## Aktif TODO (Öncelik Sırasıyla)
 
 - [ ] **[KRİTİK]** sa şifresini değiştir, ayrı SQL login aç
