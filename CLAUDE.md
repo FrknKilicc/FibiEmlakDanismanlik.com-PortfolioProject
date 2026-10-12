@@ -1,0 +1,177 @@
+# Fibi Emlak Danışmanlık — CLAUDE.md
+
+Bu dosya Claude Code'un projeyi tanıması için repo root'ta bulunur.
+Her oturumda otomatik okunur, context kaybı olmaz.
+
+---
+
+## Proje Kimliği
+- **Ad:** Fibi Emlak Danışmanlık Sistemi
+- **Geliştirici:** Furkan (youkali40@gmail.com)
+- **AI Ajanları:** Claude Code (bu) + Antigravity (koordineli)
+- **Framework:** .NET 8 (appsettings'de 7.0 yazar ama csproj net8.0)
+
+---
+
+## Gerçek Folder Structure (kodda olan)
+
+```
+FibiEmlakDanismanlik.sln
+├── Core/
+│   ├── FibiEmlakDanismanlik.Domain/
+│   │   ├── Entities/          39 entity
+│   │   ├── Enums/
+│   │   └── DTOs/              (katman ihlali — ileride taşınacak)
+│   └── FibiEmlakDanismanlik.Application/
+│       ├── Constants/
+│       ├── Features/
+│       │   ├── Commands/[Feature]Commands/    Create/Update/Remove
+│       │   ├── Queries/[Feature]Queries/      GetX / GetXById
+│       │   ├── Handlers/[Feature]Handlers/    her komut için ayrı handler
+│       │   └── Results/[Feature]Results/      GetXResult / GetXByIdResult
+│       ├── Helpers/
+│       ├── Interfaces/
+│       ├── Mapping/
+│       ├── Services/
+│       └── ViewModels/
+├── Infrastructure/
+│   └── FibiEmlakDanismanlik.Persistance/     (klasör "Persistance", namespace "Persistence")
+│       ├── Context/
+│       ├── Migrations/        40 migration
+│       └── Repositories/[Feature]Repositories/
+├── Presentation/
+│   └── FibiEmlakDanismanlik.WebApi/
+│       └── Controllers/       26 controller
+└── Frontends/
+    ├── FibiEmlakDanismanlik.Dto/              ResultXDto, CreateXDto
+    └── FibiEmlakDanismanlik.WebUI/            MVC + ViewComponent + Realshed tema + jQuery
+```
+
+**Akış:** WebUI (HttpClient) → WebApi Controller → IMediator.Send → Handler → IRepository → EF Core → SQL Server
+
+---
+
+## Kod Yazma Kuralları (Mevcut Pattern)
+
+### Command
+`Features/Commands/{Feature}Commands/{Create|Update|Remove}{Feature}Command.cs`
+- `IRequest` uygular
+- Remove komutu `int Id` ile constructor alır
+
+### Query
+`Features/Queries/{Feature}Queries/Get{Feature}Query.cs`
+- `IRequest<List<Get{Feature}Result>>` veya `IRequest<Get{Feature}ByIdResult>` döner
+
+### Handler
+`Features/Handlers/{Feature}Handlers/{CommandOrQuery}Handler.cs`
+- Basit CRUD → `IRepository<TEntity>`
+- Karmaşık sorgular → `I{Feature}Repository`
+- Mapping elle yapılır (AutoMapper sadece rental listingde var)
+
+### Result
+`Features/Results/{Feature}Results/Get{Feature}Result.cs`
+- Entity asla dışarı dönmez
+
+### Controller
+```csharp
+[Route("api/[controller]")]
+[ApiController]
+// Sadece IMediator enjekte edilir
+// GET → Ok(result)
+// POST/PUT → Ok("Türkçe başarı mesajı")
+// DELETE → int id query parametresi
+```
+
+### Entity
+`Domain/Entities`, `[Key] public int {Entity}Id`
+Fluent API konfigürasyonu `OnModelCreating` içine eklenir.
+
+### WebUI
+ViewComponent + `IHttpClientFactory` + `_configuration["Url:ApiUrl"]`
+Dto projesinde `Result{X}Dto` kullanılır. Realshed teması bozulmaz.
+
+---
+
+## Güvenlik Kuralları
+
+- **G1 KRİTİK:** Tüm POST/PUT/DELETE uçları kimliksiz — JWT + [Authorize] eklenmeli
+- **G2 KRİTİK:** Agent şifreleri plain text — BCrypt ile hash'lenmeli
+- **G3 KRİTİK:** `sa` şifresi git geçmişinde — connection string User Secrets'ta
+- **G4:** `@Html.Raw` kullanan alanlar XSS açığı — HtmlSanitizer eklenecek
+- Yeni yazılan tüm write endpoint'lere `[Authorize]` eklenir
+- Plain text şifre asla DB'ye yazılmaz, asla log'a düşmez
+
+---
+
+## Makro Değişiklik Kuralları (KRİTİK)
+
+Herhangi bir method, property, parametre değiştirilmeden önce:
+1. Bağımlılık taraması: Controller, Handler, AutoMapper profili, DTO, ViewModel, JS/AJAX
+2. Etki analizi yaz: "Bu değişiklik şu dosyaları etkiler: [liste]. Devam edeyim mi?"
+3. Tüm bağımlıları tek seferde güncelle, derleme hatası bırakma
+4. UI-API uyumunu kontrol et: response field adı değişirse jQuery kodu da güncellenir
+
+---
+
+## Branch Stratejisi
+
+```
+master          ← production (stabil)
+└── dev         ← aktif geliştirme
+    ├── feature/claude-xxx       ← Claude Code branch'leri
+    └── feature/antigravity-xxx  ← Antigravity branch'leri
+```
+
+- Her görev başında hangi dosyalara dokunulacağı belirtilir
+- Aynı dosya aynı anda iki ajan tarafından düzenlenmez
+
+---
+
+## Aktif TODO (Öncelik Sırasıyla)
+
+- [ ] **[KRİTİK]** sa şifresini değiştir, ayrı SQL login aç
+- [ ] **[KRİTİK]** JWT + [Authorize] tüm write endpoint'lere
+- [ ] **[KRİTİK]** Agent şifrelerini BCrypt ile hash'le
+- [ ] Html.Raw alanlarına HtmlSanitizer ekle (G4)
+- [ ] Global exception middleware + handler'larda null kontrolü (G9)
+- [ ] PropertyLocationController → Query/Handler/Result (G5)
+- [ ] FluentValidation + MediatR ValidationBehavior pipeline (G6)
+- [ ] ListingImageSelection.ListingTypeId alanı + migration (H1)
+- [ ] Admin: 2 hatalı ilanın ilçesini düzelt (Kayseri-Ayazağa, Giresun-Ceyhan)
+- [ ] İlan giriş formunda il/ilçe cascade dropdown
+- [ ] LandCategories tablosunu doldur
+- [ ] Teknik borç: kiralık listeleme bellekten DB sorgusuna taşı (T2)
+- [ ] Teknik borç: facet sayaçları null statüyü sayıyor (T3)
+- [ ] localhost:7015 hardcode'ları appsettings'e taşı (G11)
+
+---
+
+## Bilinen Teknik Borçlar
+
+- `PropertyRepository.cs` 3002 satır, DRY ihlali (T1)
+- 30 ayrı `PropImgUrl1..30` kolonu — ayrı tablo olmalı (T5)
+- Katman ihlali: WebUI → Application direkt referans (T6)
+- `Persistance` yazım hatası klasör adında (T7)
+- 12 deneme-yanılma migration — production öncesi squash (T9)
+- BaseEntity yok — her entity kendi Id'sini taşıyor (T10)
+- Soft delete yok — fiziksel silme yapılıyor (T10)
+
+---
+
+## Çalışma Komutları
+
+```bash
+# WebApi çalıştır
+cd Presentation/FibiEmlakDanismanlik.WebApi
+dotnet run
+
+# WebUI çalıştır
+cd Frontends/FibiEmlakDanismanlik.WebUI
+dotnet run
+
+# Migration ekle
+dotnet ef migrations add <MigrationName> --project Infrastructure/FibiEmlakDanismanlik.Persistance --startup-project Presentation/FibiEmlakDanismanlik.WebApi
+
+# DB güncelle
+dotnet ef database update --project Infrastructure/FibiEmlakDanismanlik.Persistance --startup-project Presentation/FibiEmlakDanismanlik.WebApi
+```
