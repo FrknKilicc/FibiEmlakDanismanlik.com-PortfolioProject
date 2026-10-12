@@ -141,9 +141,10 @@ Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/g
 
 1. `dev`'den `feature/antigravity-<konu>` branch'i aç.
 2. Görevi tek, net bir prompt olarak yaz: amaç, uyulacak kalıp (bu dosyadaki kurallar) ve dokunulacak dosyaların **tam yolları**. Keşfi (hangi dosyalar, nerede ne var) sen yap ve gereken bağlamı prompt'a koy; Antigravity'den dosya araması veya proje taraması isteme (headless modda arama aracı yok, dosyaları tek tek açarak 15 dakikalık zaman aşımına takılıyor). Prompt'un sonuna her zaman şunu ekle: "Terminal komutu çalıştırma; sadece dosya okuma ve yazma araçlarını kullan. Build ve testi ben çalıştıracağım." (Headless modda komutlar izinsiz reddediliyor; build/test/git işini sen yaparsın.)
-3. Çalıştır:
-   `powershell -ExecutionPolicy Bypass -File tools/agy-delegate.ps1 -Task "<prompt>"`
-   Betik `tools/agy-models.txt`'teki modelleri sırayla dener. Bir model kota (`AGY_MODEL_QUOTA_EXHAUSTED`), izin (`AGY_NEEDS_PERMISSION`), yarım kalma (`AGY_INCOMPLETE`) veya genel hata (`AGY_ERROR`) verirse aynı görevi listedeki **sıradaki modelle** otomatik tekrar dener. Başarısız bir model yarım dosya değişikliği bırakmış olabilir; sıradaki model o çalışma ağacından devam eder.
+   **Oluşturulacak veya düzenlenecek her dosyanın tam yolu prompt'ta geçmeli.** Headless agy yazma izni soramaz ve klasör desenleri eşleşmez; betik prompt'taki repo içi tam dosya yolları için geçici `write_file(<yol>)` izni ekler, iş bitince `settings.json`'ı geri yükler. Yolu geçmeyen dosyaya agy yazamaz. Prompt'ta alt ajan kullanmamasını da iste (alt ajanlar dosya içeriği uydurabiliyor).
+3. Prompt'u scratchpad'de bir dosyaya yaz ve çalıştır (uzun ve tırnaklı metin `-Task` ile komut satırında bölünür):
+   `powershell -ExecutionPolicy Bypass -File tools/agy-delegate.ps1 -TaskFile <prompt.md>`
+   Betik `tools/agy-models.txt`'teki modelleri sırayla dener. Bir model kota (`AGY_MODEL_QUOTA_EXHAUSTED`), izin (`AGY_NEEDS_PERMISSION`), yarım kalma (`AGY_INCOMPLETE`) veya genel hata (`AGY_ERROR`) verirse görevi listedeki **sıradaki modele** verir. Önceki model işe başlamışsa sıradaki model önce aynı konuşmayı (`--conversation`) sürdürmeyi dener; olmazsa görev başına "Önceki model işi yarıda bıraktı, git diff'e bak ve kaldığı yerden devam et" notu eklenerek yeniden gönderilir. `SUCCESS` gelip hiçbir dosya değişmediyse bu da yarım kalma sayılır (değişiklik beklenmeyen işler için `-AllowNoChanges`). Betik `--dangerously-skip-permissions` kullanmaz ve `useG1Credits`'i her zaman `false` tutar.
 4. Çıkış koduna göre:
    - `0` → **Kontrol et** (aşağıda). Çıktıdaki `MODEL` ve `CONVERSATION_ID`'yi not al.
    - `10` (tüm modeller kota hatası verdi) veya `3` (agy yok / oturum kapalı) → yarım kalan değişiklikleri `git stash` ile kenara al, `feature/claude-<konu>` branch'ine geç, işi kendin yap. Kullanıcıya tek satırla "Antigravity modellerinin kotası bitti, devam ediyorum" (ya da "agy çalışmıyor, devam ediyorum") de.
@@ -154,7 +155,8 @@ Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/g
 1. `git diff` ile değişiklikleri incele: bu dosyadaki kurallar, Makro Değişiklik Kuralları (bağımlılıklar güncellenmiş mi), güvenlik kuralları.
 2. `dotnet build` çalıştır. Test projesi varsa `dotnet test` çalıştır.
 3. Sorun varsa düzeltmeyi yine Antigravity'ye yaptır, aynı konuşmada:
-   `powershell -ExecutionPolicy Bypass -File tools/agy-delegate.ps1 -Task "Şu hataları düzelt: <build/test çıktısı ve inceleme notların>" -Conversation <CONVERSATION_ID>`
+   `powershell -ExecutionPolicy Bypass -File tools/agy-delegate.ps1 -TaskFile <düzeltme-prompt.md> -Conversation <CONVERSATION_ID>`
+   Düzeltme prompt'unda da build/test çıktısı, inceleme notların ve düzenlenecek dosyaların tam yolları olsun.
 4. En fazla 3 düzeltme turu. Üçüncüden sonra hâlâ sorun varsa kullanıcıya bildir ve sor. Düzeltme sırasında kod `10` veya `3` gelirse kalan düzeltmeyi kendin yap.
 5. Her şey geçince commit at, `dev`'e PR aç; PR açıklamasında işi hangi modelin yaptığını ve kaç düzeltme turu gerektiğini yaz.
 
