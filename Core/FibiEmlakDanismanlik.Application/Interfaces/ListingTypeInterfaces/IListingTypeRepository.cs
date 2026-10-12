@@ -9,7 +9,7 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.ListingTypeInterfaces
 {
     public interface IListingTypeRepository
     {
-        Task<List<ListingTypeResult>> GetByUsageTypeAsync(int usageType);
+        Task<List<ListingTypeResult>> GetByUsageTypeAsync(int usageType, bool onlyWithActiveListings = false);
         Task<ListingTypeResult> GetByIdAsync(int id);
     }
 }

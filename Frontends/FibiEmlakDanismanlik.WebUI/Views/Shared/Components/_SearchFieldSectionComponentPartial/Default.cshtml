@@ -1,29 +1,143 @@
 <style>
-    .select2-container--default .select2-selection--single { 
-        height: 50px !important; 
-        padding: 10px 15px; 
-        border-radius: 8px !important; 
-        border: 1px solid #e0e0e0 !important; 
-        box-shadow: 0 4px 6px rgba(0,0,0,0.04) !important; 
+    /* ── Search Field Section Layout ── */
+    .search-field-section {
+        direction: ltr !important;
+        text-align: left !important;
+    }
+    .search-field-section * {
+        box-sizing: border-box;
+    }
+
+    /* ── Select2 Global Overrides ── */
+    .search-field-section .select2-container {
+        z-index: 99999 !important;
+        width: 100% !important;
+    }
+    .search-field-section .select2-container--default .select2-selection--single {
+        position: relative !important;
+        height: 50px !important;
+        padding: 0 45px 0 15px !important;
+        border-radius: 8px !important;
+        border: 1px solid #e0e0e0 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
         display: flex;
         align-items: center;
         background-color: #fff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-    .select2-container--default .select2-selection--single .select2-selection__arrow { 
-        height: 50px !important; 
-        right: 15px !important; 
+    .search-field-section .select2-container--default .select2-selection--single:hover {
+        border-color: #3ea843 !important;
     }
-    .select2-container--default .select2-selection--single .select2-selection__clear {
-        height: 50px !important;
-        line-height: 50px !important;
-        margin-right: 15px !important;
+    .search-field-section .select2-container--default.select2-container--focus .select2-selection--single,
+    .search-field-section .select2-container--default.select2-container--open .select2-selection--single {
+        border-color: #3ea843 !important;
+        box-shadow: 0 0 0 3px rgba(62,168,67,0.12) !important;
+    }
+    .search-field-section .select2-container--default .select2-selection--single .select2-selection__arrow {
+        position: absolute !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        right: 12px !important;
+        width: 20px !important;
+        height: 20px !important;
+    }
+    .search-field-section .select2-container--default .select2-selection--single .select2-selection__arrow b {
+        border-color: #888 transparent transparent transparent !important;
+    }
+    .search-field-section .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+        border-color: transparent transparent #888 transparent !important;
+    }
+    .search-field-section .select2-container--default .select2-selection--single .select2-selection__clear {
+        position: absolute !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        right: 30px !important;
+        width: 18px !important;
+        height: 18px !important;
+        line-height: 16px !important;
+        text-align: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
         color: #d0021b !important;
-        font-size: 20px !important;
-        font-weight: bold;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        cursor: pointer !important;
+        z-index: 5 !important;
+        background: transparent !important;
     }
-    .select2-container { z-index: 99999 !important; }
-    .advanced-search { z-index: 999 !important; overflow: visible !important; }
-    
+    .search-field-section .select2-container--default .select2-selection--single .select2-selection__clear:hover {
+        color: #a00010 !important;
+    }
+    .search-field-section .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 50px !important;
+        color: #333;
+        font-size: 14px;
+        padding: 0 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+        display: block;
+    }
+    .search-field-section .select2-container--default .select2-selection--single .select2-selection__placeholder {
+        color: #999;
+    }
+    .search-field-section .select2-container--default.select2-container--disabled .select2-selection--single {
+        background-color: #f7f7f7 !important;
+        border-color: #e5e5e5 !important;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+    .search-field-section .select2-dropdown {
+        border-radius: 8px !important;
+        border: 1px solid #e0e0e0 !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+        margin-top: 4px;
+        z-index: 999999 !important;
+    }
+    .search-field-section .select2-results__option {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    .search-field-section .select2-results__option--highlighted[aria-selected] {
+        background-color: #3ea843 !important;
+    }
+    .search-field-section .select2-search--dropdown .select2-search__field {
+        border-radius: 6px !important;
+        border: 1px solid #e0e0e0 !important;
+        padding: 8px 12px;
+    }
+
+    /* ── Advanced Search Panel ── */
+    .advanced-search {
+        z-index: 999 !important;
+        overflow: visible !important;
+        direction: ltr !important;
+        text-align: left !important;
+    }
+
+    /* ── Mülk Ara Input ── */
+    .search-field-input {
+        height: 50px !important;
+        padding: 10px 35px 10px 38px !important;
+        border-radius: 8px !important;
+        border: 1px solid #e0e0e0 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+        font-size: 14px;
+        color: #333;
+        width: 100%;
+        box-sizing: border-box;
+        background-color: #fff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        outline: none;
+    }
+    .search-field-input:focus {
+        border-color: #3ea843 !important;
+        box-shadow: 0 0 0 3px rgba(62,168,67,0.12) !important;
+    }
+    .search-field-input::placeholder { color: #999; }
+
+    /* ── Auto-Suggest List ── */
     .suggestions-list {
         display: none;
         position: absolute;
@@ -37,45 +151,117 @@
         max-height: 250px;
         overflow-y: auto;
         padding: 0;
-        margin-top: 5px;
+        margin-top: 4px;
         list-style: none;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     }
     .suggestions-list li {
-        padding: 12px 15px;
+        padding: 10px 15px;
         border-bottom: 1px solid #f5f5f5;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: background 0.15s;
         color: #333;
         font-size: 14px;
     }
-    .suggestions-list li:hover {
-        background: #f4f8ff;
-        color: #0056b3;
-    }
-    .suggestions-list li:last-child {
-        border-bottom: none;
-    }
+    .suggestions-list li:hover { background: #f0faf0; color: #2d8f32; }
+    .suggestions-list li:last-child { border-bottom: none; }
+
     .clear-search {
-        position: absolute; 
-        right: 15px; 
-        top: 50%; 
-        transform: translateY(-50%); 
-        cursor: pointer; 
-        display: none; 
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        display: none;
         z-index: 10;
         color: #d0021b;
         font-size: 16px;
     }
-    .search-field-input {
-        padding-right: 40px !important;
-        border-radius: 8px !important;
-        border: 1px solid #e0e0e0 !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.04) !important; 
+
+    /* ── Range Sliders (Strict LTR & Pixel Perfect) ── */
+    .search-field-section .range-box {
+        direction: ltr !important;
+        text-align: left !important;
+    }
+    .search-field-section .range-box .row.clearfix {
+        display: flex;
+        align-items: stretch;
+    }
+    .search-field-section .range-box .price-range,
+    .search-field-section .range-box .area-range {
+        padding: 15px 0 10px 0;
+        direction: ltr !important;
+    }
+    .search-field-section .range-box .range-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .search-field-section .range-box h6 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 0;
+        color: #333;
+    }
+    .search-field-section .range-box .range-input {
+        width: 60%;
+    }
+    .search-field-section .range-box .range-input .input input {
+        height: 38px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 4px 12px;
+        font-size: 13px;
+        color: #3ea843;
+        font-weight: 600;
+        width: 100%;
+        background: #f9f9f9;
+        text-align: center !important;
+        direction: ltr !important;
+        unicode-bidi: embed !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .search-field-section .range-box .ui-slider {
+        direction: ltr !important;
+        position: relative !important;
+        margin: 15px 10px 10px 10px !important;
+        border-radius: 4px !important;
+        height: 6px !important;
+        border: none !important;
+        background: #e8e8e8 !important;
+    }
+    .search-field-section .range-box .ui-slider .ui-slider-range {
+        background: #3ea843 !important;
+        border-radius: 4px;
+        position: absolute;
+    }
+    .search-field-section .range-box .ui-slider .ui-slider-handle {
+        width: 20px !important;
+        height: 20px !important;
+        border-radius: 50% !important;
+        background: #3ea843 !important;
+        border: 3px solid #fff !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.25) !important;
+        top: -7px !important;
+        margin-left: -10px !important;
+        cursor: pointer !important;
+        outline: none !important;
+        position: absolute !important;
+        z-index: 3 !important;
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+    .search-field-section .range-box .ui-slider .ui-slider-handle:hover,
+    .search-field-section .range-box .ui-slider .ui-slider-handle:focus {
+        transform: scale(1.15);
+        box-shadow: 0 2px 10px rgba(62,168,67,0.5) !important;
     }
 </style>
 
-<section class="search-field-section">
+<section class="search-field-section" id="homeSearchRoot"
+         data-api="@ViewBag.ApiUrl"
+         data-sale-url="@Url.Action("Index","AllForSalePage")"
+         data-rent-url="@Url.Action("Index","AllForRentalPage")">
     <div class="auto-container">
         <div class="inner-container">
             <div class="search-field">
@@ -92,172 +278,94 @@
                         <div class="tab active-tab" id="tab-1">
                             <div class="inner-box">
                                 <div class="top-search">
-                                    <form action="index.html" method="post" class="search-form">
+                                    <form class="search-form" onsubmit="return false;">
                                         <div class="row clearfix">
-                                            
                                             <div class="col-lg-3 col-md-6 col-sm-12 column">
                                                 <div class="form-group">
                                                     <label>İlan Tipi</label>
                                                     <div class="select-box">
-                                                        <select class="wide listing-type-select" id="listingTypeDropdown-forsale">
-                                                            <option value="" disabled selected hidden>İlan Tipi Seçiniz</option>
+                                                        <select id="listingTypeDropdown-forsale" class="ignore">
+                                                            <option value="">İlan Tipi Seçiniz</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="col-lg-3 col-md-6 col-sm-12 column">
                                                 <div class="form-group">
                                                     <label>İl</label>
                                                     <div class="select-box">
-                                                        <select class="js-city-select" id="cityDropdown-forsale" data-placeholder="İl Seçiniz">
-                                                            <option value="" disabled selected hidden>İl Seçiniz</option>
+                                                        <select id="cityDropdown-forsale" class="ignore" disabled>
+                                                            <option value="">Önce ilan tipi seçin</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="col-lg-3 col-md-6 col-sm-12 column">
                                                 <div class="form-group">
                                                     <label>İlçe</label>
                                                     <div class="select-box">
-                                                        <select class="js-district-select" id="districtDropdown-forsale" data-placeholder="İlçe Seçiniz" disabled>
-                                                            <option value="" disabled selected hidden>İlçe Seçiniz</option>
+                                                        <select id="districtDropdown-forsale" class="ignore" disabled>
+                                                            <option value="">Önce il seçin</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="col-lg-3 col-md-12 col-sm-12 column">
                                                 <div class="form-group" style="position:relative;">
                                                     <label>Mülk Ara</label>
                                                     <div class="field-input" style="position:relative;">
-                                                        <i class="fas fa-search"></i>
-                                                        <input type="text" class="search-field-input" name="search-field" placeholder="Mülk, Konum veya Bölge Ara..." autocomplete="off">
+                                                        <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#999;z-index:2;"></i>
+                                                        <input type="text" class="search-field-input" id="searchInput-forsale" name="search-field" placeholder="Başlık, konum veya anahtar kelime..." autocomplete="off">
                                                         <i class="fas fa-times clear-search"></i>
                                                     </div>
-                                                    <ul class="suggestions-list"></ul>
+                                                    <ul class="suggestions-list" id="suggestions-forsale"></ul>
                                                 </div>
                                             </div>
-                                            
                                         </div>
                                         <div class="search-btn">
-                                            <button type="submit"><i class="fas fa-search"></i>Ara</button>
+                                            <button type="button" class="js-search-btn" data-tab="forsale"><i class="fas fa-search"></i>Ara</button>
                                         </div>
                                     </form>
                                 </div>
-                                <div class="switch_btn_one " style="margin-top: 15px;">
-                                    <button class="nav-btn nav-toggler navSidebar-button clearfix search__toggler">Gelişmiş Arama<i class="fas fa-angle-down"></i></button>
+                                <div class="switch_btn_one" style="margin-top: 15px;">
+                                    <button type="button" class="nav-btn nav-toggler clearfix search__toggler">Gelişmiş Arama <i class="fas fa-angle-down"></i></button>
                                     <div class="advanced-search">
                                         <div class="close-btn">
-                                            <a href="#" class="close-side-widget"><i class="far fa-times"></i></a>
+                                            <a href="javascript:void(0)" class="close-side-widget"><i class="far fa-times"></i></a>
+                                        </div>
+                                        <div class="adv-type-notice" id="advTypeNotice-forsale" style="padding:10px 15px;margin-bottom:15px;border-radius:6px;background:#f7f9f7;border:1px solid #e0e8e0;color:#555;font-size:13px;">
+                                            Detaylı filtreler için önce ilan tipi seçin
                                         </div>
                                         <div class="row clearfix">
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-sort">
-                                                <div class="form-group">
-                                                    <label>Sıralama</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="En Popüler">En Popüler</option>
-                                                            <option value="1">En Yüksek Puan</option>
-                                                            <option value="2">En Yeni</option>
-                                                            <option value="3">En Eski</option>
-                                                            <option value="4">Lüks</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                                <div class="form-group"><label>Sıralama</label><div class="select-box"><select id="sortDropdown-forsale" class="ignore"><option value="">Sıralama Seçin</option><option value="CreatedDate|desc">En Yeni</option><option value="CreatedDate|asc">En Eski</option><option value="Price|asc">Fiyat Artan</option><option value="Price|desc">Fiyat Azalan</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-room">
-                                                <div class="form-group">
-                                                    <label>Oda Sayısı</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="Maks. Oda">Maks. Oda</option>
-                                                            <option value="1">1 Oda</option>
-                                                            <option value="2">2 Oda</option>
-                                                            <option value="3">3 Oda</option>
-                                                            <option value="4">4+ Oda</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-room" id="roomFilterContainer-forsale" data-filter-type="room-section">
+                                                <div class="form-group"><label id="roomLabel-forsale" data-default-label="Oda Sayısı" data-commercial-label="Bölüm Sayısı">Oda Sayısı</label><div class="select-box"><select id="roomDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance">
-                                                <div class="form-group">
-                                                    <label>Konuma Uzaklık</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="Konuma Uzaklık">Konuma Uzaklık</option>
-                                                            <option value="1">1 km İçinde</option>
-                                                            <option value="2">3 km İçinde</option>
-                                                            <option value="3">5 km İçinde</option>
-                                                            <option value="4">10 km İçinde</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance" style="display:none;">
+                                                <div class="form-group"><label>Konuma Uzaklık</label><div class="select-box"><select id="distanceDropdown-forsale" class="ignore"><option value="">Mesafe Seçin</option><option value="1">1 km İçinde</option><option value="3">3 km İçinde</option><option value="5">5 km İçinde</option><option value="10">10 km İçinde</option></select></div></div>
                                             </div>
-                                            
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-agency">
-                                                <div class="form-group">
-                                                    <label>Danışman / Ofis</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="Tüm Danışmanlar">Tüm Danışmanlar</option>
-                                                            <option value="1">Fibi Zeytinburnu</option>
-                                                            <option value="2">Fibi Bakırköy</option>
-                                                            <option value="3">Fibi Bahçelievler</option>
-                                                            <option value="4">Fibi Küçükçekmece</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-agency" id="agencyFilterContainer-forsale">
+                                                <div class="form-group"><label>Danışman / Ofis</label><div class="select-box"><select id="agentDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-bath">
-                                                <div class="form-group">
-                                                    <label>Banyo Sayısı</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="Maks. Banyo">Maks. Banyo</option>
-                                                            <option value="1">1 Banyo</option>
-                                                            <option value="2">2 Banyo</option>
-                                                            <option value="3">3 Banyo</option>
-                                                            <option value="4">4+ Banyo</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-bath" id="bathFilterContainer-forsale" data-filter-type="bath">
+                                                <div class="form-group"><label id="bathLabel-forsale">Banyo Sayısı</label><div class="select-box"><select id="bathDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-floor">
-                                                <div class="form-group">
-                                                    <label>Kat</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="Kat Seçiniz">Kat Seçiniz</option>
-                                                            <option value="1">1. Kat</option>
-                                                            <option value="2">2. Kat</option>
-                                                            <option value="3">3. Kat</option>
-                                                            <option value="4">4. Kat ve Üzeri</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-floor" id="floorFilterContainer-forsale">
+                                                <div class="form-group"><label>Kat</label><div class="select-box"><select id="floorDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-zoning" id="zoningFilterContainer-forsale" style="display:none;">
+                                                <div class="form-group"><label>İmar Durumu</label><div class="select-box"><select id="zoningDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
                                         </div>
                                         <div class="range-box">
                                             <div class="row clearfix">
-                                                <div class="col-lg-6 col-md-6 col-sm-12 column adv-filter-area">
-                                                    <div class="area-range">
-                                                        <h6>Metrekare Aralığı Seçiniz</h6>
-                                                        <div class="range-input">
-                                                            <div class="input"><input type="text" class="area-range" name="field-name" readonly=""></div>
-                                                        </div>
-                                                        <div class="area-range-slider"></div>
-                                                    </div>
-                                                </div>
                                                 <div class="col-lg-6 col-md-6 col-sm-12 column adv-filter-price">
-                                                    <div class="price-range">
-                                                        <h6>Fiyat Aralığı Seçiniz</h6>
-                                                        <div class="range-input">
-                                                            <div class="input"><input type="text" class="property-amount" name="field-name" readonly=""></div>
-                                                        </div>
-                                                        <div class="price-range-slider"></div>
-                                                    </div>
+                                                    <div class="price-range"><div class="range-header"><h6>Fiyat Aralığı</h6><div class="range-input"><div class="input"><input type="text" class="property-amount" id="priceDisplay-forsale" readonly placeholder="Fiyat Seçiniz"></div></div></div><div class="price-range-slider" id="priceSlider-forsale"></div></div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12 column adv-filter-area">
+                                                    <div class="area-range"><div class="range-header"><h6>Metrekare Aralığı</h6><div class="range-input"><div class="input"><input type="text" class="area-range-display" id="areaDisplay-forsale" readonly placeholder="Metrekare Seçiniz"></div></div></div><div class="area-range-slider" id="areaSlider-forsale"></div></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -270,172 +378,94 @@
                         <div class="tab" id="tab-2">
                             <div class="inner-box">
                                 <div class="top-search">
-                                    <form action="index.html" method="post" class="search-form">
+                                    <form class="search-form" onsubmit="return false;">
                                         <div class="row clearfix">
-                                            
                                             <div class="col-lg-3 col-md-6 col-sm-12 column">
                                                 <div class="form-group">
                                                     <label>İlan Tipi</label>
                                                     <div class="select-box">
-                                                        <select class="wide listing-type-select" id="listingTypeDropdown-forrent">
-                                                            <option value="" disabled selected hidden>İlan Tipi Seçiniz</option>
+                                                        <select id="listingTypeDropdown-forrent" class="ignore">
+                                                            <option value="">İlan Tipi Seçiniz</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="col-lg-3 col-md-6 col-sm-12 column">
                                                 <div class="form-group">
                                                     <label>İl</label>
                                                     <div class="select-box">
-                                                        <select class="js-city-select" id="cityDropdown-forrent" data-placeholder="İl Seçiniz">
-                                                            <option value="" disabled selected hidden>İl Seçiniz</option>
+                                                        <select id="cityDropdown-forrent" class="ignore" disabled>
+                                                            <option value="">Önce ilan tipi seçin</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="col-lg-3 col-md-6 col-sm-12 column">
                                                 <div class="form-group">
                                                     <label>İlçe</label>
                                                     <div class="select-box">
-                                                        <select class="js-district-select" id="districtDropdown-forrent" data-placeholder="İlçe Seçiniz" disabled>
-                                                            <option value="" disabled selected hidden>İlçe Seçiniz</option>
+                                                        <select id="districtDropdown-forrent" class="ignore" disabled>
+                                                            <option value="">Önce il seçin</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="col-lg-3 col-md-12 col-sm-12 column">
                                                 <div class="form-group" style="position:relative;">
                                                     <label>Mülk Ara</label>
                                                     <div class="field-input" style="position:relative;">
-                                                        <i class="fas fa-search"></i>
-                                                        <input type="text" class="search-field-input" name="search-field" placeholder="Mülk, Konum veya Bölge Ara..." autocomplete="off">
+                                                        <i class="fas fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#999;z-index:2;"></i>
+                                                        <input type="text" class="search-field-input" id="searchInput-forrent" name="search-field" placeholder="Başlık, konum veya anahtar kelime..." autocomplete="off">
                                                         <i class="fas fa-times clear-search"></i>
                                                     </div>
-                                                    <ul class="suggestions-list"></ul>
+                                                    <ul class="suggestions-list" id="suggestions-forrent"></ul>
                                                 </div>
                                             </div>
-                                            
                                         </div>
                                         <div class="search-btn">
-                                            <button type="submit"><i class="fas fa-search"></i>Ara</button>
+                                            <button type="button" class="js-search-btn" data-tab="forrent"><i class="fas fa-search"></i>Ara</button>
                                         </div>
                                     </form>
                                 </div>
-                                <div class="switch_btn_one " style="margin-top: 15px;">
-                                    <button class="nav-btn nav-toggler navSidebar-button clearfix search__toggler">Gelişmiş Arama<i class="fas fa-angle-down"></i></button>
+                                <div class="switch_btn_one" style="margin-top: 15px;">
+                                    <button type="button" class="nav-btn nav-toggler clearfix search__toggler">Gelişmiş Arama <i class="fas fa-angle-down"></i></button>
                                     <div class="advanced-search">
                                         <div class="close-btn">
-                                            <a href="#" class="close-side-widget"><i class="far fa-times"></i></a>
+                                            <a href="javascript:void(0)" class="close-side-widget"><i class="far fa-times"></i></a>
+                                        </div>
+                                        <div class="adv-type-notice" id="advTypeNotice-forrent" style="padding:10px 15px;margin-bottom:15px;border-radius:6px;background:#f7f9f7;border:1px solid #e0e8e0;color:#555;font-size:13px;">
+                                            Detaylı filtreler için önce ilan tipi seçin
                                         </div>
                                         <div class="row clearfix">
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-sort">
-                                                <div class="form-group">
-                                                    <label>Sıralama</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="En Popüler">En Popüler</option>
-                                                            <option value="1">En Yüksek Puan</option>
-                                                            <option value="2">En Yeni</option>
-                                                            <option value="3">En Eski</option>
-                                                            <option value="4">Lüks</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                                <div class="form-group"><label>Sıralama</label><div class="select-box"><select id="sortDropdown-forrent" class="ignore"><option value="">Sıralama Seçin</option><option value="CreatedDate|desc">En Yeni</option><option value="CreatedDate|asc">En Eski</option><option value="Price|asc">Fiyat Artan</option><option value="Price|desc">Fiyat Azalan</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-room">
-                                                <div class="form-group">
-                                                    <label>Oda Sayısı</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="Maks. Oda">Maks. Oda</option>
-                                                            <option value="1">1 Oda</option>
-                                                            <option value="2">2 Oda</option>
-                                                            <option value="3">3 Oda</option>
-                                                            <option value="4">4+ Oda</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-room" id="roomFilterContainer-forrent" data-filter-type="room-section">
+                                                <div class="form-group"><label id="roomLabel-forrent" data-default-label="Oda Sayısı" data-commercial-label="Bölüm Sayısı">Oda Sayısı</label><div class="select-box"><select id="roomDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance">
-                                                <div class="form-group">
-                                                    <label>Konuma Uzaklık</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="Konuma Uzaklık">Konuma Uzaklık</option>
-                                                            <option value="1">1 km İçinde</option>
-                                                            <option value="2">3 km İçinde</option>
-                                                            <option value="3">5 km İçinde</option>
-                                                            <option value="4">10 km İçinde</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance" style="display:none;">
+                                                <div class="form-group"><label>Konuma Uzaklık</label><div class="select-box"><select id="distanceDropdown-forrent" class="ignore"><option value="">Mesafe Seçin</option><option value="1">1 km İçinde</option><option value="3">3 km İçinde</option><option value="5">5 km İçinde</option><option value="10">10 km İçinde</option></select></div></div>
                                             </div>
-                                            
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-agency">
-                                                <div class="form-group">
-                                                    <label>Danışman / Ofis</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="Tüm Danışmanlar">Tüm Danışmanlar</option>
-                                                            <option value="1">Fibi Zeytinburnu</option>
-                                                            <option value="2">Fibi Bakırköy</option>
-                                                            <option value="3">Fibi Bahçelievler</option>
-                                                            <option value="4">Fibi Küçükçekmece</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-agency" id="agencyFilterContainer-forrent">
+                                                <div class="form-group"><label>Danışman / Ofis</label><div class="select-box"><select id="agentDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-bath">
-                                                <div class="form-group">
-                                                    <label>Banyo Sayısı</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="Maks. Banyo">Maks. Banyo</option>
-                                                            <option value="1">1 Banyo</option>
-                                                            <option value="2">2 Banyo</option>
-                                                            <option value="3">3 Banyo</option>
-                                                            <option value="4">4+ Banyo</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-bath" id="bathFilterContainer-forrent" data-filter-type="bath">
+                                                <div class="form-group"><label id="bathLabel-forrent">Banyo Sayısı</label><div class="select-box"><select id="bathDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-floor">
-                                                <div class="form-group">
-                                                    <label>Kat</label>
-                                                    <div class="select-box">
-                                                        <select class="wide">
-                                                            <option data-display="Kat Seçiniz">Kat Seçiniz</option>
-                                                            <option value="1">1. Kat</option>
-                                                            <option value="2">2. Kat</option>
-                                                            <option value="3">3. Kat</option>
-                                                            <option value="4">4. Kat ve Üzeri</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-floor" id="floorFilterContainer-forrent">
+                                                <div class="form-group"><label>Kat</label><div class="select-box"><select id="floorDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-zoning" id="zoningFilterContainer-forrent" style="display:none;">
+                                                <div class="form-group"><label>İmar Durumu</label><div class="select-box"><select id="zoningDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
                                         </div>
                                         <div class="range-box">
                                             <div class="row clearfix">
-                                                <div class="col-lg-6 col-md-6 col-sm-12 column adv-filter-area">
-                                                    <div class="area-range">
-                                                        <h6>Metrekare Aralığı Seçiniz</h6>
-                                                        <div class="range-input">
-                                                            <div class="input"><input type="text" class="area-range" name="field-name" readonly=""></div>
-                                                        </div>
-                                                        <div class="area-range-slider"></div>
-                                                    </div>
-                                                </div>
                                                 <div class="col-lg-6 col-md-6 col-sm-12 column adv-filter-price">
-                                                    <div class="price-range">
-                                                        <h6>Fiyat Aralığı Seçiniz</h6>
-                                                        <div class="range-input">
-                                                            <div class="input"><input type="text" class="property-amount" name="field-name" readonly=""></div>
-                                                        </div>
-                                                        <div class="price-range-slider"></div>
-                                                    </div>
+                                                    <div class="price-range"><div class="range-header"><h6>Fiyat Aralığı</h6><div class="range-input"><div class="input"><input type="text" class="property-amount" id="priceDisplay-forrent" readonly placeholder="Fiyat Seçiniz"></div></div></div><div class="price-range-slider" id="priceSlider-forrent"></div></div>
+                                                </div>
+                                                <div class="col-lg-6 col-md-6 col-sm-12 column adv-filter-area">
+                                                    <div class="area-range"><div class="range-header"><h6>Metrekare Aralığı</h6><div class="range-input"><div class="input"><input type="text" class="area-range-display" id="areaDisplay-forrent" readonly placeholder="Metrekare Seçiniz"></div></div></div><div class="area-range-slider" id="areaSlider-forrent"></div></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -450,264 +480,4 @@
         </div>
     </div>
 </section>
-
-<script>
-    (function () {
-        var API_BASE = '@ViewBag.ApiUrl';
-        var FORSALE_USAGE = 1;
-        var FORRENT_USAGE = 2;
-
-        function fetchOptions(url) {
-            return fetch(url).then(function(res) {
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                return res.json();
-            }).catch(function(err) {
-                console.error('Fetch error:', err);
-                return [];
-            });
-        }
-
-        function populateSelect(selectEl, data, placeholder) {
-            if (!selectEl) return;
-            selectEl.innerHTML = '';
-            var opt0 = document.createElement('option');
-            opt0.value = '';
-            opt0.textContent = placeholder;
-            selectEl.appendChild(opt0);
-
-            data.forEach(function (item) {
-                var opt = document.createElement('option');
-                opt.value = item.id;
-                opt.textContent = item.name || item.text;
-                selectEl.appendChild(opt);
-            });
-        }
-
-        function initSelect2(selectId, placeholderText) {
-            if (window.jQuery && window.jQuery.fn.select2) {
-                var $el = window.jQuery('#' + selectId);
-                var $ns = $el.next('.nice-select');
-                if ($ns.length) $ns.remove();
-                $el.css('display', '');
-                $el.removeClass('nice-select wide');
-
-                if ($el.hasClass('select2-hidden-accessible')) {
-                    $el.select2('destroy');
-                }
-
-                $el.select2({
-                    placeholder: placeholderText,
-                    allowClear: true,
-                    width: '100%'
-                });
-            }
-        }
-
-        function updateAdvancedFilters(tabSelector, listingTypeId) {
-            var $tab = window.jQuery(tabSelector);
-            if (!listingTypeId) {
-                $tab.find('.adv-filter-room, .adv-filter-bath, .adv-filter-floor, .adv-filter-price, .adv-filter-area, .adv-filter-distance').show();
-                return;
-            }
-            fetchOptions(API_BASE + 'listingtypes/advanced-filters?listingTypeId=' + listingTypeId)
-                .then(function(filters) {
-                    if (filters.showRooms) $tab.find('.adv-filter-room').show(); else $tab.find('.adv-filter-room').hide();
-                    if (filters.showBath) $tab.find('.adv-filter-bath').show(); else $tab.find('.adv-filter-bath').hide();
-                    if (filters.showFloor) $tab.find('.adv-filter-floor').show(); else $tab.find('.adv-filter-floor').hide();
-                    if (filters.showPrice) $tab.find('.adv-filter-price').show(); else $tab.find('.adv-filter-price').hide();
-                    if (filters.showArea) $tab.find('.adv-filter-area').show(); else $tab.find('.adv-filter-area').hide();
-                    if (filters.showDistance) $tab.find('.adv-filter-distance').show(); else $tab.find('.adv-filter-distance').hide();
-                });
-        }
-
-        function initLocationCascading(usageType, tabSelector, listDropdownId, cityDropdownId, districtDropdownId) {
-            try {
-                initSelect2(cityDropdownId, 'İl Seçiniz');
-                initSelect2(districtDropdownId, 'İlçe Seçiniz');
-
-                fetchOptions(API_BASE + 'listingtypes?usageType=' + usageType)
-                    .then(function(data) {
-                        var selectEl = document.getElementById(listDropdownId);
-                        populateSelect(selectEl, data, 'İlan Tipi Seçiniz');
-                        initSelect2(listDropdownId, 'İlan Tipi Seçiniz');
-                    });
-
-                window.jQuery(document).off('change', '#' + listDropdownId).on('change', '#' + listDropdownId, function() {
-                    var listingTypeId = window.jQuery(this).val();
-                    var cityEl = document.getElementById(cityDropdownId);
-                    var districtEl = document.getElementById(districtDropdownId);
-                    
-                    if (!listingTypeId) {
-                        populateSelect(cityEl, [], 'İl Seçiniz');
-                        window.jQuery(cityEl).prop('disabled', true);
-                        initSelect2(cityDropdownId, 'İl Seçiniz');
-                        
-                        populateSelect(districtEl, [], 'İlçe Seçiniz');
-                        window.jQuery(districtEl).prop('disabled', true);
-                        initSelect2(districtDropdownId, 'İlçe Seçiniz');
-                        
-                        updateAdvancedFilters(tabSelector, null);
-                        return;
-                    }
-                    
-                    window.jQuery(cityEl).prop('disabled', false);
-                    fetchOptions(API_BASE + 'Location/available-cities?usageType=' + usageType + '&listingTypeId=' + listingTypeId)
-                        .then(function(cities) {
-                            populateSelect(cityEl, cities, 'İl Seçiniz');
-                            initSelect2(cityDropdownId, 'İl Seçiniz');
-                            
-                            populateSelect(districtEl, [], 'İlçe Seçiniz');
-                            window.jQuery(districtEl).prop('disabled', true);
-                            initSelect2(districtDropdownId, 'İlçe Seçiniz');
-                        });
-                    
-                    updateAdvancedFilters(tabSelector, listingTypeId);
-                });
-
-                window.jQuery(document).off('change', '#' + cityDropdownId).on('change', '#' + cityDropdownId, function() {
-                    var cityId = window.jQuery(this).val();
-                    var listingTypeId = window.jQuery('#' + listDropdownId).val();
-                    var $dist = window.jQuery('#' + districtDropdownId);
-                    
-                    if (!cityId || !listingTypeId) {
-                        populateSelect(document.getElementById(districtDropdownId), [], 'İlçe Seçiniz');
-                        $dist.prop('disabled', true);
-                        initSelect2(districtDropdownId, 'İlçe Seçiniz');
-                        return;
-                    }
-
-                    fetchOptions(API_BASE + 'Location/available-districts?cityId=' + cityId + '&usageType=' + usageType + '&listingTypeId=' + listingTypeId)
-                        .then(function(districts) {
-                            populateSelect(document.getElementById(districtDropdownId), districts, 'İlçe Seçiniz');
-                            $dist.prop('disabled', false);
-                            initSelect2(districtDropdownId, 'İlçe Seçiniz');
-                        });
-                });
-            } catch (err) {
-                console.error('Cascading init error:', err);
-            }
-        }
-        
-        function debounce(func, wait) {
-            var timeout;
-            return function() {
-                var context = this, args = arguments;
-                clearTimeout(timeout);
-                timeout = setTimeout(function() {
-                    func.apply(context, args);
-                }, wait);
-            };
-        }
-
-        function initPropertySearch(usageType, listDropdownId, searchInputClass, suggestionsListClass) {
-            try {
-                // Clear Icon Logic
-                window.jQuery(document).off('input', '.' + searchInputClass).on('input', '.' + searchInputClass, function() {
-                    var $input = window.jQuery(this);
-                    var $clearBtn = $input.siblings('.clear-search');
-                    if ($input.val().length > 0) {
-                        $clearBtn.show();
-                    } else {
-                        $clearBtn.hide();
-                    }
-                });
-
-                window.jQuery(document).off('click', '.clear-search').on('click', '.clear-search', function() {
-                    var $input = window.jQuery(this).siblings('.' + searchInputClass);
-                    var $list = window.jQuery(this).siblings('.' + suggestionsListClass);
-                    $input.val('').trigger('input');
-                    $list.hide();
-                    window.jQuery(this).hide();
-                });
-
-                // AJAX Debounced Search
-                var handleSearch = debounce(function(e) {
-                    var $input = window.jQuery(e.target);
-                    if (!$input.closest('.tab').hasClass('active-tab')) return;
-
-                    var term = $input.val();
-                    var $list = $input.siblings('.' + suggestionsListClass);
-                    var $listDropdown = window.jQuery('#' + listDropdownId);
-                    var listingTypeId = $listDropdown.val() || '';
-
-                    // Construct URL, omit listingTypeId if empty to prevent 400 Bad Request
-                    var url = API_BASE + 'search/suggestions?usageType=' + usageType + '&searchTerm=' + encodeURIComponent(term);
-                    if (listingTypeId) {
-                        url += '&listingTypeId=' + listingTypeId;
-                    }
-
-                    if (term.length >= 3) {
-                        fetchOptions(url)
-                            .then(function(results) {
-                                $list.empty();
-                                if (results.length > 0) {
-                                    results.forEach(function(item) {
-                                        var li = window.jQuery('<li></li>').text(item.title);
-                                        li.on('click', function() {
-                                            $input.val(item.title);
-                                            $list.hide();
-                                            $input.siblings('.clear-search').show();
-                                        });
-                                        $list.append(li);
-                                    });
-                                    $list.show();
-                                } else {
-                                    $list.hide();
-                                }
-                            });
-                    } else {
-                        $list.hide();
-                    }
-                }, 300);
-
-                window.jQuery(document).on('keyup', '.' + searchInputClass, handleSearch);
-
-                window.jQuery(document).off('click.suggest').on('click.suggest', function(e) {
-                    if (!window.jQuery(e.target).closest('.form-group').length) {
-                        window.jQuery('.' + suggestionsListClass).hide();
-                    }
-                });
-            } catch (err) {
-                console.error('Auto-suggest init error:', err);
-            }
-        }
-
-        function loadSelect2(callback) {
-            if (window.jQuery && window.jQuery.fn.select2) {
-                callback();
-                return;
-            }
-            var head = document.getElementsByTagName('head')[0];
-            if (!document.getElementById('select2-css')) {
-                var link = document.createElement('link');
-                link.id = 'select2-css';
-                link.rel = 'stylesheet';
-                link.href = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
-                head.appendChild(link);
-            }
-            var script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
-            script.onload = callback;
-            document.body.appendChild(script);
-        }
-
-        function init() {
-            // Tab 1: Satılık
-            loadSelect2(function() { 
-                initLocationCascading(FORSALE_USAGE, '#tab-1', 'listingTypeDropdown-forsale', 'cityDropdown-forsale', 'districtDropdown-forsale');
-                initPropertySearch(FORSALE_USAGE, 'listingTypeDropdown-forsale', 'search-field-input', 'suggestions-list');
-
-                // Tab 2: Kiralık
-                initLocationCascading(FORRENT_USAGE, '#tab-2', 'listingTypeDropdown-forrent', 'cityDropdown-forrent', 'districtDropdown-forrent');
-                initPropertySearch(FORRENT_USAGE, 'listingTypeDropdown-forrent', 'search-field-input', 'suggestions-list'); 
-            });
-        }
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
-    })();
-</script>
 

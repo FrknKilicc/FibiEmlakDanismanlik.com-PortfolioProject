@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,6 +19,5 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.AgentResult
         public string AgentImgUrl { get; set; }
         public string Mail { get; set; }
         public string AgentPhoneNumber { get; set; }
-        public string Password { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Queries.AgentQueries;
+using FibiEmlakDanismanlik.Application.Features.Queries.AgentQueries;
 using FibiEmlakDanismanlik.Application.Features.Results.AgentResult;
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
@@ -32,7 +32,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers
                 AgentPhoneNumber = x.AgentPhoneNumber,
                 AgentTitle = x.AgentTitle,
                 Mail=x.Mail, 
-                Password=x.Password,
             }).ToList();
         }
     }

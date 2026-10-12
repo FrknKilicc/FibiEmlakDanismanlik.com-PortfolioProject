@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Results.ListingTypeResults
 {
-    public record ListingTypeResult(int Id, string Name);
+    public record ListingTypeResult(int Id, string Name, int UsageType)
+    {
+        public ListingTypeResult(int id, string name) : this(id, name, 0) { }
+    }
 }
 

@@ -15,14 +15,7 @@
         })
     }
 
-    if ($(".switch_btn_one").length) {
-	    $(".search__toggler").on("click", function(){
-	    	$(".search-field .switch_btn_one").addClass("active");
-	    })     
-	    $(".switch_btn_one .close-btn").on("click", function(){
-	    	$(".search-field .switch_btn_one").removeClass("active");
-	    }) 
-	}
+    // Advanced search toggle is handled by the search component in Default.cshtml
 	
 	//Update Header Style and Scroll to Top
 	function headerStyle() {
@@ -477,34 +470,44 @@
 	}
 	
 	enableMasonry();
-	//Price Range Slider
-	if($('.price-range-slider').length){
+	//Price Range Slider — Only init for NON-search-module sliders (listing pages etc.)
+	if($('.price-range-slider').length && !$('#priceSlider-forsale').length){
 		$( ".price-range-slider" ).slider({
 			range: true,
 			min: 0,
-			max: 10000,
-			values: [ 1000, 5000 ],
+			max: 50000000,
+			step: 50000,
+			values: [ 500000, 5000000 ],
 			slide: function( event, ui ) {
-			$( "input.property-amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+				var $slider = $(this);
+				$slider.closest('.price-range').find('input.property-amount').val( ui.values[0].toLocaleString('tr-TR') + ' ₺ - ' + ui.values[1].toLocaleString('tr-TR') + ' ₺' );
 			}
 		});
 		
-		$( "input.property-amount" ).val( $( ".price-range-slider" ).slider( "values", 0 ) + " - $" + $( ".price-range-slider" ).slider( "values", 1 ) );	
+		$('.price-range-slider').each(function(){
+			var $s = $(this);
+			$s.closest('.price-range').find('input.property-amount').val( $s.slider('values', 0).toLocaleString('tr-TR') + ' ₺ - ' + $s.slider('values', 1).toLocaleString('tr-TR') + ' ₺' );
+		});
 	}
 
-	//Area Range Slider
-	if($('.area-range-slider').length){
+	//Area Range Slider — Only init for NON-search-module sliders
+	if($('.area-range-slider').length && !$('#areaSlider-forsale').length){
 		$( ".area-range-slider" ).slider({
 			range: true,
 			min: 0,
-			max: 7000,
-			values: [ 700, 4000 ],
+			max: 5000,
+			step: 10,
+			values: [ 50, 500 ],
 			slide: function( event, ui ) {
-			$( "input.area-range" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+				var $slider = $(this);
+				$slider.closest('.area-range').find('input.area-range').val( ui.values[0] + ' m² - ' + ui.values[1] + ' m²' );
 			}
 		});
 		
-		$( "input.area-range" ).val( $( ".area-range-slider" ).slider( "values", 0 ) + " - sq ft" + $( ".area-range-slider" ).slider( "values", 1 ) );	
+		$('.area-range-slider').each(function(){
+			var $s = $(this);
+			$s.closest('.area-range').find('input.area-range').val( $s.slider('values', 0) + ' m² - ' + $s.slider('values', 1) + ' m²' );
+		});
 	}
 
     // Progress Bar

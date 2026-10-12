@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Queries.AgentQueries;
+using FibiEmlakDanismanlik.Application.Features.Queries.AgentQueries;
 using FibiEmlakDanismanlik.Application.Features.Results.AgentResult;
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
@@ -31,8 +31,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers
                 AgentName = value.AgentName,
                 AgentPhoneNumber = value.AgentPhoneNumber,
                 AgentTitle = value.AgentTitle,
-                Mail=value.Mail,
-                Password = value.Password
+                Mail=value.Mail
             };
         }
     }

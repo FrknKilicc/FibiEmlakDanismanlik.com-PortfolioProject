@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -21,30 +21,38 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public class FibiEmlakDanismanlikContextFactory
         : IDesignTimeDbContextFactory<FibiEmlakDanismanlikContext>
         {
+            private const string WebApiUserSecretsId = "c14f0041-5e6d-4166-a771-03807aefed81";
+
             public FibiEmlakDanismanlikContext CreateDbContext(string[] args)
             {
+                // 1. Ortam değişkeni ConnectionStrings__DefaultConnection
+                var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 
-                var solutionRoot = FindSolutionRoot();
-                var webApiAppSettings = Path.Combine(solutionRoot, "Presentation", "FibiEmlakDanismanlik.WebApi", "appsettings.json");
+                // 2. WebApi'nin UserSecretsId'si ile User Secrets
+                if (string.IsNullOrWhiteSpace(connectionString))
+                {
+                    var secretsConfig = new ConfigurationBuilder()
+                        .AddUserSecrets(WebApiUserSecretsId)
+                        .Build();
+                    connectionString = secretsConfig.GetConnectionString("DefaultConnection");
+                }
 
-                if (!File.Exists(webApiAppSettings))
-                    throw new FileNotFoundException($"WebApi appsettings.json bulunamadı: {webApiAppSettings}");
-
-                var json = File.ReadAllText(webApiAppSettings);
-                using var doc = JsonDocument.Parse(json);
-
-                var root = doc.RootElement;
-
-                if (!root.TryGetProperty("ConnectionStrings", out var cs))
-                    throw new InvalidOperationException("WebApi appsettings.json içinde 'ConnectionStrings' bulunamadı.");
-
-                if (!cs.TryGetProperty("DefaultConnection", out var dc))
-                    throw new InvalidOperationException("WebApi appsettings.json içinde 'ConnectionStrings:DefaultConnection' bulunamadı.");
-
-                var connectionString = dc.GetString();
+                // 3. appsettings.json
+                if (string.IsNullOrWhiteSpace(connectionString))
+                {
+                    var solutionRoot = FindSolutionRoot();
+                    var webApiAppSettings = Path.Combine(solutionRoot, "Presentation", "FibiEmlakDanismanlik.WebApi", "appsettings.json");
+                    if (File.Exists(webApiAppSettings))
+                    {
+                        var jsonConfig = new ConfigurationBuilder()
+                            .AddJsonFile(webApiAppSettings, optional: true)
+                            .Build();
+                        connectionString = jsonConfig.GetConnectionString("DefaultConnection");
+                    }
+                }
 
                 if (string.IsNullOrWhiteSpace(connectionString))
-                    throw new InvalidOperationException("'DefaultConnection' boş.");
+                    throw new InvalidOperationException("Bağlantı dizesi bulunamadı: user-secrets veya ConnectionStrings__DefaultConnection ayarlayın.");
 
                 var optionsBuilder = new DbContextOptionsBuilder<FibiEmlakDanismanlikContext>();
                 optionsBuilder.UseSqlServer(connectionString);

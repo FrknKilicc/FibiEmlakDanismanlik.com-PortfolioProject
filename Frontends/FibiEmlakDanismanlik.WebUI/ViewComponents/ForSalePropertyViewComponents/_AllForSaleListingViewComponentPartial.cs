@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Dto.PropertyDtos;
+using FibiEmlakDanismanlik.Dto.PropertyDtos;
 using FibiEmlakDanismanlik.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -67,6 +67,15 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             decimal? maxPrice = TryDecimal("maxPrice");
             string? numberOfRoom = TryStr("numberOfRoom");
 
+            double? minArea = TryDouble("minArea");
+            double? maxArea = TryDouble("maxArea");
+            int? numberOfBathRoom = TryInt("numberOfBathRoom");
+            int? floor = TryInt("floor");
+            int? numberOfSection = TryInt("numberOfSection");
+            int? agentId = TryInt("agentId");
+            string? zoningStatus = TryStr("zoningStatus");
+            string? searchTerm = TryStr("searchTerm");
+
             var sortBy = TryStr("sortBy") ?? "CreatedDate";
             var sortDir = TryStr("sortDir") ?? "desc";
             var page = ReadIntQuery(Request, "page", 1, 1, int.MaxValue);
@@ -104,6 +113,14 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 MinPrice = minPrice,
                 MaxPrice = maxPrice,
                 NumberOfRoom = numberOfRoom,
+                MinArea = minArea,
+                MaxArea = maxArea,
+                NumberOfBathRoom = numberOfBathRoom,
+                Floor = floor,
+                NumberOfSection = numberOfSection,
+                AgentId = agentId,
+                ZoningStatus = zoningStatus,
+                SearchTerm = searchTerm,
                 SortBy = sortBy,
                 SortDir = sortDir,
                 Page = page,
@@ -163,6 +180,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
 
             int? TryInt(string key) => int.TryParse(HttpContext.Request.Query[key], out var x) ? x : null;
             decimal? TryDecimal(string key) => decimal.TryParse(HttpContext.Request.Query[key], out var x) ? x : null;
+            double? TryDouble(string key) => double.TryParse(HttpContext.Request.Query[key], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var x) ? x : null;
             string? TryStr(string key)
             {
                 var v = HttpContext.Request.Query[key].ToString();
