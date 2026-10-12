@@ -1,11 +1,14 @@
 # Antigravity models to try, in order (one slug per line).
 # Get the exact slugs with: agy models
-# When a model's quota is used up, the next one is tried.
+# When a model fails (quota, permission, incomplete, error), the next one is tried.
 # Delete this file to try every model agy lists, in its order.
 gemini-3.1-pro-high
 claude-opus-4-6-thinking
 claude-sonnet-4-6
+gemini-3.1-pro-low
 gemini-3.8-flash-high
+gemini-3.8-flash-medium
 gemini-3.7-flash-high
+gemini-3.7-flash-medium
 gemini-3.6-flash-high
-gpt-oss-120b-medium
+gemini-3.6-flash-medium

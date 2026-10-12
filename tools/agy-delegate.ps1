@@ -1,12 +1,20 @@
 # Sends a task to the Antigravity CLI (agy) in headless mode. Tries each model
-# in order; when a model's quota is used up it moves on to the next one.
+# in order. When a model fails for any reason except a missing agy / sign-in
+# (quota, permission, incomplete run, other error), the same task is sent to
+# the next model in the list.
 #
 # Exit codes:
 #   0  a model finished the task (status SUCCESS)
-#   10 every model's quota is used up -> Claude does the task itself
+#   10 every model failed and all failures were quota errors -> Claude does the task itself
 #   3  agy is not installed or not signed in -> Claude does the task itself
-#   4  agy is waiting for a permission it does not have -> Claude does the task itself
-#   1  any other agy error -> Claude reads the message and decides
+#   When every model failed but not all for quota, the code of the last
+#   non-quota failure is returned (Claude reports to the user, does not code):
+#   4  agy was waiting for a permission it does not have (AGY_NEEDS_PERMISSION)
+#   5  agy returned before its work finished (AGY_INCOMPLETE)
+#   1  any other agy error (AGY_ERROR)
+#
+# A failed model may leave partial file changes behind; the next model starts
+# from that working tree. Check `git diff` after every run.
 #
 # On success the first lines are:
 #   AGY_SUCCESS
@@ -76,6 +84,7 @@ if ($modelOrder.Count -eq 0) {
 }
 
 $exhausted = @()
+$lastFailureCode = 0
 foreach ($model in $modelOrder) {
     $run = Invoke-Agy $model $Conversation
 
@@ -83,13 +92,15 @@ foreach ($model in $modelOrder) {
     if ($run.Status -eq "SUCCESS" -and -not $run.Result.response -and $denied.Count -gt 0) {
         Write-Output "AGY_NEEDS_PERMISSION (model=$model): denied actions: $($denied -join ', ')"
         Write-Output "CONVERSATION_ID=$($run.Result.conversation_id)"
-        exit 4
+        $lastFailureCode = 4
+        continue
     }
 
     if ($run.Status -eq "SUCCESS" -and $run.Result.response -match 'Awaiting subagent') {
         Write-Output "AGY_INCOMPLETE (model=$model): agy returned before its subagent finished."
         Write-Output "CONVERSATION_ID=$($run.Result.conversation_id)"
-        exit 1
+        $lastFailureCode = 5
+        continue
     }
 
     if ($run.ExitCode -eq 0 -and $run.Status -eq "SUCCESS") {
@@ -119,12 +130,18 @@ foreach ($model in $modelOrder) {
 
     if ($run.Status -eq "WAITING") {
         Write-Output "AGY_NEEDS_PERMISSION (model=$model): $($run.Error)"
-        exit 4
+        $lastFailureCode = 4
+        continue
     }
 
     Write-Output "AGY_ERROR (model=$model, status=$($run.Status), exit=$($run.ExitCode)): $($run.Error)"
     if ($run.Result.response) { Write-Output $run.Result.response }
-    exit 1
+    $lastFailureCode = 1
+}
+
+if ($lastFailureCode -ne 0) {
+    Write-Output "AGY_ALL_MODELS_FAILED (last failure code $lastFailureCode); quota exhausted: $($exhausted -join ',')"
+    exit $lastFailureCode
 }
 
 Write-Output "AGY_ALL_QUOTA_EXHAUSTED: $($exhausted -join ',')"

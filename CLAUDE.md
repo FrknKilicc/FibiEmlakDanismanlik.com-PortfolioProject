@@ -129,7 +129,13 @@ master          ← production (stabil)
 
 ## Antigravity'ye iş devri (önce Antigravity modelleri, hepsi bitince Claude)
 
-Kod yazma gerektiren her görevi önce Antigravity CLI'a (`agy`) yaptır. Sen yönetici ve kontrolcüsün: görevi yaz, çıktıyı kontrol et, test et, onay ver, hata varsa düzelttir. Kodu kendin ancak bütün Antigravity modellerinin kotası bittiğinde yaz.
+Küçük işler dahil (tek satırlık düzeltme bile) her kod değişikliği önce Antigravity CLI'a (`agy`) gider. Sen yönetici ve kontrolcüsün: keşfi yaparsın, görevi tam dosya yollarıyla yazarsın, build/test/git'i sen çalıştırırsın, çıktıyı kontrol edip onaylarsın, hata varsa düzelttirirsin.
+
+Kodu kendin **YALNIZCA** şu iki durumda yazarsın:
+- Listedeki tüm modeller denendi ve hepsi kota hatası verdi (çıkış kodu `10`)
+- `agy` hiç çalışmıyor: kurulu değil / oturum kapalı (çıkış kodu `3`)
+
+Kod yazma gerektirmeyen işleri (soru cevaplama, kod okuma, keşif, build/test/git) kendin yaparsın.
 
 ### Akış
 
@@ -137,11 +143,11 @@ Kod yazma gerektiren her görevi önce Antigravity CLI'a (`agy`) yaptır. Sen y�
 2. Görevi tek, net bir prompt olarak yaz: amaç, uyulacak kalıp (bu dosyadaki kurallar) ve dokunulacak dosyaların **tam yolları**. Keşfi (hangi dosyalar, nerede ne var) sen yap ve gereken bağlamı prompt'a koy; Antigravity'den dosya araması veya proje taraması isteme (headless modda arama aracı yok, dosyaları tek tek açarak 15 dakikalık zaman aşımına takılıyor). Prompt'un sonuna her zaman şunu ekle: "Terminal komutu çalıştırma; sadece dosya okuma ve yazma araçlarını kullan. Build ve testi ben çalıştıracağım." (Headless modda komutlar izinsiz reddediliyor; build/test/git işini sen yaparsın.)
 3. Çalıştır:
    `powershell -ExecutionPolicy Bypass -File tools/agy-delegate.ps1 -Task "<prompt>"`
-   Betik `tools/agy-models.txt`'teki modelleri sırayla dener; bir modelin kotası biterse sıradakine geçer.
+   Betik `tools/agy-models.txt`'teki modelleri sırayla dener. Bir model kota (`AGY_MODEL_QUOTA_EXHAUSTED`), izin (`AGY_NEEDS_PERMISSION`), yarım kalma (`AGY_INCOMPLETE`) veya genel hata (`AGY_ERROR`) verirse aynı görevi listedeki **sıradaki modelle** otomatik tekrar dener. Başarısız bir model yarım dosya değişikliği bırakmış olabilir; sıradaki model o çalışma ağacından devam eder.
 4. Çıkış koduna göre:
-   - `0` → **Kontrol et** (aşağıda). Çıktıdaki `CONVERSATION_ID`'yi not al.
-   - `10` (tüm modellerin kotası bitti), `3` (agy yok / oturum kapalı), `4` (izin bekliyor) → yarım kalan değişiklikleri `git stash` ile kenara al, `feature/claude-<konu>` branch'ine geç, işi kendin yap. Kullanıcıya tek satırla "Antigravity modellerinin kotası bitti, devam ediyorum" de.
-   - `1` → hata mesajını oku; geçici bir hataysa bir kez tekrar dene, değilse kendin yap.
+   - `0` → **Kontrol et** (aşağıda). Çıktıdaki `MODEL` ve `CONVERSATION_ID`'yi not al.
+   - `10` (tüm modeller kota hatası verdi) veya `3` (agy yok / oturum kapalı) → yarım kalan değişiklikleri `git stash` ile kenara al, `feature/claude-<konu>` branch'ine geç, işi kendin yap. Kullanıcıya tek satırla "Antigravity modellerinin kotası bitti, devam ediyorum" (ya da "agy çalışmıyor, devam ediyorum") de.
+   - `4` (izin), `5` (yarım kaldı), `1` (genel hata) → betik bunları zaten sıradaki modelle denedi; bu kodlar **liste bittiği hâlde** en az bir model kota dışı bir sebeple başarısız olduğunda döner. Kodu kendin yazma: çıktıdaki hataları özetleyip kullanıcıya bildir ve nasıl devam edileceğini sor (prompt'u düzeltip yeniden göndermek gibi).
 
 ### Kontrol et, test et, onay ver
 
@@ -149,12 +155,8 @@ Kod yazma gerektiren her görevi önce Antigravity CLI'a (`agy`) yaptır. Sen y�
 2. `dotnet build` çalıştır. Test projesi varsa `dotnet test` çalıştır.
 3. Sorun varsa düzeltmeyi yine Antigravity'ye yaptır, aynı konuşmada:
    `powershell -ExecutionPolicy Bypass -File tools/agy-delegate.ps1 -Task "Şu hataları düzelt: <build/test çıktısı ve inceleme notların>" -Conversation <CONVERSATION_ID>`
-4. En fazla 3 düzeltme turu. Üçüncüden sonra hâlâ sorun varsa ya da bu sırada kod `10` gelirse kalan düzeltmeyi kendin yap.
+4. En fazla 3 düzeltme turu. Üçüncüden sonra hâlâ sorun varsa kullanıcıya bildir ve sor. Düzeltme sırasında kod `10` veya `3` gelirse kalan düzeltmeyi kendin yap.
 5. Her şey geçince commit at, `dev`'e PR aç; PR açıklamasında işi hangi modelin yaptığını ve kaç düzeltme turu gerektiğini yaz.
-
-### Ne zaman devretme
-
-Tek satırlık düzeltme, soru cevaplama, kod okuma gibi küçük işleri kendin yap: bunları devretmek, kendin yapmaktan daha pahalı.
 
 ---
 
