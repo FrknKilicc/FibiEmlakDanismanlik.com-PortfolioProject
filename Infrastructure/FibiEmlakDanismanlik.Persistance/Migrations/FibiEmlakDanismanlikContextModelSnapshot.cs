@@ -95,13 +95,17 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.Property<string>("Mail")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AgentId");
+
+                    b.HasIndex("Mail")
+                        .IsUnique();
 
                     b.ToTable("Agents");
                 });
