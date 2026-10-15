@@ -17,3 +17,10 @@
         }
     </div>
 </section>
+
+<style>
+    /* Owl kurulana kadar .owl-carousel display:none; banner yüksekliği sonradan gelip
+       altındaki bölümleri itiyordu (CLS). Kurulumdan önce yalnızca ilk slayt görünsün. */
+    .banner-style-two .banner-carousel.owl-carousel:not(.owl-loaded) { display: block; }
+    .banner-style-two .banner-carousel.owl-carousel:not(.owl-loaded) > .slide-item:not(:first-child) { display: none; }
+</style>
