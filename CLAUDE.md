@@ -179,8 +179,11 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 - [ ] PropertyLocationController → Query/Handler/Result (G5)
 - [ ] FluentValidation + MediatR ValidationBehavior pipeline (G6)
 - [ ] ListingImageSelection.ListingTypeId alanı + migration (H1)
-- [ ] Admin: 2 hatalı ilanın ilçesini düzelt (Kayseri-Ayazağa, Giresun-Ceyhan)
+- [ ] Admin: 2 hatalı ilanın ilçesini düzelt (Kayseri-Ayazağa, Giresun-Ceyhan). Bu ikisinde `DistrictId` boş; ilçe düzeltilip kaydedilince SaveChanges ID'yi kendisi doldurur
 - [ ] İlan giriş formunda il/ilçe cascade dropdown
+- [ ] Admin: ana sayfa bölüm görselleri için dosya yükleme ucu (`HomeSectionImages` şu an yalnızca URL alıyor). Karar: dosyalar WebApi `wwwroot/uploads/home-sections` altına yazılsın ve statik sunulsun; depolama bir arayüzün arkasında dursun, ileride blob'a taşınabilsin. Uzantı/MIME/boyut kontrolü yapılsın, dosya adı sunucuda üretilsin, uç `[Authorize]` olsun
+- [ ] Mahalle için `NeighborhoodId`: il/ilçede olduğu gibi (ILocatedListing + SaveChanges çözümlemesi + migration backfill) ilanlara eklensin; filtre şu an mahalleyi metinle eşleştiriyor
+- [ ] `tools/sql/seed-popular-places-demo.sql` doğrudan SQL ile eklediği için yeni demo ilanlarda `CityId`/`DistrictId` boş kalıyor; betiğin sonuna ListingLocationIds migration'ındaki backfill UPDATE'leri eklensin
 - [x] LandCategories tablosunu doldur (2026-10-12, migration ListingIdRangesAndLandCategories)
 - [ ] Teknik borç: kiralık listeleme bellekten DB sorgusuna taşı (T2)
 - [ ] Teknik borç: facet sayaçları null statüyü sayıyor (T3)
@@ -193,7 +196,7 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 
 ## Bilinen Teknik Borçlar
 
-- `PropertyRepository.cs` 3002 satır, DRY ihlali (T1)
+- `PropertyRepository.cs` 3002 satır, DRY ihlali (T1). Dosya UTF-8 değil, ISO-8859/Windows-1254 kodlamalı: Antigravity bu dosyada takılabiliyor, düzenlerken kodlama korunmalı (ileride UTF-8'e çevrilmeli)
 - 30 ayrı `PropImgUrl1..30` kolonu — ayrı tablo olmalı (T5)
 - Katman ihlali: WebUI → Application direkt referans (T6)
 - `Persistance` yazım hatası klasör adında (T7)
