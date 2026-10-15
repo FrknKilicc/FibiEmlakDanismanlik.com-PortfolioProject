@@ -7,25 +7,12 @@
     var trCulture = CultureInfo.GetCultureInfo("tr-TR");
 
     <style>
-        .latest-listings-section .latest-listings-wide {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 0 15px;
-            position: relative;
-        }
-        .latest-listings-section .latest-listings-head {
-            position: relative;
-        }
-        .latest-listings-section .latest-listings-nav {
-            position: absolute;
-            top: auto;
-            bottom: 50px;
-            right: 0;
-        }
-        @@media (max-width: 991px) {
-            .latest-listings-section .latest-listings-nav {
-                display: none;
-            }
+        .latest-listings-section .latest-listings-carousel .owl-nav { display: block; }
+        .latest-listings-section .latest-listings-carousel .owl-nav.disabled { display: none; }
+        @@media (max-width: 767px) {
+            .latest-listings-section .latest-listings-carousel .owl-nav { top: -88px; }
+            .latest-listings-section .latest-listings-carousel .owl-nav button { width: 42px; height: 42px; line-height: 42px; font-size: 18px; }
+            .latest-listings-section .sec-title { padding-right: 100px; }
         }
         .latest-listings-section .owl-stage {
             display: flex;
@@ -135,18 +122,11 @@
 
     <section class="feature-style-two sec-pad latest-listings-section">
         <div class="auto-container">
-            <div class="latest-listings-head">
-                <div class="sec-title">
-                    <h5>İlanlar</h5>
-                    <h2>Son eklenenler</h2>
-                </div>
-                <div class="nav-style-one latest-listings-nav-wrap">
-                    <div class="owl-nav latest-listings-nav"></div>
-                </div>
+            <div class="sec-title">
+                <h5>İlanlar</h5>
+                <h2>Son eklenenler</h2>
             </div>
-        </div>
-        <div class="latest-listings-wide">
-            <div class="latest-listings-carousel owl-carousel owl-theme owl-dots-none">
+            <div class="latest-listings-carousel owl-carousel owl-theme owl-dots-none nav-style-one">
                 @foreach (var item in Model)
                 {
                     var propImgUrl = !string.IsNullOrWhiteSpace(item.PropImgUrl1) ? item.PropImgUrl1 : "/Realshed/assets/images/background/Section1.jpeg";

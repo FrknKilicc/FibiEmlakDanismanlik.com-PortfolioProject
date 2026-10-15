@@ -418,6 +418,15 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                         ImageUrl = "/Realshed/assets/images/resource/popular-place-2.jpg",
                         AltText = "Fibi Emlak Danışmanlık ofis içi",
                         IsActive = true
+                    },
+                    new HomeSectionImage
+                    {
+                        HomeSectionImageId = 3,
+                        SectionKey = HomeSectionImageConstants.SectionTestimonials,
+                        Slot = 1,
+                        ImageUrl = "/Realshed/assets/images/background/testimonial-home.jpg",
+                        AltText = "Yeni evinin önünde mutlu aile",
+                        IsActive = true
                     }
                 );
             });
