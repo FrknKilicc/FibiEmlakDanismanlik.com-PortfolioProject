@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,6 +26,8 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
         // Adres Bilgileri 
         public string? City { get; set; }
         public string? District { get; set; }
+        public int? CityId { get; set; }
+        public int? DistrictId { get; set; }
         public string? Neighborhood { get; set; }
         public string? AddressDesc { get; set; }
 

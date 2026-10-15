@@ -1,5 +1,6 @@
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Results.PopularPlaceResults;
+using FibiEmlakDanismanlik.Application.Helpers;
 using FibiEmlakDanismanlik.Application.Interfaces.PopularPlaceInterfaces;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -31,10 +32,10 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PopularPlaceRepositories
             var activeStatuses = PropertyStatuses.ActiveSet;
             var ct = cancellationToken;
 
-            // Her tablodan (City, District, Count) çiftlerini SQL'de grupla
-            List<(string City, string District, int Count)> housing;
-            List<(string City, string District, int Count)> commercial;
-            List<(string City, string District, int Count)> land;
+            // Her tablodan (CityId, DistrictId, City, District, Count) çiftlerini SQL'de grupla
+            List<(int? CityId, int? DistrictId, string City, string District, int Count)> housing;
+            List<(int? CityId, int? DistrictId, string City, string District, int Count)> commercial;
+            List<(int? CityId, int? DistrictId, string City, string District, int Count)> land;
 
             if (usageType == 1)
             {
@@ -42,28 +43,28 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PopularPlaceRepositories
                     .AsNoTracking()
                     .Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
                                 && x.City != null && x.City.Trim() != "")
-                    .GroupBy(x => new { City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
-                    .Select(g => new { g.Key.City, g.Key.District, Count = g.Count() })
+                    .GroupBy(x => new { x.CityId, x.DistrictId, City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
+                    .Select(g => new { g.Key.CityId, g.Key.DistrictId, g.Key.City, g.Key.District, Count = g.Count() })
                     .ToListAsync(ct);
-                housing = rawH.Select(x => (x.City, x.District, x.Count)).ToList();
+                housing = rawH.Select(x => (x.CityId, x.DistrictId, x.City, x.District, x.Count)).ToList();
 
                 var rawC = await _context.forSaleCommercialPropertyListings
                     .AsNoTracking()
                     .Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
                                 && x.City != null && x.City.Trim() != "")
-                    .GroupBy(x => new { City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
-                    .Select(g => new { g.Key.City, g.Key.District, Count = g.Count() })
+                    .GroupBy(x => new { x.CityId, x.DistrictId, City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
+                    .Select(g => new { g.Key.CityId, g.Key.DistrictId, g.Key.City, g.Key.District, Count = g.Count() })
                     .ToListAsync(ct);
-                commercial = rawC.Select(x => (x.City, x.District, x.Count)).ToList();
+                commercial = rawC.Select(x => (x.CityId, x.DistrictId, x.City, x.District, x.Count)).ToList();
 
                 var rawL = await _context.forSaleLandListings
                     .AsNoTracking()
                     .Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
                                 && x.City != null && x.City.Trim() != "")
-                    .GroupBy(x => new { City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
-                    .Select(g => new { g.Key.City, g.Key.District, Count = g.Count() })
+                    .GroupBy(x => new { x.CityId, x.DistrictId, City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
+                    .Select(g => new { g.Key.CityId, g.Key.DistrictId, g.Key.City, g.Key.District, Count = g.Count() })
                     .ToListAsync(ct);
-                land = rawL.Select(x => (x.City, x.District, x.Count)).ToList();
+                land = rawL.Select(x => (x.CityId, x.DistrictId, x.City, x.District, x.Count)).ToList();
             }
             else
             {
@@ -71,38 +72,37 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PopularPlaceRepositories
                     .AsNoTracking()
                     .Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
                                 && x.City != null && x.City.Trim() != "")
-                    .GroupBy(x => new { City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
-                    .Select(g => new { g.Key.City, g.Key.District, Count = g.Count() })
+                    .GroupBy(x => new { x.CityId, x.DistrictId, City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
+                    .Select(g => new { g.Key.CityId, g.Key.DistrictId, g.Key.City, g.Key.District, Count = g.Count() })
                     .ToListAsync(ct);
-                housing = rawH.Select(x => (x.City, x.District, x.Count)).ToList();
+                housing = rawH.Select(x => (x.CityId, x.DistrictId, x.City, x.District, x.Count)).ToList();
 
                 var rawC = await _context.rentalCommercialPropertyListings
                     .AsNoTracking()
                     .Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
                                 && x.City != null && x.City.Trim() != "")
-                    .GroupBy(x => new { City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
-                    .Select(g => new { g.Key.City, g.Key.District, Count = g.Count() })
+                    .GroupBy(x => new { x.CityId, x.DistrictId, City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
+                    .Select(g => new { g.Key.CityId, g.Key.DistrictId, g.Key.City, g.Key.District, Count = g.Count() })
                     .ToListAsync(ct);
-                commercial = rawC.Select(x => (x.City, x.District, x.Count)).ToList();
+                commercial = rawC.Select(x => (x.CityId, x.DistrictId, x.City, x.District, x.Count)).ToList();
 
                 var rawL = await _context.rentalLandListings
                     .AsNoTracking()
                     .Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)
                                 && x.City != null && x.City.Trim() != "")
-                    .GroupBy(x => new { City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
-                    .Select(g => new { g.Key.City, g.Key.District, Count = g.Count() })
+                    .GroupBy(x => new { x.CityId, x.DistrictId, City = x.City.Trim(), District = x.District == null ? "" : x.District.Trim() })
+                    .Select(g => new { g.Key.CityId, g.Key.DistrictId, g.Key.City, g.Key.District, Count = g.Count() })
                     .ToListAsync(ct);
-                land = rawL.Select(x => (x.City, x.District, x.Count)).ToList();
+                land = rawL.Select(x => (x.CityId, x.DistrictId, x.City, x.District, x.Count)).ToList();
             }
 
             var all = housing.Concat(commercial).Concat(land).ToList();
 
-            var trComparer = StringComparer.Create(new CultureInfo("tr-TR"), ignoreCase: true);
             var trCulture = new CultureInfo("tr-TR");
 
             // İl seviyesi: farklı il sayısını kontrol et
             var cityGroups = all
-                .GroupBy(x => x.City, trComparer)
+                .GroupBy(x => GetCityKey(x.CityId, x.City))
                 .ToList();
 
             var distinctCityCount = cityGroups.Count;
@@ -120,8 +120,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PopularPlaceRepositories
                             .First()
                             .Key;
 
+                        var cityId = g.Key.StartsWith("id:")
+                            ? g.Select(x => x.CityId).FirstOrDefault(id => id.HasValue)
+                            : null;
+
                         return new PopularPlaceItemResult
                         {
+                            CityId = cityId,
+                            DistrictId = null,
                             City = displayCity,
                             District = null,
                             ListingCount = g.Sum(x => x.Count)
@@ -145,7 +151,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PopularPlaceRepositories
                 var districtRows = all.Where(x => !string.IsNullOrWhiteSpace(x.District)).ToList();
 
                 var items = districtRows
-                    .GroupBy(x => (x.City, x.District), new CityDistrictComparer(trComparer))
+                    .GroupBy(x => GetDistrictKey(x.CityId, x.City, x.DistrictId, x.District))
                     .Select(g =>
                     {
                         // Görünen ad: en çok ilanı olan YAZIM (Ordinal)
@@ -161,8 +167,22 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PopularPlaceRepositories
                             .First()
                             .Key;
 
+                        var parts = g.Key.Split('|');
+                        var cityPart = parts[0];
+                        var districtPart = parts.Length > 1 ? parts[1] : "";
+
+                        var cityId = cityPart.StartsWith("id:")
+                            ? g.Select(x => x.CityId).FirstOrDefault(id => id.HasValue)
+                            : null;
+
+                        var districtId = districtPart.StartsWith("id:")
+                            ? g.Select(x => x.DistrictId).FirstOrDefault(id => id.HasValue)
+                            : null;
+
                         return new PopularPlaceItemResult
                         {
+                            CityId = cityId,
+                            DistrictId = districtId,
                             City = displayCity,
                             District = displayDistrict,
                             ListingCount = g.Sum(x => x.Count)
@@ -182,27 +202,20 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PopularPlaceRepositories
             }
         }
 
-        /// <summary>
-        /// (City, District) tuple'ını Türkçe duyarsız karşılaştırma ile eşleştirir.
-        /// </summary>
-        private sealed class CityDistrictComparer : IEqualityComparer<(string City, string District)>
+        private static string GetCityKey(int? cityId, string city)
         {
-            private readonly StringComparer _comparer;
+            return cityId.HasValue
+                ? "id:" + cityId.Value
+                : "name:" + LocationNameNormalizer.Normalize(city);
+        }
 
-            public CityDistrictComparer(StringComparer comparer)
-            {
-                _comparer = comparer;
-            }
-
-            public bool Equals((string City, string District) x, (string City, string District) y)
-            {
-                return _comparer.Equals(x.City, y.City) && _comparer.Equals(x.District, y.District);
-            }
-
-            public int GetHashCode((string City, string District) obj)
-            {
-                return HashCode.Combine(_comparer.GetHashCode(obj.City), _comparer.GetHashCode(obj.District));
-            }
+        private static string GetDistrictKey(int? cityId, string city, int? districtId, string district)
+        {
+            var cityKey = GetCityKey(cityId, city);
+            var districtPart = districtId.HasValue
+                ? "id:" + districtId.Value
+                : "name:" + LocationNameNormalizer.Normalize(district);
+            return cityKey + "|" + districtPart;
         }
     }
 }

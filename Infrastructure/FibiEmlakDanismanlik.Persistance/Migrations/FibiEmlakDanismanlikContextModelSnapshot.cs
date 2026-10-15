@@ -447,12 +447,18 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("District")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DistrictId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Exchange")
                         .HasColumnType("bit");
@@ -609,6 +615,10 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasIndex("AgentId");
 
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("DistrictId");
+
                     b.HasIndex("ListingTypeId");
 
                     b.ToTable("forSaleCommercialPropertyListings");
@@ -642,12 +652,18 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("District")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DistrictId")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("Dues")
                         .HasColumnType("decimal(18,2)");
@@ -834,6 +850,10 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasIndex("AgentId");
 
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("DistrictId");
+
                     b.HasIndex("HousingCategoryId");
 
                     b.HasIndex("ListingTypeId");
@@ -884,6 +904,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -893,6 +916,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<string>("District")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DistrictId")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("Exchange")
                         .HasColumnType("bit");
@@ -1053,6 +1079,10 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasKey("ForSaleLandListingId");
 
                     b.HasIndex("AgentId");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("DistrictId");
 
                     b.HasIndex("LandCategoryId");
 
@@ -1469,6 +1499,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -1478,6 +1511,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<string>("District")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DistrictId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Facade")
                         .HasColumnType("nvarchar(max)");
@@ -1629,6 +1665,10 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasIndex("AgentId");
 
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("DistrictId");
+
                     b.HasIndex("ListingTypeId");
 
                     b.ToTable("rentalCommercialPropertyListings");
@@ -1662,6 +1702,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -1671,6 +1714,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<string>("District")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DistrictId")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("Dues")
                         .HasColumnType("decimal(18,2)");
@@ -1843,6 +1889,10 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasIndex("AgentId");
 
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("DistrictId");
+
                     b.HasIndex("HousingCategoryId");
 
                     b.HasIndex("ListingTypeId");
@@ -1901,6 +1951,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -1910,6 +1963,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<string>("District")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DistrictId")
+                        .HasColumnType("int");
 
                     b.Property<double?>("FloorAreaRatio")
                         .HasColumnType("float");
@@ -2060,6 +2116,10 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasKey("RentalLandListingId");
 
                     b.HasIndex("AgentId");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("DistrictId");
 
                     b.HasIndex("LandCategoryId");
 
@@ -2284,6 +2344,16 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", null)
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.District", null)
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.ListingType", "ListingType")
                         .WithMany()
                         .HasForeignKey("ListingTypeId")
@@ -2302,6 +2372,16 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasForeignKey("AgentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", null)
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.District", null)
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.HousingCategory", "HousingCategory")
                         .WithMany()
@@ -2348,6 +2428,16 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasForeignKey("AgentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", null)
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.District", null)
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.LandCategory", "LandCategory")
                         .WithMany()
@@ -2436,6 +2526,16 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", null)
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.District", null)
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.ListingType", "ListingType")
                         .WithMany()
                         .HasForeignKey("ListingTypeId");
@@ -2452,6 +2552,16 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasForeignKey("AgentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", null)
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.District", null)
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.HousingCategory", "HousingCategory")
                         .WithMany()
@@ -2496,6 +2606,16 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasForeignKey("AgentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", null)
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.District", null)
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.LandCategory", "LandCategory")
                         .WithMany()

@@ -54,6 +54,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
         City = house.City,
         District = house.District,
+        CityId = house.CityId,
+        DistrictId = house.DistrictId,
         Neighborhood = house.Neighborhood,
         AddressDesc = house.AddressDesc,
         SourceType = 1,  // usage type 1 satýlýk konut 3 ise kiralýk konut 
@@ -178,6 +180,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
         City = comm.City,
         District = comm.District,
+        CityId = comm.CityId,
+        DistrictId = comm.DistrictId,
         Neighborhood = comm.Neighborhood,
         AddressDesc = comm.AddressDesc,
 
@@ -296,6 +300,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                     City = land.City,
                     District = land.District,
+                    CityId = land.CityId,
+                    DistrictId = land.DistrictId,
                     Neighborhood = land.Neighborhood,
                     AddressDesc = land.AddressDesc,
 
@@ -1283,10 +1289,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
 
 
-            if (filter.City != null)
+            if (filter.CityId.HasValue)
+                query = query.Where(x => x.CityId == filter.CityId);
+            else if (filter.City != null)
                 query = query.Where(x => x.City == filter.City);
 
-            if (filter.District != null)
+            if (filter.DistrictId.HasValue)
+                query = query.Where(x => x.DistrictId == filter.DistrictId);
+            else if (filter.District != null)
                 query = query.Where(x => x.District == filter.District);
 
             if (filter.Neighborhood != null)
@@ -1365,10 +1375,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 baseQuery = baseQuery.Where(x =>
                     filter.ListingTypeIds.Contains(x.ListingTypeId));
 
-            if (!string.IsNullOrWhiteSpace(filter.City))
+            if (filter.CityId.HasValue)
+                baseQuery = baseQuery.Where(x => x.CityId == filter.CityId);
+            else if (!string.IsNullOrWhiteSpace(filter.City))
                 baseQuery = baseQuery.Where(x => x.City == filter.City);
 
-            if (!string.IsNullOrWhiteSpace(filter.District))
+            if (filter.DistrictId.HasValue)
+                baseQuery = baseQuery.Where(x => x.DistrictId == filter.DistrictId);
+            else if (!string.IsNullOrWhiteSpace(filter.District))
                 baseQuery = baseQuery.Where(x => x.District == filter.District);
 
             if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
@@ -1618,6 +1632,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                     City = h.City,
                     District = h.District,
+                    CityId = h.CityId,
+                    DistrictId = h.DistrictId,
                     Neighborhood = h.Neighborhood,
                     AddressDesc = h.AddressDesc,
 
@@ -1659,10 +1675,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
                 query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
 
-            if (!string.IsNullOrWhiteSpace(filter.City))
+            if (filter.CityId.HasValue)
+                query = query.Where(x => x.CityId == filter.CityId);
+            else if (!string.IsNullOrWhiteSpace(filter.City))
                 query = query.Where(x => x.City == filter.City);
 
-            if (!string.IsNullOrWhiteSpace(filter.District))
+            if (filter.DistrictId.HasValue)
+                query = query.Where(x => x.DistrictId == filter.DistrictId);
+            else if (!string.IsNullOrWhiteSpace(filter.District))
                 query = query.Where(x => x.District == filter.District);
 
             if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
@@ -1744,6 +1764,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                     City = l.City,
                     District = l.District,
+                    CityId = l.CityId,
+                    DistrictId = l.DistrictId,
                     Neighborhood = l.Neighborhood,
                     AddressDesc = l.AddressDesc,
 
@@ -1772,10 +1794,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
                 query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
 
-            if (!string.IsNullOrWhiteSpace(filter.City))
+            if (filter.CityId.HasValue)
+                query = query.Where(x => x.CityId == filter.CityId);
+            else if (!string.IsNullOrWhiteSpace(filter.City))
                 query = query.Where(x => x.City == filter.City);
 
-            if (!string.IsNullOrWhiteSpace(filter.District))
+            if (filter.DistrictId.HasValue)
+                query = query.Where(x => x.DistrictId == filter.DistrictId);
+            else if (!string.IsNullOrWhiteSpace(filter.District))
                 query = query.Where(x => x.District == filter.District);
 
             if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
@@ -1856,6 +1882,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                     City = c.City,
                     District = c.District,
+                    CityId = c.CityId,
+                    DistrictId = c.DistrictId,
                     Neighborhood = c.Neighborhood,
                     AddressDesc = c.AddressDesc,
 
@@ -1882,10 +1910,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
                 query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
 
-            if (!string.IsNullOrWhiteSpace(filter.City))
+            if (filter.CityId.HasValue)
+                query = query.Where(x => x.CityId == filter.CityId);
+            else if (!string.IsNullOrWhiteSpace(filter.City))
                 query = query.Where(x => x.City == filter.City);
 
-            if (!string.IsNullOrWhiteSpace(filter.District))
+            if (filter.DistrictId.HasValue)
+                query = query.Where(x => x.DistrictId == filter.DistrictId);
+            else if (!string.IsNullOrWhiteSpace(filter.District))
                 query = query.Where(x => x.District == filter.District);
 
             if (!string.IsNullOrWhiteSpace(filter.Neighborhood))

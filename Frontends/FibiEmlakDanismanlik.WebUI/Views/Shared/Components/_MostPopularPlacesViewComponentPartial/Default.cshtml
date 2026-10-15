@@ -65,8 +65,8 @@
                                 @foreach (var item in forSaleItems)
                                 {
                                     var itemUrl = isSaleDistrict
-                                        ? Url.Action("Index", "AllForSalePage", new { city = item.City, district = item.District })
-                                        : Url.Action("Index", "AllForSalePage", new { city = item.City });
+                                        ? Url.Action("Index", "AllForSalePage", new { cityId = item.CityId, city = item.City, districtId = item.DistrictId, district = item.District })
+                                        : Url.Action("Index", "AllForSalePage", new { cityId = item.CityId, city = item.City });
                                     <li>
                                         <a href="@itemUrl">
                                             @if (isSaleDistrict)
@@ -95,8 +95,8 @@
                                 @foreach (var item in forRentItems)
                                 {
                                     var itemUrl = isRentDistrict
-                                        ? Url.Action("Index", "AllForRentalPage", new { city = item.City, district = item.District })
-                                        : Url.Action("Index", "AllForRentalPage", new { city = item.City });
+                                        ? Url.Action("Index", "AllForRentalPage", new { cityId = item.CityId, city = item.City, districtId = item.DistrictId, district = item.District })
+                                        : Url.Action("Index", "AllForRentalPage", new { cityId = item.CityId, city = item.City });
                                     <li>
                                         <a href="@itemUrl">
                                             @if (isRentDistrict)
