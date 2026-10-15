@@ -1,0 +1,58 @@
+@model FibiEmlakDanismanlik.WebUI.Models.HomeTestimonialsViewModel
+@using System.Globalization
+
+@if (Model != null && Model.Testimonials != null && Model.Testimonials.Any())
+{
+    var trCulture = new CultureInfo("tr-TR");
+
+    <style>
+        .home-testimonials { background-position: right center; }
+        .home-testimonials:before { opacity: 1; background: linear-gradient(90deg, rgba(27,29,33,.88) 0%, rgba(27,29,33,.7) 45%, rgba(27,29,33,.15) 100%); }
+        .home-testimonials .home-testimonial-initial { display:flex; align-items:center; justify-content:center; background:#f2b241; color:#fff; font-size:26px; font-weight:700; margin:0; }
+        .home-testimonials .testimonial-block-two .inner-box .text h3 { font-size: 24px; line-height: 36px; }
+        @@media (max-width: 767px) {
+            .home-testimonials { background-attachment: scroll; background-position: 70% center; }
+            .home-testimonials:before { background: rgba(27,29,33,.75); }
+            .home-testimonials .testimonial-block-two .inner-box .text h3 { font-size: 20px; line-height: 30px; }
+        }
+    </style>
+
+    <section class="testimonial-style-two home-testimonials" style="background-image: url('@Model.BackgroundImageUrl');">
+        <div class="auto-container">
+            <div class="row clearfix">
+                <div class="col-xl-6 col-lg-8 col-md-12 inner-column">
+                    <div class="single-item-carousel owl-carousel owl-theme dots-style-one owl-nav-none">
+                        @foreach (var item in Model.Testimonials)
+                        {
+                            var initials = "";
+                            if (!string.IsNullOrWhiteSpace(item.Name))
+                            {
+                                var parts = item.Name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                if (parts.Length > 1)
+                                {
+                                    initials = (parts[0][0].ToString() + parts[1][0].ToString()).ToUpper(trCulture);
+                                }
+                                else if (parts.Length == 1)
+                                {
+                                    initials = parts[0][0].ToString().ToUpper(trCulture);
+                                }
+                            }
+
+                            <div class="testimonial-block-two">
+                                <div class="inner-box">
+                                    <div class="icon-box"><i class="@(string.IsNullOrWhiteSpace(item.LogoUrl) ? "icon-18" : item.LogoUrl)"></i></div>
+                                    <div class="text"><h3>“@item.Testimonail”</h3></div>
+                                    <div class="author-info">
+                                        <figure class="author-thumb home-testimonial-initial">@initials</figure>
+                                        <h4>@item.Name</h4>
+                                        @if (!string.IsNullOrWhiteSpace(item.Title)) { <span class="designation">@item.Title</span> }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

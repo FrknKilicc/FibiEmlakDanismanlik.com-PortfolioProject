@@ -1179,6 +1179,15 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                             IsActive = true,
                             SectionKey = "PopularPlaces",
                             Slot = 2
+                        },
+                        new
+                        {
+                            HomeSectionImageId = 3,
+                            AltText = "Yeni evinin önünde mutlu aile",
+                            ImageUrl = "/Realshed/assets/images/background/testimonial-home.jpg",
+                            IsActive = true,
+                            SectionKey = "Testimonials",
+                            Slot = 1
                         });
                 });
 

@@ -1,0 +1,188 @@
+@model List<ResultBlogWithAuthorDto>
+@using System.Globalization
+
+@functions {
+    public static int CalculateReadingTime(string? description)
+    {
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            return 1;
+        }
+
+        var words = description.Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+        int wordCount = words.Length;
+        int minutes = (int)Math.Ceiling(wordCount / 200.0);
+        return Math.Max(1, minutes);
+    }
+}
+
+@if (Model != null && Model.Any())
+{
+    var trCulture = CultureInfo.GetCultureInfo("tr-TR");
+
+    <style>
+        .news-section .row.clearfix {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .news-section .row.clearfix::before,
+        .news-section .row.clearfix::after {
+            display: none;
+        }
+        .news-section .news-block {
+            display: flex;
+            margin-bottom: 30px;
+        }
+        .news-section .news-block-one,
+        .news-section .news-block-one .inner-box {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        .news-section .news-block-one .image-box .image img {
+            width: 100%;
+            aspect-ratio: 370 / 250;
+            height: auto;
+            object-fit: cover;
+        }
+        .news-section .image-box {
+            position: relative;
+        }
+        .news-section .news-top-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #2dbe6c;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 4px;
+            z-index: 2;
+        }
+        .news-section .author-thumb img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .news-section .lower-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+        }
+        .news-section .lower-content h4 a {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 30px;
+            min-height: 60px;
+        }
+        .news-section .lower-content .text p {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 26px;
+            min-height: 78px;
+        }
+        .news-section .news-tags {
+            list-style: none;
+            display: flex;
+            flex-wrap: nowrap;
+            overflow: hidden;
+            gap: 6px;
+            margin: 10px 0 0;
+            padding: 0;
+            min-height: 22px;
+        }
+        .news-section .news-tags li {
+            font-size: 13px;
+            color: #2dbe6c;
+            line-height: 22px;
+            white-space: nowrap;
+        }
+        .news-section .lower-content .btn-box {
+            margin-top: auto;
+            padding-top: 15px;
+        }
+        .news-section .news-all-btn {
+            margin-top: 20px;
+        }
+    </style>
+
+    <section class="news-section sec-pad">
+        <div class="auto-container">
+            <div class="sec-title centred">
+                <h5>Haberler & Makaleler</h5>
+                <h2>Fibi İle Güncel Kalın</h2>
+                <p>Fibi ile sektördeki son gelişmeleri, yenilikleri ve değerli bilgileri kaçırmadan takip edin.</p>
+            </div>
+            <div class="row clearfix">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var item = Model[i];
+                    var delay = (i * 300 == 0) ? "00ms" : $"{i * 300}ms";
+                    var blogImgUrl = !string.IsNullOrWhiteSpace(item.BlogImgUrl) ? item.BlogImgUrl : "/Realshed/assets/images/background/Section1.jpeg";
+                    var authorImgUrl = !string.IsNullOrWhiteSpace(item.AuthorImgUrl) ? item.AuthorImgUrl : "/Realshed/assets/images/FibiLogo.png";
+                    var authorName = !string.IsNullOrWhiteSpace(item.AuthorName) ? item.AuthorName : "Fibi Emlak";
+                    var categoryName = !string.IsNullOrWhiteSpace(item.BlogCategoryName) ? item.BlogCategoryName : "Blog";
+                    var readingTime = CalculateReadingTime(item.BlogDescription);
+
+                    <div class="col-lg-4 col-md-6 col-sm-12 news-block">
+                        <div class="news-block-one wow fadeInUp animated" data-wow-delay="@delay" data-wow-duration="1500ms">
+                            <div class="inner-box">
+                                <div class="image-box">
+                                    <figure class="image">
+                                        <a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">
+                                            <img src="@blogImgUrl" alt="@item.BlogTitle" width="370" height="250" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/Realshed/assets/images/background/Section1.jpeg';">
+                                        </a>
+                                    </figure>
+                                    <span class="category">@categoryName</span>
+                                    @if (item.TopNews)
+                                    {
+                                        <span class="news-top-badge">Öne Çıkan</span>
+                                    }
+                                </div>
+                                <div class="lower-content">
+                                    <h4>
+                                        <a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId" title="@item.BlogTitle">@item.BlogTitle</a>
+                                    </h4>
+                                    <ul class="post-info clearfix">
+                                        <li class="author-box">
+                                            <figure class="author-thumb">
+                                                <img src="@authorImgUrl" alt="@authorName" width="40" height="40" loading="lazy" onerror="this.onerror=null;this.src='/Realshed/assets/images/FibiLogo.png';">
+                                            </figure>
+                                            <h5>@authorName</h5>
+                                        </li>
+                                        <li><time datetime="@item.CreatedDate.ToString("yyyy-MM-dd")">@item.CreatedDate.ToString("dd MMMM yyyy", trCulture)</time></li>
+                                        <li>@readingTime dk okuma</li>
+                                    </ul>
+                                    <div class="text">
+                                        <p>@item.BlogDescription</p>
+                                    </div>
+                                    <ul class="news-tags">
+                                        @foreach (var tag in (item.Tags ?? new()).Take(3))
+                                        {
+                                            <li>#@tag.Name</li>
+                                        }
+                                    </ul>
+                                    <div class="btn-box">
+                                        <a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId" class="theme-btn btn-two">Devamını Oku</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="news-all-btn centred">
+                <a asp-controller="Blog" asp-action="Index" class="theme-btn btn-one">Tüm Yazılar</a>
+            </div>
+        </div>
+    </section>
+}

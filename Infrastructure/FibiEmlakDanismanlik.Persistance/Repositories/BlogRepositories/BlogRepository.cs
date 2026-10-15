@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Results.BlogResults;
+using FibiEmlakDanismanlik.Application.Features.Results.BlogResults;
 using FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Persistence.Context;
@@ -95,9 +95,9 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
         public Task<List<GetBlogDetailWithAuthorResult?>> GetLast3BlogWithAuthor()
         {
             return _context.Blogs
-                .Include(x => x.Author)
-                .Include(x => x.BlogCategory)
+                .AsNoTracking()
                 .OrderByDescending(x => x.CreatedDate)
+                .ThenByDescending(x => x.BlogId)
                 .Take(3)
                 .Select(x => new GetBlogDetailWithAuthorResult
                 {
@@ -113,7 +113,13 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
                     AuthorName = x.Author.AuthorName,
 
                     BlogCategoryId = x.BlogCategoryId,
-                    BlogCategoryName = x.BlogCategory.CategoryName
+                    BlogCategoryName = x.BlogCategory != null ? x.BlogCategory.CategoryName : null,
+
+                    Tags = x.BlogTags.Select(t => new BlogTagItemResult
+                    {
+                        Id = t.TagId,
+                        Name = t.Tag.Name
+                    }).ToList()
                 })
                 .ToListAsync()!;
         }

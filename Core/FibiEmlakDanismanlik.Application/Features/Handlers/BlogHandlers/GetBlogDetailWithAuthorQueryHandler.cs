@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Queries.BlogQueries;
+using FibiEmlakDanismanlik.Application.Features.Queries.BlogQueries;
 using FibiEmlakDanismanlik.Application.Features.Results.BlogResults;
 using FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces;
 using MediatR;
@@ -32,7 +32,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
                 AuthorName = x.AuthorName,
                 CreatedDate = x.CreatedDate,
                 TopNews = x.TopNews,
-
+                BlogCategoryId = x.BlogCategoryId,
+                BlogCategoryName = x.BlogCategoryName,
+                Tags = x.Tags
             }).ToList();
         }
     }

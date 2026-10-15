@@ -247,6 +247,25 @@
 			}
 		});    		
 	}
+	// Ana sayfa "Son eklenenler" (4'lü, eşit yükseklikli kartlar)
+	if ($('.latest-listings-carousel').length) {
+		$('.latest-listings-carousel').owlCarousel({
+			loop: $('.latest-listings-carousel').children().length > 4,
+			margin:30,
+			nav:true,
+			smartSpeed: 800,
+			autoplay: false,
+			fibiDeferredAutoplay: true,
+			autoplayTimeout: 5000,
+			navText: [ '<span class="far fa-angle-left"></span>', '<span class="far fa-angle-right"></span>' ],
+			responsive:{
+				0:{ items:1 },
+				768:{ items:2 },
+				992:{ items:3 },
+				1200:{ items:4 }
+			}
+		});
+	}
 	// Five Item Carousel
 	if ($('.five-item-carousel').length) {
 		$('.five-item-carousel').owlCarousel({

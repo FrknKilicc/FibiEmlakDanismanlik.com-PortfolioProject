@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +20,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.BlogResults
         public string AuthorImgUrl { get; set; }
 
         public int? BlogCategoryId { get; set; }
-        public string BlogCategoryName { get; set; }
+        public string? BlogCategoryName { get; set; }
 
         public List<BlogTagItemResult> Tags { get; set; } = new();
 
