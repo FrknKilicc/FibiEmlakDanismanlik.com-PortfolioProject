@@ -2,6 +2,10 @@
 
 <style>
     #popularPlacesRoot .popular-places-empty { color: #93959e; padding: 16px 0; font-size: 15px; }
+    #popularPlacesRoot .image_block_1 .image-box .image img { height: auto; object-fit: cover; }
+    #popularPlacesRoot .image_block_1 .image-box .image-1 img { aspect-ratio: 440 / 570; }
+    #popularPlacesRoot .image_block_1 .image-box .image-2 { width: 270px; max-width: 100%; }
+    #popularPlacesRoot .image_block_1 .image-box .image-2 img { aspect-ratio: 270 / 320; }
 </style>
 
 <section class="place-style-two sec-pad" id="popularPlacesRoot">
@@ -60,8 +64,11 @@
                             <ul class="place-list clearfix popular-places-panel" data-usagetype="1">
                                 @foreach (var item in forSaleItems)
                                 {
+                                    var itemUrl = isSaleDistrict
+                                        ? Url.Action("Index", "AllForSalePage", new { city = item.City, district = item.District })
+                                        : Url.Action("Index", "AllForSalePage", new { city = item.City });
                                     <li>
-                                        <a href="@forSaleUrl">
+                                        <a href="@itemUrl">
                                             @if (isSaleDistrict)
                                             {
                                                 <h5>@item.District, @item.City</h5>
@@ -87,8 +94,11 @@
                             <ul class="place-list clearfix popular-places-panel" data-usagetype="2" style="display:none;">
                                 @foreach (var item in forRentItems)
                                 {
+                                    var itemUrl = isRentDistrict
+                                        ? Url.Action("Index", "AllForRentalPage", new { city = item.City, district = item.District })
+                                        : Url.Action("Index", "AllForRentalPage", new { city = item.City });
                                     <li>
-                                        <a href="@forRentUrl">
+                                        <a href="@itemUrl">
                                             @if (isRentDistrict)
                                             {
                                                 <h5>@item.District, @item.City</h5>
@@ -114,8 +124,8 @@
             <div class="col-lg-6 col-md-12 col-sm-12 image-column">
                 <div class="image_block_1">
                     <div class="image-box">
-                        <figure class="image image-1 paroller"><img src="/Realshed/assets/images/resource/place-5.jpg" alt=""></figure>
-                        <figure class="image image-2 paroller-2"><img src="/Realshed/assets/images/resource/place-6.jpg" alt=""></figure>
+                        <figure class="image image-1 paroller"><img src="@Model?.PrimaryImageUrl" alt="@Model?.PrimaryImageAlt" width="440" height="570" loading="lazy" decoding="async"></figure>
+                        <figure class="image image-2 paroller-2"><img src="@Model?.SecondaryImageUrl" alt="@Model?.SecondaryImageAlt" width="270" height="320" loading="lazy" decoding="async"></figure>
                     </div>
                 </div>
             </div>

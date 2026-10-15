@@ -1096,6 +1096,62 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("frequentlyAskedQuestions");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.HomeSectionImage", b =>
+                {
+                    b.Property<int>("HomeSectionImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HomeSectionImageId"));
+
+                    b.Property<string>("AltText")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SectionKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Slot")
+                        .HasColumnType("int");
+
+                    b.HasKey("HomeSectionImageId");
+
+                    b.HasIndex("SectionKey", "Slot")
+                        .IsUnique();
+
+                    b.ToTable("HomeSectionImages");
+
+                    b.HasData(
+                        new
+                        {
+                            HomeSectionImageId = 1,
+                            AltText = "Fibi Emlak Danışmanlık merkez ofis",
+                            ImageUrl = "/Realshed/assets/images/resource/popular-place-1.jpg",
+                            IsActive = true,
+                            SectionKey = "PopularPlaces",
+                            Slot = 1
+                        },
+                        new
+                        {
+                            HomeSectionImageId = 2,
+                            AltText = "Fibi Emlak Danışmanlık ofis içi",
+                            ImageUrl = "/Realshed/assets/images/resource/popular-place-2.jpg",
+                            IsActive = true,
+                            SectionKey = "PopularPlaces",
+                            Slot = 2
+                        });
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.HousingCategory", b =>
                 {
                     b.Property<int>("HousingCategoryId")
