@@ -175,41 +175,7 @@
 
 
         <!-- place-style-two -->
-        <section class="place-style-two sec-pad">
-            <div class="auto-container">
-                <div class="row clearfix">
-                    <div class="col-lg-6 col-md-12 col-sm-12 content-column">
-                        <div class="content_block_2">
-                            <div class="content-box">
-                                <div class="sec-title">
-                                    <h5>Top Places</h5>
-                                    <h2>Most Popular Places</h2>
-                                    <p>Lorem ipsum dolor sit amet consectetur adipisicing do eumod tempor.</p>
-                                </div>
-                                <ul class="place-list clearfix">
-                                    <li><a href="categories.html"><h5>Australia</h5><span>(02)</span></a></li>
-                                    <li><a href="/Realshed/categories.html"><h5>Bangladesh</h5><span>(13)</span></a></li>
-                                    <li><a href="/Realshed/categories.html"><h5>Belgium</h5><span>(05)</span></a></li>
-                                    <li><a href="/Realshed/categories.html"><h5>Brazil</h5><span>(04)</span></a></li>
-                                    <li><a href="/Realshed/categories.html"><h5>California</h5><span>(07)</span></a></li>
-                                </ul>
-                                <div class="btn-box">
-                                    <a href="/Realshed/property-list.html" class="theme-btn btn-one">View All Places</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-12 col-sm-12 image-column">
-                        <div class="image_block_1">
-                            <div class="image-box">
-                                <figure class="image image-1 paroller"><img src="/Realshed/assets/images/resource/place-5.jpg" alt=""></figure>
-                                <figure class="image image-2 paroller-2"><img src="/Realshed/assets/images/resource/place-6.jpg" alt=""></figure>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section> @*  popüler yerler *@
+        @await Component.InvokeAsync("_MostPopularPlacesViewComponentPartial") @* popüler konumlar *@
         <!-- place-style-two end -->
 
 
@@ -385,21 +351,17 @@
     <script src="/Realshed/assets/js/bootstrap.min.js"></script>
     <script src="/Realshed/assets/js/owl.js"></script>
     <script src="/Realshed/assets/js/wow.js"></script>
-    <script src="/Realshed/assets/js/validation.js"></script>
-    <script src="/Realshed/assets/js/jquery.fancybox.js"></script>
-    <script src="/Realshed/assets/js/appear.js"></script>
     <script src="/Realshed/assets/js/scrollbar.js"></script>
-    <script src="/Realshed/assets/js/isotope.js"></script>
     <script src="/Realshed/assets/js/jquery.nice-select.min.js"></script>
     <script src="/Realshed/assets/js/jQuery.style.switcher.min.js"></script>
     <script src="/Realshed/assets/js/jquery-ui.js"></script>
     <script src="/Realshed/assets/js/jquery.paroller.min.js"></script>
     <script src="/Realshed/assets/js/nav-tool.js"></script>
-    <script src="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js"></script>
     <script src="/Realshed/assets/js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="~/js/home-search.js" asp-append-version="true"></script>
     <script src="~/js/best-deals.js" asp-append-version="true"></script>
+    <script src="~/js/popular-places.js" asp-append-version="true"></script>
 
     <script>
         if ("scrollRestoration" in history) {

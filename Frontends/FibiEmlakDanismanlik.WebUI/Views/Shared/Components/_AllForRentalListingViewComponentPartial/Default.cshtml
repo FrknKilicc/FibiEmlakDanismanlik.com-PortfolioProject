@@ -1,4 +1,4 @@
-﻿@model FibiEmlakDanismanlik.WebUI.Models.ForRentalListingPageVm
+@model FibiEmlakDanismanlik.WebUI.Models.ForRentalListingPageVm
 
 @functions {
     string UsageBadgeText(int usageTypeId) => usageTypeId switch
@@ -52,6 +52,7 @@
                                     <label>Şehir</label>
                                     <select id="citySelect" class="wide js-city-select"
                                             data-selected-id="@Model.CityId"
+                                            data-selected-name="@Model.City"
                                             data-search-placeholder="İl ara...">
                                         <option value="">Şehir seç</option>
                                     </select>
@@ -61,6 +62,7 @@
                                     <label>İlçe</label>
                                     <select id="districtSelect" class="wide js-district-select"
                                             data-selected-id="@Model.DistrictId"
+                                            data-selected-name="@Model.District"
                                             data-search-placeholder="İlçe ara...">
                                         <option value="">İlçe seç</option>
                                     </select>

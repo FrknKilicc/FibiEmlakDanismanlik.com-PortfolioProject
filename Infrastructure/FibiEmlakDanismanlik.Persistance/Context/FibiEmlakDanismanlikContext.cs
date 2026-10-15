@@ -1,4 +1,7 @@
+using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Helpers;
 using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -114,6 +117,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<BlogCategory> BlogCategories { get; set; }
         public DbSet<CityGalleryImage> CityGalleryImages { get; set; }
         public DbSet<SocialMedia> SocialMedias { get; set; }
+        public DbSet<HomeSectionImage> HomeSectionImages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -387,11 +391,193 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.HasIndex(x => x.Mail).IsUnique();
             });
 
+            // HomeSectionImage: Ana sayfa bölümlerine ait görseller (bölüm anahtarı + slot)
+            modelBuilder.Entity<HomeSectionImage>(entity =>
+            {
+                entity.Property(x => x.SectionKey).IsRequired().HasMaxLength(HomeSectionImageConstants.SectionKeyMaxLength);
+                entity.Property(x => x.ImageUrl).IsRequired().HasMaxLength(HomeSectionImageConstants.ImageUrlMaxLength);
+                entity.Property(x => x.AltText).HasMaxLength(HomeSectionImageConstants.AltTextMaxLength);
+
+                entity.HasIndex(x => new { x.SectionKey, x.Slot }).IsUnique();
+
+                entity.HasData(
+                    new HomeSectionImage
+                    {
+                        HomeSectionImageId = 1,
+                        SectionKey = HomeSectionImageConstants.SectionPopularPlaces,
+                        Slot = 1,
+                        ImageUrl = "/Realshed/assets/images/resource/popular-place-1.jpg",
+                        AltText = "Fibi Emlak Danışmanlık merkez ofis",
+                        IsActive = true
+                    },
+                    new HomeSectionImage
+                    {
+                        HomeSectionImageId = 2,
+                        SectionKey = HomeSectionImageConstants.SectionPopularPlaces,
+                        Slot = 2,
+                        ImageUrl = "/Realshed/assets/images/resource/popular-place-2.jpg",
+                        AltText = "Fibi Emlak Danışmanlık ofis içi",
+                        IsActive = true
+                    }
+                );
+            });
+
+            // İlanların il/ilçe ilişkileri ve indeksleri
+            ConfigureListingLocation<ForSaleHousingListing>(modelBuilder);
+            ConfigureListingLocation<ForSaleLandListing>(modelBuilder);
+            ConfigureListingLocation<ForSaleCommercialPropertyListing>(modelBuilder);
+            ConfigureListingLocation<RentalHousingListing>(modelBuilder);
+            ConfigureListingLocation<RentalLandListing>(modelBuilder);
+            ConfigureListingLocation<RentalCommercialPropertyListing>(modelBuilder);
+
             base.OnModelCreating(modelBuilder);
         }
 
+        private static void ConfigureListingLocation<TListing>(ModelBuilder modelBuilder) where TListing : class, ILocatedListing
+        {
+            modelBuilder.Entity<TListing>(entity =>
+            {
+                entity.HasOne<City>().WithMany().HasForeignKey(nameof(ILocatedListing.CityId)).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne<District>().WithMany().HasForeignKey(nameof(ILocatedListing.DistrictId)).OnDelete(DeleteBehavior.Restrict);
+                entity.HasIndex(nameof(ILocatedListing.CityId));
+                entity.HasIndex(nameof(ILocatedListing.DistrictId));
+            });
+        }
 
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            ResolveListingLocations();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
 
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            await ResolveListingLocationsAsync(cancellationToken);
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
 
+        private void ResolveListingLocations()
+        {
+            var entries = ChangeTracker.Entries<ILocatedListing>()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+                .Select(e => e.Entity)
+                .ToList();
+
+            if (entries.Count == 0)
+                return;
+
+            var cityList = Cities.AsNoTracking()
+                .Select(c => new { c.CityId, c.Name })
+                .ToList();
+
+            var cityMap = BuildNormalizedMap(cityList.Select(c => (c.CityId, (string?)c.Name)));
+            var neededCityIds = GetResolvedCityIds(entries, cityMap);
+
+            var districtCache = new Dictionary<int, Dictionary<string, int>>();
+            foreach (var cityId in neededCityIds)
+            {
+                var districts = Districts.AsNoTracking()
+                    .Where(d => d.CityId == cityId)
+                    .Select(d => new { d.DistrictId, d.Name })
+                    .ToList();
+
+                districtCache[cityId] = BuildNormalizedMap(districts.Select(d => (d.DistrictId, (string?)d.Name)));
+            }
+
+            ApplyLocations(entries, cityMap, districtCache);
+        }
+
+        private async Task ResolveListingLocationsAsync(CancellationToken cancellationToken)
+        {
+            var entries = ChangeTracker.Entries<ILocatedListing>()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+                .Select(e => e.Entity)
+                .ToList();
+
+            if (entries.Count == 0)
+                return;
+
+            var cityList = await Cities.AsNoTracking()
+                .Select(c => new { c.CityId, c.Name })
+                .ToListAsync(cancellationToken);
+
+            var cityMap = BuildNormalizedMap(cityList.Select(c => (c.CityId, (string?)c.Name)));
+            var neededCityIds = GetResolvedCityIds(entries, cityMap);
+
+            var districtCache = new Dictionary<int, Dictionary<string, int>>();
+            foreach (var cityId in neededCityIds)
+            {
+                var districts = await Districts.AsNoTracking()
+                    .Where(d => d.CityId == cityId)
+                    .Select(d => new { d.DistrictId, d.Name })
+                    .ToListAsync(cancellationToken);
+
+                districtCache[cityId] = BuildNormalizedMap(districts.Select(d => (d.DistrictId, (string?)d.Name)));
+            }
+
+            ApplyLocations(entries, cityMap, districtCache);
+        }
+
+        private static Dictionary<string, int> BuildNormalizedMap(IEnumerable<(int Id, string? Name)> items)
+        {
+            var map = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach (var item in items)
+            {
+                var key = LocationNameNormalizer.Normalize(item.Name);
+                if (!string.IsNullOrEmpty(key))
+                {
+                    map.TryAdd(key, item.Id);
+                }
+            }
+            return map;
+        }
+
+        private static HashSet<int> GetResolvedCityIds(List<ILocatedListing> entries, Dictionary<string, int> cityMap)
+        {
+            var neededCityIds = new HashSet<int>();
+            foreach (var entry in entries)
+            {
+                var normCity = LocationNameNormalizer.Normalize(entry.City);
+                if (!string.IsNullOrEmpty(normCity) && cityMap.TryGetValue(normCity, out var cityId))
+                {
+                    neededCityIds.Add(cityId);
+                }
+            }
+            return neededCityIds;
+        }
+
+        private static void ApplyLocations(
+            List<ILocatedListing> entries,
+            Dictionary<string, int> cityMap,
+            Dictionary<int, Dictionary<string, int>> districtCache)
+        {
+            foreach (var entity in entries)
+            {
+                int? cityId = null;
+                var normCity = LocationNameNormalizer.Normalize(entity.City);
+                if (!string.IsNullOrEmpty(normCity) && cityMap.TryGetValue(normCity, out var foundCityId))
+                {
+                    cityId = foundCityId;
+                }
+                entity.CityId = cityId;
+
+                if (cityId.HasValue && districtCache.TryGetValue(cityId.Value, out var districtMap))
+                {
+                    var normDistrict = LocationNameNormalizer.Normalize(entity.District);
+                    if (!string.IsNullOrEmpty(normDistrict) && districtMap.TryGetValue(normDistrict, out var foundDistrictId))
+                    {
+                        entity.DistrictId = foundDistrictId;
+                    }
+                    else
+                    {
+                        entity.DistrictId = null;
+                    }
+                }
+                else
+                {
+                    entity.DistrictId = null;
+                }
+            }
+        }
     }
 }

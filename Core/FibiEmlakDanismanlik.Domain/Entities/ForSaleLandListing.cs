@@ -1,14 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FibiEmlakDanismanlik.Domain.Interfaces;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class ForSaleLandListing //Satılık Arsa
+    public class ForSaleLandListing : ILocatedListing //Satılık Arsa
     {
         //MainInfo
         [Key]
@@ -25,6 +26,8 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string City { get; set; } // İl
         [Required]
         public string District { get; set; } // İlçe
+        public int? CityId { get; set; }      // Cities.CityId — City metninden otomatik çözülür
+        public int? DistrictId { get; set; }  // Districts.DistrictId — District metninden otomatik çözülür
         [Required]
         public string Neighborhood { get; set; }//Mahalle
         public string AddressDesc { get; set; } //Açık Adress

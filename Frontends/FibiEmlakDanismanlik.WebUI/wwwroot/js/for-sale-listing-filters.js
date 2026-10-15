@@ -16,6 +16,13 @@
         }
     }
 
+    function findIdByName(items, name) {
+        if (!name || !items || !items.length) return "";
+        const target = name.trim().toLocaleUpperCase("tr-TR");
+        const found = items.find(x => x && x.text && x.text.trim().toLocaleUpperCase("tr-TR") === target);
+        return found ? String(found.id) : "";
+    }
+
     function destroyNiceSelect(selectEl) {
         if (!window.jQuery) return;
         const $ = window.jQuery;
@@ -148,9 +155,13 @@
         setSelectDisabled(dist, true);
         setSelectDisabled(neigh, true);
 
-        const cityId = city.getAttribute("data-selected-id");
-        const distId = dist.getAttribute("data-selected-id");
+        let cityId = city.getAttribute("data-selected-id");
+        let distId = dist.getAttribute("data-selected-id");
         const neighId = neigh.getAttribute("data-selected-id");
+
+        if (!cityId) {
+            cityId = findIdByName(cities, city.getAttribute("data-selected-name"));
+        }
 
         if (cityId) {
             city.value = cityId;
@@ -158,6 +169,10 @@
             const districts = await fetchOptions(api + "Location/districts?cityId=" + cityId);
             fillSelect(dist, districts, "İlçe seç");
             setSelectDisabled(dist, false);
+
+            if (!distId) {
+                distId = findIdByName(districts, dist.getAttribute("data-selected-name"));
+            }
 
             if (distId) {
                 dist.value = distId;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,10 +7,11 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using FibiEmlakDanismanlik.Domain.Interfaces;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class ForSaleCommercialPropertyListing //Satılık İşyeri
+    public class ForSaleCommercialPropertyListing : ILocatedListing //Satılık İşyeri
     {
         //MainInfo 
         [Key]
@@ -33,6 +34,8 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 
         [Display(Name = "İlçe")]
         public string District { get; set; }
+        public int? CityId { get; set; }      // Cities.CityId — City metninden otomatik çözülür
+        public int? DistrictId { get; set; }  // Districts.DistrictId — District metninden otomatik çözülür
         [Required]
         public string Neighborhood { get; set; }//Mahalle
         [Display(Name = "Adres")]

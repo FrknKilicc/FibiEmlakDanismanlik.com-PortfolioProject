@@ -107,6 +107,8 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             {
                 ListingTypeIds = selectedIds.Any() ? selectedIds : null,
                 SelectedAmenityIds = selectedAmenityIds.Any() ? selectedAmenityIds : null,
+                CityId = cityId,
+                DistrictId = districtId,
                 City = city,
                 District = district,
                 Neighborhood = neighborhood,
