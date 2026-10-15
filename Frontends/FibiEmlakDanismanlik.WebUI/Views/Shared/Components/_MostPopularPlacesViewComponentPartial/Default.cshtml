@@ -1,0 +1,124 @@
+@model FibiEmlakDanismanlik.WebUI.Models.PopularPlacesViewModel
+
+<style>
+    #popularPlacesRoot .popular-places-empty { color: #93959e; padding: 16px 0; font-size: 15px; }
+</style>
+
+<section class="place-style-two sec-pad" id="popularPlacesRoot">
+    <div class="auto-container">
+        <div class="row clearfix">
+            <div class="col-lg-6 col-md-12 col-sm-12 content-column">
+                <div class="content_block_2">
+                    <div class="content-box">
+                        @{
+                            var forSale = Model?.ForSale;
+                            var forRent = Model?.ForRent;
+                            var isSaleDistrict = string.Equals(forSale?.Level, "District", System.StringComparison.OrdinalIgnoreCase);
+                            var isRentDistrict = string.Equals(forRent?.Level, "District", System.StringComparison.OrdinalIgnoreCase);
+
+                            var forSaleItems = forSale?.Items ?? new();
+                            var forRentItems = forRent?.Items ?? new();
+                            var forSaleUrl = Url.Action("Index", "AllForSalePage") ?? "#";
+                            var forRentUrl = Url.Action("Index", "AllForRentalPage") ?? "#";
+                        }
+
+                        <div class="sec-title">
+                            <h5>Öne Çıkan Konumlar</h5>
+
+                            @* Satılık başlık (usageType=1) *@
+                            @if (isSaleDistrict)
+                            {
+                                <h2 data-usagetype="1">En Popüler İlçeler</h2>
+                                <p data-usagetype="1">Seçtiğiniz işlem türünde en çok aktif ilana sahip ilçeler.</p>
+                            }
+                            else
+                            {
+                                <h2 data-usagetype="1">En Popüler İller</h2>
+                                <p data-usagetype="1">Seçtiğiniz işlem türünde en çok aktif ilana sahip iller.</p>
+                            }
+
+                            @* Kiralık başlık (usageType=2) — başlangıçta gizli *@
+                            @if (isRentDistrict)
+                            {
+                                <h2 data-usagetype="2" style="display:none;">En Popüler İlçeler</h2>
+                                <p data-usagetype="2" style="display:none;">Seçtiğiniz işlem türünde en çok aktif ilana sahip ilçeler.</p>
+                            }
+                            else
+                            {
+                                <h2 data-usagetype="2" style="display:none;">En Popüler İller</h2>
+                                <p data-usagetype="2" style="display:none;">Seçtiğiniz işlem türünde en çok aktif ilana sahip iller.</p>
+                            }
+                        </div>
+
+                        @* Satılık panel (usageType=1) — başlangıçta görünür *@
+                        @if (forSaleItems.Count == 0)
+                        {
+                            <p class="popular-places-empty" data-usagetype="1">Bu işlem türünde henüz aktif ilan yok.</p>
+                        }
+                        else
+                        {
+                            <ul class="place-list clearfix popular-places-panel" data-usagetype="1">
+                                @foreach (var item in forSaleItems)
+                                {
+                                    <li>
+                                        <a href="@forSaleUrl">
+                                            @if (isSaleDistrict)
+                                            {
+                                                <h5>@item.District, @item.City</h5>
+                                            }
+                                            else
+                                            {
+                                                <h5>@item.City</h5>
+                                            }
+                                            <span>(@item.ListingCount.ToString("00"))</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+
+                        @* Kiralık panel (usageType=2) — başlangıçta gizli *@
+                        @if (forRentItems.Count == 0)
+                        {
+                            <p class="popular-places-empty" data-usagetype="2" style="display:none;">Bu işlem türünde henüz aktif ilan yok.</p>
+                        }
+                        else
+                        {
+                            <ul class="place-list clearfix popular-places-panel" data-usagetype="2" style="display:none;">
+                                @foreach (var item in forRentItems)
+                                {
+                                    <li>
+                                        <a href="@forRentUrl">
+                                            @if (isRentDistrict)
+                                            {
+                                                <h5>@item.District, @item.City</h5>
+                                            }
+                                            else
+                                            {
+                                                <h5>@item.City</h5>
+                                            }
+                                            <span>(@item.ListingCount.ToString("00"))</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+
+                        <div class="btn-box">
+                            <a href="@forSaleUrl" class="theme-btn btn-one popular-places-all" data-usagetype="1">Tüm İlanlar</a>
+                            <a href="@forRentUrl" class="theme-btn btn-one popular-places-all" data-usagetype="2" style="display:none;">Tüm İlanlar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12 col-sm-12 image-column">
+                <div class="image_block_1">
+                    <div class="image-box">
+                        <figure class="image image-1 paroller"><img src="/Realshed/assets/images/resource/place-5.jpg" alt=""></figure>
+                        <figure class="image image-2 paroller-2"><img src="/Realshed/assets/images/resource/place-6.jpg" alt=""></figure>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
