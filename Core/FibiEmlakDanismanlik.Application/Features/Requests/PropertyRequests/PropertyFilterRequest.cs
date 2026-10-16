@@ -39,5 +39,15 @@ namespace FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests
         public string? ZoningStatus { get; set; }
         public string? SearchTerm { get; set; }
 
+        public int? HousingCategoryId { get; set; }
+        public int? LandCategoryId { get; set; }
+        public string? BuildingAge { get; set; }
+        public string? Heating { get; set; }
+        public string? TitleDeedStatus { get; set; }
+        public bool? Furnished { get; set; }
+        public bool? WithinTheComplex { get; set; }
+        public bool? LoanEligible { get; set; }
+        public bool? Transferable { get; set; }
+
     }
-    }
+}

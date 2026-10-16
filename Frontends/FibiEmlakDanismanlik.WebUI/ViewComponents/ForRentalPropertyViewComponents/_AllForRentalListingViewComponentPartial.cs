@@ -76,6 +76,15 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForRentalPropertyViewCompone
                 int? numberOfSection = TryInt("numberOfSection");
                 int? agentId = TryInt("agentId");
                 string? zoningStatus = TryStr("zoningStatus");
+                int? housingCategoryId = TryInt("housingCategoryId");
+                int? landCategoryId = TryInt("landCategoryId");
+                string? buildingAge = TryStr("buildingAge");
+                string? heating = TryStr("heating");
+                string? titleDeedStatus = TryStr("titleDeedStatus");
+                bool? furnished = TryBool("furnished");
+                bool? withinTheComplex = TryBool("withinTheComplex");
+                bool? loanEligible = TryBool("loanEligible");
+                bool? transferable = TryBool("transferable");
                 string? searchTerm = TryStr("searchTerm");
 
                 var sortBy = TryStr("sortBy") ?? "CreatedDate";
@@ -125,6 +134,15 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForRentalPropertyViewCompone
                     NumberOfSection = numberOfSection,
                     AgentId = agentId,
                     ZoningStatus = zoningStatus,
+                    HousingCategoryId = housingCategoryId,
+                    LandCategoryId = landCategoryId,
+                    BuildingAge = buildingAge,
+                    Heating = heating,
+                    TitleDeedStatus = titleDeedStatus,
+                    Furnished = furnished,
+                    WithinTheComplex = withinTheComplex,
+                    LoanEligible = loanEligible,
+                    Transferable = transferable,
                     SearchTerm = searchTerm,
                     SortBy = sortBy,
                     SortDir = sortDir,
@@ -194,6 +212,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForRentalPropertyViewCompone
                     var v = HttpContext.Request.Query[key].ToString();
                     return string.IsNullOrWhiteSpace(v) ? null : v;
                 }
+                bool? TryBool(string key) => bool.TryParse(HttpContext.Request.Query[key], out var b) ? b : null;
 
             }
         }

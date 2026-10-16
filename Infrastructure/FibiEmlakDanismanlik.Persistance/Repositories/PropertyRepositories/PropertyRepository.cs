@@ -4,6 +4,7 @@ using FibiEmlakDanismanlik.Application.Features.Results.AmenityFacetResults;
 using FibiEmlakDanismanlik.Application.Features.Results.CommonPropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
+using FibiEmlakDanismanlik.Application.Features.Results.ListingTypeResults;
 using FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces;
 using FibiEmlakDanismanlik.Application.ViewModels;
 using FibiEmlakDanismanlik.Domain.DTOs;
@@ -79,6 +80,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         Exchange = null,
         BestDeals = house.BestDeals,
         LandCategoryId = null,
+        HousingCategoryId = house.HousingCategoryId,
 
 
         // konut dolu
@@ -201,6 +203,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         Exchange = null,
         BestDeals = comm.BestDeals,
         LandCategoryId = null,
+        HousingCategoryId = null,
 
 
         // konut boş
@@ -321,6 +324,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Exchange = land.Exchange,
                     BestDeals = land.BestDeals,
                     LandCategoryId = land.LandCategoryId,
+                    HousingCategoryId = null,
                     
 
                     // konut boş
@@ -1418,6 +1422,25 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
                 baseQuery = baseQuery.Where(x => x.ZoningStatus == filter.ZoningStatus);
 
+            if (filter.HousingCategoryId.HasValue)
+                baseQuery = baseQuery.Where(x => x.HousingCategoryId == filter.HousingCategoryId.Value);
+            if (filter.LandCategoryId.HasValue)
+                baseQuery = baseQuery.Where(x => x.LandCategoryId == filter.LandCategoryId.Value);
+            if (!string.IsNullOrWhiteSpace(filter.BuildingAge))
+                baseQuery = baseQuery.Where(x => x.BuildingAge == filter.BuildingAge);
+            if (!string.IsNullOrWhiteSpace(filter.Heating))
+                baseQuery = baseQuery.Where(x => x.Heating == filter.Heating);
+            if (!string.IsNullOrWhiteSpace(filter.TitleDeedStatus))
+                baseQuery = baseQuery.Where(x => x.TitleDeedStatus == filter.TitleDeedStatus);
+            if (filter.Furnished.HasValue)
+                baseQuery = baseQuery.Where(x => (x.Furnished ?? false) == filter.Furnished.Value);
+            if (filter.WithinTheComplex.HasValue)
+                baseQuery = baseQuery.Where(x => (x.WithinTheComplex ?? false) == filter.WithinTheComplex.Value);
+            if (filter.LoanEligible.HasValue)
+                baseQuery = baseQuery.Where(x => ((x.HomeLoan ?? false) || (x.LandLoan ?? false)) == filter.LoanEligible.Value);
+            if (filter.Transferable.HasValue)
+                baseQuery = baseQuery.Where(x => (x.Transferable ?? false) == filter.Transferable.Value);
+
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var term = filter.SearchTerm.Trim();
@@ -1718,6 +1741,20 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
                 query = query.Where(x => false);
 
+            if (filter.HousingCategoryId.HasValue)
+                query = query.Where(x => x.HousingCategoryId == filter.HousingCategoryId.Value);
+            if (!string.IsNullOrWhiteSpace(filter.BuildingAge))
+                query = query.Where(x => x.BuildingAge == filter.BuildingAge);
+            if (!string.IsNullOrWhiteSpace(filter.Heating))
+                query = query.Where(x => x.Heating == filter.Heating);
+            if (filter.Furnished.HasValue)
+                query = query.Where(x => (x.Furnished ?? false) == filter.Furnished.Value);
+            if (filter.WithinTheComplex.HasValue)
+                query = query.Where(x => (x.WithinTheComplex ?? false) == filter.WithinTheComplex.Value);
+
+            if (filter.LandCategoryId.HasValue || !string.IsNullOrWhiteSpace(filter.TitleDeedStatus) || filter.LoanEligible.HasValue || filter.Transferable.HasValue)
+                query = query.Where(x => false);
+
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
                 var term = filter.SearchTerm.Trim();
@@ -1779,6 +1816,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     // Arsa özel
                     LandCategoryId = l.LandCategoryId,
                     ZoningStatus = l.ZoningStatus,
+                    TitleDeedStatus = l.TitleDeedStatus,
                     Area = l.Area,
                     PricePerSquareMeter = l.PricePerSquareMeter,
                     ParcelNumber = l.ParcelNumber,
@@ -1833,6 +1871,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
                 query = query.Where(x => x.ZoningStatus == filter.ZoningStatus);
+
+            if (filter.LandCategoryId.HasValue)
+                query = query.Where(x => x.LandCategoryId == filter.LandCategoryId.Value);
+            if (!string.IsNullOrWhiteSpace(filter.TitleDeedStatus))
+                query = query.Where(x => x.TitleDeedStatus == filter.TitleDeedStatus);
+
+            if (filter.HousingCategoryId.HasValue || !string.IsNullOrWhiteSpace(filter.BuildingAge) || !string.IsNullOrWhiteSpace(filter.Heating) || filter.Furnished.HasValue || filter.WithinTheComplex.HasValue || filter.LoanEligible.HasValue || filter.Transferable.HasValue)
+                query = query.Where(x => false);
 
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             {
@@ -1948,6 +1994,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 query = query.Where(x => x.AgentId == filter.AgentId.Value);
 
             if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
+                query = query.Where(x => false);
+
+            if (!string.IsNullOrWhiteSpace(filter.BuildingAge))
+                query = query.Where(x => x.BuildingAge == filter.BuildingAge);
+            if (!string.IsNullOrWhiteSpace(filter.Heating))
+                query = query.Where(x => x.Heating == filter.Heating);
+
+            if (filter.HousingCategoryId.HasValue || filter.LandCategoryId.HasValue || !string.IsNullOrWhiteSpace(filter.TitleDeedStatus) || filter.Furnished.HasValue || filter.WithinTheComplex.HasValue || filter.LoanEligible.HasValue || filter.Transferable.HasValue)
                 query = query.Where(x => false);
 
             if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
@@ -2775,6 +2829,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             public string? ZoningStatus { get; set; }
             public int? AgentId { get; set; }
             public string? AgentName { get; set; }
+            public int? HousingCategoryId { get; set; }
+            public int? LandCategoryId { get; set; }
+            public string? BuildingAge { get; set; }
+            public string? Heating { get; set; }
+            public string? TitleDeedStatus { get; set; }
         }
 
         public async Task<FibiEmlakDanismanlik.Application.Features.Results.PropertyResults.SearchFilterFacetsResult> GetSearchFilterFacetsAsync(
@@ -2839,7 +2898,10 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                             Bathroom = x.NumberOfBathRoom,
                             Floor = x.NumberOfFloors,
                             AgentId = x.AgentId,
-                            AgentName = x.AgentName
+                            AgentName = x.AgentName,
+                            HousingCategoryId = x.HousingCategoryId,
+                            BuildingAge = x.BuildingAge,
+                            Heating = x.Heating
                         });
                         break;
                     }
@@ -2858,7 +2920,9 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                             Area = x.Area,
                             ZoningStatus = x.ZoningStatus,
                             AgentId = x.AgentId,
-                            AgentName = x.AgentName
+                            AgentName = x.AgentName,
+                            LandCategoryId = x.LandCategoryId,
+                            TitleDeedStatus = x.TitleDeedStatus
                         });
                         break;
                     }
@@ -2881,6 +2945,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                 comm.NumberOfSection,
                                 comm.NumberOfBathrooms,
                                 comm.NumberOfFloors,
+                                comm.TitleDeedStatus,
                                 comm.AgentId,
                                 agent.AgentName
                             };
@@ -2896,7 +2961,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                             Bathroom = x.NumberOfBathrooms,
                             Floor = x.NumberOfFloors,
                             AgentId = x.AgentId,
-                            AgentName = x.AgentName
+                            AgentName = x.AgentName,
+                            TitleDeedStatus = x.TitleDeedStatus
                         });
                         break;
                     }
@@ -2922,7 +2988,10 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                             Bathroom = x.NumberOfBathRoom,
                             Floor = x.NumberOfFloors,
                             AgentId = x.AgentId,
-                            AgentName = x.AgentName
+                            AgentName = x.AgentName,
+                            HousingCategoryId = x.HousingCategoryId,
+                            BuildingAge = x.BuildingAge,
+                            Heating = x.Heating
                         });
                         break;
                     }
@@ -2939,7 +3008,9 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                             Area = x.Area,
                             ZoningStatus = x.ZoningStatus,
                             AgentId = x.AgentId,
-                            AgentName = x.AgentName
+                            AgentName = x.AgentName,
+                            LandCategoryId = x.LandCategoryId,
+                            TitleDeedStatus = x.TitleDeedStatus
                         });
                         break;
                     }
@@ -2958,7 +3029,9 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                             Bathroom = x.NumberOfBathrooms,
                             Floor = x.NumberOfFloors,
                             AgentId = x.AgentId,
-                            AgentName = x.AgentName
+                            AgentName = x.AgentName,
+                            BuildingAge = x.BuildingAge,
+                            Heating = x.Heating
                         });
                         break;
                     }
@@ -3010,6 +3083,24 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 .Select(r => r.Section!.Value)
                 .Distinct()
                 .ToList();
+
+            result.BuildingAges = rows.Where(r => !string.IsNullOrWhiteSpace(r.BuildingAge)).Select(r => r.BuildingAge!.Trim()).Distinct().ToList();
+            result.Heatings = rows.Where(r => !string.IsNullOrWhiteSpace(r.Heating)).Select(r => r.Heating!.Trim()).Distinct().ToList();
+            result.TitleDeedStatuses = rows.Where(r => !string.IsNullOrWhiteSpace(r.TitleDeedStatus)).Select(r => r.TitleDeedStatus!.Trim()).Distinct().ToList();
+
+            var housingCatIds = rows.Where(r => r.HousingCategoryId.HasValue).Select(r => r.HousingCategoryId!.Value).Distinct().ToList();
+            if (housingCatIds.Count > 0)
+                result.HousingCategories = await _context.HousingCategories.AsNoTracking()
+                    .Where(c => housingCatIds.Contains(c.HousingCategoryId))
+                    .Select(c => new FilterOptionDto(c.HousingCategoryId.ToString(), c.HousingCategoryName))
+                    .ToListAsync();
+
+            var landCatIds = rows.Where(r => r.LandCategoryId.HasValue).Select(r => r.LandCategoryId!.Value).Distinct().ToList();
+            if (landCatIds.Count > 0)
+                result.LandCategories = await _context.LandCategories.AsNoTracking()
+                    .Where(c => landCatIds.Contains(c.LandCategoryId))
+                    .Select(c => new FilterOptionDto(c.LandCategoryId.ToString(), c.LandCategoryName))
+                    .ToListAsync();
 
             result.ZoningStatuses = rows
                 .Where(r => !string.IsNullOrWhiteSpace(r.ZoningStatus))

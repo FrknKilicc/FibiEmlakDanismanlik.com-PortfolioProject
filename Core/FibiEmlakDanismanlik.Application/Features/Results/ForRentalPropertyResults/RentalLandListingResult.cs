@@ -11,6 +11,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyRes
         public int? LandCategoryId { get; set; }
 
         public string? ZoningStatus { get; set; }
+        public string? TitleDeedStatus { get; set; }
 
         public double? Area { get; set; }
         public decimal? PricePerSquareMeter { get; set; }

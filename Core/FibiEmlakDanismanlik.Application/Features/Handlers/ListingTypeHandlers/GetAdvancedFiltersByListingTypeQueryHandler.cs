@@ -65,16 +65,24 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingTypeHandlers
             var effectiveUsageType = request.UsageType > 0 ? request.UsageType : expectedUsageType;
             var isLand = category == "land";
             var isCommercial = category == "commercial";
+            var isForSale = expectedUsageType == (int)UsageType.ForSale;
 
             var result = new AdvancedFiltersVisibilityDto
             {
                 Category = category,
                 RoomLabel = isCommercial ? "Bölüm Sayısı" : "Oda Sayısı",
-                BathLabel = isCommercial ? "Lavabo Sayısı" : "Banyo Sayısı",
                 ShowRooms = !isLand,
-                ShowBath = !isLand,
-                ShowFloor = !isLand,
+                ShowFloor = category == "housing",
                 ShowZoning = isLand,
+                ShowHousingCategory = category == "housing",
+                ShowLandCategory = isLand,
+                ShowBuildingAge = category == "housing" || (isCommercial && !isForSale),
+                ShowHeating = category == "housing" || (isCommercial && !isForSale),
+                ShowTitleDeed = isLand || (isCommercial && isForSale),
+                ShowFurnished = category == "housing" && !isForSale,
+                ShowWithinComplex = category == "housing",
+                ShowLoanEligible = isForSale && (category == "housing" || isLand),
+                ShowTransferable = isCommercial && isForSale,
                 ShowPrice = true,
                 ShowArea = true,
                 ShowDistance = false
@@ -120,19 +128,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingTypeHandlers
                     .OrderBy(s => s)
                     .Select(s => new FilterOptionDto(s.ToString(CultureInfo.InvariantCulture), $"{s} Bölüm"))
                     .ToList();
-
-                result.BathOptions = facets.Bathrooms
-                    .Where(b => b > 0)
-                    .Distinct()
-                    .OrderBy(b => b)
-                    .Select(b => new FilterOptionDto(b.ToString(CultureInfo.InvariantCulture), $"{b} Lavabo"))
-                    .ToList();
-
-                result.FloorOptions = facets.Floors
-                    .Distinct()
-                    .OrderBy(f => f)
-                    .Select(f => new FilterOptionDto(f.ToString(CultureInfo.InvariantCulture), FormatFloor(f)))
-                    .ToList();
             }
             else
             {
@@ -140,19 +135,23 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingTypeHandlers
                     .Select(r => new FilterOptionDto(r, r))
                     .ToList();
 
-                result.BathOptions = facets.Bathrooms
-                    .Where(b => b > 0)
-                    .Distinct()
-                    .OrderBy(b => b)
-                    .Select(b => new FilterOptionDto(b.ToString(CultureInfo.InvariantCulture), $"{b} Banyo"))
-                    .ToList();
-
                 result.FloorOptions = facets.Floors
                     .Distinct()
                     .OrderBy(f => f)
                     .Select(f => new FilterOptionDto(f.ToString(CultureInfo.InvariantCulture), FormatFloor(f)))
                     .ToList();
             }
+
+            if (result.ShowHousingCategory)
+                result.HousingCategoryOptions = facets.HousingCategories.OrderBy(o => o.Text, TrComparer).ToList();
+            if (result.ShowLandCategory)
+                result.LandCategoryOptions = facets.LandCategories.OrderBy(o => o.Text, TrComparer).ToList();
+            if (result.ShowBuildingAge)
+                result.BuildingAgeOptions = ToOptions(facets.BuildingAges);
+            if (result.ShowHeating)
+                result.HeatingOptions = ToOptions(facets.Heatings);
+            if (result.ShowTitleDeed)
+                result.TitleDeedOptions = ToOptions(facets.TitleDeedStatuses);
 
             return result;
         }
@@ -192,6 +191,17 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingTypeHandlers
                 .ThenBy(x => x.Sub)
                 .ThenBy(x => x.Raw, TrComparer)
                 .Select(x => x.Raw);
+        }
+
+        private static List<FilterOptionDto> ToOptions(IEnumerable<string> values)
+        {
+            return values
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => x.Trim())
+                .Distinct(TrComparer)
+                .OrderBy(x => x, TrComparer)
+                .Select(x => new FilterOptionDto(x, x))
+                .ToList();
         }
     }
 }
