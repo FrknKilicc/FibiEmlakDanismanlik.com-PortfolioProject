@@ -25,6 +25,13 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _mediator.Send(new GetAgentQuery());
             return Ok(value);
         }
+
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetAgentPagedList(int page = 1, int pageSize = 3)
+        {
+            var value = await _mediator.Send(new GetAgentPagedQuery(page, pageSize));
+            return Ok(value);
+        }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAgentById(int id)
         {

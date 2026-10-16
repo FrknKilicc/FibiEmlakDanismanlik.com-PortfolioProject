@@ -1,7 +1,7 @@
 ﻿@model List<FibiEmlakDanismanlik.WebUI.Models.AgentFeaturedPropertySidebarVm>
 
 <div class="widget-title">
-    <h5>Öne Çıkanlar</h5>
+    <h5>Vitrin İlanları</h5>
 </div>
 
 @if (Model != null && Model.Any())
@@ -39,7 +39,7 @@
                         <div class="price-box clearfix">
                             <div class="price-info">
                                 <h6>@item.PropertyStatusLabel</h6>
-                                <h4>@item.Price.ToString("N0") TL</h4>
+                                <h4>@item.Price.ToString("N0") ₺</h4>
                             </div>
                         </div>
 
@@ -56,5 +56,5 @@
 }
 else
 {
-    <p>Gösterilecek ilan bulunamadı.</p>
+    <p>Şu anda vitrinde ilan bulunmuyor.</p>
 }
