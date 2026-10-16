@@ -1,7 +1,12 @@
-﻿using FibiEmlakDanismanlik.Dto.PropertyDtos;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using FibiEmlakDanismanlik.Dto.PropertyDtos;
 using FibiEmlakDanismanlik.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents
@@ -19,71 +24,67 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents
             _configuration = configuration;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string status = "forRent")
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            status = string.IsNullOrWhiteSpace(status) ? "forRent" : status;
             var client = _httpClientFactory.CreateClient();
-
-            if (status == "forSale")
+            var apiUrl = _configuration["Url:ApiUrl"]?.Trim();
+            if (!string.IsNullOrEmpty(apiUrl) && !apiUrl.EndsWith("/"))
             {
-                var responseMessage = await client.GetAsync(
-                    $"{_configuration["Url:ApiUrl"]}ForSales/GetAllForSalesPropertyForListing");
-
-                if (!responseMessage.IsSuccessStatusCode)
-                    return View(new List<AgentFeaturedPropertySidebarVm>());
-
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultAllForSaleListinForPageDto>>(jsonData);
-
-                var top5 = values?
-                    .OrderByDescending(x => x.CreatedDate)
-                    .Take(5)
-                    .Select(x => new AgentFeaturedPropertySidebarVm
-                    {
-                        ListingId = x.ListingId,
-                        PropertyName = x.PropertyName,
-                        PropertyDescription = x.PropertyDescription,
-                        CreatedDate = x.CreatedDate,
-                        Price = x.Price,
-                        PropImgUrl1 = x.PropImgUrl1,
-                        PropertyStatusLabel = "Satılık",
-                        DetailUrl = $"/AllForSaleDetailPage/Index/{x.ListingId}"
-                    })
-                    .ToList() ?? new List<AgentFeaturedPropertySidebarVm>();
-
-                ViewBag.SelectedStatus = status;
-                return View(top5);
+                apiUrl += "/";
             }
-            else
+
+            var forSaleTask = !string.IsNullOrEmpty(apiUrl)
+                ? GetDealsAsync(client, $"{apiUrl}BestDeals?usageType=1")
+                : Task.FromResult(new List<ResultBestDealDto>());
+
+            var forRentTask = !string.IsNullOrEmpty(apiUrl)
+                ? GetDealsAsync(client, $"{apiUrl}BestDeals?usageType=2")
+                : Task.FromResult(new List<ResultBestDealDto>());
+
+            await Task.WhenAll(forSaleTask, forRentTask);
+
+            var forSaleList = await forSaleTask;
+            var forRentList = await forRentTask;
+
+            var list = forSaleList
+                .Concat(forRentList)
+                .OrderByDescending(x => x.CreatedDate)
+                .Take(6)
+                .Select(x => new AgentFeaturedPropertySidebarVm
+                {
+                    ListingId = x.ListingId,
+                    PropertyName = x.PropertyName ?? "",
+                    PropertyDescription = x.PropertyDescription ?? "",
+                    CreatedDate = x.CreatedDate,
+                    Price = x.Price,
+                    PropImgUrl1 = x.ImageUrl,
+                    PropertyStatusLabel = x.UsageType == 2 ? "Kiralık" : "Satılık",
+                    DetailUrl = (x.UsageType == 2
+                        ? Url.Action("Index", "AllForRentalDetailPage", new { id = x.ListingId })
+                        : Url.Action("Index", "AllForSaleDetailPage", new { id = x.ListingId })) ?? "#"
+                })
+                .ToList();
+
+            return View(list);
+        }
+
+        private async Task<List<ResultBestDealDto>> GetDealsAsync(HttpClient client, string url)
+        {
+            try
             {
-                var responseMessage = await client.GetAsync(
-                    $"{_configuration["Url:ApiUrl"]}ForRental/GetAllForRentalPropertyForListing");
-
-                if (!responseMessage.IsSuccessStatusCode)
-                    return View(new List<AgentFeaturedPropertySidebarVm>());
-
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var values = JsonConvert.DeserializeObject<List<ResultAllForRentalListingForPageDto>>(jsonData);
-
-                var top5 = values?
-                    .OrderByDescending(x => x.CreatedDate)
-                    .Take(5)
-                    .Select(x => new AgentFeaturedPropertySidebarVm
-                    {
-                        ListingId = x.ListingId,
-                        PropertyName = x.PropertyName,
-                        PropertyDescription = x.PropertyDescription,
-                        CreatedDate = x.CreatedDate,
-                        Price = x.Rent,
-                        PropImgUrl1 = x.PropImgUrl1,
-                        PropertyStatusLabel = "Kiralık",
-                        DetailUrl = $"/AllForRentalDetailPage/Index/{x.ListingId}"
-                    })
-                    .ToList() ?? new List<AgentFeaturedPropertySidebarVm>();
-
-                ViewBag.SelectedStatus = status;
-                return View(top5);
+                var response = await client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<List<ResultBestDealDto>>(json) ?? new List<ResultBestDealDto>();
+                }
             }
+            catch (Exception)
+            {
+                // Hata durumunda boş liste döner
+            }
+
+            return new List<ResultBestDealDto>();
         }
     }
 }

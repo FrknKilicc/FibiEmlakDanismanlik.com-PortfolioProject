@@ -1,14 +1,5 @@
 ﻿@model FibiEmlakDanismanlik.WebUI.Models.AgentListingPageVm
 
-@{
-    var selectedStatus = Context.Request.Query["status"].ToString();
-
-    if (string.IsNullOrWhiteSpace(selectedStatus))
-    {
-        selectedStatus = "forRent";
-    }
-}
-
 
 
 <!--Page Title-->
@@ -89,27 +80,8 @@
                             </a>
                         </div>
                     </div>
-                    <div class="category-widget sidebar-widget">
-                        <div class="widget-title">
-                            <h5>İlan Kategorisi</h5>
-                        </div>
-                        <ul class="category-list clearfix">
-                            <li>
-                                <a href="@Url.Action("Index", "Agent", new { status = "forRent" })"
-                                   class="@(selectedStatus == "forRent" ? "active" : "")">
-                                    Kiralık
-                                </a>
-                            </li>
-                            <li>
-                                <a href="@Url.Action("Index", "Agent", new { status = "forSale" })"
-                                   class="@(selectedStatus == "forSale" ? "active" : "")">
-                                    Satılık
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                     <div class="featured-widget sidebar-widget">
-                        @await Component.InvokeAsync("_TopFeaturedPropertyForAgentPageViewComponentPartial", new { status = selectedStatus })
+                        @await Component.InvokeAsync("_TopFeaturedPropertyForAgentPageViewComponentPartial")
                     </div>
                     <div class="blog-sidebar">
                         @await Component.InvokeAsync("_GetLast3BlogWithAuthorViewComponentPartial")
