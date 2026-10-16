@@ -147,9 +147,6 @@
                 room: 'roomDropdown-' + sfx,
                 roomLabel: 'roomLabel-' + sfx,
                 roomContainer: 'roomFilterContainer-' + sfx,
-                bath: 'bathDropdown-' + sfx,
-                bathLabel: 'bathLabel-' + sfx,
-                bathContainer: 'bathFilterContainer-' + sfx,
                 floor: 'floorDropdown-' + sfx,
                 floorContainer: 'floorFilterContainer-' + sfx,
                 agent: 'agentDropdown-' + sfx,
@@ -163,6 +160,19 @@
                 as: 'areaSlider-' + sfx,
                 ad: 'areaDisplay-' + sfx
             };
+
+            var YES_NO = [{ id: 'true', text: 'Evet' }, { id: 'false', text: 'Hayır' }];
+            var EXTRA_FILTERS = [
+                { cls: 'adv-filter-housingcat',    sel: 'housingCategoryDropdown-' + sfx, show: 'showHousingCategory', opts: 'housingCategoryOptions', label: 'Konut Tipi',   param: 'housingCategoryId' },
+                { cls: 'adv-filter-landcat',       sel: 'landCategoryDropdown-' + sfx,    show: 'showLandCategory',    opts: 'landCategoryOptions',    label: 'Arsa Tipi',    param: 'landCategoryId' },
+                { cls: 'adv-filter-titledeed',     sel: 'titleDeedDropdown-' + sfx,       show: 'showTitleDeed',       opts: 'titleDeedOptions',       label: 'Tapu Durumu',  param: 'titleDeedStatus' },
+                { cls: 'adv-filter-buildingage',   sel: 'buildingAgeDropdown-' + sfx,     show: 'showBuildingAge',     opts: 'buildingAgeOptions',     label: 'Bina Yaşı',    param: 'buildingAge' },
+                { cls: 'adv-filter-heating',       sel: 'heatingDropdown-' + sfx,         show: 'showHeating',         opts: 'heatingOptions',         label: 'Isıtma',       param: 'heating' },
+                { cls: 'adv-filter-furnished',     sel: 'furnishedDropdown-' + sfx,       show: 'showFurnished',       fixed: [{ id: 'true', text: 'Eşyalı' }, { id: 'false', text: 'Eşyasız' }], label: 'Eşya Durumu', param: 'furnished' },
+                { cls: 'adv-filter-withincomplex', sel: 'withinComplexDropdown-' + sfx,   show: 'showWithinComplex',   fixed: YES_NO, label: 'Site İçinde',   param: 'withinTheComplex' },
+                { cls: 'adv-filter-loan',          sel: 'loanEligibleDropdown-' + sfx,    show: 'showLoanEligible',    fixed: YES_NO, label: 'Krediye Uygun', param: 'loanEligible' },
+                { cls: 'adv-filter-transferable',  sel: 'transferableDropdown-' + sfx,    show: 'showTransferable',    fixed: YES_NO, label: 'Devren',        param: 'transferable' }
+            ];
 
             // Sekme bazlı artan istek sayaçları (yarış koşulu önleme)
             var reqSeq = {
@@ -186,18 +196,20 @@
                 $tab.attr('data-total-count', '0');
                 $('#' + ID.notice).show();
                 $('#' + ID.roomLabel).text('Oda Sayısı');
-                $('#' + ID.bathLabel).text('Banyo Sayısı');
                 $tab.find('.adv-filter-room').show();
-                $tab.find('.adv-filter-bath').show();
-                $tab.find('.adv-filter-floor').show();
+                $tab.find('.adv-filter-floor').hide();
                 $tab.find('.adv-filter-zoning').hide();
                 $tab.find('.adv-filter-distance').hide();
                 $tab.find('.adv-filter-price').show();
                 $tab.find('.adv-filter-area').show();
 
+                EXTRA_FILTERS.forEach(function (ef) {
+                    $tab.find('.' + ef.cls).hide().attr('data-active', '0');
+                    setSelectState($('#' + ef.sel), { options: [], placeholder: 'Önce ilan tipi seçin', disabled: true });
+                });
+
                 setSelectState($('#' + ID.sort), { options: SORT_OPTIONS, placeholder: 'Önce ilan tipi seçin', disabled: true });
                 setSelectState($('#' + ID.room), { options: [], placeholder: 'Önce ilan tipi seçin', disabled: true });
-                setSelectState($('#' + ID.bath), { options: [], placeholder: 'Önce ilan tipi seçin', disabled: true });
                 setSelectState($('#' + ID.floor), { options: [], placeholder: 'Önce ilan tipi seçin', disabled: true });
                 setSelectState($('#' + ID.agent), { options: [], placeholder: 'Önce ilan tipi seçin', disabled: true });
                 setSelectState($('#' + ID.zoning), { options: [], placeholder: 'Önce ilan tipi seçin', disabled: true });
@@ -227,10 +239,12 @@
                 $('#' + ID.notice).hide();
                 setSelectState($('#' + ID.sort), { options: SORT_OPTIONS, placeholder: 'Sıralama Seçiniz', disabled: false });
                 setSelectState($('#' + ID.room), { options: [], placeholder: 'Yükleniyor...', disabled: true });
-                setSelectState($('#' + ID.bath), { options: [], placeholder: 'Yükleniyor...', disabled: true });
                 setSelectState($('#' + ID.floor), { options: [], placeholder: 'Yükleniyor...', disabled: true });
                 setSelectState($('#' + ID.agent), { options: [], placeholder: 'Yükleniyor...', disabled: true });
                 setSelectState($('#' + ID.zoning), { options: [], placeholder: 'Yükleniyor...', disabled: true });
+                EXTRA_FILTERS.forEach(function (ef) {
+                    setSelectState($('#' + ef.sel), { options: [], placeholder: 'Yükleniyor...', disabled: true });
+                });
             }
 
             function loadAdvancedFilters(ltId, cityId, distId) {
@@ -250,15 +264,12 @@
                     if (!f) return;
 
                     var rLabel = f.roomLabel || 'Oda Sayısı';
-                    var bLabel = f.bathLabel || 'Banyo Sayısı';
                     $('#' + ID.roomLabel).text(rLabel);
-                    $('#' + ID.bathLabel).text(bLabel);
 
                     $tab.attr('data-category', f.category || '');
                     $tab.attr('data-total-count', typeof f.totalCount === 'number' ? f.totalCount : 0);
 
                     $tab.find('.adv-filter-room').toggle(!!f.showRooms);
-                    $tab.find('.adv-filter-bath').toggle(!!f.showBath);
                     $tab.find('.adv-filter-floor').toggle(!!f.showFloor);
                     $tab.find('.adv-filter-zoning').toggle(!!f.showZoning);
                     $tab.find('.adv-filter-price').toggle(f.showPrice !== false);
@@ -271,15 +282,6 @@
                             options: rOpts,
                             placeholder: rOpts.length > 0 ? (rLabel + ' Seçiniz') : 'Bu seçimde aktif ilan yok',
                             disabled: rOpts.length === 0
-                        });
-                    }
-
-                    if (f.showBath) {
-                        var bOpts = Array.isArray(f.bathOptions) ? f.bathOptions : [];
-                        setSelectState($('#' + ID.bath), {
-                            options: bOpts,
-                            placeholder: bOpts.length > 0 ? (bLabel + ' Seçiniz') : 'Bu seçimde aktif ilan yok',
-                            disabled: bOpts.length === 0
                         });
                     }
 
@@ -300,6 +302,21 @@
                             disabled: zOpts.length === 0
                         });
                     }
+
+                    EXTRA_FILTERS.forEach(function (ef) {
+                        var visible = !!f[ef.show];
+                        $tab.find('.' + ef.cls).toggle(visible).attr('data-active', visible ? '1' : '0');
+                        if (!visible) {
+                            setSelectState($('#' + ef.sel), { options: [], placeholder: ef.label + ' Seçiniz', disabled: true });
+                            return;
+                        }
+                        var o = ef.fixed ? ef.fixed : (Array.isArray(f[ef.opts]) ? f[ef.opts] : []);
+                        setSelectState($('#' + ef.sel), {
+                            options: o,
+                            placeholder: o.length > 0 ? (ef.label + ' Seçiniz') : 'Bu seçimde aktif ilan yok',
+                            disabled: o.length === 0
+                        });
+                    });
 
                     var aOpts = Array.isArray(f.agentOptions) ? f.agentOptions : [];
                     setSelectState($('#' + ID.agent), {
@@ -336,10 +353,12 @@
                     if (seq !== reqSeq.filters) return;
                     console.error('[HomeSearch] Gelişmiş filtreler yüklenemedi:', err);
                     setSelectState($('#' + ID.room), { options: [], placeholder: 'Yüklenemedi, tekrar deneyin', disabled: true });
-                    setSelectState($('#' + ID.bath), { options: [], placeholder: 'Yüklenemedi, tekrar deneyin', disabled: true });
                     setSelectState($('#' + ID.floor), { options: [], placeholder: 'Yüklenemedi, tekrar deneyin', disabled: true });
                     setSelectState($('#' + ID.agent), { options: [], placeholder: 'Yüklenemedi, tekrar deneyin', disabled: true });
                     setSelectState($('#' + ID.zoning), { options: [], placeholder: 'Yüklenemedi, tekrar deneyin', disabled: true });
+                    EXTRA_FILTERS.forEach(function (ef) {
+                        setSelectState($('#' + ef.sel), { options: [], placeholder: 'Yüklenemedi, tekrar deneyin', disabled: true });
+                    });
                 });
             }
 
@@ -550,13 +569,8 @@
                     }
                 }
 
-                var bathVal = $('#' + ID.bath).val();
-                if (bathVal && category !== 'land') {
-                    params.set('numberOfBathRoom', String(bathVal));
-                }
-
                 var floorVal = $('#' + ID.floor).val();
-                if (floorVal !== null && floorVal !== undefined && floorVal !== '' && category !== 'land') {
+                if (floorVal !== null && floorVal !== undefined && floorVal !== '' && category === 'housing') {
                     params.set('floor', String(floorVal));
                 }
 
@@ -564,6 +578,12 @@
                 if (zoningVal && category === 'land') {
                     params.set('zoningStatus', String(zoningVal));
                 }
+
+                EXTRA_FILTERS.forEach(function (ef) {
+                    if ($tab.find('.' + ef.cls).attr('data-active') !== '1') return;
+                    var v = $('#' + ef.sel).val();
+                    if (v !== null && v !== undefined && v !== '') params.set(ef.param, String(v));
+                });
 
                 var agentVal = $('#' + ID.agent).val();
                 if (agentVal) {

@@ -47,6 +47,7 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
         public bool? Exchange { get; set; }
         public bool? BestDeals { get; set; }
         public int? LandCategoryId { get; set; }
+        public int? HousingCategoryId { get; set; }
         public List<CardHighlightViewModel> Highlights { get; set; } = new();
 
         // Konut Alanları
