@@ -233,3 +233,42 @@ price-range alanı */
     }
 }
 
+/* Agent list page */
+.agents-list .agents-block-one .image-box img.agent-card-img {
+    width: 250px;
+    height: 330px;
+    object-fit: cover;
+    object-position: top center;
+}
+
+.agents-list .agents-empty-state {
+    background: #fff;
+    border-radius: 10px;
+    padding: 40px 30px;
+    text-align: center;
+    color: #6c757d;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+@media only screen and (max-width: 767px) {
+    .agents-list .agents-block-one .image-box img.agent-card-img {
+        width: 100%;
+        height: 300px;
+    }
+}
+
+.agent-sidebar .category-widget .category-list li a.active {
+    color: #2dbe6c;
+    font-weight: 600;
+}
+
+.agent-sidebar .category-widget .category-list li a.active:before {
+    border-color: #2dbe6c;
+}
+
+.agent-sidebar .category-widget .category-list li a.active:after {
+    background-color: #2dbe6c;
+}
+
+
+
