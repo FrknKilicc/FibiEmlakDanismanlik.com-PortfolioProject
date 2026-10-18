@@ -1,0 +1,216 @@
+@model FibiEmlakDanismanlik.WebUI.Models.FibiServices.FibiServicePageVm
+@{
+    ViewData["Title"] = Model.Active.Title;
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/fibi-services.css" asp-append-version="true" />
+    <style>
+        .fibi-chart-box { position: relative; height: 340px; }
+        @@media (max-width: 767px) { .fibi-chart-box { height: 260px; } }
+    </style>
+}
+
+<!-- Sayfa Başlığı ve Hizmet Nav Barı -->
+@await Html.PartialAsync("_FibiServiceHeader", Model)
+
+<!-- FİBİ Bölge Analiz Ana Bölüm -->
+<section class="sec-pad">
+    <div class="auto-container">
+        <!-- Kısa Giriş -->
+        <div class="sec-title centred">
+            <h5>Bölge Karnesi ve Değer Projeksiyonu</h5>
+            <h2>Mahallenin Piyasa Bandını ve Yatırım Notunu Görün</h2>
+        </div>
+
+        <div class="row clearfix">
+            <!-- Sol Kolon: Form Paneli (col-lg-4 col-md-12 col-sm-12) -->
+            <div class="col-lg-4 col-md-12 col-sm-12">
+                <div class="fibi-panel">
+                    <form id="regionForm" class="default-form" novalidate>
+                        <!-- 1. Konum -->
+                        <div class="fibi-step-label">
+                            <span class="fibi-step-number">1</span> Konum
+                        </div>
+                        <div class="form-group">
+                            <label for="regionCity">İl <span class="text-danger">*</span></label>
+                            <select id="regionCity" name="cityId"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="regionDistrict">İlçe <span class="text-danger">*</span></label>
+                            <select id="regionDistrict" name="districtId"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="regionNeighborhood">Mahalle <span class="text-danger">*</span></label>
+                            <select id="regionNeighborhood" name="neighborhoodId"></select>
+                        </div>
+
+                        <!-- 2. Mülk Tipi -->
+                        <div class="fibi-step-label">
+                            <span class="fibi-step-number">2</span> Mülk Tipi
+                        </div>
+                        <div class="fibi-radio-cards">
+                            <label class="fibi-radio-card is-checked">
+                                <input type="radio" name="propertySegment" value="1" checked>
+                                <i class="fas fa-building"></i>
+                                <span class="fibi-card-title">Standart Daire</span>
+                                <span class="fibi-card-subtitle">Bölge ortalaması</span>
+                            </label>
+                            <label class="fibi-radio-card">
+                                <input type="radio" name="propertySegment" value="2">
+                                <i class="fas fa-city"></i>
+                                <span class="fibi-card-title">Site İçi / Yeni Bina</span>
+                                <span class="fibi-card-subtitle">Sosyal donatılı, yeni yapı</span>
+                            </label>
+                            <label class="fibi-radio-card">
+                                <input type="radio" name="propertySegment" value="3">
+                                <i class="fas fa-store"></i>
+                                <span class="fibi-card-title">Ticari</span>
+                                <span class="fibi-card-subtitle">Dükkan, ofis</span>
+                            </label>
+                        </div>
+
+                        <!-- 3. Karşılaştır (opsiyonel) -->
+                        <div class="fibi-step-label">
+                            <span class="fibi-step-number">3</span> Karşılaştır (opsiyonel)
+                        </div>
+                        <div class="form-group">
+                            <label for="regionCompare">Karşılaştırma Mahalle</label>
+                            <select id="regionCompare" name="compareWithNeighborhoodId"></select>
+                            <small class="form-text text-muted">İki mahalleyi yan yana kıyaslayın.</small>
+                        </div>
+
+                        <div class="form-group mt-3 mb-0">
+                            <button type="submit" id="regionSubmitBtn" class="theme-btn btn-one w-100">Bölgeyi Analiz Et</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sağ Kolon: Sonuç Paneli (col-lg-8 col-md-12 col-sm-12) -->
+            <div class="col-lg-8 col-md-12 col-sm-12">
+                <div class="fibi-panel" id="regionResultPanel">
+                    <!-- Sonuç Bekleme Alanı -->
+                    <div id="regionPlaceholder" class="fibi-result-placeholder">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Bölge karnesi burada görünecek</h4>
+                        <p>Mahalle seçin; piyasa emsal bandı, amortisman süresi ve 12 aylık değer projeksiyonu anında hesaplansın.</p>
+                    </div>
+
+                    <!-- Analiz Sonucu -->
+                    <div id="regionResult" hidden>
+                        <h3 id="regionLocationTitle" class="fibi-panel-title"></h3>
+
+                        <!-- 4 İstatistik Kartı -->
+                        <div class="row clearfix">
+                            <!-- a) Bölge Yatırım Notu -->
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <div class="fibi-stat-card">
+                                    <div class="fibi-stat-label">Bölge Yatırım Notu</div>
+                                    <div id="regionGrade" class="fibi-stat-value"></div>
+                                    <div id="regionGradeSub" class="fibi-stat-sub"></div>
+                                </div>
+                            </div>
+
+                            <!-- b) Piyasa Emsal Bandı (m²) -->
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <div class="fibi-stat-card">
+                                    <div class="fibi-stat-label">Piyasa Emsal Bandı (m²)</div>
+                                    <div id="regionBandBalanced" class="fibi-stat-value"></div>
+                                    <div id="regionBandSummary" class="fibi-stat-sub"></div>
+                                </div>
+                            </div>
+
+                            <!-- c) Amortisman Süresi -->
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <div class="fibi-stat-card">
+                                    <div class="fibi-stat-label">Amortisman Süresi</div>
+                                    <div id="regionAmortization" class="fibi-stat-value"></div>
+                                    <div id="regionAmortizationSub" class="fibi-stat-sub"></div>
+                                </div>
+                            </div>
+
+                            <!-- d) 12 Aylık Değer Beklentisi -->
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <div class="fibi-stat-card">
+                                    <div class="fibi-stat-label">12 Aylık Değer Beklentisi</div>
+                                    <div id="regionGrowth" class="fibi-stat-value"></div>
+                                    <div id="regionGrowthSub" class="fibi-stat-sub"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fiyat Bandı Görseli -->
+                        <h4 class="fibi-panel-title mt-4">Piyasa Emsal Bandı (m² başına)</h4>
+                        <div class="fibi-band">
+                            <div class="fibi-band-track">
+                                <span class="fibi-band-point" style="left: 0%;"></span>
+                                <span class="fibi-band-point" style="left: 50%;"></span>
+                                <span class="fibi-band-point" style="left: 100%;"></span>
+                            </div>
+                            <div class="fibi-band-labels">
+                                <div class="fibi-band-label-item">
+                                    <span class="fibi-band-label-title">Alt Emsal Bandı</span>
+                                    <span id="regionBandMin" class="fibi-band-label-val"></span>
+                                </div>
+                                <div class="fibi-band-label-item">
+                                    <span class="fibi-band-label-title">Piyasa Dengesi</span>
+                                    <span id="regionBandMid" class="fibi-band-label-val"></span>
+                                </div>
+                                <div class="fibi-band-label-item">
+                                    <span class="fibi-band-label-title">Nitelikli Mülk Üst Bandı</span>
+                                    <span id="regionBandMax" class="fibi-band-label-val"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grafik -->
+                        <h4 class="fibi-panel-title mt-4">Endeksli m² Trendi ve 12 Aylık Projeksiyon</h4>
+                        <div class="fibi-chart-box">
+                            <canvas id="regionChart"></canvas>
+                        </div>
+
+                        <!-- Karşılaştırma Tablosu -->
+                        <div id="regionCompareBlock" hidden>
+                            <h4 class="fibi-panel-title mt-4">Mahalle Karşılaştırması</h4>
+                            <div class="fibi-compare-table-wrapper">
+                                <table class="fibi-compare-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="fibi-compare-metric">Gösterge</th>
+                                            <th class="fibi-compare-val" id="regionCompareHeadA"></th>
+                                            <th class="fibi-compare-val" id="regionCompareHeadB"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="regionCompareBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Yasal Uyarı Metni -->
+                        <p class="fibi-disclaimer">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="regionDisclaimerText"></span>
+                        </p>
+
+                        <!-- Eylem Butonları -->
+                        <div class="fibi-cta-row">
+                            <a id="regionListingsLink" class="theme-btn btn-one" href="/AllForSalePage">Bu Bölgedeki İlanlarımızı İnceleyin</a>
+                            <button type="button" id="regionLeadBtn" class="theme-btn btn-two">Ücretsiz Uzman Değerleme Raporu Alın</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Ortak Lead Formu -->
+@await Html.PartialAsync("_FibiLeadForm", Model)
+
+@section Scripts {
+    <script src="~/js/fibi-services-common.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="~/js/fibi-neighborhood-analysis.js" asp-append-version="true"></script>
+}
