@@ -192,6 +192,17 @@
     margin-right: 8px;
 }
 
+.fibi-panel .form-group::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.fibi-panel .nice-select {
+    width: 100%;
+    float: none;
+}
+
 /* --------------------------------------------------------------------------
    3. Form Bölüm Başlıkları (.fibi-step-label)
    -------------------------------------------------------------------------- */
@@ -205,6 +216,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 12px;
+    clear: both;
 }
 
 .fibi-step-label .fibi-step-number {
@@ -456,6 +468,12 @@
     font-weight: 700;
     color: var(--fibi-heading);
     line-height: 1.2;
+}
+
+.fibi-stat-value--compact {
+    font-size: 18px;
+    line-height: 1.3;
+    white-space: nowrap;
 }
 
 .fibi-stat-sub {
@@ -713,6 +731,21 @@
     flex-wrap: wrap;
     align-items: center;
     margin-top: 20px;
+}
+
+.fibi-cta-row .theme-btn.btn-two {
+    background-color: #ffffff;
+    border: 2px solid var(--fibi-primary);
+    color: var(--fibi-primary);
+}
+
+.fibi-cta-row .theme-btn.btn-two:hover {
+    background-color: var(--fibi-primary);
+    color: #ffffff;
+}
+
+.fibi-cta-row .theme-btn.btn-two:before {
+    background-color: var(--fibi-primary);
 }
 
 @media (max-width: 575px) {
