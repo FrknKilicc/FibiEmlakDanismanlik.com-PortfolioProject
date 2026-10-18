@@ -26,6 +26,8 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces
 
         Task<BankLoanRate?> GetTrackedBankRateAsync(string providerKey);
 
+        Task<List<MarketDataSyncLog>> GetRecentSyncLogsAsync(int count);
+
         Task<int> SaveChangesAsync();
 
         /// <summary>Kaydedilmemiş tüm değişiklikleri bırakır (başarısız çalıştırmadan sonra).</summary>

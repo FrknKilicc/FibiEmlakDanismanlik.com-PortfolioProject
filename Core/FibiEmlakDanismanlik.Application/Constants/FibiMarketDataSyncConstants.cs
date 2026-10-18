@@ -32,5 +32,6 @@ namespace FibiEmlakDanismanlik.Application.Constants
         public const int MinimumRegionalChangeCount = 10;
         public const decimal MaximumAbsoluteChangePercentage = 200m;
         public const int SyncMessageMaxLength = FibiServiceConstants.SyncMessageMaxLength;
+        public const int RecentSyncLogCount = 50;
     }
 }

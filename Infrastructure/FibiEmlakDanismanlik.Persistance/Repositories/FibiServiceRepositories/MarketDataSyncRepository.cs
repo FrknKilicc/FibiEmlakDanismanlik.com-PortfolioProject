@@ -270,6 +270,15 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.FibiServiceRepositories
             return await _context.BankLoanRates.FirstOrDefaultAsync(x => x.ProviderKey == providerKey);
         }
 
+        public async Task<List<MarketDataSyncLog>> GetRecentSyncLogsAsync(int count)
+        {
+            return await _context.MarketDataSyncLogs
+                .AsNoTracking()
+                .OrderByDescending(x => x.StartedAt)
+                .Take(count)
+                .ToListAsync();
+        }
+
         public async Task<int> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync();

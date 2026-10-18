@@ -34,6 +34,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
 using System.Threading.RateLimiting;
 using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -115,6 +116,7 @@ builder.Services.AddScoped(typeof(IMarketDataSyncRepository), typeof(MarketDataS
 
 //MediaTR tried
 builder.Services.AddApplicationService(builder.Configuration);
+builder.Services.AddFibiInfrastructure(builder.Configuration);
 //MediaTR 
 
 // Reverse proxy arkasında rate limit'in gerçek istemci IP'sini görmesi için.
