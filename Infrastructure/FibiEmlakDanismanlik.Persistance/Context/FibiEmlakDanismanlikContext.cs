@@ -118,6 +118,9 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<CityGalleryImage> CityGalleryImages { get; set; }
         public DbSet<SocialMedia> SocialMedias { get; set; }
         public DbSet<HomeSectionImage> HomeSectionImages { get; set; }
+        public DbSet<ExternalNeighborhoodMarketStat> ExternalNeighborhoodMarketStats { get; set; }
+        public DbSet<BankLoanRate> BankLoanRates { get; set; }
+        public DbSet<FibiServiceLead> FibiServiceLeads { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -429,6 +432,82 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                         IsActive = true
                     }
                 );
+            });
+
+            // ExternalNeighborhoodMarketStat: Dış piyasa mahalle emsal verileri
+            modelBuilder.Entity<ExternalNeighborhoodMarketStat>(entity =>
+            {
+                entity.HasOne(x => x.Neighborhood)
+                      .WithMany()
+                      .HasForeignKey(x => x.NeighborhoodId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => x.NeighborhoodId).IsUnique();
+
+                entity.Property(x => x.BaseSalePricePerSqm).HasPrecision(18, 2);
+                entity.Property(x => x.BaseRentPricePerSqm).HasPrecision(18, 2);
+
+                entity.Property(x => x.AgencyMarginMultiplier)
+                      .HasPrecision(5, 3)
+                      .HasDefaultValue(FibiServiceConstants.DefaultAgencyMarginMultiplier);
+
+                entity.Property(x => x.BandSpreadPercentage)
+                      .HasPrecision(5, 2)
+                      .HasDefaultValue(FibiServiceConstants.DefaultBandSpreadPercentage);
+
+                entity.Property(x => x.Last1YearGrowthRate).HasPrecision(7, 2);
+                entity.Property(x => x.Last3YearsCompoundGrowthRate).HasPrecision(7, 2);
+                entity.Property(x => x.RegionalDevelopmentFactor).HasPrecision(4, 2);
+
+                entity.Property(x => x.HistoricalQuarterlyPricesJson).IsRequired();
+            });
+
+            // BankLoanRate: Banka kredi faiz oranları ve seed data
+            modelBuilder.Entity<BankLoanRate>(entity =>
+            {
+                entity.Property(x => x.BankName)
+                      .IsRequired()
+                      .HasMaxLength(FibiServiceConstants.BankNameMaxLength);
+
+                entity.Property(x => x.LogoUrl)
+                      .HasMaxLength(FibiServiceConstants.LogoUrlMaxLength);
+
+                entity.Property(x => x.HousingLoanMonthlyRate).HasPrecision(9, 4);
+                entity.Property(x => x.CommercialLoanMonthlyRate).HasPrecision(9, 4);
+                entity.Property(x => x.AllocationFeeRate).HasPrecision(9, 4);
+
+                entity.HasData(
+                    new BankLoanRate { BankLoanRateId = 1, BankName = "Ziraat Bankası", LogoUrl = null, HousingLoanMonthlyRate = 2.49m, CommercialLoanMonthlyRate = 2.89m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
+                    new BankLoanRate { BankLoanRateId = 2, BankName = "Halkbank", LogoUrl = null, HousingLoanMonthlyRate = 2.52m, CommercialLoanMonthlyRate = 2.95m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
+                    new BankLoanRate { BankLoanRateId = 3, BankName = "VakıfBank", LogoUrl = null, HousingLoanMonthlyRate = 2.55m, CommercialLoanMonthlyRate = 2.99m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
+                    new BankLoanRate { BankLoanRateId = 4, BankName = "Türkiye İş Bankası", LogoUrl = null, HousingLoanMonthlyRate = 2.79m, CommercialLoanMonthlyRate = 3.19m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
+                    new BankLoanRate { BankLoanRateId = 5, BankName = "Garanti BBVA", LogoUrl = null, HousingLoanMonthlyRate = 2.85m, CommercialLoanMonthlyRate = 3.25m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) }
+                );
+            });
+
+            // FibiServiceLead: Danışmanlık talepleri
+            modelBuilder.Entity<FibiServiceLead>(entity =>
+            {
+                entity.Property(x => x.FullName)
+                      .IsRequired()
+                      .HasMaxLength(FibiServiceConstants.FullNameMaxLength);
+
+                entity.Property(x => x.PhoneNumber)
+                      .IsRequired()
+                      .HasMaxLength(FibiServiceConstants.PhoneNumberMaxLength);
+
+                entity.Property(x => x.Email)
+                      .HasMaxLength(FibiServiceConstants.EmailMaxLength);
+
+                entity.Property(x => x.CustomerNote)
+                      .HasMaxLength(FibiServiceConstants.CustomerNoteMaxLength);
+
+                entity.HasOne(x => x.Neighborhood)
+                      .WithMany()
+                      .HasForeignKey(x => x.NeighborhoodId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => new { x.IsContacted, x.CreatedDate });
             });
 
             // İlanların il/ilçe ilişkileri ve indeksleri

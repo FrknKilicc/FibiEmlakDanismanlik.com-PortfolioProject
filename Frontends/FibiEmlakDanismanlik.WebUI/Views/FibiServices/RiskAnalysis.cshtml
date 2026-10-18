@@ -1,0 +1,225 @@
+@model FibiEmlakDanismanlik.WebUI.Models.FibiServices.FibiServicePageVm
+@{
+    ViewData["Title"] = Model.Active.Title;
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/fibi-services.css" asp-append-version="true" />
+}
+
+<!-- Sayfa Başlığı ve Hizmet Nav Barı -->
+@await Html.PartialAsync("_FibiServiceHeader", Model)
+
+<!-- FİBİ Risk Analiz Ana Bölüm -->
+<section class="sec-pad">
+    <div class="auto-container">
+        <!-- Kısa Giriş -->
+        <div class="sec-title centred">
+            <h5>Deprem ve Yatırım Ön Değerlendirmesi</h5>
+            <h2>Binanızın Riskini ve Dönüşüm Potansiyelini Öğrenin</h2>
+        </div>
+
+        <div class="row clearfix">
+            <!-- Sol Kolon: Form Paneli (col-lg-5 col-md-12 col-sm-12) -->
+            <div class="col-lg-5 col-md-12 col-sm-12">
+                <div class="fibi-panel">
+                    <form id="riskForm" class="default-form" novalidate>
+                        <!-- 1. Konum -->
+                        <div class="fibi-step-label">
+                            <span class="fibi-step-number">1</span> Konum
+                        </div>
+                        <div class="form-group">
+                            <label for="riskCity">İl <span class="text-danger">*</span></label>
+                            <select id="riskCity" name="cityId"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="riskDistrict">İlçe <span class="text-danger">*</span></label>
+                            <select id="riskDistrict" name="districtId"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="riskNeighborhood">Mahalle <span class="text-danger">*</span></label>
+                            <select id="riskNeighborhood" name="neighborhoodId"></select>
+                        </div>
+
+                        <!-- 2. Yapım Yılı -->
+                        <div class="fibi-step-label">
+                            <span class="fibi-step-number">2</span> Yapım Yılı
+                        </div>
+                        <div class="fibi-radio-cards">
+                            <label class="fibi-radio-card">
+                                <input type="radio" name="constructionYearRange" value="1">
+                                <i class="fas fa-history"></i>
+                                <span class="fibi-card-title">1999 Öncesi</span>
+                                <span class="fibi-card-subtitle">Eski yönetmelik</span>
+                            </label>
+                            <label class="fibi-radio-card">
+                                <input type="radio" name="constructionYearRange" value="2">
+                                <i class="fas fa-hourglass-half"></i>
+                                <span class="fibi-card-title">2000 – 2007</span>
+                                <span class="fibi-card-subtitle">Geçiş dönemi</span>
+                            </label>
+                            <label class="fibi-radio-card">
+                                <input type="radio" name="constructionYearRange" value="3">
+                                <i class="fas fa-building"></i>
+                                <span class="fibi-card-title">2008 – 2018</span>
+                                <span class="fibi-card-subtitle">2007 yönetmeliği</span>
+                            </label>
+                            <label class="fibi-radio-card">
+                                <input type="radio" name="constructionYearRange" value="4">
+                                <i class="fas fa-shield-alt"></i>
+                                <span class="fibi-card-title">2018 Sonrası</span>
+                                <span class="fibi-card-subtitle">Yeni deprem yönetmeliği</span>
+                            </label>
+                        </div>
+
+                        <!-- 3. Yapı Tipi -->
+                        <div class="fibi-step-label">
+                            <span class="fibi-step-number">3</span> Yapı Tipi
+                        </div>
+                        <div class="fibi-radio-cards">
+                            <label class="fibi-radio-card is-checked">
+                                <input type="radio" name="structureType" value="1" checked>
+                                <i class="fas fa-cubes"></i>
+                                <span class="fibi-card-title">Betonarme</span>
+                            </label>
+                            <label class="fibi-radio-card">
+                                <input type="radio" name="structureType" value="2">
+                                <i class="fas fa-industry"></i>
+                                <span class="fibi-card-title">Çelik</span>
+                            </label>
+                            <label class="fibi-radio-card">
+                                <input type="radio" name="structureType" value="3">
+                                <i class="fas fa-th-large"></i>
+                                <span class="fibi-card-title">Yığma</span>
+                            </label>
+                        </div>
+
+                        <!-- 4. Kat Bilgisi -->
+                        <div class="fibi-step-label">
+                            <span class="fibi-step-number">4</span> Kat Bilgisi
+                        </div>
+                        <div class="fibi-range-wrapper">
+                            <div class="fibi-range-header">
+                                <label for="riskTotalFloors">Binanın Toplam Kat Sayısı</label>
+                                <span id="riskTotalFloorsValue" class="fibi-range-value">5 Kat</span>
+                            </div>
+                            <input type="range" class="fibi-range" id="riskTotalFloors" name="totalFloors" min="1" max="40" value="5">
+                        </div>
+                        <div class="fibi-range-wrapper">
+                            <div class="fibi-range-header">
+                                <label for="riskCurrentFloor">Dairenizin Bulunduğu Kat</label>
+                                <span id="riskCurrentFloorValue" class="fibi-range-value">1. Kat</span>
+                            </div>
+                            <input type="range" class="fibi-range" id="riskCurrentFloor" name="currentFloor" min="-3" max="5" value="1">
+                        </div>
+
+                        <!-- 5. Bina Özellikleri -->
+                        <div class="fibi-step-label">
+                            <span class="fibi-step-number">5</span> Bina Özellikleri
+                        </div>
+                        <div class="fibi-radio-cards">
+                            <label class="fibi-toggle-card">
+                                <input type="checkbox" name="hasGroundFloorCommercial" value="true">
+                                <i class="fas fa-store"></i>
+                                <span class="fibi-card-title">Ticari Alan</span>
+                                <span class="fibi-card-subtitle">Zemin katta dükkan / market var</span>
+                            </label>
+                            <label class="fibi-toggle-card">
+                                <input type="checkbox" name="isAdjacentBuilding" value="true">
+                                <i class="fas fa-grip-lines-vertical"></i>
+                                <span class="fibi-card-title">Bitişik Nizam</span>
+                                <span class="fibi-card-subtitle">Bitişik nizam bina</span>
+                            </label>
+                            <label class="fibi-toggle-card is-checked">
+                                <input type="checkbox" name="hasBasementOrParking" value="true" checked>
+                                <i class="fas fa-parking"></i>
+                                <span class="fibi-card-title">Bodrum / Otopark</span>
+                                <span class="fibi-card-subtitle">Bodrum kat / otopark var</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group mt-3 mb-0">
+                            <button type="submit" id="riskSubmitBtn" class="theme-btn btn-one w-100">Riski Analiz Et</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sağ Kolon: Sonuç Paneli (col-lg-7 col-md-12 col-sm-12) -->
+            <div class="col-lg-7 col-md-12 col-sm-12">
+                <div class="fibi-panel" id="riskResultPanel">
+                    <!-- Sonuç Bekleme Alanı -->
+                    <div id="riskPlaceholder" class="fibi-result-placeholder">
+                        <i class="fas fa-house-damage"></i>
+                        <h4>Analiz sonucu burada görünecek</h4>
+                        <p>Soldaki formu doldurun; yapısal risk skorunuz ve kentsel dönüşüm potansiyeliniz anında hesaplansın.</p>
+                    </div>
+
+                    <!-- Analiz Sonucu -->
+                    <div id="riskResult" hidden>
+                        <h3 id="riskLocationTitle" class="fibi-panel-title"></h3>
+
+                        <div class="row clearfix">
+                            <!-- Sol: Yapısal Risk Skoru -->
+                            <div class="col-md-6 col-sm-12">
+                                <div class="fibi-stat-card text-center">
+                                    <div class="fibi-stat-label justify-content-center">Yapısal Risk Skoru</div>
+                                    <div class="fibi-gauge">
+                                        <canvas id="riskGauge" height="150"></canvas>
+                                        <div class="fibi-gauge-score">
+                                            <span id="riskScore" class="fibi-gauge-number"></span>
+                                            <span class="fibi-gauge-label">/ 100</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span id="riskLevelBadge" class="fibi-badge"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sağ: Kentsel Dönüşüm ve Yatırım Potansiyeli -->
+                            <div class="col-md-6 col-sm-12">
+                                <div class="fibi-stat-card">
+                                    <div class="fibi-stat-label">Kentsel Dönüşüm ve Yatırım Potansiyeli</div>
+                                    <div class="fibi-stat-value">
+                                        <span id="transformationScore"></span> / 100
+                                    </div>
+                                    <div class="fibi-progress">
+                                        <div id="transformationBar" class="fibi-progress-bar" style="width:0"></div>
+                                    </div>
+                                    <p id="transformationVerdict" class="fibi-stat-sub"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Uzman Bulguları -->
+                        <h4 class="fibi-panel-title mt-4">Uzman Bulguları</h4>
+                        <ul id="riskInsights" class="fibi-insights"></ul>
+
+                        <!-- Yasal Uyarı Metni -->
+                        <p id="riskDisclaimer" class="fibi-disclaimer">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="riskDisclaimerText"></span>
+                        </p>
+
+                        <!-- Eylem Butonları -->
+                        <div class="fibi-cta-row">
+                            <a id="riskListingsLink" class="theme-btn btn-one" href="/AllForSalePage">Bu Bölgedeki İlanlarımızı İnceleyin</a>
+                            <button type="button" id="riskLeadBtn" class="theme-btn btn-two">Ücretsiz Kentsel Dönüşüm / Ekspertiz Danışmanlığı Alın</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Ortak Lead Formu -->
+@await Html.PartialAsync("_FibiLeadForm", Model)
+
+@section Scripts {
+    <script src="~/js/fibi-services-common.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="~/js/fibi-risk-analysis.js" asp-append-version="true"></script>
+}

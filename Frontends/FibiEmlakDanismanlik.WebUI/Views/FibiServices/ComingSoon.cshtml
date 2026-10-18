@@ -1,0 +1,45 @@
+@model FibiEmlakDanismanlik.WebUI.Models.FibiServices.FibiServicePageVm
+@{
+    ViewData["Title"] = Model.Active.Title;
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/fibi-services.css" asp-append-version="true" />
+}
+
+<!-- Sayfa Başlığı ve Hizmet Nav Barı -->
+@await Html.PartialAsync("_FibiServiceHeader", Model)
+
+<!-- Faz 2 Yakında Bilgilendirme Bölümü -->
+<section class="fibi-coming-soon-section sec-pad">
+    <div class="auto-container">
+        <div class="row clearfix">
+            <div class="col-lg-8 col-md-10 col-sm-12 offset-lg-2 offset-md-1">
+                <div class="fibi-panel centred fibi-coming-soon-panel">
+                    <div class="fibi-coming-soon-icon">
+                        <i class="@Model.Active.IconClass"></i>
+                    </div>
+                    <h2>@Model.Active.Title çok yakında hizmetinizde</h2>
+                    <p class="fibi-coming-soon-desc">@Model.Active.ShortDescription</p>
+                    <div class="fibi-coming-soon-divider"></div>
+                    <div class="fibi-coming-soon-actions">
+                        <h5>Şu anda aktif olan hizmetlerimizi inceleyebilirsiniz:</h5>
+                        <div class="fibi-cta-row justify-content-center">
+                            @foreach (var item in Model.Items.Where(x => x.IsAvailable))
+                            {
+                                <a href="@Url.Action(item.ActionName, "FibiServices")" class="theme-btn btn-one">
+                                    <i class="@item.IconClass mr-2"></i> @item.Title
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/fibi-services-common.js" asp-append-version="true"></script>
+}

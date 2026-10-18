@@ -23,10 +23,15 @@ using FibiEmlakDanismanlik.Application.Interfaces.BestDealInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.BestDealRepositories;
 using FibiEmlakDanismanlik.Application.Interfaces.PopularPlaceInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.PopularPlaceRepositories;
+using FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces;
+using FibiEmlakDanismanlik.Persistence.Repositories.FibiServiceRepositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Threading.RateLimiting;
+using FibiEmlakDanismanlik.Application.Constants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,11 +107,27 @@ builder.Services.AddScoped(typeof(IListingTypeRepository), typeof(ListingTypeRep
 builder.Services.AddScoped(typeof(IAgentRepository), typeof(AgentRepository));
 builder.Services.AddScoped(typeof(IBestDealRepository), typeof(BestDealRepository));
 builder.Services.AddScoped(typeof(IPopularPlaceRepository), typeof(PopularPlaceRepository));
+builder.Services.AddScoped(typeof(IMarketStatRepository), typeof(MarketStatRepository));
 //Configure IRepositories
 
 //MediaTR tried
 builder.Services.AddApplicationService(builder.Configuration);
 //MediaTR 
+
+// Anonim lead ucunu spam'e karşı IP başına sınırlar.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy(FibiServiceConstants.LeadRateLimitPolicy, httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = FibiServiceConstants.LeadRateLimitPermitCount,
+                Window = TimeSpan.FromMinutes(FibiServiceConstants.LeadRateLimitWindowMinutes),
+                QueueLimit = 0
+            }));
+});
 
 var app = builder.Build();
 
@@ -124,6 +145,7 @@ app.UseCors("AllowLocalhost");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapControllers();
 
