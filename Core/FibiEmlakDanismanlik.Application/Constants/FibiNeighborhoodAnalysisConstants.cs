@@ -36,6 +36,6 @@ namespace FibiEmlakDanismanlik.Application.Constants
         public const int GradeBThreshold = 50;
 
         // Yasal uyarı
-        public const string Disclaimer = "Fiyat bantları ve projeksiyonlar dış piyasa emsal verilerinden türetilmiş tahmini aralıklardır; bağlayıcı bir değerleme veya yatırım tavsiyesi değildir. Mülke özel değer için uzman ekspertiz raporu alınmalıdır.";
+        public const string Disclaimer = "Fiyat bantları ve projeksiyonlar dış piyasa emsal verilerinden türetilmiş tahmini aralıklardır; bağlayıcı bir değerleme veya yatırım tavsiyesi değildir. Mülke özel değer için uzman ekspertiz raporu alınmalıdır. Mahalleye özel veri bulunmadığında ilçe, il veya Türkiye ortalaması kullanılır; kullanılan kapsam sonuçta belirtilir.";
     }
 }

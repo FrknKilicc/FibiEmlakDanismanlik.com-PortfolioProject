@@ -19,14 +19,32 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.FibiServiceRepositories
             _context = context;
         }
 
-        public async Task<ExternalMarketStat?> GetByNeighborhoodIdAsync(int neighborhoodId)
+        public async Task<Neighborhood?> GetNeighborhoodWithParentsAsync(int neighborhoodId)
+        {
+            return await _context.Neighborhoods
+                .AsNoTracking()
+                .Include(n => n.District)
+                    .ThenInclude(d => d.City)
+                .FirstOrDefaultAsync(n => n.NeighborhoodId == neighborhoodId);
+        }
+
+        public async Task<ExternalMarketStat?> ResolveStatAsync(int neighborhoodId, int districtId, int cityId)
         {
             return await _context.ExternalMarketStats
                 .AsNoTracking()
-                .Include(x => x.Neighborhood!)
-                    .ThenInclude(n => n.District)
-                        .ThenInclude(d => d.City)
-                .FirstOrDefaultAsync(x => x.Scope == MarketStatScope.Neighborhood && x.NeighborhoodId == neighborhoodId);
+                .Where(x => (x.Scope == MarketStatScope.Neighborhood && x.NeighborhoodId == neighborhoodId)
+                         || (x.Scope == MarketStatScope.District && x.DistrictId == districtId)
+                         || (x.Scope == MarketStatScope.City && x.CityId == cityId)
+                         || x.Scope == MarketStatScope.Country)
+                .OrderByDescending(x => x.Scope)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<NeighborhoodSeismicScenarioStat?> GetSeismicScenarioAsync(int neighborhoodId)
+        {
+            return await _context.NeighborhoodSeismicScenarioStats
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.NeighborhoodId == neighborhoodId);
         }
 
         public async Task<List<FibiLocationSummaryResult>> GetCoveredLocationsAsync()
@@ -50,13 +68,31 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.FibiServiceRepositories
 
         public async Task<decimal> GetCityAverageSalePriceAsync(int cityId)
         {
-            var average = await _context.ExternalMarketStats
+            var cityPrice = await _context.ExternalMarketStats
+                .AsNoTracking()
+                .Where(x => x.Scope == MarketStatScope.City && x.CityId == cityId)
+                .Select(x => (decimal?)x.BaseSalePricePerSqm)
+                .FirstOrDefaultAsync();
+
+            if (cityPrice.HasValue)
+                return cityPrice.Value;
+
+            var districtAverage = await _context.ExternalMarketStats
+                .AsNoTracking()
+                .Where(x => x.Scope == MarketStatScope.District && x.CityId == cityId)
+                .Select(x => (decimal?)x.BaseSalePricePerSqm)
+                .AverageAsync();
+
+            if (districtAverage.HasValue)
+                return districtAverage.Value;
+
+            var neighborhoodAverage = await _context.ExternalMarketStats
                 .AsNoTracking()
                 .Where(x => x.Scope == MarketStatScope.Neighborhood && x.CityId == cityId)
                 .Select(x => (decimal?)x.BaseSalePricePerSqm)
                 .AverageAsync();
 
-            return average ?? 0m;
+            return neighborhoodAverage ?? 0m;
         }
     }
 }

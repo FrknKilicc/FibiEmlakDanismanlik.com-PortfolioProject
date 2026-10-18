@@ -11,28 +11,28 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.FibiServiceHandlers
 {
     public class GetNeighborhoodAnalysisQueryHandler : IRequestHandler<GetNeighborhoodAnalysisQuery, GetNeighborhoodAnalysisResult?>
     {
-        private readonly IMarketStatRepository _marketStatRepository;
+        private readonly IFibiMarketContextService _marketContextService;
 
-        public GetNeighborhoodAnalysisQueryHandler(IMarketStatRepository marketStatRepository)
+        public GetNeighborhoodAnalysisQueryHandler(IFibiMarketContextService marketContextService)
         {
-            _marketStatRepository = marketStatRepository;
+            _marketContextService = marketContextService;
         }
 
         public async Task<GetNeighborhoodAnalysisResult?> Handle(GetNeighborhoodAnalysisQuery request, CancellationToken cancellationToken)
         {
-            var primaryStat = await _marketStatRepository.GetByNeighborhoodIdAsync(request.NeighborhoodId);
-            if (primaryStat == null)
+            var primaryContext = await _marketContextService.GetForNeighborhoodAsync(request.NeighborhoodId);
+            if (primaryContext == null)
                 return null;
 
-            var primaryResult = NeighborhoodAnalysisCalculator.Calculate(primaryStat, request.PropertySegment);
+            var primaryResult = NeighborhoodAnalysisCalculator.Calculate(primaryContext, request.PropertySegment);
 
             NeighborhoodAnalysisItemResult? comparisonResult = null;
             if (request.CompareWithNeighborhoodId.HasValue)
             {
-                var comparisonStat = await _marketStatRepository.GetByNeighborhoodIdAsync(request.CompareWithNeighborhoodId.Value);
-                if (comparisonStat != null)
+                var comparisonContext = await _marketContextService.GetForNeighborhoodAsync(request.CompareWithNeighborhoodId.Value);
+                if (comparisonContext != null)
                 {
-                    comparisonResult = NeighborhoodAnalysisCalculator.Calculate(comparisonStat, request.PropertySegment);
+                    comparisonResult = NeighborhoodAnalysisCalculator.Calculate(comparisonContext, request.PropertySegment);
                 }
             }
 

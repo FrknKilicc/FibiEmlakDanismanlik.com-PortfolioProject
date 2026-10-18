@@ -1,5 +1,6 @@
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Results.FibiServiceResults;
+using FibiEmlakDanismanlik.Application.Models.FibiServiceModels;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using System;
@@ -24,8 +25,9 @@ namespace FibiEmlakDanismanlik.Application.Helpers
             _ => FibiNeighborhoodAnalysisConstants.StandardApartmentCoefficient
         };
 
-        public static NeighborhoodAnalysisItemResult Calculate(ExternalMarketStat stat, PropertySegment segment)
+        public static NeighborhoodAnalysisItemResult Calculate(FibiMarketContext context, PropertySegment segment)
         {
+            var stat = context.Stat;
             var coefficient = GetSegmentCoefficient(segment);
 
             // 1. Fiyat bantları (100'e yuvarlanır)
@@ -144,7 +146,8 @@ namespace FibiEmlakDanismanlik.Application.Helpers
 
             return new NeighborhoodAnalysisItemResult
             {
-                Location = FibiLocationSummaryFactory.FromNeighborhood(stat.Neighborhood!),
+                Location = context.Location,
+                DataSource = context.DataSource,
                 PriceBand = priceBand,
                 AmortizationYears = amortizationYears,
                 AnnualRentYieldPercentage = annualRentYield,
