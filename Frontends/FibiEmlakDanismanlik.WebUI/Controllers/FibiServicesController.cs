@@ -1,57 +1,58 @@
 using FibiEmlakDanismanlik.WebUI.Models.FibiServices;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FibiEmlakDanismanlik.WebUI.Controllers;
-
-/// <summary>
-/// FİBİ Hizmetler modüllerinin ortak controller yapısı.
-/// </summary>
-public class FibiServicesController : Controller
+namespace FibiEmlakDanismanlik.WebUI.Controllers
 {
-    private readonly IConfiguration _configuration;
-
-    public FibiServicesController(IConfiguration configuration)
+    /// <summary>
+    /// FİBİ Hizmetler modüllerinin ortak controller yapısı.
+    /// </summary>
+    public class FibiServicesController : Controller
     {
-        _configuration = configuration;
-    }
+        private readonly IConfiguration _configuration;
 
-    private FibiServicePageVm BuildPage(string key)
-    {
-        return new FibiServicePageVm
+        public FibiServicesController(IConfiguration configuration)
         {
-            Active = FibiServiceCatalog.Get(key),
-            Items = FibiServiceCatalog.Items,
-            ApiUrl = _configuration["Url:ApiUrl"] ?? string.Empty
-        };
-    }
+            _configuration = configuration;
+        }
 
-    public IActionResult Index()
-    {
-        return RedirectToAction(nameof(RiskAnalysis));
-    }
+        private FibiServicePageVm BuildPage(string key)
+        {
+            return new FibiServicePageVm
+            {
+                Active = FibiServiceCatalog.Get(key),
+                Items = FibiServiceCatalog.Items,
+                ApiUrl = _configuration["Url:ApiUrl"] ?? string.Empty
+            };
+        }
 
-    public IActionResult RiskAnalysis()
-    {
-        return View(BuildPage(FibiServiceCatalog.RiskAnalysis));
-    }
+        public IActionResult Index()
+        {
+            return RedirectToAction(nameof(RiskAnalysis));
+        }
 
-    public IActionResult NeighborhoodAnalysis()
-    {
-        return View(BuildPage(FibiServiceCatalog.NeighborhoodAnalysis));
-    }
+        public IActionResult RiskAnalysis()
+        {
+            return View(BuildPage(FibiServiceCatalog.RiskAnalysis));
+        }
 
-    public IActionResult Finance()
-    {
-        return View("ComingSoon", BuildPage(FibiServiceCatalog.Finance));
-    }
+        public IActionResult NeighborhoodAnalysis()
+        {
+            return View(BuildPage(FibiServiceCatalog.NeighborhoodAnalysis));
+        }
 
-    public IActionResult Expert()
-    {
-        return View("ComingSoon", BuildPage(FibiServiceCatalog.Expert));
-    }
+        public IActionResult Finance()
+        {
+            return View("ComingSoon", BuildPage(FibiServiceCatalog.Finance));
+        }
 
-    public IActionResult Investment()
-    {
-        return View("ComingSoon", BuildPage(FibiServiceCatalog.Investment));
+        public IActionResult Expert()
+        {
+            return View("ComingSoon", BuildPage(FibiServiceCatalog.Expert));
+        }
+
+        public IActionResult Investment()
+        {
+            return View("ComingSoon", BuildPage(FibiServiceCatalog.Investment));
+        }
     }
 }
