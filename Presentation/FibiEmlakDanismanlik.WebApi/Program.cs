@@ -23,6 +23,8 @@ using FibiEmlakDanismanlik.Application.Interfaces.BestDealInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.BestDealRepositories;
 using FibiEmlakDanismanlik.Application.Interfaces.PopularPlaceInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.PopularPlaceRepositories;
+using FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces;
+using FibiEmlakDanismanlik.Persistence.Repositories.FibiServiceRepositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -102,6 +104,7 @@ builder.Services.AddScoped(typeof(IListingTypeRepository), typeof(ListingTypeRep
 builder.Services.AddScoped(typeof(IAgentRepository), typeof(AgentRepository));
 builder.Services.AddScoped(typeof(IBestDealRepository), typeof(BestDealRepository));
 builder.Services.AddScoped(typeof(IPopularPlaceRepository), typeof(PopularPlaceRepository));
+builder.Services.AddScoped(typeof(IMarketStatRepository), typeof(MarketStatRepository));
 //Configure IRepositories
 
 //MediaTR tried
