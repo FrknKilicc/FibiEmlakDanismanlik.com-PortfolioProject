@@ -8,7 +8,7 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces
     /// <summary>Mahalle dış piyasa emsal istatistikleri repository arayüzü.</summary>
     public interface IMarketStatRepository
     {
-        Task<ExternalNeighborhoodMarketStat?> GetByNeighborhoodIdAsync(int neighborhoodId);
+        Task<ExternalMarketStat?> GetByNeighborhoodIdAsync(int neighborhoodId);
         Task<List<FibiLocationSummaryResult>> GetCoveredLocationsAsync();
         Task<decimal> GetCityAverageSalePriceAsync(int cityId);
     }

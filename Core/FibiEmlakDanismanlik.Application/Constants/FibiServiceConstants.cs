@@ -22,5 +22,13 @@ namespace FibiEmlakDanismanlik.Application.Constants
         // String uzunlukları — BankLoanRate
         public const int BankNameMaxLength = 100;
         public const int LogoUrlMaxLength = 500;
+
+        // Veri kaynağı ve senkronizasyon
+        public const string EstimatedSeedDataSource = "FİBİ tahmini başlangıç verisi";
+        public const int DataSourceMaxLength = 100;
+        public const int ProviderKeyMaxLength = 50;
+        public const int SourceUrlMaxLength = 500;
+        public const int IndexPeriodMaxLength = 7;
+        public const int SyncMessageMaxLength = 1000;
     }
 }

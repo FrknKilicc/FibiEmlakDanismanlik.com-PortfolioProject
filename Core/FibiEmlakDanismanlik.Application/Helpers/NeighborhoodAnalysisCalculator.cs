@@ -24,7 +24,7 @@ namespace FibiEmlakDanismanlik.Application.Helpers
             _ => FibiNeighborhoodAnalysisConstants.StandardApartmentCoefficient
         };
 
-        public static NeighborhoodAnalysisItemResult Calculate(ExternalNeighborhoodMarketStat stat, PropertySegment segment)
+        public static NeighborhoodAnalysisItemResult Calculate(ExternalMarketStat stat, PropertySegment segment)
         {
             var coefficient = GetSegmentCoefficient(segment);
 
@@ -144,7 +144,7 @@ namespace FibiEmlakDanismanlik.Application.Helpers
 
             return new NeighborhoodAnalysisItemResult
             {
-                Location = FibiLocationSummaryFactory.FromNeighborhood(stat.Neighborhood),
+                Location = FibiLocationSummaryFactory.FromNeighborhood(stat.Neighborhood!),
                 PriceBand = priceBand,
                 AmortizationYears = amortizationYears,
                 AnnualRentYieldPercentage = annualRentYield,

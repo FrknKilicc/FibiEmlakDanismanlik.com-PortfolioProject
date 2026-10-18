@@ -3,6 +3,7 @@ using FibiEmlakDanismanlik.Application.Features.Queries.FibiServiceQueries;
 using FibiEmlakDanismanlik.Application.Features.Results.FibiServiceResults;
 using FibiEmlakDanismanlik.Application.Helpers;
 using FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces;
+using FibiEmlakDanismanlik.Domain.Enums;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,9 +25,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.FibiServiceHandlers
             if (stat == null)
                 return null;
 
-            var cityAverageSalePrice = await _marketStatRepository.GetCityAverageSalePriceAsync(stat.Neighborhood.District.CityId);
+            var cityAverageSalePrice = await _marketStatRepository.GetCityAverageSalePriceAsync(stat.Neighborhood!.District.CityId);
 
-            var structuralScore = BuildingRiskScorer.CalculateStructuralScore(request, stat.SoilRiskClass);
+            var structuralScore = BuildingRiskScorer.CalculateStructuralScore(request, stat.SoilRiskClass ?? SoilRiskClass.Medium);
             var (riskLabel, riskCode) = BuildingRiskScorer.GetRiskLevel(structuralScore);
 
             var transformationScore = BuildingRiskScorer.CalculateTransformationScore(
@@ -36,11 +37,11 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.FibiServiceHandlers
                 cityAverageSalePrice);
 
             var transformationVerdict = BuildingRiskScorer.GetTransformationVerdict(transformationScore);
-            var insights = BuildingRiskScorer.BuildInsights(request, stat.SoilRiskClass, transformationScore);
+            var insights = BuildingRiskScorer.BuildInsights(request, stat.SoilRiskClass ?? SoilRiskClass.Medium, transformationScore);
 
             return new CalculateBuildingRiskResult
             {
-                Location = FibiLocationSummaryFactory.FromNeighborhood(stat.Neighborhood),
+                Location = FibiLocationSummaryFactory.FromNeighborhood(stat.Neighborhood!),
                 StructuralRiskScore = structuralScore,
                 RiskLevel = riskLabel,
                 RiskLevelCode = riskCode,
