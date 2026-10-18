@@ -12,6 +12,12 @@ namespace FibiEmlakDanismanlik.Application.Constants
         public const int PhoneNumberMaxLength = 20;
         public const int EmailMaxLength = 256;
         public const int CustomerNoteMaxLength = 1000;
+        public const int CalculationSummaryMaxLength = 8000;
+
+        // Rate limiting — FibiServiceLead
+        public const string LeadRateLimitPolicy = "fibi-leads";
+        public const int LeadRateLimitPermitCount = 5;
+        public const int LeadRateLimitWindowMinutes = 10;
 
         // String uzunlukları — BankLoanRate
         public const int BankNameMaxLength = 100;
