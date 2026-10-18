@@ -194,6 +194,20 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 
 ---
 
+### FİBİ Hizmetler Faz 2 (branch `feature/antigravity-fibi-services-phase2`, 2026-10-18'de yarıda kaldı)
+Bitti: kademeli emsal şeması + migration (yerel DB'ye uygulandı), mahalle > ilçe > il > Türkiye fallback'i, İBB senaryosundan deprem tehlikesi, senkronizasyon çekirdeği, Infrastructure projesi (seed / İBB / TCMB KFE bülteni / opsiyonel EVDS sağlayıcıları, arka plan servisi, `[Authorize]` sync uçları), KvkkApprovedAt, ForwardedHeaders.
+- [ ] Canlı veri senkronizasyonunu uçtan uca test et (WebApi'yi scratchpad'e derleyip ayrı portta çalıştır; seed + İBB 959 mahalle + TCMB bülteni DB'ye yazılmalı, `sync/logs` kontrol edilmeli; Risk/Bölge uçları verisi olmayan bir ilçede 404 yerine il/Türkiye verisiyle dönmeli)
+- [ ] Banka faizi sağlayıcıları: her banka için kendi açık sayfasından oran okuyan `IMarketDataProvider` (oranlar HTML'de değil hesaplama araçlarında; banka banka incelenmeli). Kırılan banka son oranında kalır
+- [ ] WebUI: konum seçimini Türkiye geneline aç (mevcut `api/Location/cities|districts|neighborhoods` cascade); `api/FibiServices/locations` ucu ve `GetFibiServiceLocations*` kaldırılsın; sonuçlarda veri kapsamı/kaynak etiketi ve İBB deprem özeti gösterilsin
+- [ ] Fibi Finans modülü (kredi + kira başabaş, banka karşılaştırma, tapu günü gizli maliyetler)
+- [ ] Fibi Eksper modülü (şerefiye katsayılı değerleme bandı + satıcı lead)
+- [ ] Fibi Yatırım modülü (bütçe + strateji ile en iyi 5 bölge)
+- [ ] EVDS anahtarı alınırsa `dotnet user-secrets set "FibiMarketDataSync:EvdsApiKey" "<anahtar>"`; sağlayıcının yanıt biçimi o zaman doğrulanmalı
+- [ ] KVKK aydınlatma metni sayfası (onay artık `KvkkApprovedAt` ile kaydediliyor)
+- [ ] Canlıda reverse proxy IP'si `ForwardedHeaders:KnownProxies` ayarına yazılmalı
+
+---
+
 ## Bilinen Teknik Borçlar
 
 - `PropertyRepository.cs` 3002 satır, DRY ihlali (T1). Dosya UTF-8 değil, ISO-8859/Windows-1254 kodlamalı: Antigravity bu dosyada takılabiliyor, düzenlerken kodlama korunmalı (ileride UTF-8'e çevrilmeli)
