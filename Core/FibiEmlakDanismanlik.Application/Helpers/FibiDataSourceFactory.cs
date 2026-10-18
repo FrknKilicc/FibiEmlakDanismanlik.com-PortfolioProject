@@ -15,7 +15,7 @@ namespace FibiEmlakDanismanlik.Application.Helpers
                 GetScopeLabel(stat.Scope),
                 stat.DataSource,
                 stat.LastUpdatedDate,
-                stat.DataSource == FibiServiceConstants.EstimatedSeedDataSource);
+                MarketIndexApplier.IsEstimatedSource(stat.DataSource));
         }
 
         public static string GetScopeLabel(MarketStatScope scope) => scope switch

@@ -110,6 +110,7 @@ builder.Services.AddScoped(typeof(IAgentRepository), typeof(AgentRepository));
 builder.Services.AddScoped(typeof(IBestDealRepository), typeof(BestDealRepository));
 builder.Services.AddScoped(typeof(IPopularPlaceRepository), typeof(PopularPlaceRepository));
 builder.Services.AddScoped(typeof(IMarketStatRepository), typeof(MarketStatRepository));
+builder.Services.AddScoped(typeof(IMarketDataSyncRepository), typeof(MarketDataSyncRepository));
 //Configure IRepositories
 
 //MediaTR tried

@@ -18,6 +18,7 @@ namespace FibiEmlakDanismanlik.Application.Services
             services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(ServicesRegistiration).Assembly));
             services.AddAutoMapper(typeof(ServicesRegistiration).Assembly);
             services.AddScoped<IFibiMarketContextService, FibiMarketContextService>();
+            services.AddScoped<IMarketDataSyncRunner, MarketDataSyncRunner>();
         }
 
 

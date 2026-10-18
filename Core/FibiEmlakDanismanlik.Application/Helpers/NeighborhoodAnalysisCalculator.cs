@@ -176,32 +176,19 @@ namespace FibiEmlakDanismanlik.Application.Helpers
 
         private static List<FibiQuarterlyPriceResult> ParseHistoricalPrices(string? json, decimal coefficient)
         {
-            if (string.IsNullOrWhiteSpace(json))
-                return new List<FibiQuarterlyPriceResult>();
+            var rawList = MarketStatHistoryHelper.ReadHistory(json);
+            if (rawList.Count == 0)
+                return rawList;
 
-            try
+            var result = new List<FibiQuarterlyPriceResult>(rawList.Count);
+            foreach (var item in rawList)
             {
-                var rawList = JsonSerializer.Deserialize<List<FibiQuarterlyPriceResult>>(json, JsonOptions);
-                if (rawList == null || rawList.Count == 0)
-                    return new List<FibiQuarterlyPriceResult>();
-
-                var result = new List<FibiQuarterlyPriceResult>(rawList.Count);
-                foreach (var item in rawList)
-                {
-                    if (item != null && !string.IsNullOrWhiteSpace(item.Quarter))
-                    {
-                        result.Add(new FibiQuarterlyPriceResult(
-                            item.Quarter,
-                            RoundToHundreds(item.Price * coefficient)));
-                    }
-                }
-
-                return result;
+                result.Add(new FibiQuarterlyPriceResult(
+                    item.Quarter,
+                    RoundToHundreds(item.Price * coefficient)));
             }
-            catch (JsonException)
-            {
-                return new List<FibiQuarterlyPriceResult>();
-            }
+
+            return result;
         }
 
         private static List<string> GenerateProjectionQuarters(string? lastHistoricalQuarter, int count)
