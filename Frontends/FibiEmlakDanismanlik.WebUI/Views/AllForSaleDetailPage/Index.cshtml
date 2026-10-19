@@ -3,7 +3,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
-@await Component.InvokeAsync("_AllForSaleDetailPageViewComponentPartial", new { id = Model.ListingId })
+@await Component.InvokeAsync("_AllForSaleDetailPageViewComponentPartial", new { id = Model.ListingId, listingTypeId = Model.ListingTypeId > 0 ? Model.ListingTypeId : (int?)null })
 @section Styles {
     <link rel="stylesheet" href="/Realshed/assets/css/timePicker.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />

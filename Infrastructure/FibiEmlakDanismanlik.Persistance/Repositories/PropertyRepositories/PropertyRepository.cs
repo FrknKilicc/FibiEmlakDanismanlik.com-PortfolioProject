@@ -582,11 +582,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             return getAllRentalProperties;
         }
 
-        public async Task<ForSalePropertyForListingViewModel> GetUnifiedForSalePropertyById(int id)
+        public async Task<ForSalePropertyForListingViewModel> GetUnifiedForSalePropertyById(int id, int? listingTypeId = null)
         {
             List<AmenityItemViewModel> amenities = new();
 
-            var housingById = await _context.forSaleHousingPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleHousingListId == id);
+            bool checkHousing = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.ForSaleHousingListing;
+            var housingById = checkHousing
+                ? await _context.forSaleHousingPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleHousingListId == id)
+                : null;
 
             if (housingById != null)
             {
@@ -686,7 +689,10 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
 
             }
-            var land = await _context.forSaleLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x => x.LandCategory).FirstOrDefaultAsync(x => x.ForSaleLandListingId == id);
+            bool checkLand = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.ForSaleLandListing;
+            var land = checkLand
+                ? await _context.forSaleLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x => x.LandCategory).FirstOrDefaultAsync(x => x.ForSaleLandListingId == id)
+                : null;
             
 
             if (land != null)
@@ -779,7 +785,10 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                 };
             }
-            var commercialById = await _context.forSaleCommercialPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleCommercialListingId == id);
+            bool checkCommercial = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.ForSaleCommercialPropertyListing;
+            var commercialById = checkCommercial
+                ? await _context.forSaleCommercialPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleCommercialListingId == id)
+                : null;
             if (commercialById != null)
             {
                 amenities = await _context.ForSaleCommercialListingAmenities
@@ -2250,15 +2259,18 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         .ToListAsync();
         }
 
-        public async Task<ForRentalPropertForListingViewModel?> GetUnifiedForRentalPropertyById(int id)
+        public async Task<ForRentalPropertForListingViewModel?> GetUnifiedForRentalPropertyById(int id, int? listingTypeId = null)
         {
             List<AmenityItemViewModel> amenities = new();
 
-            var housingById = await _context.rentalHousingListings
-                .Include(x => x.Agent)
-                .Include(x => x.ListingType)
-                .Include(x => x.HousingCategory)
-                .FirstOrDefaultAsync(x => x.RentalHousingListId == id);
+            bool checkHousing = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.RentalHousingListing;
+            var housingById = checkHousing
+                ? await _context.rentalHousingListings
+                    .Include(x => x.Agent)
+                    .Include(x => x.ListingType)
+                    .Include(x => x.HousingCategory)
+                    .FirstOrDefaultAsync(x => x.RentalHousingListId == id)
+                : null;
 
             if (housingById != null)
             {
@@ -2358,7 +2370,10 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                 };
             }
-            var land = await _context.rentalLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x => x.LandCategory).FirstOrDefaultAsync(x => x.RentalLandListingId == id);
+            bool checkLand = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.RentalLandListing;
+            var land = checkLand
+                ? await _context.rentalLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x => x.LandCategory).FirstOrDefaultAsync(x => x.RentalLandListingId == id)
+                : null;
             if (land != null)
             {
                 amenities = await _context.RentalLandListingAmenities
@@ -2448,7 +2463,10 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     //Images
                 };
             }
-            var commercialById = await _context.rentalCommercialPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.RentalCommercialListId == id);
+            bool checkCommercial = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.RentalCommercialPropertyListing;
+            var commercialById = checkCommercial
+                ? await _context.rentalCommercialPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.RentalCommercialListId == id)
+                : null;
             if (commercialById != null)
             {
                 amenities = await _context.RentalCommercialListingAmenities

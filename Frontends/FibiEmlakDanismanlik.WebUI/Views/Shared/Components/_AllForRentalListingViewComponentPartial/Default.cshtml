@@ -231,7 +231,8 @@
                                                             <h4>
                                                                 <a asp-action="Index"
                                                                    asp-controller="AllForRentalDetailPage"
-                                                                   asp-route-id="@item.ListingId">
+                                                                   asp-route-id="@item.ListingId"
+                                                                   asp-route-listingTypeId="@item.ListingTypeId">
                                                                     @item.PropertyName
                                                                 </a>
                                                             </h4>
@@ -290,6 +291,7 @@
                                                             <a asp-route-id="@item.ListingId"
                                                            asp-action="Index"
                                                            asp-controller="AllForRentalDetailPage"
+                                                           asp-route-listingTypeId="@item.ListingTypeId"
                                                                class="theme-btn btn-two">
                                                                 İlan Detayı
                                                             </a>

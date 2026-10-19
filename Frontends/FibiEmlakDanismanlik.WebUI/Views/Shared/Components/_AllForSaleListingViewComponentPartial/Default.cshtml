@@ -233,7 +233,7 @@
                                                     </div>
                                                 <div class="title-text">
                                                     <h4>
-                                                        <a asp-action="Index" asp-controller="AllForSaleDetailPage" asp-route-id="@item.ListingId">
+                                                        <a asp-action="Index" asp-controller="AllForSaleDetailPage" asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId">
                                                             @(string.IsNullOrWhiteSpace(item.PropertyName)
                                                                                                                         ? "İlan Başlığı"
                                                                                                                         : item.PropertyName.Length > 45
@@ -290,7 +290,7 @@
                                                             <li><i class="@h.Icon"></i>@h.Text</li>
                                                         }
                                                     </ul>
-                                                    <div class="btn-box"><a asp-route-id="@item.ListingId" asp-controller="AllForSaleDetailPage" asp-action="Index" class="theme-btn btn-two">İlan Detayı</a></div>
+                                                    <div class="btn-box"><a asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId" asp-controller="AllForSaleDetailPage" asp-action="Index" class="theme-btn btn-two">İlan Detayı</a></div>
                                                 </div>
                                             </div>
                                         </div>

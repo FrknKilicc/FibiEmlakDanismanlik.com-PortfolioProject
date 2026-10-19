@@ -16,10 +16,15 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int id)
+        public async Task<IViewComponentResult> InvokeAsync(int id, int? listingTypeId = null)
         {
             var client = _httpClientFactory.CreateClient();
-            var response = await client.GetAsync($"{_configuration["Url:ApiUrl"]}ForSales/GetUnifiedForSalesPropertyById/{id}");
+            var url = $"{_configuration["Url:ApiUrl"]}ForSales/GetUnifiedForSalesPropertyById/{id}";
+            if (listingTypeId.HasValue)
+            {
+                url += $"?listingTypeId={listingTypeId.Value}";
+            }
+            var response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 var jsonData = await response.Content.ReadAsStringAsync();

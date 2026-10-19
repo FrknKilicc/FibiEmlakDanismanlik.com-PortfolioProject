@@ -727,9 +727,13 @@
 
         function getDetailUrl(item) {
             const id = encodeURIComponent(item.listingId || "");
-            return item.usageTypeId === 2
+            let url = item.usageTypeId === 2
                 ? `/AllForRentalDetailPage/Index/${id}`
                 : `/AllForSaleDetailPage/Index/${id}`;
+            if (item.listingTypeId != null && item.listingTypeId !== "") {
+                url += `?listingTypeId=${encodeURIComponent(item.listingTypeId)}`;
+            }
+            return url;
         }
     }
 })();

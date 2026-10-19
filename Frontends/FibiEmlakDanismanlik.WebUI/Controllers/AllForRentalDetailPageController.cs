@@ -6,11 +6,12 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
 {
     public class AllForRentalDetailPageController : Controller
     {
-        public IActionResult Index(int id)
+        public IActionResult Index(int id, int? listingTypeId)
         {
             var dto = new ResultAllForRentalListingForPageDto
             {
-                ListingId = id
+                ListingId = id,
+                ListingTypeId = listingTypeId
             };
 
             return View(dto);

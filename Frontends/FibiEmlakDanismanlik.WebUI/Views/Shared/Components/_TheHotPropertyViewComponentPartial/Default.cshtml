@@ -58,8 +58,8 @@
                         @foreach (var item in panel.Items)
                         {
                             var detailUrl = isRent
-                                ? Url.Action("Index", "AllForRentalDetailPage", new { id = item.ListingId })
-                                : Url.Action("Index", "AllForSaleDetailPage", new { id = item.ListingId });
+                                ? Url.Action("Index", "AllForRentalDetailPage", new { id = item.ListingId, listingTypeId = item.ListingTypeId })
+                                : Url.Action("Index", "AllForSaleDetailPage", new { id = item.ListingId, listingTypeId = item.ListingTypeId });
 
                             var locParts = new List<string>();
                             if (!string.IsNullOrWhiteSpace(item.District))

@@ -18,7 +18,7 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces
         public List<ForSalePropertyViewModel> GetAllForSalePropertyWithAgent();
         public List<RentalPropertyBaseViewModel> GetAllRentalPropertyWithAgent();
 
-        public Task<ForSalePropertyForListingViewModel> GetUnifiedForSalePropertyById(int id);
+        public Task<ForSalePropertyForListingViewModel> GetUnifiedForSalePropertyById(int id, int? listingTypeId = null);
         public List<ForRentalPropertForListingViewModel> GetAllForRentalPropertyForListing();
         Task<List<ListingTypeFacetDto>> GetForSaleListingTypeFacetsAsync();
         public Task<List<ForSalePropertyForListingViewModel>> GetAllForSalePropertyForListing();
@@ -27,7 +27,7 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces
 
         public Task<List<ListingTypeFacetDto>> GetForRentalListingTypeFacetsAsync();
         public Task<RentalListingFilterResponseResult> GetFilteredForRentalPropertyForListingWithFacets(PropertyFilterRequest filter);
-        public Task<ForRentalPropertForListingViewModel> GetUnifiedForRentalPropertyById(int id);
+        public Task<ForRentalPropertForListingViewModel> GetUnifiedForRentalPropertyById(int id, int? listingTypeId = null);
 
         public Task<List<ListingSelectedImageRowDto>>
             GetSelectedImagesAsync(int listingId, string sectionKey);

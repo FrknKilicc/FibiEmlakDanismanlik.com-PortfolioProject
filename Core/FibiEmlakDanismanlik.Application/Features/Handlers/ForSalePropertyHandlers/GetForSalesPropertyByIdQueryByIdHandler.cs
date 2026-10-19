@@ -27,7 +27,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHand
             GetForSalesPropertyByIdQueries request,
             CancellationToken cancellationToken)
         {
-            var value = await _repository.GetUnifiedForSalePropertyById(request.Id);
+            var value = await _repository.GetUnifiedForSalePropertyById(request.Id, request.ListingTypeId);
 
             var result = new GetAllForSalePropertiesForListingResult
             {
