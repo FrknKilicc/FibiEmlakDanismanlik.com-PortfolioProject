@@ -268,3 +268,12 @@
     padding: 10px 20px;
     font-size: 14px;
 }
+
+@media (max-width: 575px) {
+    .listing-specs .ls-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .listing-specs .ls-fact { padding: 12px 8px; }
+    .listing-specs .ls-fact-value { font-size: 15px; }
+    .listing-specs .ls-group { padding: 14px 14px; }
+    .listing-specs .ls-amenities { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
