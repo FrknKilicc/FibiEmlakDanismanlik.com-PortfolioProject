@@ -366,6 +366,84 @@ BEGIN TRY
         CLOSE rl_cur; DEALLOCATE rl_cur;
     END;
 
+    -- =========================================================================
+    -- Konum ID'leri (uygulama SaveChanges'te dolduruyor; doğrudan SQL eklemede elle)
+    -- =========================================================================
+    DECLARE @LocationTables TABLE (TableName NVARCHAR(128));
+    INSERT INTO @LocationTables (TableName) VALUES
+        (N'dbo.ForSaleHousingPropertyListings'),
+        (N'dbo.ForSaleLandListings'),
+        (N'dbo.ForSaleCommercialPropertyListings'),
+        (N'dbo.RentalHousingListings'),
+        (N'dbo.RentalLandListings'),
+        (N'dbo.RentalCommercialPropertyListings');
+
+    DECLARE @NormFmt NVARCHAR(MAX) = N'REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(UPPER(LTRIM(RTRIM({col})) COLLATE Turkish_CS_AS),N''İ'',N''I''),N''Ş'',N''S''),N''Ğ'',N''G''),N''Ü'',N''U''),N''Ö'',N''O''),N''Ç'',N''C''),N''Â'',N''A''),N''Î'',N''I''),N''Û'',N''U'')';
+    DECLARE @Norm_c_City NVARCHAR(MAX) = REPLACE(@NormFmt, N'{col}', N'c.Name');
+    DECLARE @Norm_l_City NVARCHAR(MAX) = REPLACE(@NormFmt, N'{col}', N'l.City');
+    DECLARE @Norm_d_Dist NVARCHAR(MAX) = REPLACE(@NormFmt, N'{col}', N'd.Name');
+    DECLARE @Norm_l_Dist NVARCHAR(MAX) = REPLACE(@NormFmt, N'{col}', N'l.District');
+    DECLARE @Norm_n_Neig NVARCHAR(MAX) = REPLACE(@NormFmt, N'{col}', N'n.Name');
+    DECLARE @Norm_l_Neig NVARCHAR(MAX) = REPLACE(@NormFmt, N'{col}', N'l.Neighborhood');
+
+    DECLARE @LocTable NVARCHAR(128);
+    DECLARE loc_cur CURSOR LOCAL FAST_FORWARD FOR SELECT TableName FROM @LocationTables;
+    OPEN loc_cur;
+    FETCH NEXT FROM loc_cur INTO @LocTable;
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- 1. CityId
+        SET @Sql = CAST(N'
+            UPDATE l
+            SET l.CityId = c.CityId
+            FROM ' AS NVARCHAR(MAX)) + @LocTable + N' l
+            INNER JOIN [Cities] c
+                ON ' + @Norm_c_City + N' = ' + @Norm_l_City + N'
+            WHERE l.CityId IS NULL AND l.City IS NOT NULL;';
+        EXEC sp_executesql @Sql;
+
+        -- 2. DistrictId
+        SET @Sql = CAST(N'
+            UPDATE l
+            SET l.DistrictId = d.DistrictId
+            FROM ' AS NVARCHAR(MAX)) + @LocTable + N' l
+            INNER JOIN [Districts] d
+                ON d.CityId = l.CityId
+               AND ' + @Norm_d_Dist + N' = ' + @Norm_l_Dist + N'
+            WHERE l.DistrictId IS NULL AND l.CityId IS NOT NULL AND l.District IS NOT NULL;';
+        EXEC sp_executesql @Sql;
+
+        -- 3. NeighborhoodId
+        SET @Sql = CAST(N'
+            UPDATE l
+            SET l.NeighborhoodId = (
+                SELECT MIN(n.NeighborhoodId)
+                FROM [Neighborhoods] n
+                WHERE n.DistrictId = l.DistrictId
+                  AND (
+                      ' AS NVARCHAR(MAX)) + @Norm_n_Neig + N' = ' + @Norm_l_Neig + N' + N'' MAHALLESI''
+                   OR ' + @Norm_n_Neig + N' = ' + @Norm_l_Neig + N'
+                  )
+            )
+            FROM ' + @LocTable + N' l
+            WHERE l.NeighborhoodId IS NULL
+              AND l.DistrictId IS NOT NULL
+              AND l.Neighborhood IS NOT NULL
+              AND EXISTS (
+                  SELECT 1
+                  FROM [Neighborhoods] n
+                  WHERE n.DistrictId = l.DistrictId
+                    AND (
+                        ' + @Norm_n_Neig + N' = ' + @Norm_l_Neig + N' + N'' MAHALLESI''
+                     OR ' + @Norm_n_Neig + N' = ' + @Norm_l_Neig + N'
+                    )
+              );';
+        EXEC sp_executesql @Sql;
+
+        FETCH NEXT FROM loc_cur INTO @LocTable;
+    END;
+    CLOSE loc_cur; DEALLOCATE loc_cur;
+
     COMMIT;
     PRINT N'Demo veriler başarıyla eklendi.';
 

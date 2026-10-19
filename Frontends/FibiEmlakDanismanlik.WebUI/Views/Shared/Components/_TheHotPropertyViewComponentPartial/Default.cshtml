@@ -107,7 +107,14 @@
                                                     <div class="price-box clearfix">
                                                         <div class="price-info pull-left">
                                                             <h6>@(isRent ? "Kira:" : "Fiyat:")</h6>
-                                                            <h4>@(item.Price.ToString("N0", trCulture) + " ₺")</h4>
+                                                            @if (isRent)
+                                                            {
+                                                                <h4>@(item.Price.ToString("N0", trCulture) + " ₺") <span class="price-period">/ ay</span></h4>
+                                                            }
+                                                            else
+                                                            {
+                                                                <h4>@(item.Price.ToString("N0", trCulture) + " ₺")</h4>
+                                                            }
                                                         </div>
                                                         <div class="author-box pull-right">
                                                             <figure class="author-thumb">
@@ -199,6 +206,7 @@
 </section>
 
 <style>
+    .price-info .price-period { font-size: 14px; font-weight: 500; color: #93959e; }
     #bestDealsRoot .best-deals-filters { text-align:center; margin-bottom:40px; }
     #bestDealsRoot .best-deals-filters li { display:inline-block; font-size:15px; line-height:26px; color:#93959e; font-weight:500; cursor:pointer; border:1px solid #e5e7ec; border-radius:5px; padding:11px 28px; margin:0 3.5px 7px; transition:all 500ms ease; }
     #bestDealsRoot .best-deals-filters li:hover, #bestDealsRoot .best-deals-filters li.active { color:#fff; background:#2dbe6c; border-color:#2dbe6c; }
