@@ -2260,7 +2260,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 return ListingCardHighlightBuilder.Land(
                     l.Area,
                     l.ZoningStatus,
-                    l.PricePerSquareMeter,
+                    null,
                     l.TitleDeedStatus);
             }
 

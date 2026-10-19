@@ -309,6 +309,12 @@ price-range alanı */
     flex: 1 1 auto;
 }
 
+.deals-grid-content .feature-block-one .inner-box .image-box .image img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+}
+
 .deals-grid-content .feature-block-one .lower-content {
     display: flex;
     flex-direction: column;
@@ -321,6 +327,10 @@ price-range alanı */
     -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 56px;
+}
+
+.deals-grid-content .feature-block-one .lower-content .title-text h4 a {
+    display: inline;
 }
 
 .deals-grid-content .feature-block-one .lower-content > p {
