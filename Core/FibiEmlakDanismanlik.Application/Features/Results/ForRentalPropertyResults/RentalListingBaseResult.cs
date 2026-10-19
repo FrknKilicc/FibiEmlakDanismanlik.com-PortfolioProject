@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FibiEmlakDanismanlik.Application.ViewModels;
 
 namespace FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyResults
 {
@@ -43,6 +44,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyRes
 
         public List<string> ImageUrls { get; set; } = new();
 
-        public List<string> Highlights { get; set; } = new();
+        public List<CardHighlightViewModel> Highlights { get; set; } = new();
     }
 }

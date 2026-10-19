@@ -5,6 +5,7 @@ using FibiEmlakDanismanlik.Application.Features.Results.CommonPropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
 using FibiEmlakDanismanlik.Application.Features.Results.ListingTypeResults;
+using FibiEmlakDanismanlik.Application.Helpers;
 using FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces;
 using FibiEmlakDanismanlik.Application.ViewModels;
 using FibiEmlakDanismanlik.Domain.DTOs;
@@ -1358,31 +1359,32 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             if (t.Contains("konut"))
             {
-                return new List<CardHighlightViewModel>
-        {
-            new() { Icon = "icon-14", Text = $"{x.NumberOfRoom ?? "-"} Oda" },
-            new() { Icon = "icon-15", Text = $"{(x.NumberOfBathRoom?.ToString() ?? "-")} Banyo" },
-            new() { Icon = "icon-16", Text = $"{(x.NetArea?.ToString() ?? x.GrossArea?.ToString() ?? "-")} m²" }
-        };
+                return ListingCardHighlightBuilder.Housing(
+                    x.NumberOfRoom,
+                    x.NetArea,
+                    x.GrossArea,
+                    x.NumberOfFloors,
+                    x.NumberOfBathRoom ?? x.NumberOfBathrooms,
+                    x.BuildingAge);
             }
 
             if (t.Contains("arsa"))
             {
-                return new List<CardHighlightViewModel>
-        {
-            new() { Icon = "icon-14", Text = $"{(x.Area?.ToString() ?? "-")} m²" },
-            new() { Icon = "icon-15", Text = $"{(x.ZoningStatus ?? "-")}" },
-            new() { Icon = "icon-16", Text = $"{(x.PricePerSquareMeter?.ToString("N0") ?? "-")} TL/m²" }
-        };
+                return ListingCardHighlightBuilder.Land(
+                    x.Area,
+                    x.ZoningStatus,
+                    x.PricePerSquareMeter,
+                    x.TitleDeedStatus);
             }
 
             // İşyeri
-            return new List<CardHighlightViewModel>
-    {
-        new() { Icon = "icon-14", Text = $"{(x.Area?.ToString() ?? x.GrossArea?.ToString() ?? "-")} m²" },
-        new() { Icon = "icon-15", Text = $"{(x.NumberOfFloors?.ToString() ?? "-")} Kat" },
-        new() { Icon = "icon-16", Text = $"{(x.NumberOfSection?.ToString() ?? "-")} Bölüm" }
-    };
+            return ListingCardHighlightBuilder.Commercial(
+                x.NetArea,
+                x.GrossArea,
+                x.Area,
+                x.NumberOfSection,
+                x.NumberOfFloors,
+                x.BuildingAge);
         }
         public async Task<ForSaleFilterResponseResult> GetFilteredForSalePropertyForListingWithFacets(PropertyFilterRequest filter)
         {
@@ -2240,25 +2242,40 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             };
         }
 
-        private static List<string> BuildHighlightsForRental(RentalListingBaseResult item)
+        private static List<CardHighlightViewModel> BuildHighlightsForRental(RentalListingBaseResult item)
         {
-            var list = new List<string>();
-
             if (item is RentalHousingListingResult h)
             {
-                if (!string.IsNullOrWhiteSpace(h.NumberOfRoom)) list.Add(h.NumberOfRoom);
-                if (h.GrossArea.HasValue) list.Add($"{h.GrossArea.Value:n0} m²");
-            }
-            else if (item is RentalLandListingResult l)
-            {
-                if (l.Area.HasValue) list.Add($"{l.Area.Value:n0} m²");
-            }
-            else if (item is RentalCommercialListingResult c)
-            {
-                if (c.GrossArea.HasValue) list.Add($"{c.GrossArea.Value:n0} m²");
+                return ListingCardHighlightBuilder.Housing(
+                    h.NumberOfRoom,
+                    h.NetArea,
+                    h.GrossArea,
+                    h.NumberOfFloors,
+                    h.NumberOfBathRoom,
+                    h.BuildingAge);
             }
 
-            return list;
+            if (item is RentalLandListingResult l)
+            {
+                return ListingCardHighlightBuilder.Land(
+                    l.Area,
+                    l.ZoningStatus,
+                    l.PricePerSquareMeter,
+                    l.TitleDeedStatus);
+            }
+
+            if (item is RentalCommercialListingResult c)
+            {
+                return ListingCardHighlightBuilder.Commercial(
+                    c.NetArea,
+                    c.GrossArea,
+                    null,
+                    c.NumberOfSection,
+                    c.NumberOfFloors,
+                    c.BuildingAge);
+            }
+
+            return new List<CardHighlightViewModel>();
         }
 
         public async Task<List<ListingSelectedImageRowDto>> GetSelectedImagesAsync(int listingId, string sectionKey)
