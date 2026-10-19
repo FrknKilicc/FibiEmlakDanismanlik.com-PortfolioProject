@@ -212,6 +212,38 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [ ] Yakın yerler ilan koordinatı yaklaşık (mahalle merkezi) olduğu için yaklaşık mesafeler; admin kesin pin girince `nearby-from-osm.ps1 -OnlyMissing` (o ilanın kayıtları silinerek) yeniden çalıştırılmalı; ileride sync sağlayıcısına dönüştürülebilir
 - [ ] Demo görseller repo içinde (~9 MB, `wwwroot/images/listings`); gerçek fotoğraflar geldiğinde klasör ve CREDITS kaldırılmalı, yükleme deposu (blob) kararı verilmeli
 
+### Gözlemler ve öneriler (2026-10-19, kullanıcı gün içinde soracak; sırayla birlikte yapılacak)
+
+**Git ve süreç**
+- [ ] Push + dev'e birleştirme: önce `feature/antigravity-fibi-services-phase2`, sonra `feature/antigravity-listings-map` (harita branch'i Faz 2'den açıldı, sync altyapısını kullanıyor). Footer, dil ve iç sayfa düzeltmeleri de bu branch'lerde; kullanıcı onayıyla
+- [ ] Test projesi yok: `ListingSpecsBuilder`, `KfeBulletinParser`, `IbbSeismicCsvParser`, `MarketIndexApplier`, `TurkishTextHelper` için xUnit testleri; headless Chrome kontrol betikleri (şu an oturum scratchpad'inde: harita, detay, taşma taraması) `tools/ui-tests` altına alınıp duman testi olarak çalıştırılabilir hale getirilsin
+- [ ] Yeni veriyle doğrulanmamış sayfalar: ana sayfa (vitrin, popüler yerler, son ilanlar), satılık/kiralık liste filtreleri (yeni değer biçimleri: bina yaşı "0/1-5/6-10/11-15/16-20/21 ve üzeri", ısıtma, tapu "Kat Mülkiyetli/Müstakil Tapulu", kullanım durumu), karşılaştırma (Compare) sayfası, arama önerileri
+- [ ] Antigravity satır sonlarını LF yapıyor ve BOM'u siliyor (her turda elle geri ekleniyor); `tools/agy-delegate.ps1` iş bitince değişen dosyalarda BOM'u HEAD'deki duruma göre otomatik geri yüklesin
+
+**Hata ve tutarsızlıklar**
+- [ ] WebUI sayfaları API kapalıyken 500 veriyor (ör. Hakkımızda, İletişim ViewComponent'leri try/catch'siz); footer ve benzer ilanlardaki gibi boş içerikle açılmalı. API tarafı G9 ile birlikte ele alınmalı
+- [ ] Tüm sayfalarda `<title>` sabit ("Fibi Yapı Emlak & Danışmanlık", `_HeadLayoutViewComponentPartial`); `ViewData["Title"]` kullanılmıyor ve 8 view'da "Index" yazıyor. Sayfa başına başlık + meta description; ilan detayında ilan adı
+- [ ] Mobil menüde (`ScaffTemplate.cshtml`) tema kalıntıları: sahte telefon `+88 01682648101`, `info@example.com` linki, sosyal linkler `/Realshed/index.html`; footer gibi `Contact` ve `SocialMedia` tablolarından gelmeli
+- [ ] Header "Sayfalar" mega menüsü İngilizce tema demo linkleri (About Us, Our Services, Pricing Table, Compare Properties → `/Realshed/*.html`); gerçek sayfalara bağlanmalı veya kaldırılmalı
+- [ ] Sayfa başlığı arka plan görselleri (detay, liste, blog, SSS, iletişim, karşılaştırma; 9 dosya) `images.stockcake.com` vb. harici sitelerden hotlink; `wwwroot` altına alınmalı
+- [ ] Detay sayfası `h1` her ilanda "Satılık İlanlar"/"Kiralık İlanlar" (sayfa başlığı bandı); breadcrumb ilan adını göstermiyor
+- [ ] `Blogs` tablosunda neredeyse aynı iki yazı ("Gayrimenkul/Emlak Yatırımında Lokasyon Neden Her Şeydir?", Id 15 ve 10); biri tekrar kayıt olabilir
+- [ ] `MapRepository.GetListingMarkerAsync` nullable uyarıları (dönüş tipi `ListingMarkerResult` ama null dönüyor); imza `Task<ListingMarkerResult?>` yapılmalı
+- [ ] Danışman e-postaları kişisel Gmail adresleri (`...fibi@gmail.com`); kurumsal alan adı adresleri tercih edilmeli
+- [ ] Liste ve detayda ilan "Durum" etiketi (Aktif/Opsiyonlu) ziyaretçiye gösterilmiyor; "Opsiyonlu" ilanlarda rozet gösterilmesi düşünülmeli
+
+**Beklenen / önerilen geliştirmeler**
+- [ ] Danışman kutusuna WhatsApp ile yaz ve tek tıkla ara butonları (mobilde sabit alt çubuk)
+- [ ] İlan detayında kredi taksit hesaplayıcı (FİBİ Finans modülüyle ortak; `BankLoanRates` verisi)
+- [ ] Galeri: küçük resim şeridi, fotoğraf sayısı rozeti, tam ekran (fancybox zaten yüklü)
+- [ ] SEO: ilan detayına schema.org `RealEstateListing`/`Offer` yapılandırılmış verisi, Open Graph görseli, `sitemap.xml` ve `robots.txt`
+- [ ] Görseller: WebP + duyarlı boyutlar (srcset), liste kartlarında küçük boy; şu an 1024px JPEG her yerde
+- [ ] Spam koruması: iletişim ve randevu formlarına rate limit (FİBİ lead formundaki gibi) ve isteğe bağlı captcha
+- [ ] "Benzer ilan çıkınca haber ver" talep formu (lead olarak `FibiServiceLeads` benzeri tabloya)
+- [ ] Liste sayfalarında harita/liste görünüm geçişi aynı sayfada (şu an ayrı Haritada İlanlar sayfası var)
+- [ ] Harita sayfasında fiyat aralığı ve oda filtresi; "bu alanda ara" (bbox) ile API tarafı filtreleme
+- [ ] İzleme: yapılandırılmış log (Serilog) ve sync sağlayıcıları için hata bildirimi (Nominatim/TCMB/İBB başarısız olursa)
+
 ### Haritada İlanlar (2026-10-19, branch `feature/antigravity-listings-map`)
 `ListingsMap` sayfası `GET api/Map/listings` ucundan satılık + kiralık tüm aktif ilanları tek haritada gösterir. Koordinatı olmayan ilanlara `listing-geocode` sağlayıcısı (sync altyapısı, 6 saatte bir) OSM Nominatim ile mahalle > ilçe > il düzeyinde yaklaşık konum yazar (`ListingGeoPoints.Source = nominatim`, `Precision = neighborhood|district|city`); haritada kesikli çerçeveyle gösterilir.
 - [ ] Admin paneli: ilan formunda haritadan kesin pin seçme (Leaflet tıkla/sürükle); kaydedince `ListingGeoPoints` kaydı `Source = manual`, `Precision = building` olarak yaklaşık kaydın yerine yazılsın (şu an `AddGeoPointsAsync` mevcut kaydı ezmiyor, güncelleme ucu ayrıca yazılmalı)
