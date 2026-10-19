@@ -1230,16 +1230,16 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             var listingTypes = await _context.listingTypes.AsNoTracking().Where(x => x.UsageType == UsageType.ForSale).Select(x => new { x.ListingTypeId, x.Name }).ToListAsync();
             var housingTypeIds = _context.forSaleHousingPropertyListings
      .AsNoTracking()
-     .Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null)
+     .Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus))
      .Select(x => x.ListingTypeId);
 
             var landTypeIds = _context.forSaleLandListings
         .AsNoTracking()
-        .Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null)
+        .Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus))
         .Select(x => x.ListingTypeId);
             var commercialTypeIds = _context.forSaleCommercialPropertyListings
         .AsNoTracking()
-        .Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null)
+        .Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus))
         .Select(x => x.ListingTypeId);
             var groupedCounts = await housingTypeIds
         .Concat(landTypeIds)
@@ -1595,13 +1595,13 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 .ToListAsync();
 
             var housingTypeIds = _context.rentalHousingListings.AsNoTracking()
-.Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null).Select(x => x.ListingTypeId);
+.Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)).Select(x => x.ListingTypeId);
 
             var landTypeIds = _context.rentalLandListings.AsNoTracking()
-.Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null).Select(x => x.ListingTypeId);
+.Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)).Select(x => x.ListingTypeId);
 
             var commTypeIds = _context.rentalCommercialPropertyListings.AsNoTracking()
-.Where(x => (x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)) || x.PropertyStatus == null).Select(x => x.ListingTypeId);
+.Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)).Select(x => x.ListingTypeId);
 
             var groupedCounts = await housingTypeIds.Concat(landTypeIds).Concat(commTypeIds)
                 .Where(id => id != null)
@@ -2020,12 +2020,19 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             return query;
         }
+        private sealed class RentalListingSortKey
+        {
+            public int SourceType { get; set; }
+            public int ListingId { get; set; }
+            public decimal? Price { get; set; }
+            public DateTime? CreatedDate { get; set; }
+        }
+
         public async Task<RentalListingFilterResponseResult> GetFilteredForRentalPropertyForListingWithFacets(PropertyFilterRequest filter)
         {
             var selectedIds = (filter.SelectedAmenityIds ?? new List<int>()).Distinct().ToArray();
             var selectedCount = selectedIds.Length;
             var selectedSet = selectedIds.ToHashSet();
-
 
             var baseHousingQuery = BuildRentalHousingQuery(filter);
             var baseLandQuery = BuildRentalLandQuery(filter);
@@ -2063,17 +2070,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             var baseLandIds = baseLandQuery.Select(x => x.ListingId);
             var baseCommercialIds = baseCommercialQuery.Select(x => x.ListingId);
 
-            var housingList = await baseHousingQuery.AsNoTracking().ToListAsync();
-            var landList = await baseLandQuery.AsNoTracking().ToListAsync();
-            var commercialList = await baseCommercialQuery.AsNoTracking().ToListAsync();
-
-
-            var all = new List<RentalListingBaseResult>();
-            all.AddRange(housingList);
-            all.AddRange(landList);
-            all.AddRange(commercialList);
-
-
             var housingCounts = await _context.RentalHousingListingAmenities
                 .Where(x => baseHousingIds.Contains(x.RentalHousingListId))
                 .GroupBy(x => x.AmenityId)
@@ -2098,30 +2094,95 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             foreach (var x in landCounts) countMap[x.AmenityId] = countMap.GetValueOrDefault(x.AmenityId) + x.Cnt;
             foreach (var x in commercialCounts) countMap[x.AmenityId] = countMap.GetValueOrDefault(x.AmenityId) + x.Cnt;
 
-            var total = all.Count;
+            var total = await baseHousingQuery.CountAsync()
+                + await baseLandQuery.CountAsync()
+                + await baseCommercialQuery.CountAsync();
 
-            // Sort 
+            var housingKeys = baseHousingQuery.Select(x => new RentalListingSortKey
+            {
+                SourceType = 1,
+                ListingId = x.ListingId,
+                Price = x.Price,
+                CreatedDate = x.CreatedDate
+            });
+
+            var landKeys = baseLandQuery.Select(x => new RentalListingSortKey
+            {
+                SourceType = 2,
+                ListingId = x.ListingId,
+                Price = x.Price,
+                CreatedDate = x.CreatedDate
+            });
+
+            var commercialKeys = baseCommercialQuery.Select(x => new RentalListingSortKey
+            {
+                SourceType = 3,
+                ListingId = x.ListingId,
+                Price = x.Price,
+                CreatedDate = x.CreatedDate
+            });
+
+            var combinedKeys = housingKeys.Concat(landKeys).Concat(commercialKeys);
+
             var sortBy = (filter.SortBy ?? "CreatedDate").ToLowerInvariant();
             var sortDir = (filter.SortDir ?? "desc").ToLowerInvariant();
 
-            IEnumerable<RentalListingBaseResult> sorted = (sortBy, sortDir) switch
+            IOrderedQueryable<RentalListingSortKey> sortedKeys = (sortBy, sortDir) switch
             {
-                ("price", "asc") => all.OrderBy(x => x.Price),
-                ("price", "desc") => all.OrderByDescending(x => x.Price),
-                ("createddate", "asc") => all.OrderBy(x => x.CreatedDate),
-                _ => all.OrderByDescending(x => x.CreatedDate),
+                ("price", "asc") => combinedKeys.OrderBy(x => x.Price),
+                ("price", "desc") => combinedKeys.OrderByDescending(x => x.Price),
+                ("createddate", "asc") => combinedKeys.OrderBy(x => x.CreatedDate),
+                _ => combinedKeys.OrderByDescending(x => x.CreatedDate),
             };
 
-            // Pagination 
             var page = filter.Page < 1 ? 1 : filter.Page;
             var pageSize = filter.PageSize is < 1 or > 100 ? 20 : filter.PageSize;
 
-            var items = sorted
+            var pageKeys = await sortedKeys
+                .ThenBy(x => x.SourceType)
+                .ThenBy(x => x.ListingId)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToList();
-            foreach (var item in items)
-                item.Highlights = BuildHighlightsForRental(item);
+                .ToListAsync();
+
+            var housingIds = pageKeys.Where(x => x.SourceType == 1).Select(x => x.ListingId).ToList();
+            var landIds = pageKeys.Where(x => x.SourceType == 2).Select(x => x.ListingId).ToList();
+            var commercialIds = pageKeys.Where(x => x.SourceType == 3).Select(x => x.ListingId).ToList();
+
+            var pageHousing = housingIds.Count > 0
+                ? await baseHousingQuery.Where(x => housingIds.Contains(x.ListingId)).AsNoTracking().ToListAsync()
+                : new List<RentalHousingListingResult>();
+
+            var pageLand = landIds.Count > 0
+                ? await baseLandQuery.Where(x => landIds.Contains(x.ListingId)).AsNoTracking().ToListAsync()
+                : new List<RentalLandListingResult>();
+
+            var pageCommercial = commercialIds.Count > 0
+                ? await baseCommercialQuery.Where(x => commercialIds.Contains(x.ListingId)).AsNoTracking().ToListAsync()
+                : new List<RentalCommercialListingResult>();
+
+            var housingDict = pageHousing.ToDictionary(x => x.ListingId);
+            var landDict = pageLand.ToDictionary(x => x.ListingId);
+            var commercialDict = pageCommercial.ToDictionary(x => x.ListingId);
+
+            var items = new List<RentalListingBaseResult>(pageKeys.Count);
+            foreach (var key in pageKeys)
+            {
+                RentalListingBaseResult? item = key.SourceType switch
+                {
+                    1 => housingDict.GetValueOrDefault(key.ListingId),
+                    2 => landDict.GetValueOrDefault(key.ListingId),
+                    3 => commercialDict.GetValueOrDefault(key.ListingId),
+                    _ => null
+                };
+
+                if (item != null)
+                {
+                    item.Highlights = BuildHighlightsForRental(item);
+                    items.Add(item);
+                }
+            }
+
             var defs = await _context.AmenityDefinitions
                 .AsNoTracking()
                 .Where(d => d.isActive)
@@ -2157,8 +2218,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         private static List<string> BuildHighlightsForRental(RentalListingBaseResult item)
         {
             var list = new List<string>();
-
-            if (item.Price.HasValue) list.Add($"{item.Price.Value:n0} ?");
 
             if (item is RentalHousingListingResult h)
             {
