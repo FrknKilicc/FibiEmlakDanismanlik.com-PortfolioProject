@@ -1,6 +1,7 @@
 ﻿using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Results.MapResults;
 using FibiEmlakDanismanlik.Application.Interfaces.MapInterfaces;
+using FibiEmlakDanismanlik.Application.Models.MapModels;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
@@ -364,6 +365,195 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
                 .OrderBy(x => x.UsageTypeId)
                 .ThenBy(x => x.Price)
                 .ToList();
+        }
+
+        public async Task<List<ListingGeocodeCandidate>> GetListingsWithoutGeoPointAsync(int take)
+        {
+            if (take <= 0)
+                return new List<ListingGeocodeCandidate>();
+
+            var existingKeys = await _context.ListingGeoPoints
+                .AsNoTracking()
+                .Select(x => new { x.ListingTypeId, x.ListingId })
+                .ToListAsync();
+
+            var geoSet = new HashSet<(int ListingTypeId, int ListingId)>(
+                existingKeys.Select(x => (x.ListingTypeId, x.ListingId)));
+
+            var activeSet = PropertyStatuses.ActiveSet;
+            var candidates = new List<ListingGeocodeCandidate>();
+
+            // 1. Satılık Konut
+            var saleHousing = await _context.forSaleHousingPropertyListings
+                .AsNoTracking()
+                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus))
+                .Select(x => new ListingGeocodeCandidate
+                {
+                    ListingId = x.ForSaleHousingListId,
+                    ListingTypeId = x.ListingTypeId,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood
+                })
+                .ToListAsync();
+
+            foreach (var item in saleHousing)
+            {
+                if (!geoSet.Contains((item.ListingTypeId, item.ListingId)))
+                {
+                    candidates.Add(item);
+                    if (candidates.Count >= take) return candidates;
+                }
+            }
+
+            // 2. Satılık Arsa
+            var saleLand = await _context.forSaleLandListings
+                .AsNoTracking()
+                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus))
+                .Select(x => new ListingGeocodeCandidate
+                {
+                    ListingId = x.ForSaleLandListingId,
+                    ListingTypeId = x.ListingTypeId,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood
+                })
+                .ToListAsync();
+
+            foreach (var item in saleLand)
+            {
+                if (!geoSet.Contains((item.ListingTypeId, item.ListingId)))
+                {
+                    candidates.Add(item);
+                    if (candidates.Count >= take) return candidates;
+                }
+            }
+
+            // 3. Satılık Ticari
+            var saleCommercial = await _context.forSaleCommercialPropertyListings
+                .AsNoTracking()
+                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus))
+                .Select(x => new ListingGeocodeCandidate
+                {
+                    ListingId = x.ForSaleCommercialListingId,
+                    ListingTypeId = x.ListingTypeId,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood
+                })
+                .ToListAsync();
+
+            foreach (var item in saleCommercial)
+            {
+                if (!geoSet.Contains((item.ListingTypeId, item.ListingId)))
+                {
+                    candidates.Add(item);
+                    if (candidates.Count >= take) return candidates;
+                }
+            }
+
+            // 4. Kiralık Konut
+            var rentHousing = await _context.rentalHousingListings
+                .AsNoTracking()
+                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus) && x.ListingTypeId != null)
+                .Select(x => new ListingGeocodeCandidate
+                {
+                    ListingId = x.RentalHousingListId,
+                    ListingTypeId = x.ListingTypeId!.Value,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood
+                })
+                .ToListAsync();
+
+            foreach (var item in rentHousing)
+            {
+                if (!geoSet.Contains((item.ListingTypeId, item.ListingId)))
+                {
+                    candidates.Add(item);
+                    if (candidates.Count >= take) return candidates;
+                }
+            }
+
+            // 5. Kiralık Arsa
+            var rentLand = await _context.rentalLandListings
+                .AsNoTracking()
+                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus) && x.ListingTypeId != null)
+                .Select(x => new ListingGeocodeCandidate
+                {
+                    ListingId = x.RentalLandListingId,
+                    ListingTypeId = x.ListingTypeId!.Value,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood
+                })
+                .ToListAsync();
+
+            foreach (var item in rentLand)
+            {
+                if (!geoSet.Contains((item.ListingTypeId, item.ListingId)))
+                {
+                    candidates.Add(item);
+                    if (candidates.Count >= take) return candidates;
+                }
+            }
+
+            // 6. Kiralık Ticari
+            var rentCommercial = await _context.rentalCommercialPropertyListings
+                .AsNoTracking()
+                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus) && x.ListingTypeId != null)
+                .Select(x => new ListingGeocodeCandidate
+                {
+                    ListingId = x.RentalCommercialListId,
+                    ListingTypeId = x.ListingTypeId!.Value,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood
+                })
+                .ToListAsync();
+
+            foreach (var item in rentCommercial)
+            {
+                if (!geoSet.Contains((item.ListingTypeId, item.ListingId)))
+                {
+                    candidates.Add(item);
+                    if (candidates.Count >= take) return candidates;
+                }
+            }
+
+            return candidates;
+        }
+
+        public async Task<int> AddGeoPointsAsync(IReadOnlyList<ListingGeoPoint> points)
+        {
+            if (points == null || points.Count == 0)
+                return 0;
+
+            var existingKeys = await _context.ListingGeoPoints
+                .AsNoTracking()
+                .Select(x => new { x.ListingTypeId, x.ListingId })
+                .ToListAsync();
+
+            var existingSet = new HashSet<(int ListingTypeId, int ListingId)>(
+                existingKeys.Select(x => (x.ListingTypeId, x.ListingId)));
+
+            var toAdd = new List<ListingGeoPoint>();
+            foreach (var pt in points)
+            {
+                var key = (pt.ListingTypeId, pt.ListingId);
+                if (!existingSet.Contains(key))
+                {
+                    toAdd.Add(pt);
+                    existingSet.Add(key);
+                }
+            }
+
+            if (toAdd.Count == 0)
+                return 0;
+
+            await _context.ListingGeoPoints.AddRangeAsync(toAdd);
+            await _context.SaveChangesAsync();
+            return toAdd.Count;
         }
 
         private sealed class ListingItemDto

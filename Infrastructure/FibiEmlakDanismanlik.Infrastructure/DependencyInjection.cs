@@ -25,6 +25,7 @@ namespace FibiEmlakDanismanlik.Infrastructure
             services.AddScoped<IMarketDataProvider, IbbSeismicScenarioProvider>();
             services.AddScoped<IMarketDataProvider, EvdsUnitPriceProvider>();
             services.AddScoped<IMarketDataProvider, TcmbKfeBulletinProvider>();
+            services.AddScoped<IMarketDataProvider, ListingGeocodeProvider>();
 
             services.AddHostedService<MarketDataSyncBackgroundService>();
 

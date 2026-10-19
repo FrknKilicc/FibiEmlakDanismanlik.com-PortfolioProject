@@ -25,5 +25,13 @@ namespace FibiEmlakDanismanlik.Application.Constants
         public const string CategoryHousing = "housing";
         public const string CategoryLand = "land";
         public const string CategoryCommercial = "commercial";
+
+        public const string GeocodeProviderKey = "listing-geocode";
+        public const string NominatimSearchUrl = "https://nominatim.openstreetmap.org/search";
+        public const string NominatimCountryCode = "tr";
+        public const int GeocodeMaxRequestsPerRun = 60;
+        public const int GeocodeRequestDelayMilliseconds = 1100;
+        public const int GeocodeCandidateLimit = 500;
+        public const string CountryName = "Türkiye";
     }
 }
