@@ -53,6 +53,67 @@
     }
 
     /**
+     * Konum dropdown'ları için Select2 eklentisini başlatır / günceller.
+     */
+    function initLocationSelect(selectEl, placeholderText) {
+        if (!window.jQuery || !window.jQuery.fn || !window.jQuery.fn.select2) {
+            return;
+        }
+
+        var $el = window.jQuery(selectEl);
+        if (!$el.length) {
+            return;
+        }
+
+        var $nice = $el.next('.nice-select');
+        if ($nice.length) {
+            $nice.remove();
+            $el.css('display', '');
+        }
+
+        if ($el.data('select2')) {
+            $el.select2('destroy');
+        }
+
+        $el.select2({
+            width: '100%',
+            placeholder: placeholderText,
+            allowClear: false,
+            dropdownParent: $el.closest('.form-group'),
+            language: {
+                noResults: function () {
+                    return 'Sonuç bulunamadı';
+                },
+                searching: function () {
+                    return 'Aranıyor...';
+                }
+            }
+        });
+    }
+
+    /**
+     * Select elemanını sınıfına göre Select2 veya niceSelect ile tazeler.
+     */
+    function refreshSelect(el) {
+        var domEl = toElement(el);
+        if (!domEl) {
+            return;
+        }
+
+        var hasLocationClass = (domEl.classList && domEl.classList.contains('fibi-location-select')) ||
+            (window.jQuery && window.jQuery(domEl).hasClass('fibi-location-select'));
+
+        if (hasLocationClass) {
+            var firstOptionText = (domEl.options && domEl.options.length > 0)
+                ? domEl.options[0].text
+                : '';
+            initLocationSelect(domEl, firstOptionText);
+        } else {
+            updateNiceSelect(domEl);
+        }
+    }
+
+    /**
      * XSS önleme amaçlı metin kaçış yardımcısı.
      */
     function escapeHtml(str) {
@@ -96,7 +157,7 @@
         selectEl.options.length = 0;
         selectEl.add(new Option(placeholderText, ''));
         selectEl.value = '';
-        updateNiceSelect(selectEl);
+        refreshSelect(selectEl);
     }
 
     /**
@@ -140,7 +201,7 @@
                     districts.forEach(function (item) {
                         distEl.add(new Option(item.text, String(item.id)));
                     });
-                    updateNiceSelect(distEl);
+                    refreshSelect(distEl);
                 })
                 .catch(function (err) {
                     if (currentDistSeq !== districtReqSeq) {
@@ -185,7 +246,7 @@
                         }
                         neighEl.add(new Option(item.text, String(item.id)));
                     });
-                    updateNiceSelect(neighEl);
+                    refreshSelect(neighEl);
                 })
                 .catch(function (err) {
                     if (currentNeighSeq !== neighborhoodReqSeq) {
@@ -218,7 +279,7 @@
                 cities.forEach(function (item) {
                     cityEl.add(new Option(item.text, String(item.id)));
                 });
-                updateNiceSelect(cityEl);
+                refreshSelect(cityEl);
             })
             .catch(function (err) {
                 clearSelect(cityEl, 'İl seçin');

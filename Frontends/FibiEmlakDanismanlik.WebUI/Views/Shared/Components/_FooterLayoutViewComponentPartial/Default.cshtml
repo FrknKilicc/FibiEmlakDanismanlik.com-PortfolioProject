@@ -66,16 +66,22 @@
             </div>
         </div>
     </div>
+    <style>
+        .footer-bottom .footer-logo .fibi-footer-logo { display: block; height: 64px; width: auto; background: #fff; padding: 6px 16px; border-radius: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+        @@media (max-width: 767px) {
+            .footer-bottom .footer-logo .fibi-footer-logo { height: 54px; padding: 5px 12px; }
+        }
+    </style>
     <div class="footer-bottom">
         <div class="auto-container">
             <div class="inner-box clearfix">
-                <figure class="footer-logo"><a href="/Realshed/index.html"><img src="/Realshed/assets/images/footer-logo.png" alt=""></a></figure>
+                <figure class="footer-logo"><a href="@Url.Action("Index", "UILayout")"><img class="fibi-footer-logo" src="/Realshed/assets/images/FibiLogo-footer.png" alt="Fibi Emlak Danışmanlık"></a></figure>
                 <div class="copyright pull-left">
-                    <p><a href="/Realshed/index.html">Furkan Kılıç</a> &copy; 2024 Tüm Hakları Saklıdır</p>
+                    <p>&copy; 2026 <a href="@Url.Action("Index", "UILayout")">Fibi Emlak Danışmanlık</a>. Tüm hakları saklıdır.</p>
                 </div>
                 <ul class="footer-nav pull-right clearfix">
-                    <li><a href="/Realshed/index.html">Terms of Service</a></li>
-                    <li><a href="/Realshed/index.html">Privacy Policy</a></li>
+                    <li><a href="#">Kullanım Koşulları</a></li>
+                    <li><a href="#">Gizlilik Politikası</a></li>
                 </ul>
             </div>
         </div>
