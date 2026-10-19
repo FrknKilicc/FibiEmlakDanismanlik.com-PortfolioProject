@@ -6,6 +6,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.FibiServiceResults
     public class NeighborhoodAnalysisItemResult
     {
         public FibiLocationSummaryResult Location { get; set; } = null!;
+        public FibiDataSourceResult DataSource { get; set; } = null!;
         public FibiPriceBandResult PriceBand { get; set; } = null!;
         public decimal AmortizationYears { get; set; }
         public decimal AnnualRentYieldPercentage { get; set; }

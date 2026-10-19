@@ -936,3 +936,184 @@
     color: var(--fibi-heading);
     margin-bottom: 16px;
 }
+
+/* --------------------------------------------------------------------------
+   19. Veri Kaynağı Etiketi (.fibi-source)
+   -------------------------------------------------------------------------- */
+.fibi-source {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.fibi-source-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.fibi-source-pill--neighborhood {
+    background: var(--fibi-primary-light);
+    color: #15803d;
+    border: 1px solid var(--fibi-primary-border);
+}
+
+.fibi-source-pill--district {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+}
+
+.fibi-source-pill--city {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.fibi-source-pill--country {
+    background: var(--fibi-bg-light);
+    color: var(--fibi-heading);
+    border: 1px solid var(--fibi-border);
+}
+
+.fibi-source-meta {
+    font-size: 12px;
+    color: var(--fibi-text);
+}
+
+.fibi-source-note {
+    flex-basis: 100%;
+    font-size: 12px;
+    color: var(--fibi-text);
+    font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   20. Deprem Senaryosu Özeti (.fibi-seismic)
+   -------------------------------------------------------------------------- */
+.fibi-seismic {
+    margin-top: 8px;
+    padding: 16px 20px 4px;
+    background: var(--fibi-white);
+    border: 1px solid var(--fibi-border);
+    border-radius: var(--fibi-radius-sm);
+}
+
+.fibi-seismic-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.fibi-seismic .fibi-stat-card {
+    margin-bottom: 12px;
+}
+
+.fibi-badge--unknown {
+    background: var(--fibi-bg-light);
+    color: var(--fibi-text);
+    border: 1px solid var(--fibi-border);
+}
+
+/* [hidden] elemanların gizlenmesi */
+.fibi-source[hidden],
+.fibi-seismic[hidden],
+.fibi-seismic .row[hidden] {
+    display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   21. Konum Seçimi (select2)
+   -------------------------------------------------------------------------- */
+.fibi-panel .select2-container {
+    width: 100% !important;
+}
+
+.fibi-panel .select2-container--default .select2-selection--single {
+    height: 50px;
+    border: 1px solid var(--fibi-border);
+    border-radius: var(--fibi-radius-sm);
+    background: var(--fibi-white);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+}
+
+.fibi-panel .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 1.2;
+    padding: 0 24px 0 0;
+    color: var(--fibi-heading);
+    font-size: 14px;
+}
+
+.fibi-panel .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: var(--fibi-text);
+}
+
+.fibi-panel .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 48px;
+    right: 10px;
+}
+
+.fibi-panel .select2-container--default.select2-container--open .select2-selection--single,
+.fibi-panel .select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: var(--fibi-primary);
+}
+
+.fibi-panel .select2-dropdown {
+    border: 1px solid var(--fibi-border);
+    border-radius: var(--fibi-radius-sm);
+    box-shadow: var(--fibi-shadow);
+    overflow: hidden;
+    z-index: 20;
+}
+
+.fibi-panel .select2-search--dropdown .select2-search__field {
+    height: 40px;
+    border: 1px solid var(--fibi-border);
+    border-radius: var(--fibi-radius-sm);
+    padding: 8px 12px;
+    font-size: 14px;
+    outline: none;
+}
+
+.fibi-panel .select2-results > .select2-results__options {
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.fibi-panel .select2-results__option {
+    padding: 9px 12px;
+    font-size: 14px;
+}
+
+.fibi-panel .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable,
+.fibi-panel .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--fibi-primary);
+    color: #ffffff;
+}
+
+.fibi-panel .select2-container--default .select2-results__option--selected,
+.fibi-panel .select2-results__option--selected {
+    background-color: var(--fibi-primary-light);
+}
+
+.fibi-panel select.fibi-location-select {
+    width: 100%;
+    height: 50px;
+    border: 1px solid var(--fibi-border);
+    border-radius: var(--fibi-radius-sm);
+    padding: 0 14px;
+}
+
+

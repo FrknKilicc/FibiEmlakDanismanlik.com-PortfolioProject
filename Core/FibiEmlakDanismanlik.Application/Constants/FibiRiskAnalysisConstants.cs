@@ -14,6 +14,7 @@ namespace FibiEmlakDanismanlik.Application.Constants
         public const int SoilMediumPoints = 15;
         public const int SoilHighPoints = 25;
         public const int SoilVeryHighPoints = 35;
+        public const int SoilUnknownPoints = 15; // Veri yoksa orta kabul edilir
 
         // Yapısal risk ek puanları ve eşikler
         public const int SoftStoryPoints = 12; // Zemin kat ticari (yumuşak kat)
@@ -60,6 +61,6 @@ namespace FibiEmlakDanismanlik.Application.Constants
         public const string LowTransformationVerdict = "Düşük Dönüşüm Potansiyeli";
 
         // Yasal uyarı
-        public const string LegalDisclaimer = "Bu analiz; seçilen mahallenin dış piyasa ve zemin verileri ile sizin verdiğiniz bilgiler kullanılarak üretilen genel bir ön değerlendirmedir. Resmi bina performans analizi, zemin etüdü veya riskli yapı tespiti yerine geçmez. Kesin sonuç için yetkili kuruluşlarca yapılacak teknik inceleme gereklidir.";
+        public const string LegalDisclaimer = "Bu analiz; seçilen konumun dış piyasa ve deprem verileri (mahalleye özel veri yoksa bağlı olduğu ilçe, il veya Türkiye ortalaması) ile sizin verdiğiniz bilgiler kullanılarak üretilen genel bir ön değerlendirmedir. Resmi bina performans analizi, zemin etüdü veya riskli yapı tespiti yerine geçmez. Kesin sonuç için yetkili kuruluşlarca yapılacak teknik inceleme gereklidir.";
     }
 }

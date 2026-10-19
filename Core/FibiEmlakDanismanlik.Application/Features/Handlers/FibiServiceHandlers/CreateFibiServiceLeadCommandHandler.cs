@@ -23,6 +23,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.FibiServiceHandlers
             var customerNote = string.IsNullOrWhiteSpace(request.CustomerNote) ? null : request.CustomerNote.Trim();
             var calculationSummary = string.IsNullOrWhiteSpace(request.CalculationSummaryJson) ? null : request.CalculationSummaryJson.Trim();
 
+            var now = DateTime.Now;
             var lead = new FibiServiceLead
             {
                 SourceModule = request.SourceModule,
@@ -32,7 +33,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.FibiServiceHandlers
                 NeighborhoodId = request.NeighborhoodId,
                 CalculationSummaryJson = calculationSummary,
                 CustomerNote = customerNote,
-                CreatedDate = DateTime.Now,
+                CreatedDate = now,
+                KvkkApprovedAt = now,
                 IsContacted = false
             };
 

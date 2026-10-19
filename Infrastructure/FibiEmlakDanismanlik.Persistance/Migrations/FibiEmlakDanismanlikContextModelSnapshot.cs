@@ -191,6 +191,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasPrecision(9, 4)
                         .HasColumnType("decimal(9,4)");
 
+                    b.Property<string>("DataSource")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<decimal>("HousingLoanMonthlyRate")
                         .HasPrecision(9, 4)
                         .HasColumnType("decimal(9,4)");
@@ -205,10 +210,22 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<int>("MaxTermMonths")
                         .HasColumnType("int");
 
+                    b.Property<string>("ProviderKey")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SourceUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("BankLoanRateId");
+
+                    b.HasIndex("ProviderKey")
+                        .IsUnique()
+                        .HasFilter("[ProviderKey] IS NOT NULL");
 
                     b.ToTable("BankLoanRates");
 
@@ -219,9 +236,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                             AllocationFeeRate = 0.50m,
                             BankName = "Ziraat Bankası",
                             CommercialLoanMonthlyRate = 2.89m,
+                            DataSource = "FİBİ tahmini başlangıç verisi",
                             HousingLoanMonthlyRate = 2.49m,
                             IsActive = true,
                             MaxTermMonths = 120,
+                            ProviderKey = "ziraat",
                             UpdatedDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -230,9 +249,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                             AllocationFeeRate = 0.50m,
                             BankName = "Halkbank",
                             CommercialLoanMonthlyRate = 2.95m,
+                            DataSource = "FİBİ tahmini başlangıç verisi",
                             HousingLoanMonthlyRate = 2.52m,
                             IsActive = true,
                             MaxTermMonths = 120,
+                            ProviderKey = "halkbank",
                             UpdatedDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -241,9 +262,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                             AllocationFeeRate = 0.50m,
                             BankName = "VakıfBank",
                             CommercialLoanMonthlyRate = 2.99m,
+                            DataSource = "FİBİ tahmini başlangıç verisi",
                             HousingLoanMonthlyRate = 2.55m,
                             IsActive = true,
                             MaxTermMonths = 120,
+                            ProviderKey = "vakifbank",
                             UpdatedDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -252,9 +275,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                             AllocationFeeRate = 0.50m,
                             BankName = "Türkiye İş Bankası",
                             CommercialLoanMonthlyRate = 3.19m,
+                            DataSource = "FİBİ tahmini başlangıç verisi",
                             HousingLoanMonthlyRate = 2.79m,
                             IsActive = true,
                             MaxTermMonths = 120,
+                            ProviderKey = "isbank",
                             UpdatedDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -263,9 +288,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                             AllocationFeeRate = 0.50m,
                             BankName = "Garanti BBVA",
                             CommercialLoanMonthlyRate = 3.25m,
+                            DataSource = "FİBİ tahmini başlangıç verisi",
                             HousingLoanMonthlyRate = 2.85m,
                             IsActive = true,
                             MaxTermMonths = 120,
+                            ProviderKey = "garanti",
                             UpdatedDate = new DateTime(2026, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -507,13 +534,13 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("Districts");
                 });
 
-            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ExternalNeighborhoodMarketStat", b =>
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ExternalMarketStat", b =>
                 {
-                    b.Property<int>("ExternalNeighborhoodMarketStatId")
+                    b.Property<int>("ExternalMarketStatId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExternalNeighborhoodMarketStatId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExternalMarketStatId"));
 
                     b.Property<decimal>("AgencyMarginMultiplier")
                         .ValueGeneratedOnAdd()
@@ -535,6 +562,17 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DataSource")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("DistrictId")
+                        .HasColumnType("int");
+
                     b.Property<string>("HistoricalQuarterlyPricesJson")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -547,28 +585,51 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasPrecision(7, 2)
                         .HasColumnType("decimal(7,2)");
 
+                    b.Property<string>("LastAppliedIndexPeriod")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
+
                     b.Property<DateTime>("LastUpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("NeighborhoodId")
+                    b.Property<int?>("NeighborhoodId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("RegionalDevelopmentFactor")
                         .HasPrecision(4, 2)
                         .HasColumnType("decimal(4,2)");
 
-                    b.Property<int>("SoilRiskClass")
+                    b.Property<int>("Scope")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SoilRiskClass")
                         .HasColumnType("int");
 
                     b.Property<int>("UrbanTransformationAppetiteScore")
                         .HasColumnType("int");
 
-                    b.HasKey("ExternalNeighborhoodMarketStatId");
+                    b.HasKey("ExternalMarketStatId");
+
+                    b.HasIndex("CityId")
+                        .IsUnique()
+                        .HasFilter("[Scope] = 2");
+
+                    b.HasIndex("DistrictId")
+                        .IsUnique()
+                        .HasFilter("[Scope] = 3");
 
                     b.HasIndex("NeighborhoodId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Scope] = 4");
 
-                    b.ToTable("ExternalNeighborhoodMarketStats");
+                    b.HasIndex("Scope")
+                        .IsUnique()
+                        .HasFilter("[Scope] = 1");
+
+                    b.ToTable("ExternalMarketStats", t =>
+                        {
+                            t.HasCheckConstraint("CK_ExternalMarketStats_ScopeLocation", "([Scope] = 1 AND [CityId] IS NULL AND [DistrictId] IS NULL AND [NeighborhoodId] IS NULL) OR ([Scope] = 2 AND [CityId] IS NOT NULL AND [DistrictId] IS NULL AND [NeighborhoodId] IS NULL) OR ([Scope] = 3 AND [CityId] IS NOT NULL AND [DistrictId] IS NOT NULL AND [NeighborhoodId] IS NULL) OR ([Scope] = 4 AND [CityId] IS NOT NULL AND [DistrictId] IS NOT NULL AND [NeighborhoodId] IS NOT NULL)");
+                        });
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.FibiServiceLead", b =>
@@ -600,6 +661,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.Property<bool>("IsContacted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("KvkkApprovedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("NeighborhoodId")
                         .HasColumnType("int");
@@ -1594,6 +1658,42 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("MainBanners");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.MarketDataSyncLog", b =>
+                {
+                    b.Property<int>("MarketDataSyncLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MarketDataSyncLogId"));
+
+                    b.Property<int>("AffectedRowCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FinishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("ProviderKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MarketDataSyncLogId");
+
+                    b.HasIndex("ProviderKey", "StartedAt");
+
+                    b.ToTable("MarketDataSyncLogs");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.NearbyCategory", b =>
                 {
                     b.Property<int>("Id")
@@ -1653,6 +1753,63 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasIndex("DistrictId", "Name");
 
                     b.ToTable("Neighborhoods");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.NeighborhoodSeismicScenarioStat", b =>
+                {
+                    b.Property<int>("NeighborhoodSeismicScenarioStatId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NeighborhoodSeismicScenarioStatId"));
+
+                    b.Property<int>("Buildings1980To2000Count")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BuildingsAfter2000Count")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BuildingsBefore1980Count")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DataSource")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("EstimatedFatalityCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HeavilyDamagedBuildingCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LightlyDamagedBuildingCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ModeratelyDamagedBuildingCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NeighborhoodId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TemporaryShelterNeedCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UavtCode")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VeryHeavilyDamagedBuildingCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("NeighborhoodSeismicScenarioStatId");
+
+                    b.HasIndex("NeighborhoodId")
+                        .IsUnique();
+
+                    b.ToTable("NeighborhoodSeismicScenarioStats");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.OurPartners", b =>
@@ -2540,13 +2697,26 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Navigation("City");
                 });
 
-            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ExternalNeighborhoodMarketStat", b =>
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ExternalMarketStat", b =>
                 {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.District", "District")
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", "Neighborhood")
                         .WithMany()
                         .HasForeignKey("NeighborhoodId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("City");
+
+                    b.Navigation("District");
 
                     b.Navigation("Neighborhood");
                 });
@@ -2741,6 +2911,17 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("District");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.NeighborhoodSeismicScenarioStat", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", "Neighborhood")
+                        .WithMany()
+                        .HasForeignKey("NeighborhoodId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Neighborhood");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.RentalCommercialListingAmenities", b =>

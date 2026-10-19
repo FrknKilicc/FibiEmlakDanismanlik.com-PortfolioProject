@@ -4,6 +4,6 @@ using System.Collections.Generic;
 
 namespace FibiEmlakDanismanlik.Application.Features.Queries.FibiServiceQueries
 {
-    /// <summary>Emsal verisi bulunan mahalleleri hiyerarşik olarak getiren sorgu.</summary>
-    public record GetFibiServiceLocationsQuery() : IRequest<List<GetFibiServiceLocationResult>>;
+    /// <summary>Son veri senkronizasyonu günlüklerini getiren sorgu.</summary>
+    public record GetMarketDataSyncLogsQuery() : IRequest<List<GetMarketDataSyncLogResult>>;
 }

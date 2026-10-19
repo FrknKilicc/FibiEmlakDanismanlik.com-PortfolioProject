@@ -30,8 +30,11 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.HttpOverrides;
+using System.Net;
 using System.Threading.RateLimiting;
 using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -108,11 +111,26 @@ builder.Services.AddScoped(typeof(IAgentRepository), typeof(AgentRepository));
 builder.Services.AddScoped(typeof(IBestDealRepository), typeof(BestDealRepository));
 builder.Services.AddScoped(typeof(IPopularPlaceRepository), typeof(PopularPlaceRepository));
 builder.Services.AddScoped(typeof(IMarketStatRepository), typeof(MarketStatRepository));
+builder.Services.AddScoped(typeof(IMarketDataSyncRepository), typeof(MarketDataSyncRepository));
 //Configure IRepositories
 
 //MediaTR tried
 builder.Services.AddApplicationService(builder.Configuration);
+builder.Services.AddFibiInfrastructure(builder.Configuration);
 //MediaTR 
+
+// Reverse proxy arkasında rate limit'in gerçek istemci IP'sini görmesi için.
+// Yalnızca güvenilen proxy'lerden gelen X-Forwarded-For kabul edilir (varsayılan: loopback);
+// herkese güvenmek IP sahteciliğiyle rate limit'in aşılmasına izin verir.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    foreach (var proxy in builder.Configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>() ?? Array.Empty<string>())
+    {
+        if (IPAddress.TryParse(proxy, out var address))
+            options.KnownProxies.Add(address);
+    }
+});
 
 // Anonim lead ucunu spam'e karşı IP başına sınırlar.
 builder.Services.AddRateLimiter(options =>
@@ -130,6 +148,8 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 
 // Configure the HTTP request pipeline.

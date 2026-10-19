@@ -35,15 +35,15 @@
                         </div>
                         <div class="form-group">
                             <label for="regionCity">İl <span class="text-danger">*</span></label>
-                            <select id="regionCity" name="cityId"></select>
+                            <select id="regionCity" name="cityId" class="ignore fibi-location-select"></select>
                         </div>
                         <div class="form-group">
                             <label for="regionDistrict">İlçe <span class="text-danger">*</span></label>
-                            <select id="regionDistrict" name="districtId"></select>
+                            <select id="regionDistrict" name="districtId" class="ignore fibi-location-select"></select>
                         </div>
                         <div class="form-group">
                             <label for="regionNeighborhood">Mahalle <span class="text-danger">*</span></label>
-                            <select id="regionNeighborhood" name="neighborhoodId"></select>
+                            <select id="regionNeighborhood" name="neighborhoodId" class="ignore fibi-location-select"></select>
                         </div>
 
                         <!-- 2. Mülk Tipi -->
@@ -76,9 +76,17 @@
                             <span class="fibi-step-number">3</span> Karşılaştır (opsiyonel)
                         </div>
                         <div class="form-group">
-                            <label for="regionCompare">Karşılaştırma Mahalle</label>
-                            <select id="regionCompare" name="compareWithNeighborhoodId"></select>
-                            <small class="form-text text-muted">İki mahalleyi yan yana kıyaslayın.</small>
+                            <label for="regionCompareCity">Karşılaştırma İli</label>
+                            <select id="regionCompareCity" class="ignore fibi-location-select"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="regionCompareDistrict">Karşılaştırma İlçesi</label>
+                            <select id="regionCompareDistrict" class="ignore fibi-location-select"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="regionCompare">Karşılaştırma Mahallesi</label>
+                            <select id="regionCompare" name="compareWithNeighborhoodId" class="ignore fibi-location-select"></select>
+                            <small class="form-text text-muted">Boş bırakırsanız karşılaştırma yapılmaz. Türkiye'deki herhangi bir mahalleyi seçebilirsiniz.</small>
                         </div>
 
                         <div class="form-group mt-3 mb-0">
@@ -101,6 +109,7 @@
                     <!-- Analiz Sonucu -->
                     <div id="regionResult" hidden>
                         <h3 id="regionLocationTitle" class="fibi-panel-title"></h3>
+                        <div id="regionDataSource" class="fibi-source" hidden></div>
 
                         <!-- 4 İstatistik Kartı -->
                         <div class="row clearfix">

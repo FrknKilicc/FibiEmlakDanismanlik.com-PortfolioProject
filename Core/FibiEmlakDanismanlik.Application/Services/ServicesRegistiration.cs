@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces;
+using FibiEmlakDanismanlik.Application.Services.FibiServices;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,8 @@ namespace FibiEmlakDanismanlik.Application.Services
         {
             services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(ServicesRegistiration).Assembly));
             services.AddAutoMapper(typeof(ServicesRegistiration).Assembly);
+            services.AddScoped<IFibiMarketContextService, FibiMarketContextService>();
+            services.AddScoped<IMarketDataSyncRunner, MarketDataSyncRunner>();
         }
 
 

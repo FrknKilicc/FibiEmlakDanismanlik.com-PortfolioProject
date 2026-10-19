@@ -13,6 +13,14 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 
         public string? LogoUrl { get; set; }
 
+        /// <summary>Otomatik güncelleyen sağlayıcının anahtarı; örn. ziraat. Boşsa oran elle yönetilir.</summary>
+        public string? ProviderKey { get; set; }
+
+        /// <summary>Oranın okunduğu banka sayfası.</summary>
+        public string? SourceUrl { get; set; }
+
+        public string DataSource { get; set; } = null!;
+
         /// <summary>Konut kredisi aylık faiz oranı (% — 2.49 = %2,49).</summary>
         public decimal HousingLoanMonthlyRate { get; set; }
 

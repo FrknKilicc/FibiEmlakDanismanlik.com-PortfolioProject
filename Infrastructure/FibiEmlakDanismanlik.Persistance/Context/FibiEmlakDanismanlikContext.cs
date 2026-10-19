@@ -118,7 +118,9 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<CityGalleryImage> CityGalleryImages { get; set; }
         public DbSet<SocialMedia> SocialMedias { get; set; }
         public DbSet<HomeSectionImage> HomeSectionImages { get; set; }
-        public DbSet<ExternalNeighborhoodMarketStat> ExternalNeighborhoodMarketStats { get; set; }
+        public DbSet<ExternalMarketStat> ExternalMarketStats { get; set; }
+        public DbSet<NeighborhoodSeismicScenarioStat> NeighborhoodSeismicScenarioStats { get; set; }
+        public DbSet<MarketDataSyncLog> MarketDataSyncLogs { get; set; }
         public DbSet<BankLoanRate> BankLoanRates { get; set; }
         public DbSet<FibiServiceLead> FibiServiceLeads { get; set; }
 
@@ -434,15 +436,34 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 );
             });
 
-            // ExternalNeighborhoodMarketStat: Dış piyasa mahalle emsal verileri
-            modelBuilder.Entity<ExternalNeighborhoodMarketStat>(entity =>
+            // ExternalMarketStat: Kademeli kapsamlı dış piyasa emsal verileri
+            modelBuilder.Entity<ExternalMarketStat>(entity =>
             {
+                entity.ToTable(t => t.HasCheckConstraint("CK_ExternalMarketStats_ScopeLocation",
+                    "([Scope] = 1 AND [CityId] IS NULL AND [DistrictId] IS NULL AND [NeighborhoodId] IS NULL) OR " +
+                    "([Scope] = 2 AND [CityId] IS NOT NULL AND [DistrictId] IS NULL AND [NeighborhoodId] IS NULL) OR " +
+                    "([Scope] = 3 AND [CityId] IS NOT NULL AND [DistrictId] IS NOT NULL AND [NeighborhoodId] IS NULL) OR " +
+                    "([Scope] = 4 AND [CityId] IS NOT NULL AND [DistrictId] IS NOT NULL AND [NeighborhoodId] IS NOT NULL)"));
+
+                entity.HasOne(x => x.City)
+                      .WithMany()
+                      .HasForeignKey(x => x.CityId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.District)
+                      .WithMany()
+                      .HasForeignKey(x => x.DistrictId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
                 entity.HasOne(x => x.Neighborhood)
                       .WithMany()
                       .HasForeignKey(x => x.NeighborhoodId)
                       .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasIndex(x => x.NeighborhoodId).IsUnique();
+                entity.HasIndex(x => x.Scope).IsUnique().HasFilter("[Scope] = 1");
+                entity.HasIndex(x => x.CityId).IsUnique().HasFilter("[Scope] = 2");
+                entity.HasIndex(x => x.DistrictId).IsUnique().HasFilter("[Scope] = 3");
+                entity.HasIndex(x => x.NeighborhoodId).IsUnique().HasFilter("[Scope] = 4");
 
                 entity.Property(x => x.BaseSalePricePerSqm).HasPrecision(18, 2);
                 entity.Property(x => x.BaseRentPricePerSqm).HasPrecision(18, 2);
@@ -460,6 +481,41 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.Property(x => x.RegionalDevelopmentFactor).HasPrecision(4, 2);
 
                 entity.Property(x => x.HistoricalQuarterlyPricesJson).IsRequired();
+
+                entity.Property(x => x.DataSource)
+                      .IsRequired()
+                      .HasMaxLength(FibiServiceConstants.DataSourceMaxLength);
+
+                entity.Property(x => x.LastAppliedIndexPeriod)
+                      .HasMaxLength(FibiServiceConstants.IndexPeriodMaxLength);
+            });
+
+            // NeighborhoodSeismicScenarioStat: İBB deprem senaryosu mahalle verisi
+            modelBuilder.Entity<NeighborhoodSeismicScenarioStat>(entity =>
+            {
+                entity.HasOne(x => x.Neighborhood)
+                      .WithMany()
+                      .HasForeignKey(x => x.NeighborhoodId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => x.NeighborhoodId).IsUnique();
+
+                entity.Property(x => x.DataSource)
+                      .IsRequired()
+                      .HasMaxLength(FibiServiceConstants.DataSourceMaxLength);
+            });
+
+            // MarketDataSyncLog: Dış kaynak senkronizasyon kayıtları
+            modelBuilder.Entity<MarketDataSyncLog>(entity =>
+            {
+                entity.Property(x => x.ProviderKey)
+                      .IsRequired()
+                      .HasMaxLength(FibiServiceConstants.ProviderKeyMaxLength);
+
+                entity.Property(x => x.Message)
+                      .HasMaxLength(FibiServiceConstants.SyncMessageMaxLength);
+
+                entity.HasIndex(x => new { x.ProviderKey, x.StartedAt });
             });
 
             // BankLoanRate: Banka kredi faiz oranları ve seed data
@@ -472,16 +528,30 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.Property(x => x.LogoUrl)
                       .HasMaxLength(FibiServiceConstants.LogoUrlMaxLength);
 
+                entity.Property(x => x.ProviderKey)
+                      .HasMaxLength(FibiServiceConstants.ProviderKeyMaxLength);
+
+                entity.HasIndex(x => x.ProviderKey)
+                      .IsUnique()
+                      .HasFilter("[ProviderKey] IS NOT NULL");
+
+                entity.Property(x => x.SourceUrl)
+                      .HasMaxLength(FibiServiceConstants.SourceUrlMaxLength);
+
+                entity.Property(x => x.DataSource)
+                      .IsRequired()
+                      .HasMaxLength(FibiServiceConstants.DataSourceMaxLength);
+
                 entity.Property(x => x.HousingLoanMonthlyRate).HasPrecision(9, 4);
                 entity.Property(x => x.CommercialLoanMonthlyRate).HasPrecision(9, 4);
                 entity.Property(x => x.AllocationFeeRate).HasPrecision(9, 4);
 
                 entity.HasData(
-                    new BankLoanRate { BankLoanRateId = 1, BankName = "Ziraat Bankası", LogoUrl = null, HousingLoanMonthlyRate = 2.49m, CommercialLoanMonthlyRate = 2.89m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
-                    new BankLoanRate { BankLoanRateId = 2, BankName = "Halkbank", LogoUrl = null, HousingLoanMonthlyRate = 2.52m, CommercialLoanMonthlyRate = 2.95m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
-                    new BankLoanRate { BankLoanRateId = 3, BankName = "VakıfBank", LogoUrl = null, HousingLoanMonthlyRate = 2.55m, CommercialLoanMonthlyRate = 2.99m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
-                    new BankLoanRate { BankLoanRateId = 4, BankName = "Türkiye İş Bankası", LogoUrl = null, HousingLoanMonthlyRate = 2.79m, CommercialLoanMonthlyRate = 3.19m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
-                    new BankLoanRate { BankLoanRateId = 5, BankName = "Garanti BBVA", LogoUrl = null, HousingLoanMonthlyRate = 2.85m, CommercialLoanMonthlyRate = 3.25m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) }
+                    new BankLoanRate { BankLoanRateId = 1, BankName = "Ziraat Bankası", LogoUrl = null, ProviderKey = "ziraat", SourceUrl = null, DataSource = FibiServiceConstants.EstimatedSeedDataSource, HousingLoanMonthlyRate = 2.49m, CommercialLoanMonthlyRate = 2.89m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
+                    new BankLoanRate { BankLoanRateId = 2, BankName = "Halkbank", LogoUrl = null, ProviderKey = "halkbank", SourceUrl = null, DataSource = FibiServiceConstants.EstimatedSeedDataSource, HousingLoanMonthlyRate = 2.52m, CommercialLoanMonthlyRate = 2.95m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
+                    new BankLoanRate { BankLoanRateId = 3, BankName = "VakıfBank", LogoUrl = null, ProviderKey = "vakifbank", SourceUrl = null, DataSource = FibiServiceConstants.EstimatedSeedDataSource, HousingLoanMonthlyRate = 2.55m, CommercialLoanMonthlyRate = 2.99m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
+                    new BankLoanRate { BankLoanRateId = 4, BankName = "Türkiye İş Bankası", LogoUrl = null, ProviderKey = "isbank", SourceUrl = null, DataSource = FibiServiceConstants.EstimatedSeedDataSource, HousingLoanMonthlyRate = 2.79m, CommercialLoanMonthlyRate = 3.19m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) },
+                    new BankLoanRate { BankLoanRateId = 5, BankName = "Garanti BBVA", LogoUrl = null, ProviderKey = "garanti", SourceUrl = null, DataSource = FibiServiceConstants.EstimatedSeedDataSource, HousingLoanMonthlyRate = 2.85m, CommercialLoanMonthlyRate = 3.25m, MaxTermMonths = 120, AllocationFeeRate = 0.50m, IsActive = true, UpdatedDate = new DateTime(2026, 10, 1) }
                 );
             });
 

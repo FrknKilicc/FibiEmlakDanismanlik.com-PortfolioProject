@@ -29,6 +29,9 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 
         public DateTime CreatedDate { get; set; }
 
+        /// <summary>Kullanıcının KVKK aydınlatma onayını verdiği an.</summary>
+        public DateTime KvkkApprovedAt { get; set; }
+
         public bool IsContacted { get; set; }
     }
 }

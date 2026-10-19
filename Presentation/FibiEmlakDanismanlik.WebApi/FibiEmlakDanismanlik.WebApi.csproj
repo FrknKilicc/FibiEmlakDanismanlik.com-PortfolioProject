@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\FibiEmlakDanismanlik.Persistance\FibiEmlakDanismanlik.Persistence.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\FibiEmlakDanismanlik.Infrastructure\FibiEmlakDanismanlik.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

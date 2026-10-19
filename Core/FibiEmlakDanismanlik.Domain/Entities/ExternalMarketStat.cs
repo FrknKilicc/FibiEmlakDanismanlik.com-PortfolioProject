@@ -4,14 +4,22 @@ using FibiEmlakDanismanlik.Domain.Enums;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    /// <summary>Dış piyasa mahalle emsal verileri.</summary>
-    public class ExternalNeighborhoodMarketStat
+    /// <summary>Dış piyasa emsal verileri. Kapsam Türkiye, il, ilçe veya mahalle olabilir; hesaplamalar en dar kapsamdan genişe doğru arar.</summary>
+    public class ExternalMarketStat
     {
         [Key]
-        public int ExternalNeighborhoodMarketStatId { get; set; }
+        public int ExternalMarketStatId { get; set; }
 
-        public int NeighborhoodId { get; set; }
-        public Neighborhood Neighborhood { get; set; } = null!;
+        public MarketStatScope Scope { get; set; }
+
+        public int? CityId { get; set; }
+        public City? City { get; set; }
+
+        public int? DistrictId { get; set; }
+        public District? District { get; set; }
+
+        public int? NeighborhoodId { get; set; }
+        public Neighborhood? Neighborhood { get; set; }
 
         /// <summary>Dış piyasa baz satılık m² fiyatı (TL).</summary>
         public decimal BaseSalePricePerSqm { get; set; }
@@ -34,7 +42,8 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         /// <summary>Bölge gelişim katsayısı (1.0–1.5).</summary>
         public decimal RegionalDevelopmentFactor { get; set; }
 
-        public SoilRiskClass SoilRiskClass { get; set; }
+        /// <summary>Bilinmiyorsa null.</summary>
+        public SoilRiskClass? SoilRiskClass { get; set; }
 
         /// <summary>Kentsel dönüşüm iştah puanı (0–100).</summary>
         public int UrbanTransformationAppetiteScore { get; set; }
@@ -43,5 +52,11 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string HistoricalQuarterlyPricesJson { get; set; } = null!;
 
         public DateTime LastUpdatedDate { get; set; }
+
+        /// <summary>Verinin kaynağı; örn. FİBİ tahmini başlangıç verisi, TCMB KFE bülteni.</summary>
+        public string DataSource { get; set; } = null!;
+
+        /// <summary>Fiyatlara en son uygulanan endeks dönemi, yyyy-MM. Aynı bültenin iki kez uygulanmasını önler.</summary>
+        public string? LastAppliedIndexPeriod { get; set; }
     }
 }

@@ -3,14 +3,14 @@
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     @await Component.InvokeAsync("_HeadLayoutViewComponentPartial")
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
 
-    <div class="boxed_wrapper rtl"> </div>
+    <div class="boxed_wrapper">
 
 
         <!-- preloader -->
@@ -65,6 +65,7 @@
 <button class="scroll-top scroll-to-target" data-target="html">
     <span class="fal fa-angle-up"></span>
 </button>
+    </div> <!-- boxed_wrapper end -->
     <!-- jequery plugins -->
    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -192,6 +192,32 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 - [ ] Ana sayfa vitrini: kiralık vitrin 5 sınırında dolu (4 işyeri + 1 arsa); yeni işaretlenen ilan en eski işaretliyi düşürür
 - [ ] Repo temizliği: dev'e birleşmiş feature branch'leri (yerel + origin) silinsin mi karar ver; `.claude/launch.json` commit'lenecek mi yoksa .gitignore'a mı eklenecek
 
+### Footer (2026-10-19'da DB'den dinamik yapıldı)
+Footer (`_FooterLayoutViewComponentPartial`) `AboutUs/1`, `Contact` (ilk kayıt), `SocialMedia` (aktif, yalnızca http/https URL'ler) ve `Blog/GetLast3BlogWithAuthor` (son 2) uçlarından beslenir, 5 dk `IMemoryCache`'te tutulur (admin değişikliği en geç 5 dk'da görünür). "Sayfalar" sütunu bilerek sabit route listesi.
+- [ ] Admin paneli: Hakkımızda, İletişim, Sosyal Medya ve Blog ekranları (`[Authorize]` CRUD uçları mevcut; footer, iletişim ve hakkımızda sayfaları bu tablolardan okuyor)
+- [ ] `AboutUsController`'da liste/aktif kayıt ucu yok; footer ve Hakkımızda sayfası `AboutUs/1`'e sabit bağlı. "Aktif/ilk kaydı getir" ucu eklenip ikisi de ona geçmeli
+- [ ] Veri: `SocialMedias` tablosunda bozuk kayıtlar var (Google Plus → `blog-1.html`, Twitter → `/UIlayout/Index`); footer bunları gizliyor ama düzeltilmeli/pasife alınmalı. Google+ kapandı, kaydı silinebilir
+- [ ] Veri: `Contacts.EMail1` = `info@fibiEmlak.com` (footer küçük harfe çeviriyor); eski footer'da elle yazılı `(0212) 510 01 14` vardı, DB'de `05442603193` — doğru ofis telefonu teyit edilmeli
+- [ ] İletişim sayfası (`_GetContactInfoViewComponentPartial`) telefon linkleri sabit ve yanlış: `tel:+23055873407` / `tel:+23055873408` (tema kalıntısı); footer'daki gibi DB numarasından üretilmeli
+- [ ] Footer kozmetik: blog küçük görselleri eşit 90x90 değil (tema CSS'i `width/height`'ı eziyor), "Devamını Oku" linki yeşil yerine gri görünüyor
+- [ ] Footer "Kullanım Koşulları" ve "Gizlilik Politikası" linkleri `#`; sayfalar yazılınca bağlanmalı (KVKK aydınlatma metni ile birlikte)
+- [ ] İstenirse "Sayfalar" sütunu admin'den yönetilebilir menü olur (`FooterLink` tablosu: başlık, URL, sıra, aktif + CRUD + migration)
+- [ ] Site geneli: yalnızca `/Realshed/...` görsel yolları kaldı ama birçok bileşende hâlâ `/Realshed/property-details.html`, `/Realshed/property-list.html`, `/Realshed/blog-details.html` gibi tema demo sayfası linkleri var (ör. `_FeaturedRentalPropertViewComponentPartial`); gerçek route'lara çevrilmeli
+
+---
+
+### FİBİ Hizmetler Faz 2 (branch `feature/antigravity-fibi-services-phase2`, 2026-10-18'de yarıda kaldı)
+Bitti: kademeli emsal şeması + migration (yerel DB'ye uygulandı), mahalle > ilçe > il > Türkiye fallback'i, İBB senaryosundan deprem tehlikesi, senkronizasyon çekirdeği, Infrastructure projesi (seed / İBB / TCMB KFE bülteni / opsiyonel EVDS sağlayıcıları, arka plan servisi, `[Authorize]` sync uçları), KvkkApprovedAt, ForwardedHeaders.
+- [x] (2026-10-19) Canlı veri senkronizasyonunu uçtan uca test et (WebApi'yi scratchpad'e derleyip ayrı portta çalıştır; seed + İBB 959 mahalle + TCMB bülteni DB'ye yazılmalı, `sync/logs` kontrol edilmeli; Risk/Bölge uçları verisi olmayan bir ilçede 404 yerine il/Türkiye verisiyle dönmeli)
+- [ ] Banka faizi sağlayıcıları: her banka için kendi açık sayfasından oran okuyan `IMarketDataProvider` (oranlar HTML'de değil hesaplama araçlarında; banka banka incelenmeli). Kırılan banka son oranında kalır
+- [x] (2026-10-19) WebUI: konum seçimini Türkiye geneline aç (mevcut `api/Location/cities|districts|neighborhoods` cascade); `api/FibiServices/locations` ucu ve `GetFibiServiceLocations*` kaldırılsın; sonuçlarda veri kapsamı/kaynak etiketi ve İBB deprem özeti gösterilsin
+- [ ] Fibi Finans modülü (kredi + kira başabaş, banka karşılaştırma, tapu günü gizli maliyetler)
+- [ ] Fibi Eksper modülü (şerefiye katsayılı değerleme bandı + satıcı lead)
+- [ ] Fibi Yatırım modülü (bütçe + strateji ile en iyi 5 bölge)
+- [ ] EVDS anahtarı alınırsa `dotnet user-secrets set "FibiMarketDataSync:EvdsApiKey" "<anahtar>"`; sağlayıcının yanıt biçimi o zaman doğrulanmalı
+- [ ] KVKK aydınlatma metni sayfası (onay artık `KvkkApprovedAt` ile kaydediliyor)
+- [ ] Canlıda reverse proxy IP'si `ForwardedHeaders:KnownProxies` ayarına yazılmalı
+
 ---
 
 ## Bilinen Teknik Borçlar

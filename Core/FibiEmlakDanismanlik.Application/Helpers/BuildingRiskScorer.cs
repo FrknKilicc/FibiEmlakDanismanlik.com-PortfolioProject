@@ -1,16 +1,18 @@
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Queries.FibiServiceQueries;
 using FibiEmlakDanismanlik.Application.Features.Results.FibiServiceResults;
+using FibiEmlakDanismanlik.Application.Models.FibiServiceModels;
 using FibiEmlakDanismanlik.Domain.Enums;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace FibiEmlakDanismanlik.Application.Helpers
 {
     /// <summary>Bina yapısal risk ve kentsel dönüşüm potansiyeli saf hesaplama motoru.</summary>
     public static class BuildingRiskScorer
     {
-        public static int CalculateStructuralScore(CalculateBuildingRiskQuery input, SoilRiskClass soil)
+        public static int CalculateStructuralScore(CalculateBuildingRiskQuery input, SoilRiskClass? hazardLevel)
         {
             var score = 0;
 
@@ -24,14 +26,15 @@ namespace FibiEmlakDanismanlik.Application.Helpers
                 _ => 0
             };
 
-            // Zemin sınıfı puanı
-            score += soil switch
+            // Deprem tehlikesi / zemin puanı
+            score += hazardLevel switch
             {
                 SoilRiskClass.Low => FibiRiskAnalysisConstants.SoilLowPoints,
                 SoilRiskClass.Medium => FibiRiskAnalysisConstants.SoilMediumPoints,
                 SoilRiskClass.High => FibiRiskAnalysisConstants.SoilHighPoints,
                 SoilRiskClass.VeryHigh => FibiRiskAnalysisConstants.SoilVeryHighPoints,
-                _ => 0
+                null => FibiRiskAnalysisConstants.SoilUnknownPoints,
+                _ => FibiRiskAnalysisConstants.SoilUnknownPoints
             };
 
             // Zemin kat ticari alan (yumuşak kat riski)
@@ -51,7 +54,7 @@ namespace FibiEmlakDanismanlik.Application.Helpers
                 score += FibiRiskAnalysisConstants.NoBasementPoints;
 
             // Zayıf zeminde bodrum/zemin kat
-            if (input.CurrentFloor <= 0 && IsWeakSoil(soil))
+            if (input.CurrentFloor <= 0 && IsWeakSoil(hazardLevel))
                 score += FibiRiskAnalysisConstants.LowFloorOnWeakSoilPoints;
 
             return Math.Clamp(score, 0, FibiRiskAnalysisConstants.MaxScore);
@@ -106,7 +109,7 @@ namespace FibiEmlakDanismanlik.Application.Helpers
             return FibiRiskAnalysisConstants.LowTransformationVerdict;
         }
 
-        public static List<FibiInsightResult> BuildInsights(CalculateBuildingRiskQuery input, SoilRiskClass soil, int transformationScore)
+        public static List<FibiInsightResult> BuildInsights(CalculateBuildingRiskQuery input, SeismicHazardAssessment seismic, int transformationScore)
         {
             var insights = new List<FibiInsightResult>();
 
@@ -132,40 +135,8 @@ namespace FibiEmlakDanismanlik.Application.Helpers
                     break;
             }
 
-            // 2. Zemin ve Ticari (Yumuşak Kat)
-            var soilCode = GetSoilCode(soil);
-            var isWeak = IsWeakSoil(soil);
-
-            if (isWeak && input.HasGroundFloorCommercial)
-            {
-                insights.Add(new FibiInsightResult(
-                    FibiInsightSeverities.Danger,
-                    $"Seçilen mahalle {soilCode} zemin sınıfındadır ve binada zemin kat ticari alan (yumuşak kat) bulunmaktadır."));
-            }
-            else
-            {
-                if (isWeak)
-                {
-                    insights.Add(new FibiInsightResult(
-                        FibiInsightSeverities.Danger,
-                        $"Seçilen mahalle {soilCode} zemin sınıfındadır; zemin büyütme etkisi deprem yükünü artırabilir."));
-                }
-
-                if (input.HasGroundFloorCommercial)
-                {
-                    insights.Add(new FibiInsightResult(
-                        FibiInsightSeverities.Warning,
-                        "Zemin katta ticari alan bulunması yumuşak kat ve kolon kesme riski oluşturabilir."));
-                }
-            }
-
-            // 3. Sağlam zemin
-            if (soil == SoilRiskClass.Low)
-            {
-                insights.Add(new FibiInsightResult(
-                    FibiInsightSeverities.Success,
-                    "Seçilen mahalle Z1 (sağlam) zemin sınıfındadır."));
-            }
+            // 2 & 3. Deprem tehlikesi / Zemin ve Ticari (Yumuşak Kat)
+            AddSeismicInsights(insights, input, seismic);
 
             // 4. Bitişik nizam ve kat sayısı
             if (input.IsAdjacentBuilding && input.TotalFloors > FibiRiskAnalysisConstants.AdjacentBuildingFloorThreshold)
@@ -192,7 +163,7 @@ namespace FibiEmlakDanismanlik.Application.Helpers
             }
 
             // 7. Zayıf zeminde bodrum veya zemin kat
-            if (input.CurrentFloor <= 0 && isWeak)
+            if (input.CurrentFloor <= 0 && IsWeakSoil(seismic.HazardLevel))
             {
                 insights.Add(new FibiInsightResult(
                     FibiInsightSeverities.Info,
@@ -210,8 +181,95 @@ namespace FibiEmlakDanismanlik.Application.Helpers
             return insights;
         }
 
-        private static bool IsWeakSoil(SoilRiskClass soil) =>
-            soil == SoilRiskClass.High || soil == SoilRiskClass.VeryHigh;
+        private static void AddSeismicInsights(List<FibiInsightResult> insights, CalculateBuildingRiskQuery input, SeismicHazardAssessment seismic)
+        {
+            var level = seismic.HazardLevel;
+            var isWeak = IsWeakSoil(level);
+            var summary = seismic.Summary;
+            var softStoryHandled = false;
+
+            if (summary.IsOfficialData)
+            {
+                var trCulture = CultureInfo.GetCultureInfo("tr-TR");
+                var rate = summary.HeavyDamageRatePercentage?.ToString("N1", trCulture);
+                var label = summary.HazardLevelLabel;
+
+                if (isWeak)
+                {
+                    var message = $"İBB deprem senaryosuna göre mahallenizdeki binaların %{rate} kadarında ağır veya çok ağır hasar bekleniyor (deprem tehlikesi: {label}).";
+                    if (input.HasGroundFloorCommercial)
+                    {
+                        message += " Binada zemin kat ticari alan (yumuşak kat) bulunması bu riski artırır.";
+                        softStoryHandled = true;
+                    }
+                    insights.Add(new FibiInsightResult(FibiInsightSeverities.Danger, message));
+                }
+                else if (level == SoilRiskClass.Medium)
+                {
+                    insights.Add(new FibiInsightResult(
+                        FibiInsightSeverities.Warning,
+                        $"İBB deprem senaryosuna göre mahallenizdeki binaların %{rate} kadarında ağır veya çok ağır hasar bekleniyor."));
+                }
+                else if (level == SoilRiskClass.Low)
+                {
+                    insights.Add(new FibiInsightResult(
+                        FibiInsightSeverities.Success,
+                        $"İBB deprem senaryosunda mahallenizde ağır hasar beklenen bina oranı düşüktür (%{rate})."));
+                }
+
+                if (summary.Pre1980BuildingSharePercentage >= FibiMarketDataConstants.OldBuildingShareWarningPercentage)
+                {
+                    var share = summary.Pre1980BuildingSharePercentage?.ToString("N1", trCulture);
+                    insights.Add(new FibiInsightResult(
+                        FibiInsightSeverities.Info,
+                        $"Mahallenizdeki binaların %{share} kadarı 1980 öncesinde yapılmıştır (İBB 2017 bina envanteri)."));
+                }
+            }
+            else if (level.HasValue)
+            {
+                var soilCode = GetSoilCode(level.Value);
+
+                if (isWeak && input.HasGroundFloorCommercial)
+                {
+                    insights.Add(new FibiInsightResult(
+                        FibiInsightSeverities.Danger,
+                        $"Bölgesel tahmine göre seçilen konum {soilCode} zemin sınıfındadır ve binada zemin kat ticari alan (yumuşak kat) bulunmaktadır."));
+                    softStoryHandled = true;
+                }
+                else
+                {
+                    if (isWeak)
+                    {
+                        insights.Add(new FibiInsightResult(
+                            FibiInsightSeverities.Danger,
+                            $"Bölgesel tahmine göre seçilen konum {soilCode} zemin sınıfındadır; zemin büyütme etkisi deprem yükünü artırabilir."));
+                    }
+                }
+
+                if (level.Value == SoilRiskClass.Low)
+                {
+                    insights.Add(new FibiInsightResult(
+                        FibiInsightSeverities.Success,
+                        "Bölgesel tahmine göre seçilen konum Z1 (sağlam) zemin sınıfındadır."));
+                }
+            }
+            else
+            {
+                insights.Add(new FibiInsightResult(
+                    FibiInsightSeverities.Info,
+                    "Bu konum için resmi zemin veya deprem senaryosu verisi bulunamadı; deprem tehlikesi orta kabul edildi. Adresinizin tehlike değerini AFAD Türkiye Deprem Tehlike Haritası'ndan sorgulayabilirsiniz."));
+            }
+
+            if (input.HasGroundFloorCommercial && !softStoryHandled)
+            {
+                insights.Add(new FibiInsightResult(
+                    FibiInsightSeverities.Warning,
+                    "Zemin katta ticari alan bulunması yumuşak kat ve kolon kesme riski oluşturabilir."));
+            }
+        }
+
+        private static bool IsWeakSoil(SoilRiskClass? level) =>
+            level == SoilRiskClass.High || level == SoilRiskClass.VeryHigh;
 
         private static string GetSoilCode(SoilRiskClass soil) => soil switch
         {
