@@ -1,5 +1,7 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Results.MapResults;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Results.MapResults;
 using FibiEmlakDanismanlik.Application.Interfaces.MapInterfaces;
+using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -137,6 +139,246 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
             if (s == "aktif" || s == "active" || s == "1" || s.Contains("aktif")) return "active";
             return "passive";
         }
+
+        public async Task<List<GetMapListingsResult>> GetMapListingsAsync(int? usageType, string? category, int? cityId)
+        {
+            // 1. listingTypes'ı belleğe al (6 kayıt); usageType ve category filtresine uymayan tiplerin tablolarını hiç sorgulama
+            var allListingTypes = await _context.listingTypes.AsNoTracking().ToListAsync();
+
+            bool IsTypeMatched(ListingType lt)
+            {
+                if (usageType.HasValue && (int)lt.UsageType != usageType.Value)
+                    return false;
+
+                if (!string.IsNullOrWhiteSpace(category))
+                {
+                    var catKey = NormalizeCategoryKey(lt.Name);
+                    if (!string.Equals(catKey, category.Trim(), StringComparison.OrdinalIgnoreCase))
+                        return false;
+                }
+
+                return true;
+            }
+
+            var matchedTypes = allListingTypes.Where(IsTypeMatched).ToList();
+            if (matchedTypes.Count == 0)
+            {
+                return new List<GetMapListingsResult>();
+            }
+
+            bool shouldQuery(UsageType usage, string expectedCat) =>
+                matchedTypes.Any(lt => lt.UsageType == usage && NormalizeCategoryKey(lt.Name) == expectedCat);
+
+            bool querySaleHousing = shouldQuery(UsageType.ForSale, ListingGeoConstants.CategoryHousing);
+            bool querySaleLand = shouldQuery(UsageType.ForSale, ListingGeoConstants.CategoryLand);
+            bool querySaleCommercial = shouldQuery(UsageType.ForSale, ListingGeoConstants.CategoryCommercial);
+
+            bool queryRentHousing = shouldQuery(UsageType.ForRent, ListingGeoConstants.CategoryHousing);
+            bool queryRentLand = shouldQuery(UsageType.ForRent, ListingGeoConstants.CategoryLand);
+            bool queryRentCommercial = shouldQuery(UsageType.ForRent, ListingGeoConstants.CategoryCommercial);
+
+            // 2. Tüm ListingGeoPoints'i AsNoTracking ile belleğe al ve (ListingTypeId, ListingId) anahtarlı sözlüğe koy
+            // (Aynı anahtar iki kez varsa en yüksek ListingGeoPointId'li kayıt kalır)
+            var allGeoPoints = await _context.ListingGeoPoints.AsNoTracking().ToListAsync();
+            var geoDict = allGeoPoints
+                .GroupBy(g => (g.ListingTypeId, g.ListingId))
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.OrderByDescending(x => x.ListingGeoPointId).First()
+                );
+
+            var rawItems = new List<ListingItemDto>();
+            var activeSet = PropertyStatuses.ActiveSet;
+
+            // 3. Gerekli tabloların her birini aktiflik ve (varsa) cityId filtresiyle, yalnızca gereken alanları Select ederek sorgula
+            if (querySaleHousing)
+            {
+                var q = _context.forSaleHousingPropertyListings.AsNoTracking()
+                    .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus));
+                if (cityId.HasValue) q = q.Where(x => x.CityId == cityId.Value);
+
+                var items = await q.Select(x => new ListingItemDto
+                {
+                    ListingId = x.ForSaleHousingListId,
+                    ListingTypeId = x.ListingTypeId,
+                    Title = x.PropertyName,
+                    Price = x.Price,
+                    Area = x.GrossArea,
+                    Rooms = x.NumberOfRoom,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood,
+                    ImageUrl = x.PropImgUrl1
+                }).ToListAsync();
+                rawItems.AddRange(items);
+            }
+
+            if (querySaleLand)
+            {
+                var q = _context.forSaleLandListings.AsNoTracking()
+                    .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus));
+                if (cityId.HasValue) q = q.Where(x => x.CityId == cityId.Value);
+
+                var items = await q.Select(x => new ListingItemDto
+                {
+                    ListingId = x.ForSaleLandListingId,
+                    ListingTypeId = x.ListingTypeId,
+                    Title = x.PropertyName,
+                    Price = x.Price,
+                    Area = x.Area,
+                    Rooms = null,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood,
+                    ImageUrl = x.PropImgUrl1
+                }).ToListAsync();
+                rawItems.AddRange(items);
+            }
+
+            if (querySaleCommercial)
+            {
+                var q = _context.forSaleCommercialPropertyListings.AsNoTracking()
+                    .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus));
+                if (cityId.HasValue) q = q.Where(x => x.CityId == cityId.Value);
+
+                var items = await q.Select(x => new ListingItemDto
+                {
+                    ListingId = x.ForSaleCommercialListingId,
+                    ListingTypeId = x.ListingTypeId,
+                    Title = x.PropertyName,
+                    Price = x.Price,
+                    Area = x.GrossArea,
+                    Rooms = null,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood,
+                    ImageUrl = x.PropImgUrl1
+                }).ToListAsync();
+                rawItems.AddRange(items);
+            }
+
+            if (queryRentHousing)
+            {
+                var q = _context.rentalHousingListings.AsNoTracking()
+                    .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus));
+                if (cityId.HasValue) q = q.Where(x => x.CityId == cityId.Value);
+
+                var items = await q.Select(x => new ListingItemDto
+                {
+                    ListingId = x.RentalHousingListId,
+                    ListingTypeId = x.ListingTypeId,
+                    Title = x.PropertyName,
+                    Price = x.Rent,
+                    Area = x.GrossArea,
+                    Rooms = x.NumberOfRoom,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood,
+                    ImageUrl = x.PropImgUrl1
+                }).ToListAsync();
+                rawItems.AddRange(items);
+            }
+
+            if (queryRentLand)
+            {
+                var q = _context.rentalLandListings.AsNoTracking()
+                    .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus));
+                if (cityId.HasValue) q = q.Where(x => x.CityId == cityId.Value);
+
+                var items = await q.Select(x => new ListingItemDto
+                {
+                    ListingId = x.RentalLandListingId,
+                    ListingTypeId = x.ListingTypeId,
+                    Title = x.PropertyName,
+                    Price = x.Rent,
+                    Area = x.Area,
+                    Rooms = null,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood,
+                    ImageUrl = x.PropImgUrl1
+                }).ToListAsync();
+                rawItems.AddRange(items);
+            }
+
+            if (queryRentCommercial)
+            {
+                var q = _context.rentalCommercialPropertyListings.AsNoTracking()
+                    .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus));
+                if (cityId.HasValue) q = q.Where(x => x.CityId == cityId.Value);
+
+                var items = await q.Select(x => new ListingItemDto
+                {
+                    ListingId = x.RentalCommercialListId,
+                    ListingTypeId = x.ListingTypeId,
+                    Title = x.PropertyName,
+                    Price = x.Rent,
+                    Area = x.GrossArea,
+                    Rooms = null,
+                    City = x.City,
+                    District = x.District,
+                    Neighborhood = x.Neighborhood,
+                    ImageUrl = x.PropImgUrl1
+                }).ToListAsync();
+                rawItems.AddRange(items);
+            }
+
+            // 4. Bellekte geo sözlüğüyle eşleştir; koordinatı olmayanları atla. Kiralıkta ListingTypeId null ise atla.
+            var typesById = allListingTypes.ToDictionary(x => x.ListingTypeId);
+            var results = new List<GetMapListingsResult>();
+
+            foreach (var item in rawItems)
+            {
+                if (!item.ListingTypeId.HasValue)
+                    continue;
+
+                if (!typesById.TryGetValue(item.ListingTypeId.Value, out var lt))
+                    continue;
+
+                if (!geoDict.TryGetValue((lt.ListingTypeId, item.ListingId), out var geo))
+                    continue;
+
+                results.Add(new GetMapListingsResult
+                {
+                    ListingId = item.ListingId,
+                    ListingTypeId = lt.ListingTypeId,
+                    UsageTypeId = (int)lt.UsageType,
+                    CategoryKey = NormalizeCategoryKey(lt.Name),
+                    ListingTypeName = lt.Name ?? "",
+                    Title = item.Title ?? "",
+                    Price = item.Price,
+                    Area = item.Area,
+                    Rooms = item.Rooms,
+                    City = item.City,
+                    District = item.District,
+                    Neighborhood = item.Neighborhood,
+                    ImageUrl = item.ImageUrl,
+                    Latitude = geo.Latitude,
+                    Longitude = geo.Longitude,
+                    IsApproximate = ListingGeoConstants.IsApproximate(geo.Precision)
+                });
+            }
+
+            // 5. UsageTypeId sonra Price artan sırala
+            return results
+                .OrderBy(x => x.UsageTypeId)
+                .ThenBy(x => x.Price)
+                .ToList();
+        }
+
+        private sealed class ListingItemDto
+        {
+            public int ListingId { get; set; }
+            public int? ListingTypeId { get; set; }
+            public string Title { get; set; } = "";
+            public decimal Price { get; set; }
+            public double? Area { get; set; }
+            public string? Rooms { get; set; }
+            public string? City { get; set; }
+            public string? District { get; set; }
+            public string? Neighborhood { get; set; }
+            public string? ImageUrl { get; set; }
+        }
     }
-    }
+}
 

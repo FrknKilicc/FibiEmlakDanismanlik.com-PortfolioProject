@@ -10,5 +10,6 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.MapInterfaces
     public interface IMapRepository
     {
         public Task<ListingMarkerResult> GetListingMarkerAsync(int listingId, int listingTypeId);
+        Task<List<GetMapListingsResult>> GetMapListingsAsync(int? usageType, string? category, int? cityId);
     }
 }
