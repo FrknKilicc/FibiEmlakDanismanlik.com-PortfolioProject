@@ -35,6 +35,7 @@ using System.Net;
 using System.Threading.RateLimiting;
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Infrastructure;
+using FibiEmlakDanismanlik.WebApi.ExceptionHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,8 @@ builder.Services.AddScoped<FibiEmlakDanismanlikContext>();
 
 
 builder.Services.AddControllers();
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddProblemDetails();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -150,6 +153,7 @@ builder.Services.AddRateLimiter(options =>
 var app = builder.Build();
 
 app.UseForwardedHeaders();
+app.UseExceptionHandler();
 
 
 // Configure the HTTP request pipeline.
