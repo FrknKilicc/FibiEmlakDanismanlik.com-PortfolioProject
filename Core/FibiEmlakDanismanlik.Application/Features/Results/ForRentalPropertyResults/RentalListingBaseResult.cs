@@ -32,6 +32,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyRes
         public string? District { get; set; }
         public int? CityId { get; set; }
         public int? DistrictId { get; set; }
+        public int? NeighborhoodId { get; set; }
         public string? Neighborhood { get; set; }
         public string? AddressDesc { get; set; }
 

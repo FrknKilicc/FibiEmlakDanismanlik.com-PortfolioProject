@@ -597,21 +597,122 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             {
                 entity.HasOne<City>().WithMany().HasForeignKey(nameof(ILocatedListing.CityId)).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne<District>().WithMany().HasForeignKey(nameof(ILocatedListing.DistrictId)).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne<Neighborhood>().WithMany().HasForeignKey(nameof(ILocatedListing.NeighborhoodId)).OnDelete(DeleteBehavior.Restrict);
                 entity.HasIndex(nameof(ILocatedListing.CityId));
                 entity.HasIndex(nameof(ILocatedListing.DistrictId));
+                entity.HasIndex(nameof(ILocatedListing.NeighborhoodId));
             });
         }
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
+            RemoveStaleGeocodedPoints();
             ResolveListingLocations();
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
+            await RemoveStaleGeocodedPointsAsync(cancellationToken);
             await ResolveListingLocationsAsync(cancellationToken);
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void RemoveStaleGeocodedPoints()
+        {
+            var targets = GetStaleGeocodeListingTargets();
+            if (targets.Count == 0)
+                return;
+
+            var listingTypeIds = targets.Select(t => t.ListingTypeId).Distinct().ToList();
+            var listingIds = targets.Select(t => t.ListingId).Distinct().ToList();
+
+            var candidates = ListingGeoPoints
+                .Where(p => p.Source == ListingGeoConstants.SourceNominatim
+                         && listingTypeIds.Contains(p.ListingTypeId)
+                         && listingIds.Contains(p.ListingId))
+                .ToList();
+
+            var stalePoints = candidates
+                .Where(p => targets.Any(t => t.ListingTypeId == p.ListingTypeId && t.ListingId == p.ListingId))
+                .ToList();
+
+            if (stalePoints.Count > 0)
+            {
+                ListingGeoPoints.RemoveRange(stalePoints);
+            }
+        }
+
+        private async Task RemoveStaleGeocodedPointsAsync(CancellationToken cancellationToken)
+        {
+            var targets = GetStaleGeocodeListingTargets();
+            if (targets.Count == 0)
+                return;
+
+            var listingTypeIds = targets.Select(t => t.ListingTypeId).Distinct().ToList();
+            var listingIds = targets.Select(t => t.ListingId).Distinct().ToList();
+
+            var candidates = await ListingGeoPoints
+                .Where(p => p.Source == ListingGeoConstants.SourceNominatim
+                         && listingTypeIds.Contains(p.ListingTypeId)
+                         && listingIds.Contains(p.ListingId))
+                .ToListAsync(cancellationToken);
+
+            var stalePoints = candidates
+                .Where(p => targets.Any(t => t.ListingTypeId == p.ListingTypeId && t.ListingId == p.ListingId))
+                .ToList();
+
+            if (stalePoints.Count > 0)
+            {
+                ListingGeoPoints.RemoveRange(stalePoints);
+            }
+        }
+
+        private List<(int ListingTypeId, int ListingId)> GetStaleGeocodeListingTargets()
+        {
+            var targets = new List<(int ListingTypeId, int ListingId)>();
+
+            var entries = ChangeTracker.Entries<ILocatedListing>()
+                .Where(e => e.State == EntityState.Modified);
+
+            foreach (var entry in entries)
+            {
+                var cityProp = entry.Property(nameof(ILocatedListing.City));
+                var districtProp = entry.Property(nameof(ILocatedListing.District));
+                var neighborhoodProp = entry.Property(nameof(ILocatedListing.Neighborhood));
+
+                var origCity = LocationNameNormalizer.Normalize(cityProp.OriginalValue as string);
+                var currCity = LocationNameNormalizer.Normalize(cityProp.CurrentValue as string);
+
+                var origDistrict = LocationNameNormalizer.Normalize(districtProp.OriginalValue as string);
+                var currDistrict = LocationNameNormalizer.Normalize(districtProp.CurrentValue as string);
+
+                var origNeighborhood = LocationNameNormalizer.Normalize(neighborhoodProp.OriginalValue as string);
+                var currNeighborhood = LocationNameNormalizer.Normalize(neighborhoodProp.CurrentValue as string);
+
+                var addressChanged = !string.Equals(origCity, currCity, StringComparison.Ordinal)
+                                  || !string.Equals(origDistrict, currDistrict, StringComparison.Ordinal)
+                                  || !string.Equals(origNeighborhood, currNeighborhood, StringComparison.Ordinal);
+
+                if (!addressChanged)
+                    continue;
+
+                var pkPropName = entry.Metadata.FindPrimaryKey()!.Properties[0].Name;
+                var listingIdVal = entry.Property(pkPropName).CurrentValue;
+                if (listingIdVal == null)
+                    continue;
+
+                var listingTypeIdVal = entry.Property("ListingTypeId").CurrentValue;
+                if (listingTypeIdVal == null)
+                    continue;
+
+                var listingId = Convert.ToInt32(listingIdVal);
+                var listingTypeId = Convert.ToInt32(listingTypeIdVal);
+
+                targets.Add((listingTypeId, listingId));
+            }
+
+            return targets.Distinct().ToList();
         }
 
         private void ResolveListingLocations()
@@ -642,7 +743,19 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 districtCache[cityId] = BuildNormalizedMap(districts.Select(d => (d.DistrictId, (string?)d.Name)));
             }
 
-            ApplyLocations(entries, cityMap, districtCache);
+            var neededDistrictIds = GetResolvedDistrictIds(entries, cityMap, districtCache);
+            var neighborhoodCache = new Dictionary<int, Dictionary<string, int>>();
+            foreach (var districtId in neededDistrictIds)
+            {
+                var neighborhoods = Neighborhoods.AsNoTracking()
+                    .Where(n => n.DistrictId == districtId)
+                    .Select(n => new { n.NeighborhoodId, n.Name })
+                    .ToList();
+
+                neighborhoodCache[districtId] = BuildNormalizedNeighborhoodMap(neighborhoods.Select(n => (n.NeighborhoodId, (string?)n.Name)));
+            }
+
+            ApplyLocations(entries, cityMap, districtCache, neighborhoodCache);
         }
 
         private async Task ResolveListingLocationsAsync(CancellationToken cancellationToken)
@@ -673,7 +786,19 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 districtCache[cityId] = BuildNormalizedMap(districts.Select(d => (d.DistrictId, (string?)d.Name)));
             }
 
-            ApplyLocations(entries, cityMap, districtCache);
+            var neededDistrictIds = GetResolvedDistrictIds(entries, cityMap, districtCache);
+            var neighborhoodCache = new Dictionary<int, Dictionary<string, int>>();
+            foreach (var districtId in neededDistrictIds)
+            {
+                var neighborhoods = await Neighborhoods.AsNoTracking()
+                    .Where(n => n.DistrictId == districtId)
+                    .Select(n => new { n.NeighborhoodId, n.Name })
+                    .ToListAsync(cancellationToken);
+
+                neighborhoodCache[districtId] = BuildNormalizedNeighborhoodMap(neighborhoods.Select(n => (n.NeighborhoodId, (string?)n.Name)));
+            }
+
+            ApplyLocations(entries, cityMap, districtCache, neighborhoodCache);
         }
 
         private static Dictionary<string, int> BuildNormalizedMap(IEnumerable<(int Id, string? Name)> items)
@@ -682,6 +807,20 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             foreach (var item in items)
             {
                 var key = LocationNameNormalizer.Normalize(item.Name);
+                if (!string.IsNullOrEmpty(key))
+                {
+                    map.TryAdd(key, item.Id);
+                }
+            }
+            return map;
+        }
+
+        private static Dictionary<string, int> BuildNormalizedNeighborhoodMap(IEnumerable<(int Id, string? Name)> items)
+        {
+            var map = new Dictionary<string, int>(StringComparer.Ordinal);
+            foreach (var item in items)
+            {
+                var key = LocationNameNormalizer.NormalizeNeighborhood(item.Name);
                 if (!string.IsNullOrEmpty(key))
                 {
                     map.TryAdd(key, item.Id);
@@ -704,10 +843,35 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             return neededCityIds;
         }
 
-        private static void ApplyLocations(
+        private static HashSet<int> GetResolvedDistrictIds(
             List<ILocatedListing> entries,
             Dictionary<string, int> cityMap,
             Dictionary<int, Dictionary<string, int>> districtCache)
+        {
+            var neededDistrictIds = new HashSet<int>();
+            foreach (var entry in entries)
+            {
+                var normCity = LocationNameNormalizer.Normalize(entry.City);
+                if (!string.IsNullOrEmpty(normCity) && cityMap.TryGetValue(normCity, out var cityId))
+                {
+                    if (districtCache.TryGetValue(cityId, out var districtMap))
+                    {
+                        var normDistrict = LocationNameNormalizer.Normalize(entry.District);
+                        if (!string.IsNullOrEmpty(normDistrict) && districtMap.TryGetValue(normDistrict, out var districtId))
+                        {
+                            neededDistrictIds.Add(districtId);
+                        }
+                    }
+                }
+            }
+            return neededDistrictIds;
+        }
+
+        private static void ApplyLocations(
+            List<ILocatedListing> entries,
+            Dictionary<string, int> cityMap,
+            Dictionary<int, Dictionary<string, int>> districtCache,
+            Dictionary<int, Dictionary<string, int>> neighborhoodCache)
         {
             foreach (var entity in entries)
             {
@@ -719,21 +883,32 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 }
                 entity.CityId = cityId;
 
+                int? districtId = null;
                 if (cityId.HasValue && districtCache.TryGetValue(cityId.Value, out var districtMap))
                 {
                     var normDistrict = LocationNameNormalizer.Normalize(entity.District);
                     if (!string.IsNullOrEmpty(normDistrict) && districtMap.TryGetValue(normDistrict, out var foundDistrictId))
                     {
-                        entity.DistrictId = foundDistrictId;
+                        districtId = foundDistrictId;
+                    }
+                }
+                entity.DistrictId = districtId;
+
+                if (districtId.HasValue && neighborhoodCache.TryGetValue(districtId.Value, out var neighborhoodMap))
+                {
+                    var normNeighborhood = LocationNameNormalizer.NormalizeNeighborhood(entity.Neighborhood);
+                    if (!string.IsNullOrEmpty(normNeighborhood) && neighborhoodMap.TryGetValue(normNeighborhood, out var foundNeighborhoodId))
+                    {
+                        entity.NeighborhoodId = foundNeighborhoodId;
                     }
                     else
                     {
-                        entity.DistrictId = null;
+                        entity.NeighborhoodId = null;
                     }
                 }
                 else
                 {
-                    entity.DistrictId = null;
+                    entity.NeighborhoodId = null;
                 }
             }
         }

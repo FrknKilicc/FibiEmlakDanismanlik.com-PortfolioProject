@@ -118,6 +118,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 SelectedAmenityIds = selectedAmenityIds.Any() ? selectedAmenityIds : null,
                 CityId = cityId,
                 DistrictId = districtId,
+                NeighborhoodId = neighborhoodId,
                 City = city,
                 District = district,
                 Neighborhood = neighborhood,

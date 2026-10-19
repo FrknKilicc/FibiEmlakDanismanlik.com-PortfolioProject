@@ -757,6 +757,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("NeighborhoodId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("NumberOfBathrooms")
                         .HasColumnType("int");
 
@@ -899,6 +902,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasIndex("ListingTypeId");
 
+                    b.HasIndex("NeighborhoodId");
+
                     b.ToTable("forSaleCommercialPropertyListings");
                 });
 
@@ -977,6 +982,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<string>("Neighborhood")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NeighborhoodId")
+                        .HasColumnType("int");
 
                     b.Property<double>("NetArea")
                         .HasColumnType("float");
@@ -1136,6 +1144,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasIndex("ListingTypeId");
 
+                    b.HasIndex("NeighborhoodId");
+
                     b.ToTable("forSaleHousingPropertyListings");
                 });
 
@@ -1219,6 +1229,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<string>("Neighborhood")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NeighborhoodId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ParcelNumber")
                         .HasColumnType("nvarchar(max)");
@@ -1365,6 +1378,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasIndex("LandCategoryId");
 
                     b.HasIndex("ListingTypeId");
+
+                    b.HasIndex("NeighborhoodId");
 
                     b.ToTable("forSaleLandListings");
                 });
@@ -1912,6 +1927,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("NeighborhoodId")
+                        .HasColumnType("int");
+
                     b.Property<double?>("NetArea")
                         .HasColumnType("float");
 
@@ -2051,6 +2069,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasIndex("ListingTypeId");
 
+                    b.HasIndex("NeighborhoodId");
+
                     b.ToTable("rentalCommercialPropertyListings");
                 });
 
@@ -2126,6 +2146,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<string>("Neighborhood")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NeighborhoodId")
+                        .HasColumnType("int");
 
                     b.Property<double>("NetArea")
                         .HasColumnType("float");
@@ -2277,6 +2300,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.HasIndex("ListingTypeId");
 
+                    b.HasIndex("NeighborhoodId");
+
                     b.ToTable("rentalHousingListings");
                 });
 
@@ -2362,6 +2387,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<string>("Neighborhood")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NeighborhoodId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ParcelNumber")
                         .HasColumnType("nvarchar(max)");
@@ -2504,6 +2532,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasIndex("LandCategoryId");
 
                     b.HasIndex("ListingTypeId");
+
+                    b.HasIndex("NeighborhoodId");
 
                     b.ToTable("rentalLandListings");
                 });
@@ -2774,6 +2804,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", null)
+                        .WithMany()
+                        .HasForeignKey("NeighborhoodId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Agent");
 
                     b.Navigation("ListingType");
@@ -2808,6 +2843,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasForeignKey("ListingTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", null)
+                        .WithMany()
+                        .HasForeignKey("NeighborhoodId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Agent");
 
@@ -2864,6 +2904,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasForeignKey("ListingTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", null)
+                        .WithMany()
+                        .HasForeignKey("NeighborhoodId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Agent");
 
@@ -2965,6 +3010,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("ListingTypeId");
 
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", null)
+                        .WithMany()
+                        .HasForeignKey("NeighborhoodId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Agent");
 
                     b.Navigation("ListingType");
@@ -2997,6 +3047,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.ListingType", "ListingType")
                         .WithMany()
                         .HasForeignKey("ListingTypeId");
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", null)
+                        .WithMany()
+                        .HasForeignKey("NeighborhoodId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Agent");
 
@@ -3051,6 +3106,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.ListingType", "ListingType")
                         .WithMany()
                         .HasForeignKey("ListingTypeId");
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", null)
+                        .WithMany()
+                        .HasForeignKey("NeighborhoodId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Agent");
 
