@@ -1,0 +1,111 @@
+@model FibiEmlakDanismanlik.WebUI.Models.ListingSpecs.ListingSpecsVm
+
+@if (Model != null)
+{
+    <div class="details-box content-widget listing-specs">
+        <div class="title-box">
+            <h4>İlan Özellikleri</h4>
+        </div>
+
+        @* 1. Temel Göstergeler (KeyFacts) *@
+        @if (Model.KeyFacts != null && Model.KeyFacts.Count > 0)
+        {
+            <div class="ls-facts">
+                @foreach (var fact in Model.KeyFacts)
+                {
+                    <div class="ls-fact">
+                        <span class="ls-fact-icon"><i class="@fact.Icon"></i></span>
+                        <span class="ls-fact-value">@fact.Value</span>
+                        <span class="ls-fact-label">@fact.Label</span>
+                    </div>
+                }
+            </div>
+        }
+
+        @* 2. Detay Bilgi Grupları (Groups) *@
+        @if (Model.Groups != null && Model.Groups.Count > 0)
+        {
+            <div class="ls-groups">
+                @foreach (var group in Model.Groups)
+                {
+                    if (group.Rows != null && group.Rows.Count > 0)
+                    {
+                        <section class="ls-group">
+                            <h5><i class="@group.Icon"></i> @group.Title</h5>
+                            <dl class="ls-rows">
+                                @foreach (var row in group.Rows)
+                                {
+                                    var rowClass = string.IsNullOrWhiteSpace(row.Tone) ? "ls-row" : $"ls-row ls-row--{row.Tone}";
+                                    <div class="@rowClass">
+                                        <dt>@row.Label</dt>
+                                        <dd>
+                                            @if (row.Tone == "locked")
+                                            {
+                                                <i class="fas fa-lock"></i>
+                                            }
+                                            @row.Value
+                                        </dd>
+                                    </div>
+                                }
+                            </dl>
+                        </section>
+                    }
+                }
+            </div>
+        }
+
+        @* 3. Donanım ve Öne Çıkan Özellikler (AmenityGroups) *@
+        @if (Model.AmenityGroups != null && Model.AmenityGroups.Count > 0)
+        {
+            <h5 class="ls-subtitle">Öne Çıkan Özellikler</h5>
+            <div class="ls-amenities">
+                @foreach (var ag in Model.AmenityGroups)
+                {
+                    if (ag.Items != null && ag.Items.Count > 0)
+                    {
+                        <div class="ls-amenity-group">
+                            <span class="ls-amenity-title"><i class="@ag.Icon"></i> @ag.Title</span>
+                            <ul>
+                                @foreach (var item in ag.Items)
+                                {
+                                    <li><i class="fas fa-check"></i> @item</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                }
+            </div>
+        }
+
+        @* 4. Analiz ve İçgörü Kartları (Insights) *@
+        @if (Model.Insights != null && Model.Insights.Count > 0)
+        {
+            <div class="ls-insights">
+                @foreach (var ins in Model.Insights)
+                {
+                    <div class="ls-insight">
+                        <i class="@ins.Icon ls-insight-icon"></i>
+                        <div>
+                            <strong>@ins.Title</strong>
+                            <p>@ins.Text</p>
+                            @if (!string.IsNullOrWhiteSpace(ins.LinkText) && !string.IsNullOrWhiteSpace(ins.LinkUrl))
+                            {
+                                <a href="@ins.LinkUrl" class="ls-insight-link">@ins.LinkText <i class="fas fa-arrow-right"></i></a>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @* 5. Güvenlik ve Gizlilik Notu (ProtectedNote) *@
+        @if (!string.IsNullOrWhiteSpace(Model.ProtectedNote))
+        {
+            <div class="ls-protected">
+                <i class="fas fa-user-shield"></i>
+                <p>@Model.ProtectedNote</p>
+                <a href="#schedule-box" class="theme-btn btn-two ls-protected-btn">Randevu Talep Et</a>
+            </div>
+        }
+    </div>
+}

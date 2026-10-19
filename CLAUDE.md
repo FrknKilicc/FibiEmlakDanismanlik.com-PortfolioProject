@@ -174,12 +174,12 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 - [ ] Admin paneli eklenince: login ekranı + JWT'nin saklanması (HttpOnly cookie / sunucu tarafı oturum) ve write isteklerinde `Authorization: Bearer` gönderilmesi; süre dolunca yeniden login
 - [ ] Admin paneli eklenince: ilan formunda "Vitrin ilanı" (BestDeals) checkbox'ı; satılık ve kiralıkta ayrı ayrı en fazla 5 (BestDealConstants.MaxPerUsageType) uyarısı. BestDeals şu an sadece Create komutlarında ve ForSaleCommercial Update'te var; diğer Update komutlarına eklenmeli
 - [ ] Detay linklerine ilan türü ekle (id + listingTypeId): şu an detay sayfası yalnızca id ile konut/arsa/ticari tablolarına sırayla bakıyor; çakışma id aralıklarıyla (konut 1M+, arsa 2M+, ticari 3M+) geçici olarak önlendi
-- [ ] Veri: kırık ilan görselleri (imaj.emlakjet.com URL'leri 404) gerçek görsellerle değiştirilmeli; harici sitelere hotlink yerine görseller kendi depolamamıza alınmalı
+- [x] (2026-10-19) Veri: kırık ilan görselleri yerine `wwwroot/images/listings` altındaki CC0 demo görseller (`CREDITS.md`); gerçek ilan fotoğrafları admin yüklemesiyle gelmeli
 - [ ] Global exception middleware + handler'larda null kontrolü (G9)
 - [ ] PropertyLocationController → Query/Handler/Result (G5)
 - [ ] FluentValidation + MediatR ValidationBehavior pipeline (G6)
 - [ ] ListingImageSelection.ListingTypeId alanı + migration (H1)
-- [ ] Admin: 2 hatalı ilanın ilçesini düzelt (Kayseri-Ayazağa, Giresun-Ceyhan). Bu ikisinde `DistrictId` boş; ilçe düzeltilip kaydedilince SaveChanges ID'yi kendisi doldurur
+- [x] (2026-10-19, demo veri yenilemesi) Admin: 2 hatalı ilanın ilçesini düzelt (Kayseri-Ayazağa, Giresun-Ceyhan). Bu ikisinde `DistrictId` boş; ilçe düzeltilip kaydedilince SaveChanges ID'yi kendisi doldurur
 - [ ] İlan giriş formunda il/ilçe cascade dropdown
 - [ ] Admin: ana sayfa bölüm görselleri için dosya yükleme ucu (`HomeSectionImages` şu an yalnızca URL alıyor). Karar: dosyalar WebApi `wwwroot/uploads/home-sections` altına yazılsın ve statik sunulsun; depolama bir arayüzün arkasında dursun, ileride blob'a taşınabilsin. Uzantı/MIME/boyut kontrolü yapılsın, dosya adı sunucuda üretilsin, uç `[Authorize]` olsun
 - [ ] Mahalle için `NeighborhoodId`: il/ilçede olduğu gibi (ILocatedListing + SaveChanges çözümlemesi + migration backfill) ilanlara eklensin; filtre şu an mahalleyi metinle eşleştiriyor
@@ -187,8 +187,8 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 - [x] LandCategories tablosunu doldur (2026-10-12, migration ListingIdRangesAndLandCategories)
 - [ ] Teknik borç: kiralık listeleme bellekten DB sorgusuna taşı (T2)
 - [ ] Teknik borç: facet sayaçları null statüyü sayıyor (T3)
-- [ ] localhost:7015 hardcode'ları appsettings'e taşı (G11)
-- [ ] Kiralık fiyat gösteriminde dönem belirsiz: "Kira: 25.000 ₺" aylık mı yıllık mı? Karar verilince vitrin ve ilan sayfalarına "/ay" vb. eklenmeli
+- [x] (2026-10-19) localhost:7015 hardcode'ları appsettings'e taşı (G11): benzer ilanlar (satılık/kiralık) ve iletişim formu `Url:ApiUrl` kullanıyor; yalnızca `_SearchFieldSectionComponentPartial` içinde yedek değer olarak kaldı
+- [ ] Kiralık fiyat dönemi: demo veride kira AYLIK kabul edildi; ilan detayında ve harita sayfasında "/ ay" gösteriliyor. Liste kartları, ana sayfa vitrini ve benzer ilan kartlarına da eklenmeli; admin formunda dönem alanı netleşmeli
 - [ ] Ana sayfa vitrini: kiralık vitrin 5 sınırında dolu (4 işyeri + 1 arsa); yeni işaretlenen ilan en eski işaretliyi düşürür
 - [ ] Repo temizliği: dev'e birleşmiş feature branch'leri (yerel + origin) silinsin mi karar ver; `.claude/launch.json` commit'lenecek mi yoksa .gitignore'a mı eklenecek
 
@@ -202,6 +202,56 @@ Footer (`_FooterLayoutViewComponentPartial`) `AboutUs/1`, `Contact` (ilk kayıt)
 - [ ] Footer kozmetik: blog küçük görselleri eşit 90x90 değil (tema CSS'i `width/height`'ı eziyor), "Devamını Oku" linki yeşil yerine gri görünüyor
 - [ ] Footer "Kullanım Koşulları" ve "Gizlilik Politikası" linkleri `#`; sayfalar yazılınca bağlanmalı (KVKK aydınlatma metni ile birlikte)
 - [ ] İstenirse "Sayfalar" sütunu admin'den yönetilebilir menü olur (`FooterLink` tablosu: başlık, URL, sıra, aktif + CRUD + migration)
+
+### İlan verisi ve detay sayfası (2026-10-19)
+Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-refresh.sql` ile yenilendi (gerçek mahalleler, FİBİ emsal m² değerlerinden fiyat, türetilmiş özellikler, CC0 görseller); yakın yerler `tools/sql/nearby-from-osm.ps1` ile OpenStreetMap'ten (Nominatim) dolduruldu. Öncesinin yedeği `bak20261019` şemasında. Detay sayfasındaki "İlan Özellikleri" ortak bileşen: `Models/ListingSpecs` + `Views/Shared/_ListingSpecs.cshtml`; ada/parsel/pafta değerleri bilerek gösterilmez.
+- [ ] `bak20261019` yedek şeması, yeni veri doğrulandıktan sonra silinsin (`DROP` işlemleri onayla)
+- [ ] Kullanılmayan eski partial'lar silinsin: `_ForSaleDetailPropertyDetails_*`, `_ForRentalDetailPropertyDetails_*`, `_AmenitiesListViewComponentPartial` (detay sayfası artık `_ListingSpecs` kullanıyor; başka yerde kullanılmadığı doğrulanmalı)
+- [ ] Benzer ilanlar çok katı (aynı il + fiyat ±%30 + m² ±%30); gerçekçi veride çoğu ilanda boş dönüyor. Sonuç yoksa kademeli gevşetme (önce fiyat, sonra il) eklenmeli
+- [ ] Detay sayfası danışman kutusundaki ofis adresi sabit metin; `Contacts` tablosundan gelmeli
+- [ ] Yakın yerler ilan koordinatı yaklaşık (mahalle merkezi) olduğu için yaklaşık mesafeler; admin kesin pin girince `nearby-from-osm.ps1 -OnlyMissing` (o ilanın kayıtları silinerek) yeniden çalıştırılmalı; ileride sync sağlayıcısına dönüştürülebilir
+- [ ] Demo görseller repo içinde (~9 MB, `wwwroot/images/listings`); gerçek fotoğraflar geldiğinde klasör ve CREDITS kaldırılmalı, yükleme deposu (blob) kararı verilmeli
+
+### Gözlemler ve öneriler (2026-10-19, kullanıcı gün içinde soracak; sırayla birlikte yapılacak)
+
+**Git ve süreç**
+- [ ] Push + dev'e birleştirme: önce `feature/antigravity-fibi-services-phase2`, sonra `feature/antigravity-listings-map` (harita branch'i Faz 2'den açıldı, sync altyapısını kullanıyor). Footer, dil ve iç sayfa düzeltmeleri de bu branch'lerde; kullanıcı onayıyla
+- [ ] Test projesi yok: `ListingSpecsBuilder`, `KfeBulletinParser`, `IbbSeismicCsvParser`, `MarketIndexApplier`, `TurkishTextHelper` için xUnit testleri; headless Chrome kontrol betikleri (şu an oturum scratchpad'inde: harita, detay, taşma taraması) `tools/ui-tests` altına alınıp duman testi olarak çalıştırılabilir hale getirilsin
+- [ ] Yeni veriyle doğrulanmamış sayfalar: ana sayfa (vitrin, popüler yerler, son ilanlar), satılık/kiralık liste filtreleri (yeni değer biçimleri: bina yaşı "0/1-5/6-10/11-15/16-20/21 ve üzeri", ısıtma, tapu "Kat Mülkiyetli/Müstakil Tapulu", kullanım durumu), karşılaştırma (Compare) sayfası, arama önerileri
+- [ ] Antigravity satır sonlarını LF yapıyor ve BOM'u siliyor (her turda elle geri ekleniyor); `tools/agy-delegate.ps1` iş bitince değişen dosyalarda BOM'u HEAD'deki duruma göre otomatik geri yüklesin
+
+**Hata ve tutarsızlıklar**
+- [ ] WebUI sayfaları API kapalıyken 500 veriyor (ör. Hakkımızda, İletişim ViewComponent'leri try/catch'siz); footer ve benzer ilanlardaki gibi boş içerikle açılmalı. API tarafı G9 ile birlikte ele alınmalı
+- [ ] Tüm sayfalarda `<title>` sabit ("Fibi Yapı Emlak & Danışmanlık", `_HeadLayoutViewComponentPartial`); `ViewData["Title"]` kullanılmıyor ve 8 view'da "Index" yazıyor. Sayfa başına başlık + meta description; ilan detayında ilan adı
+- [ ] Mobil menüde (`ScaffTemplate.cshtml`) tema kalıntıları: sahte telefon `+88 01682648101`, `info@example.com` linki, sosyal linkler `/Realshed/index.html`; footer gibi `Contact` ve `SocialMedia` tablolarından gelmeli
+- [ ] Header "Sayfalar" mega menüsü İngilizce tema demo linkleri (About Us, Our Services, Pricing Table, Compare Properties → `/Realshed/*.html`); gerçek sayfalara bağlanmalı veya kaldırılmalı
+- [ ] Sayfa başlığı arka plan görselleri (detay, liste, blog, SSS, iletişim, karşılaştırma; 9 dosya) `images.stockcake.com` vb. harici sitelerden hotlink; `wwwroot` altına alınmalı
+- [ ] Detay sayfası `h1` her ilanda "Satılık İlanlar"/"Kiralık İlanlar" (sayfa başlığı bandı); breadcrumb ilan adını göstermiyor
+- [ ] `Blogs` tablosunda neredeyse aynı iki yazı ("Gayrimenkul/Emlak Yatırımında Lokasyon Neden Her Şeydir?", Id 15 ve 10); biri tekrar kayıt olabilir
+- [ ] `MapRepository.GetListingMarkerAsync` nullable uyarıları (dönüş tipi `ListingMarkerResult` ama null dönüyor); imza `Task<ListingMarkerResult?>` yapılmalı
+- [ ] Danışman e-postaları kişisel Gmail adresleri (`...fibi@gmail.com`); kurumsal alan adı adresleri tercih edilmeli
+- [ ] Liste ve detayda ilan "Durum" etiketi (Aktif/Opsiyonlu) ziyaretçiye gösterilmiyor; "Opsiyonlu" ilanlarda rozet gösterilmesi düşünülmeli
+
+**Beklenen / önerilen geliştirmeler**
+- [ ] Danışman kutusuna WhatsApp ile yaz ve tek tıkla ara butonları (mobilde sabit alt çubuk)
+- [ ] İlan detayında kredi taksit hesaplayıcı (FİBİ Finans modülüyle ortak; `BankLoanRates` verisi)
+- [ ] Galeri: küçük resim şeridi, fotoğraf sayısı rozeti, tam ekran (fancybox zaten yüklü)
+- [ ] SEO: ilan detayına schema.org `RealEstateListing`/`Offer` yapılandırılmış verisi, Open Graph görseli, `sitemap.xml` ve `robots.txt`
+- [ ] Görseller: WebP + duyarlı boyutlar (srcset), liste kartlarında küçük boy; şu an 1024px JPEG her yerde
+- [ ] Spam koruması: iletişim ve randevu formlarına rate limit (FİBİ lead formundaki gibi) ve isteğe bağlı captcha
+- [ ] "Benzer ilan çıkınca haber ver" talep formu (lead olarak `FibiServiceLeads` benzeri tabloya)
+- [ ] Liste sayfalarında harita/liste görünüm geçişi aynı sayfada (şu an ayrı Haritada İlanlar sayfası var)
+- [ ] Harita sayfasında fiyat aralığı ve oda filtresi; "bu alanda ara" (bbox) ile API tarafı filtreleme
+- [ ] İzleme: yapılandırılmış log (Serilog) ve sync sağlayıcıları için hata bildirimi (Nominatim/TCMB/İBB başarısız olursa)
+
+### Haritada İlanlar (2026-10-19, branch `feature/antigravity-listings-map`)
+`ListingsMap` sayfası `GET api/Map/listings` ucundan satılık + kiralık tüm aktif ilanları tek haritada gösterir. Koordinatı olmayan ilanlara `listing-geocode` sağlayıcısı (sync altyapısı, 6 saatte bir) OSM Nominatim ile mahalle > ilçe > il düzeyinde yaklaşık konum yazar (`ListingGeoPoints.Source = nominatim`, `Precision = neighborhood|district|city`); haritada kesikli çerçeveyle gösterilir.
+- [ ] Admin paneli: ilan formunda haritadan kesin pin seçme (Leaflet tıkla/sürükle); kaydedince `ListingGeoPoints` kaydı `Source = manual`, `Precision = building` olarak yaklaşık kaydın yerine yazılsın (şu an `AddGeoPointsAsync` mevcut kaydı ezmiyor, güncelleme ucu ayrıca yazılmalı)
+- [x] (2026-10-19, `tools/sql/demo-listings-refresh.ps1`) Veri: demo ilanların çoğunda mahalle alanı il/ilçeyle uyumsuz (ör. Kadıköy ve Çankaya ilanlarında "Veliefendi"); bu yüzden 68 ilanın 47'si yalnızca ilçe düzeyinde konumlandı. Mahalle düzeltilince ilgili `nominatim` kayıtları silinirse sağlayıcı yeniden konumlar
+- [ ] İlan güncellenip ili/ilçesi/mahallesi değişirse `nominatim` kaynaklı eski koordinat kalıyor; adres değişikliğinde yaklaşık kayıt silinmeli (manuel pin hariç)
+- [ ] Harita sayfası tüm ilanları tek istekte alıp istemci tarafında filtreliyor (şimdilik 70 ilan); ilan sayısı birkaç bini geçerse `Map/listings` ucunun mevcut `usageType/category/cityId` filtreleri ve harita sınırlarına göre (bbox) sorgu kullanılmalı
+- [ ] Nominatim kullanım politikası: User-Agent'a iletişim bilgisi (site adresi veya e-posta) eklenmeli; canlıda yoğun kullanımda kendi geocoder'ımız veya ücretli servis değerlendirilmeli
+- [ ] Leaflet ve MarkerCluster unpkg CDN'den yükleniyor (detay sayfası da öyle); CDN erişilemezse harita çalışmaz, `wwwroot/lib` altına alınabilir
 - [ ] Site geneli: yalnızca `/Realshed/...` görsel yolları kaldı ama birçok bileşende hâlâ `/Realshed/property-details.html`, `/Realshed/property-list.html`, `/Realshed/blog-details.html` gibi tema demo sayfası linkleri var (ör. `_FeaturedRentalPropertViewComponentPartial`); gerçek route'lara çevrilmeli
 
 ---

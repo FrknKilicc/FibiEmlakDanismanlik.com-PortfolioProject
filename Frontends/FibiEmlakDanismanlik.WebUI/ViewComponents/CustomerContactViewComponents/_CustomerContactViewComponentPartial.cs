@@ -34,7 +34,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.CustomerContactViewComponent
             var jsonData = JsonConvert.SerializeObject(dto);
             var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-            var responseMessage = await client.PostAsync("https://localhost:7015/api/CustomerContact", content);
+            var responseMessage = await client.PostAsync($"{_configuration["Url:ApiUrl"]}CustomerContact", content);
 
             if (responseMessage.IsSuccessStatusCode)
             {
@@ -44,5 +44,5 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.CustomerContactViewComponent
             return View(dto);
         }
     }
-    }
+}
 

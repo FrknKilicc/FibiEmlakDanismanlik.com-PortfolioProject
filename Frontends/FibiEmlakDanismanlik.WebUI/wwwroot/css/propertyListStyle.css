@@ -264,5 +264,26 @@ price-range alanı */
     }
 }
 
-
+/* Liste sayfasından haritaya geçiş butonu */
+.item-shorting .fibi-result-col { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 0; }
+.item-shorting .fibi-result-col h5 { margin: 0; }
+.fibi-result-col .fibi-map-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 14px;
+    margin-left: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fff;
+    color: #2d2929;
+    font-size: 14px;
+    font-weight: 500;
+    vertical-align: middle;
+    transition: all .2s ease;
+}
+.fibi-result-col .fibi-map-view-btn i { color: #2dbe6c; }
+.fibi-result-col .fibi-map-view-btn:hover { background: #2dbe6c; border-color: #2dbe6c; color: #fff; }
+.fibi-result-col .fibi-map-view-btn:hover i { color: #fff; }
 

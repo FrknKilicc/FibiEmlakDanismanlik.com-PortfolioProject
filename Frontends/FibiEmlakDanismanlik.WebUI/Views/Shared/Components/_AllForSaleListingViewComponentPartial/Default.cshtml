@@ -175,8 +175,9 @@
             <div class="col-lg-8 col-md-12 col-sm-12 content-side">
                 <div class="property-content-side">
                     <div class="item-shorting clearfix">
-                        <div class="right-column pull-left">
-                        <h5>Sonuç: <span>@Model.Total ilan bulundu</span></h5>
+                        <div class="right-column pull-left fibi-result-col">
+                            <h5>Sonuç: <span>@Model.Total ilan bulundu</span></h5>
+                            <a href="@Url.Action("Index", "ListingsMap", new { usage = "sale" })" class="fibi-map-view-btn" title="Satılık ilanları haritada gör"><i class="fas fa-map-marked-alt"></i> Haritada Gör</a>
                         </div>
                         <div class="right-column pull-right clearfix">
                             <div class="short-box clearfix">
