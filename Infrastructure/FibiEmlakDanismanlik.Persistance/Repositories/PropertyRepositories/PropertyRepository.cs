@@ -2565,7 +2565,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
          .FirstOrDefaultAsync();
         }
 
-        public async Task<List<SimilarPropertyCandidateResult>> GetForSaleSimilarCandidatesAsync(SimilarPropertyReferenceResult reference, int take)
+        public async Task<List<SimilarPropertyCandidateResult>> GetForSaleSimilarCandidatesAsync(SimilarPropertyReferenceResult reference, int take, int relaxLevel = 0)
         {
             if (reference == null)
                 return new List<SimilarPropertyCandidateResult>();
@@ -2582,17 +2582,17 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 .Where(x => x.UsageTypeId == reference.UsageTypeId)
                 .Where(x => x.ListingTypeId == reference.ListingTypeId);
 
-            if (!string.IsNullOrWhiteSpace(reference.City))
+            if (relaxLevel <= 2 && !string.IsNullOrWhiteSpace(reference.City))
             {
                 query = query.Where(x => x.City == reference.City);
             }
 
-            if (minPrice.HasValue && maxPrice.HasValue)
+            if (relaxLevel == 0 && minPrice.HasValue && maxPrice.HasValue)
             {
                 query = query.Where(x => x.Price >= minPrice.Value && x.Price <= maxPrice.Value);
             }
 
-            if (minSquareMeter.HasValue && maxSquareMeter.HasValue)
+            if (relaxLevel <= 1 && minSquareMeter.HasValue && maxSquareMeter.HasValue)
             {
                 query = query.Where(x =>
                     ((x.ListingType == "Konut" ? x.GrossArea : x.Area) ?? 0) >= minSquareMeter.Value &&
@@ -2763,7 +2763,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         }
         public async Task<List<SimilarPropertyCandidateResult>> GetForRentalSimilarCandidatesAsync(
             SimilarPropertyReferenceResult reference,
-            int take)
+            int take,
+            int relaxLevel = 0)
         {
             if (reference == null)
                 return new List<SimilarPropertyCandidateResult>();
@@ -2780,17 +2781,17 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 .Where(x => x.UsageTypeId == reference.UsageTypeId)
                 .Where(x => x.ListingTypeId == reference.ListingTypeId);
 
-            if (!string.IsNullOrWhiteSpace(reference.City))
+            if (relaxLevel <= 2 && !string.IsNullOrWhiteSpace(reference.City))
             {
                 query = query.Where(x => x.City == reference.City);
             }
 
-            if (minPrice.HasValue && maxPrice.HasValue)
+            if (relaxLevel == 0 && minPrice.HasValue && maxPrice.HasValue)
             {
                 query = query.Where(x => x.Price >= minPrice.Value && x.Price <= maxPrice.Value);
             }
 
-            if (minSquareMeter.HasValue && maxSquareMeter.HasValue)
+            if (relaxLevel <= 1 && minSquareMeter.HasValue && maxSquareMeter.HasValue)
             {
                 query = query.Where(x =>
                     (x.SquareMeter ?? 0) >= minSquareMeter.Value &&

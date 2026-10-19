@@ -27,23 +27,47 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHand
             if (reference == null)
                 return new List<SimilarPropertyItemResult>();
 
-            var candidates = await _propertyRepository.GetForSaleSimilarCandidatesAsync(reference, 24);
+            var candidatesWithLevel = new List<(SimilarPropertyCandidateResult Candidate, int Level)>();
+            var seenListingIds = new HashSet<int>();
 
-            if (candidates == null || !candidates.Any())
+            for (int level = 0; level <= 3; level++)
+            {
+                var candidates = await _propertyRepository.GetForSaleSimilarCandidatesAsync(reference, 24, level);
+                if (candidates != null && candidates.Count > 0)
+                {
+                    foreach (var candidate in candidates)
+                    {
+                        if (seenListingIds.Add(candidate.ListingId))
+                        {
+                            candidatesWithLevel.Add((candidate, level));
+                        }
+                    }
+                }
+
+                if (candidatesWithLevel.Count >= 6)
+                {
+                    break;
+                }
+            }
+
+            if (!candidatesWithLevel.Any())
                 return new List<SimilarPropertyItemResult>();
 
-            var result = candidates
-                .Select(candidate => new
+            var result = candidatesWithLevel
+                .Select(x => new
                 {
-                    Candidate = candidate,
-                    Score = SimilarPropertyScorer.Calculate(reference, candidate)
+                    x.Candidate,
+                    x.Level,
+                    Score = SimilarPropertyScorer.Calculate(reference, x.Candidate)
                 })
-                .OrderByDescending(x => x.Score)
+                .OrderBy(x => x.Level)
+                .ThenByDescending(x => x.Score)
                 .ThenByDescending(x => x.Candidate.CreatedDate)
                 .Take(6)
                 .Select(x => new SimilarPropertyItemResult
                 {
                     ListingId = x.Candidate.ListingId,
+                    ListingTypeId = x.Candidate.ListingTypeId,
                     ListingType = x.Candidate.ListingType,
                     PropertyName = x.Candidate.PropertyName,
                     PropertyDescription = x.Candidate.PropertyDescription,
@@ -54,10 +78,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHand
                     SquareMeter = x.Candidate.SquareMeter,
                     NumberOfRoom = x.Candidate.NumberOfRoom,
                     CoverImageUrl = x.Candidate.CoverImageUrl,
-                    PropertyStatus=x.Candidate.PropertyStatus,
-                    AgentImageUrl=x.Candidate.AgentImageUrl,
+                    PropertyStatus = x.Candidate.PropertyStatus,
+                    AgentImageUrl = x.Candidate.AgentImageUrl,
                     AgentName = x.Candidate.AgentName
-                    
                 })
                 .ToList();
 
