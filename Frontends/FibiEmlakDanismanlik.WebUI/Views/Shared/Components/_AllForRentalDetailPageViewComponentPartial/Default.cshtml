@@ -24,23 +24,16 @@
                         <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt=""></figure>
                         <h6>@Model.AgentName</h6>
                     </div>
-                    <ul class="rating clearfix pull-left">
-                        <li><i class="icon-39"></i></li>
-                        <li><i class="icon-39"></i></li>
-                        <li><i class="icon-39"></i></li>
-                        <li><i class="icon-39"></i></li>
-                        <li><i class="icon-40"></i></li>
-                    </ul>
                 </div>
             </div>
             <div class="right-column pull-right clearfix">
                 <div class="price-inner clearfix">
                     <ul class="category clearfix pull-left">
-                        <li><a href="property-details.html">@Model.ListingType</a></li>
-                        <li><a href="property-details.html">@Model.PropertyStatus</a></li>
+                        <li><a href="@Url.Action("Index","AllForRentalPage")">Kiralık</a></li>
+                        <li><a href="@Url.Action("Index","AllForRentalPage")">@Model.ListingType</a></li>
                     </ul>
                     <div class="price-box pull-right">
-                        <h3>@Model.Rent.ToString("N0") TL</h3>
+                        <h3>@Model.Rent.ToString("N0") TL <span class="price-period">/ ay</span></h3>
                         @if (Model.Deposit.HasValue)
                         {
                             <p class="deposit-text">Depozito : @Model.Deposit.Value.ToString("N0") TL</p>
@@ -94,7 +87,7 @@
                                 var fixedUrl = NormalizeImgUrl(url!);
                                 <figure class="image-box">
                                     <a class="lightbox-image" href="@fixedUrl" data-fancybox="property-gallery">
-                                        <img src="@fixedUrl" alt="">
+                                        <img src="@fixedUrl" alt="@Model.PropertyName" loading="lazy">
                                     </a>
                                 </figure>
                             }
@@ -105,38 +98,17 @@
                             <h4>İlan Açıklaması</h4>
                         </div>
                         <div class="text">
-                            <p>@Model.PropertyDescription</p>
+                            @{
+                                var descParagraphs = (Model.PropertyDescription ?? "")
+                                    .Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                            }
+                            @foreach (var parca in descParagraphs)
+                            {
+                                <p>@parca</p>
+                            }
                         </div>
                     </div>
-                    <div class="details-box content-widget">
-                        <div class="title-box">
-                            <h4>İlan Detayları</h4>
-                        </div>
-                        @{
-                            var lt = Model?.ListingType?.Trim();
-                        }
-                        @if (lt == "Konut")
-                        {
-                            @await Html.PartialAsync("~/Views/Shared/Components/_ForRentalDetailPropertyDetails_Housing/Default.cshtml", Model)
-                        }
-                        else if (lt == "Arsa")
-                        {
-                            @await Html.PartialAsync("~/Views/Shared/Components/_ForRentalDetailPropertyDetails_Land/Default.cshtml", Model)
-                        }
-                        else if (lt == "İşyeri")
-                        {
-                            @await Html.PartialAsync("~/Views/Shared/Components/_ForRentalDetailPropertyDetails_Commercial/Default.cshtml", Model)
-                        }
-                    </div>
-                    @if (Model?.Amenities != null && Model.Amenities.Any())
-                    {
-                        <div class="amenities-box content-widget">
-                            <div class="title-box">
-                                <h4>@Model.ListingType  Özellikler</h4>
-                            </div>
-                            @await Html.PartialAsync("~/Views/Shared/Components/_AmenitiesListViewComponentPartial/Default.cshtml", Model.Amenities)
-                        </div>
-                    }
+                    @await Html.PartialAsync("~/Views/Shared/_ListingSpecs.cshtml", FibiEmlakDanismanlik.WebUI.Models.ListingSpecs.ListingSpecsBuilder.FromRental(Model!))
                     @{
                         var items = Model?.FloorPlanImageItems ?? new();
                     }
@@ -175,7 +147,7 @@
                             <h4>Lokasyon</h4>
                         </div>
                         <ul class="info clearfix">
-                            <li><span>Address:</span> @Model.AddressDesc</li>
+                            <li><span>Adres:</span> @Model.AddressDesc</li>
                             <li><span>İl:</span> @Model.City</li>
                             <li><span>İlçe:</span> @Model.District</li>
                             <li><span>Mahalle:</span> @Model.Neighborhood</li>
@@ -191,11 +163,12 @@
                                  data-map-title="@Model.PropertyName">
                             </div>
                         </div>
+                        <p class="map-approx-note"><i class="fas fa-info-circle"></i> Harita konumu mahalle düzeyindedir; tam adres yerinde görüşmede paylaşılır.</p>
                     </div>
                     @await Component.InvokeAsync("_NearbyPlacesViewComponentPartial",
                     new { listingId = Model.ListingId, ListingTypeId = Model.ListingTypeId })
 
-                    <div class="schedule-box content-widget">
+                    <div class="schedule-box content-widget" id="schedule-box">
                         <div class="title-box">
                             <h4>Görüşme Randevusu Talep Et</h4>
                         </div>
@@ -270,12 +243,16 @@
                             <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt=""></figure>
                             <div class="inner">
                                 <h4>@Model.AgentName</h4>
+                                @if (!string.IsNullOrWhiteSpace(Model.AgentTitle))
+                                {
+                                    <p class="agent-title">@Model.AgentTitle</p>
+                                }
                                 <ul class="info clearfix">
                                     <li>
                                         <i class="fas fa-map-marker-alt"></i> Telsiz, 85/2. Sk.3A,34020 Zeytinburnu/İstanbul
                                     </li>
                                     <li><i class="fas fa-phone"></i><a href="tel:@Model.AgentPhoneNumber">@Model.AgentPhoneNumber</a></li>
-                                    <li><i class="fas fa-envelope"></i><a href="tel:@Model.Mail">@Model.Mail</a></li>
+                                    <li><i class="fas fa-envelope"></i><a href="mailto:@Model.Mail">@Model.Mail</a></li>
 
                                 </ul>
                             </div>
