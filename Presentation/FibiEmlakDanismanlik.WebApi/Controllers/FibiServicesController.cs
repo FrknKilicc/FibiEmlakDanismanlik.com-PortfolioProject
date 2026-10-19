@@ -21,10 +21,6 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("locations")]
-        public async Task<IActionResult> GetLocations()
-            => Ok(await _mediator.Send(new GetFibiServiceLocationsQuery()));
-
         [HttpPost("risk-analysis")]
         public async Task<IActionResult> CalculateBuildingRisk([FromBody] CalculateBuildingRiskQuery query)
         {

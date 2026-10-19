@@ -1,6 +1,4 @@
-using FibiEmlakDanismanlik.Application.Features.Results.FibiServiceResults;
 using FibiEmlakDanismanlik.Domain.Entities;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces
@@ -12,7 +10,6 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces
         /// <summary>Mahalle, ilçe, il ve Türkiye kapsamları arasından en dar mevcut kaydı döner.</summary>
         Task<ExternalMarketStat?> ResolveStatAsync(int neighborhoodId, int districtId, int cityId);
         Task<NeighborhoodSeismicScenarioStat?> GetSeismicScenarioAsync(int neighborhoodId);
-        Task<List<FibiLocationSummaryResult>> GetCoveredLocationsAsync();
         Task<decimal> GetCityAverageSalePriceAsync(int cityId);
     }
 }

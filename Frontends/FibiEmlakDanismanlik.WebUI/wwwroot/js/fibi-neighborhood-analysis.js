@@ -50,47 +50,20 @@
             }
         });
 
-        // 2. Karşılaştırma mahalle listesini ilk doldurma
-        F.fillNeighborhoodSelect('#regionCompare', { placeholder: 'Karşılaştırma yok' });
-
-        // Ana mahalle değiştiğinde karşılaştırma listesini güncelle
-        function onPrimaryNeighborhoodChange() {
-            var selectedNeighId = neighSelect ? neighSelect.value : '';
-            var previousCompareVal = compareSelect ? compareSelect.value : '';
-
-            F.fillNeighborhoodSelect('#regionCompare', {
-                placeholder: 'Karşılaştırma yok',
-                excludeId: selectedNeighId ? selectedNeighId : null
-            }).then(function () {
-                if (!compareSelect) return;
-                if (previousCompareVal && String(previousCompareVal) !== String(selectedNeighId)) {
-                    var hasOption = false;
-                    for (var i = 0; i < compareSelect.options.length; i++) {
-                        if (compareSelect.options[i].value === String(previousCompareVal)) {
-                            hasOption = true;
-                            break;
-                        }
-                    }
-                    if (hasOption) {
-                        compareSelect.value = String(previousCompareVal);
-                    } else {
-                        compareSelect.value = '';
-                    }
-                } else {
-                    compareSelect.value = '';
-                }
-
-                if (window.jQuery && window.jQuery.fn && window.jQuery.fn.niceSelect) {
-                    window.jQuery(compareSelect).niceSelect('update');
-                }
-            });
-        }
-
-        if (window.jQuery) {
-            window.jQuery('#regionNeighborhood').on('change', onPrimaryNeighborhoodChange);
-        } else if (neighSelect) {
-            neighSelect.addEventListener('change', onPrimaryNeighborhoodChange);
-        }
+        // 2. Karşılaştırma konumu kademeli seçim bağlamı
+        F.bindLocationCascade({
+            city: '#regionCompareCity',
+            district: '#regionCompareDistrict',
+            neighborhood: '#regionCompare',
+            excludeNeighborhoodId: function () {
+                return neighSelect ? neighSelect.value : '';
+            }
+        }).catch(function (err) {
+            console.error('[FibiNeighborhoodAnalysis] Konum listesi yüklenemedi:', err);
+            if (window.toastr) {
+                window.toastr.error('Konum listesi yüklenemedi.');
+            }
+        });
 
         // 3. Form gönderim olayı
         if (form) {
@@ -110,6 +83,13 @@
 
                 var compVal = compareSelect ? compareSelect.value : '';
                 var compareId = compVal ? parseInt(compVal, 10) : null;
+
+                if (compareId && parseInt(neighVal, 10) === compareId) {
+                    if (window.toastr) {
+                        window.toastr.warning('Karşılaştırma için farklı bir mahalle seçin.');
+                    }
+                    return;
+                }
 
                 var body = {
                     neighborhoodId: parseInt(neighVal, 10),

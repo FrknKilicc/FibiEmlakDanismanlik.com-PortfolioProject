@@ -5,8 +5,7 @@
         return;
     }
 
-    var cachedLocations = null;
-    var locationPromise = null;
+    var optionCache = {};
     var _leadContext = {
         neighborhoodId: null,
         summary: null
@@ -64,18 +63,14 @@
     }
 
     /**
-     * Emsal verisi olan şehir, ilçe ve mahalle hiyerarşisini çeker ve önbellekler.
+     * Konum API uçlarından seçenek listesini çeker ve önbellekler.
      */
-    function loadLocations() {
-        if (cachedLocations !== null) {
-            return Promise.resolve(cachedLocations);
-        }
-        if (locationPromise !== null) {
-            return locationPromise;
+    function fetchOptions(path) {
+        if (optionCache[path]) {
+            return optionCache[path];
         }
 
-        var url = apiUrl() + 'FibiServices/locations';
-        locationPromise = fetch(url)
+        var promise = fetch(apiUrl() + path)
             .then(function (res) {
                 if (!res.ok) {
                     throw new Error('HTTP ' + res.status);
@@ -83,17 +78,15 @@
                 return res.json();
             })
             .then(function (data) {
-                cachedLocations = Array.isArray(data) ? data : [];
-                locationPromise = null;
-                return cachedLocations;
+                return Array.isArray(data) ? data : [];
             })
             .catch(function (err) {
-                locationPromise = null;
-                console.error('[FibiServices] Lokasyonlar alınamadı:', err);
+                delete optionCache[path];
                 throw err;
             });
 
-        return locationPromise;
+        optionCache[path] = promise;
+        return promise;
     }
 
     /**
@@ -110,177 +103,127 @@
      * İl, İlçe ve Mahalle seçimlerini birbirine bağlar (kademeli doldurma).
      */
     function bindLocationCascade(opts) {
+        opts = opts || {};
         var cityEl = toElement(opts.city);
         var distEl = toElement(opts.district);
         var neighEl = toElement(opts.neighborhood);
 
         if (!cityEl) return Promise.resolve();
 
-        clearSelect(cityEl, 'İl seçin');
+        var districtReqSeq = 0;
+        var neighborhoodReqSeq = 0;
+
+        clearSelect(cityEl, 'İller yükleniyor...');
         if (distEl) clearSelect(distEl, 'İlçe seçin');
         if (neighEl) clearSelect(neighEl, 'Mahalle seçin');
 
-        return loadLocations().then(function (cities) {
-            cityEl.options.length = 0;
-            cityEl.add(new Option('İl seçin', ''));
+        function onCityChanged() {
+            var selectedCityId = cityEl ? cityEl.value : '';
+            districtReqSeq++;
+            neighborhoodReqSeq++;
 
-            cities.forEach(function (c) {
-                cityEl.add(new Option(c.cityName, String(c.cityId)));
-            });
+            if (distEl) clearSelect(distEl, selectedCityId ? 'İlçeler yükleniyor...' : 'İlçe seçin');
+            if (neighEl) clearSelect(neighEl, 'Mahalle seçin');
 
-            if (cities.length === 1) {
-                cityEl.value = String(cities[0].cityId);
-                populateDistricts(cities[0]);
-            }
-            updateNiceSelect(cityEl);
-
-            function onCityChanged() {
-                var selectedCityId = cityEl.value;
-                if (!selectedCityId) {
-                    if (distEl) clearSelect(distEl, 'İlçe seçin');
-                    if (neighEl) clearSelect(neighEl, 'Mahalle seçin');
-                    return;
-                }
-
-                var cityObj = cities.find(function (c) {
-                    return String(c.cityId) === String(selectedCityId);
-                });
-                populateDistricts(cityObj);
+            if (!selectedCityId || !distEl) {
+                return;
             }
 
-            if (window.jQuery) {
-                window.jQuery(cityEl).off('change.fibiCascade').on('change.fibiCascade', onCityChanged);
-            } else {
-                cityEl.addEventListener('change', onCityChanged);
-            }
-
-            function populateDistricts(cityObj) {
-                if (!distEl) return;
-                distEl.options.length = 0;
-                distEl.add(new Option('İlçe seçin', ''));
-                if (neighEl) clearSelect(neighEl, 'Mahalle seçin');
-
-                var distList = (cityObj && Array.isArray(cityObj.districts)) ? cityObj.districts : [];
-                distList.forEach(function (d) {
-                    distEl.add(new Option(d.districtName, String(d.districtId)));
-                });
-
-                if (distList.length === 1) {
-                    distEl.value = String(distList[0].districtId);
-                    populateNeighborhoods(distList[0]);
-                }
-                updateNiceSelect(distEl);
-            }
-
-            function onDistrictChanged() {
-                if (!distEl) return;
-                var selectedDistId = distEl.value;
-                if (!selectedDistId) {
-                    if (neighEl) clearSelect(neighEl, 'Mahalle seçin');
-                    return;
-                }
-
-                var selectedCityId = cityEl.value;
-                var currentCity = cities.find(function (c) {
-                    return String(c.cityId) === String(selectedCityId);
-                });
-                var distObj = currentCity && currentCity.districts
-                    ? currentCity.districts.find(function (d) { return String(d.districtId) === String(selectedDistId); })
-                    : null;
-
-                populateNeighborhoods(distObj);
-            }
-
-            if (distEl) {
-                if (window.jQuery) {
-                    window.jQuery(distEl).off('change.fibiCascade').on('change.fibiCascade', onDistrictChanged);
-                } else {
-                    distEl.addEventListener('change', onDistrictChanged);
-                }
-            }
-
-            function populateNeighborhoods(distObj) {
-                if (!neighEl) return;
-                neighEl.options.length = 0;
-                neighEl.add(new Option('Mahalle seçin', ''));
-
-                var neighList = (distObj && Array.isArray(distObj.neighborhoods)) ? distObj.neighborhoods : [];
-                neighList.forEach(function (n) {
-                    neighEl.add(new Option(n.neighborhoodName, String(n.neighborhoodId)));
-                });
-                updateNiceSelect(neighEl);
-            }
-        });
-    }
-
-    /**
-     * Tüm mahalleleri ilçe bazlı optgroup ile doldurur (karşılaştırma modu için).
-     */
-    function fillNeighborhoodSelect(select, opts) {
-        var selectEl = toElement(select);
-        if (!selectEl) return Promise.resolve();
-
-        opts = opts || {};
-        var exclude = opts.excludeId != null ? String(opts.excludeId) : null;
-        var ph = opts.placeholder || 'Mahalle seçin';
-
-        selectEl.options.length = 0;
-        selectEl.add(new Option(ph, ''));
-
-        return loadLocations().then(function (cities) {
-            cities.forEach(function (city) {
-                if (!Array.isArray(city.districts)) return;
-                city.districts.forEach(function (dist) {
-                    if (!Array.isArray(dist.neighborhoods)) return;
-                    var eligible = dist.neighborhoods.filter(function (n) {
-                        return exclude === null || String(n.neighborhoodId) !== exclude;
-                    });
-                    if (eligible.length === 0) return;
-
-                    var optgroup = document.createElement('optgroup');
-                    optgroup.label = dist.districtName;
-
-                    eligible.forEach(function (n) {
-                        var opt = new Option(n.neighborhoodName, String(n.neighborhoodId));
-                        optgroup.appendChild(opt);
-                    });
-
-                    selectEl.appendChild(optgroup);
-                });
-            });
-            updateNiceSelect(selectEl);
-        });
-    }
-
-    /**
-     * Mahalle kimliğine göre il ve ilçe bilgilerini bulur.
-     */
-    function findLocation(neighborhoodId) {
-        if (neighborhoodId == null || !cachedLocations) return null;
-        var targetId = String(neighborhoodId);
-
-        for (var i = 0; i < cachedLocations.length; i++) {
-            var city = cachedLocations[i];
-            if (!city.districts) continue;
-            for (var j = 0; j < city.districts.length; j++) {
-                var dist = city.districts[j];
-                if (!dist.neighborhoods) continue;
-                for (var k = 0; k < dist.neighborhoods.length; k++) {
-                    var neigh = dist.neighborhoods[k];
-                    if (String(neigh.neighborhoodId) === targetId) {
-                        return {
-                            cityId: city.cityId,
-                            cityName: city.cityName,
-                            districtId: dist.districtId,
-                            districtName: dist.districtName,
-                            neighborhoodId: neigh.neighborhoodId,
-                            neighborhoodName: neigh.neighborhoodName
-                        };
+            var currentDistSeq = districtReqSeq;
+            fetchOptions('Location/districts?cityId=' + encodeURIComponent(selectedCityId))
+                .then(function (districts) {
+                    if (currentDistSeq !== districtReqSeq) {
+                        return;
                     }
-                }
+                    distEl.options.length = 0;
+                    distEl.add(new Option('İlçe seçin', ''));
+                    districts.forEach(function (item) {
+                        distEl.add(new Option(item.text, String(item.id)));
+                    });
+                    updateNiceSelect(distEl);
+                })
+                .catch(function (err) {
+                    if (currentDistSeq !== districtReqSeq) {
+                        return;
+                    }
+                    if (distEl) clearSelect(distEl, 'İlçe seçin');
+                    console.error('[FibiServices] İlçe listesi yüklenemedi:', err);
+                    if (window.toastr) {
+                        window.toastr.error('Konum listesi yüklenemedi.');
+                    }
+                });
+        }
+
+        function onDistrictChanged() {
+            if (!distEl) return;
+            var selectedDistId = distEl.value;
+            neighborhoodReqSeq++;
+
+            if (neighEl) clearSelect(neighEl, selectedDistId ? 'Mahalleler yükleniyor...' : 'Mahalle seçin');
+
+            if (!selectedDistId || !neighEl) {
+                return;
+            }
+
+            var currentNeighSeq = neighborhoodReqSeq;
+            fetchOptions('Location/neighborhoods?districtId=' + encodeURIComponent(selectedDistId))
+                .then(function (neighborhoods) {
+                    if (currentNeighSeq !== neighborhoodReqSeq) {
+                        return;
+                    }
+                    neighEl.options.length = 0;
+                    neighEl.add(new Option('Mahalle seçin', ''));
+
+                    var excludeId = (typeof opts.excludeNeighborhoodId === 'function')
+                        ? opts.excludeNeighborhoodId()
+                        : null;
+                    var excludeStr = (excludeId != null && excludeId !== '') ? String(excludeId) : null;
+
+                    neighborhoods.forEach(function (item) {
+                        if (excludeStr !== null && String(item.id) === excludeStr) {
+                            return;
+                        }
+                        neighEl.add(new Option(item.text, String(item.id)));
+                    });
+                    updateNiceSelect(neighEl);
+                })
+                .catch(function (err) {
+                    if (currentNeighSeq !== neighborhoodReqSeq) {
+                        return;
+                    }
+                    if (neighEl) clearSelect(neighEl, 'Mahalle seçin');
+                    console.error('[FibiServices] Mahalle listesi yüklenemedi:', err);
+                    if (window.toastr) {
+                        window.toastr.error('Konum listesi yüklenemedi.');
+                    }
+                });
+        }
+
+        if (window.jQuery) {
+            window.jQuery(cityEl).off('change.fibiCascade').on('change.fibiCascade', onCityChanged);
+            if (distEl) {
+                window.jQuery(distEl).off('change.fibiCascade').on('change.fibiCascade', onDistrictChanged);
+            }
+        } else {
+            cityEl.addEventListener('change', onCityChanged);
+            if (distEl) {
+                distEl.addEventListener('change', onDistrictChanged);
             }
         }
-        return null;
+
+        return fetchOptions('Location/cities')
+            .then(function (cities) {
+                cityEl.options.length = 0;
+                cityEl.add(new Option('İl seçin', ''));
+                cities.forEach(function (item) {
+                    cityEl.add(new Option(item.text, String(item.id)));
+                });
+                updateNiceSelect(cityEl);
+            })
+            .catch(function (err) {
+                clearSelect(cityEl, 'İl seçin');
+                throw err;
+            });
     }
 
     /**
@@ -592,10 +535,8 @@
     window.FibiServices = {
         apiUrl: apiUrl,
         moduleId: moduleId,
-        loadLocations: loadLocations,
+        fetchOptions: fetchOptions,
         bindLocationCascade: bindLocationCascade,
-        fillNeighborhoodSelect: fillNeighborhoodSelect,
-        findLocation: findLocation,
         postJson: postJson,
         formatTL: formatTL,
         formatNumber: formatNumber,
