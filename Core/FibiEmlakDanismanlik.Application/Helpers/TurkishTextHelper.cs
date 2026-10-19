@@ -30,6 +30,25 @@ namespace FibiEmlakDanismanlik.Application.Helpers
             var parts = upper.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
             return string.Join(" ", parts);
         }
+
+        /// <summary>Gevşek karşılaştırma anahtarı: ToComparisonKey sonucunda Türkçe harfler ASCII'ye katlanır (Ş→S, Ç→C, Ğ→G, İ→I, Ö→O, Ü→U), boşluk, tire ve nokta kaldırılır.</summary>
+        public static string ToCompactComparisonKey(string? value)
+        {
+            var key = ToComparisonKey(value);
+            if (string.IsNullOrEmpty(key))
+                return string.Empty;
+
+            return key
+                .Replace('Ş', 'S')
+                .Replace('Ç', 'C')
+                .Replace('Ğ', 'G')
+                .Replace('İ', 'I')
+                .Replace('Ö', 'O')
+                .Replace('Ü', 'U')
+                .Replace(" ", string.Empty)
+                .Replace("-", string.Empty)
+                .Replace(".", string.Empty);
+        }
     }
 }
 

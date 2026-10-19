@@ -163,6 +163,29 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.FibiServiceRepositories
 
         public async Task<int> UpsertSeismicScenariosAsync(IReadOnlyList<IbbSeismicRecord> records, string dataSource, DateTime now)
         {
+            static string GetCompactNeighborhoodKey(string? name)
+            {
+                var compact = TurkishTextHelper.ToCompactComparisonKey(name);
+                if (compact.EndsWith(FibiMarketDataSyncConstants.CompactNeighborhoodSuffix, StringComparison.Ordinal))
+                {
+                    var trimmed = compact[..^FibiMarketDataSyncConstants.CompactNeighborhoodSuffix.Length];
+                    if (trimmed.Length > 0)
+                    {
+                        return trimmed;
+                    }
+                }
+                else if (compact.EndsWith(FibiMarketDataSyncConstants.CompactNeighborhoodShortSuffix, StringComparison.Ordinal))
+                {
+                    var trimmed = compact[..^FibiMarketDataSyncConstants.CompactNeighborhoodShortSuffix.Length];
+                    if (trimmed.Length > 0)
+                    {
+                        return trimmed;
+                    }
+                }
+
+                return compact;
+            }
+
             var istanbulNeighborhoods = await _context.Neighborhoods
                 .AsNoTracking()
                 .Include(n => n.District)
@@ -171,6 +194,9 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.FibiServiceRepositories
                 .ToListAsync();
 
             var neighborhoodMap = new Dictionary<(string DistrictKey, string NeighborhoodKey), int>();
+            var compactNeighborhoodMap = new Dictionary<(string DistrictCompactKey, string NeighborhoodCompactKey), int>();
+            var ambiguousCompactKeys = new HashSet<(string DistrictCompactKey, string NeighborhoodCompactKey)>();
+
             foreach (var n in istanbulNeighborhoods)
             {
                 var distKey = TurkishTextHelper.ToComparisonKey(n.District.Name);
@@ -181,6 +207,20 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.FibiServiceRepositories
                 }
                 var neighKey = TurkishTextHelper.ToComparisonKey(name);
                 neighborhoodMap.TryAdd((distKey, neighKey), n.NeighborhoodId);
+
+                var distCompactKey = TurkishTextHelper.ToCompactComparisonKey(n.District.Name);
+                var neighCompactKey = GetCompactNeighborhoodKey(n.Name);
+                var compactKey = (distCompactKey, neighCompactKey);
+
+                if (ambiguousCompactKeys.Contains(compactKey))
+                {
+                    // Zaten belirsiz
+                }
+                else if (!compactNeighborhoodMap.TryAdd(compactKey, n.NeighborhoodId))
+                {
+                    compactNeighborhoodMap.Remove(compactKey);
+                    ambiguousCompactKeys.Add(compactKey);
+                }
             }
 
             var existingScenarios = await _context.NeighborhoodSeismicScenarioStats
@@ -195,12 +235,24 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.FibiServiceRepositories
                 {
                     recNeighName = recNeighName[..^FibiMarketDataSyncConstants.NeighborhoodNameSuffix.Length];
                 }
+
                 var recDistKey = TurkishTextHelper.ToComparisonKey(rec.DistrictName);
+                if (FibiMarketDataSyncConstants.IbbDistrictAliases.TryGetValue(recDistKey, out var aliasDistKey))
+                {
+                    recDistKey = aliasDistKey;
+                }
+
                 var recNeighKey = TurkishTextHelper.ToComparisonKey(recNeighName);
 
                 if (!neighborhoodMap.TryGetValue((recDistKey, recNeighKey), out var neighborhoodId))
                 {
-                    continue;
+                    var recDistCompactKey = TurkishTextHelper.ToCompactComparisonKey(recDistKey);
+                    var recNeighCompactKey = GetCompactNeighborhoodKey(rec.NeighborhoodName);
+
+                    if (!compactNeighborhoodMap.TryGetValue((recDistCompactKey, recNeighCompactKey), out neighborhoodId))
+                    {
+                        continue;
+                    }
                 }
 
                 if (existingScenarios.TryGetValue(neighborhoodId, out var existing))

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace FibiEmlakDanismanlik.Application.Constants
 {
     /// <summary>FİBİ canlı veri senkronizasyonu sabitleri.</summary>
@@ -33,5 +35,13 @@ namespace FibiEmlakDanismanlik.Application.Constants
         public const decimal MaximumAbsoluteChangePercentage = 200m;
         public const int SyncMessageMaxLength = FibiServiceConstants.SyncMessageMaxLength;
         public const int RecentSyncLogCount = 50;
+
+        // İBB 2017 verisindeki eski ilçe adları → güncel adlar (karşılaştırma anahtarı biçiminde)
+        public static readonly IReadOnlyDictionary<string, string> IbbDistrictAliases = new Dictionary<string, string>
+        {
+            ["EYÜP"] = "EYÜPSULTAN"
+        };
+        public const string CompactNeighborhoodSuffix = "MAHALLESI";
+        public const string CompactNeighborhoodShortSuffix = "MAHALLE";
     }
 }
