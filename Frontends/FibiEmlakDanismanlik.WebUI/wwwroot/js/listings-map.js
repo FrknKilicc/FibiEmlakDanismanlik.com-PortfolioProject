@@ -25,6 +25,7 @@
         }
 
         const citySelect = document.getElementById("lmCity");
+        const districtSelect = document.getElementById("lmDistrict");
         const listEl = document.getElementById("lmList");
         const countEl = document.getElementById("lmCount");
 
@@ -32,7 +33,8 @@
         const state = {
             usage: "",
             category: "",
-            city: ""
+            city: "",
+            district: ""
         };
 
         readStateFromUrlOrDataset();
@@ -90,6 +92,7 @@
                     }
                     allListings = data;
                     populateCities(allListings);
+                    populateDistricts();
                     applyFilters({ fitBounds: true });
                 })
                 .catch(() => {
@@ -136,6 +139,63 @@
                 citySelect.value = state.city;
                 if (citySelect.value !== state.city) {
                     state.city = "";
+                    state.district = "";
+                    updateUrl();
+                }
+            }
+        }
+
+        function populateDistricts() {
+            if (!districtSelect) return;
+
+            if (!state.city) {
+                districtSelect.textContent = "";
+                const defaultOpt = document.createElement("option");
+                defaultOpt.value = "";
+                defaultOpt.textContent = "Tüm İlçeler";
+                districtSelect.appendChild(defaultOpt);
+                districtSelect.value = "";
+                districtSelect.disabled = true;
+                if (state.district) {
+                    state.district = "";
+                    updateUrl();
+                }
+                return;
+            }
+
+            const districtSet = new Set();
+            allListings.forEach(item => {
+                if ((item.city || "").trim() === state.city) {
+                    const d = (item.district || "").trim();
+                    if (d) districtSet.add(d);
+                }
+            });
+
+            const districts = Array.from(districtSet);
+            districts.sort((a, b) => a.localeCompare(b, "tr"));
+
+            districtSelect.textContent = "";
+            const defaultOpt = document.createElement("option");
+            defaultOpt.value = "";
+            defaultOpt.textContent = "Tüm İlçeler";
+            districtSelect.appendChild(defaultOpt);
+
+            districts.forEach(districtName => {
+                const opt = document.createElement("option");
+                opt.value = districtName;
+                opt.textContent = districtName;
+                districtSelect.appendChild(opt);
+            });
+
+            districtSelect.disabled = false;
+
+            if (state.district && districts.includes(state.district)) {
+                districtSelect.value = state.district;
+            } else {
+                const hadDistrict = !!state.district;
+                state.district = "";
+                districtSelect.value = "";
+                if (hadDistrict) {
                     updateUrl();
                 }
             }
@@ -160,10 +220,12 @@
             }
 
             const city = params.has("city") ? (params.get("city") || "").trim() : "";
+            const district = params.has("district") ? (params.get("district") || "").trim() : "";
 
             state.usage = usage;
             state.category = category;
             state.city = city;
+            state.district = city ? district : "";
 
             updateUsageButtons();
             updateCategoryButtons();
@@ -176,7 +238,10 @@
             const sp = new URLSearchParams();
             if (state.usage) sp.set("usage", state.usage);
             if (state.category) sp.set("category", state.category);
-            if (state.city) sp.set("city", state.city);
+            if (state.city) {
+                sp.set("city", state.city);
+                if (state.district) sp.set("district", state.district);
+            }
             const qs = sp.toString();
             const newUrl = window.location.pathname + (qs ? "?" + qs : "");
             window.history.replaceState(null, "", newUrl);
@@ -215,6 +280,16 @@
             if (citySelect) {
                 citySelect.addEventListener("change", () => {
                     state.city = (citySelect.value || "").trim();
+                    state.district = "";
+                    populateDistricts();
+                    updateUrl();
+                    applyFilters({ fitBounds: true });
+                });
+            }
+
+            if (districtSelect) {
+                districtSelect.addEventListener("change", () => {
+                    state.district = (districtSelect.value || "").trim();
                     updateUrl();
                     applyFilters({ fitBounds: true });
                 });
@@ -222,6 +297,7 @@
 
             window.addEventListener("popstate", () => {
                 readStateFromUrlOrDataset();
+                populateDistricts();
                 applyFilters({ fitBounds: true });
             });
         }
@@ -259,6 +335,9 @@
 
                 // İl
                 if (state.city && (item.city || "").trim() !== state.city) return false;
+
+                // İlçe
+                if (state.district && (item.district || "").trim() !== state.district) return false;
 
                 return true;
             });
@@ -330,8 +409,15 @@
                 return bounds.contains([lat, lng]);
             });
 
+            const saleVisible = visibleListings.filter(item => item.usageTypeId !== 2);
+            const rentVisible = visibleListings.filter(item => item.usageTypeId === 2);
+
             if (countEl) {
-                countEl.textContent = `${visibleListings.length} ilan (haritada görünen) · toplam ${currentFilteredListings.length}`;
+                if (!state.usage) {
+                    countEl.textContent = `${visibleListings.length} ilan haritada · ${saleVisible.length} satılık · ${rentVisible.length} kiralık`;
+                } else {
+                    countEl.textContent = `${visibleListings.length} ilan haritada · toplam ${currentFilteredListings.length}`;
+                }
             }
 
             if (visibleListings.length === 0) {
@@ -343,11 +429,55 @@
             }
 
             const fragment = document.createDocumentFragment();
-            visibleListings.forEach(item => {
-                const detailUrl = getDetailUrl(item);
-                const card = createCardElement(item, item._marker, detailUrl);
-                fragment.appendChild(card);
-            });
+
+            if (!state.usage) {
+                // Tümü: Önce satılıklar, sonra kiralıklar
+                if (saleVisible.length > 0) {
+                    const headSale = document.createElement("div");
+                    headSale.className = "lm-list-head lm-list-head--sale";
+                    const titleSale = document.createElement("span");
+                    titleSale.textContent = "Satılık İlanlar";
+                    const countSale = document.createElement("span");
+                    countSale.className = "lm-list-count";
+                    countSale.textContent = String(saleVisible.length);
+                    headSale.appendChild(titleSale);
+                    headSale.appendChild(countSale);
+                    fragment.appendChild(headSale);
+
+                    saleVisible.forEach(item => {
+                        const detailUrl = getDetailUrl(item);
+                        const card = createCardElement(item, item._marker, detailUrl);
+                        fragment.appendChild(card);
+                    });
+                }
+
+                if (rentVisible.length > 0) {
+                    const headRent = document.createElement("div");
+                    headRent.className = "lm-list-head lm-list-head--rent";
+                    const titleRent = document.createElement("span");
+                    titleRent.textContent = "Kiralık İlanlar";
+                    const countRent = document.createElement("span");
+                    countRent.className = "lm-list-count";
+                    countRent.textContent = String(rentVisible.length);
+                    headRent.appendChild(titleRent);
+                    headRent.appendChild(countRent);
+                    fragment.appendChild(headRent);
+
+                    rentVisible.forEach(item => {
+                        const detailUrl = getDetailUrl(item);
+                        const card = createCardElement(item, item._marker, detailUrl);
+                        fragment.appendChild(card);
+                    });
+                }
+            } else {
+                // Tek liste: Başlık basmadan
+                visibleListings.forEach(item => {
+                    const detailUrl = getDetailUrl(item);
+                    const card = createCardElement(item, item._marker, detailUrl);
+                    fragment.appendChild(card);
+                });
+            }
+
             listEl.appendChild(fragment);
         }
 
@@ -378,13 +508,19 @@
             const content = document.createElement("div");
             content.className = "lm-popup-content";
 
-            // Rozet (Satılık / Kiralık + listingTypeName)
-            const badge = document.createElement("span");
+            // Rozet yerine belirgin etiket (lm-card-tag) + listingTypeName (lm-card-type)
             const isRent = item.usageTypeId === 2;
-            badge.className = "lm-badge " + (isRent ? "lm-badge--rent" : "lm-badge--sale");
-            const usageLabel = isRent ? "Kiralık" : "Satılık";
-            badge.textContent = item.listingTypeName ? `${usageLabel} · ${item.listingTypeName}` : usageLabel;
-            content.appendChild(badge);
+            const tag = document.createElement("span");
+            tag.className = "lm-card-tag " + (isRent ? "lm-card-tag--rent" : "lm-card-tag--sale");
+            tag.textContent = isRent ? "KİRALIK" : "SATILIK";
+            content.appendChild(tag);
+
+            if (item.listingTypeName) {
+                const typeSpan = document.createElement("span");
+                typeSpan.className = "lm-card-type";
+                typeSpan.textContent = item.listingTypeName;
+                content.appendChild(typeSpan);
+            }
 
             // Başlık
             const title = document.createElement("h4");
@@ -396,7 +532,14 @@
             const price = document.createElement("div");
             price.className = "lm-popup-price";
             const priceNum = typeof item.price === "number" ? item.price : Number(item.price) || 0;
-            price.textContent = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 }).format(priceNum) + " ₺";
+            const formattedPrice = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 }).format(priceNum) + " ₺";
+            price.appendChild(document.createTextNode(formattedPrice));
+            if (isRent) {
+                const period = document.createElement("span");
+                period.className = "lm-price-period";
+                period.textContent = "/ ay";
+                price.appendChild(period);
+            }
             content.appendChild(price);
 
             // Alan & Oda özellikleri
@@ -443,8 +586,9 @@
         }
 
         function createCardElement(item, marker, detailUrl) {
+            const isRent = item.usageTypeId === 2;
             const card = document.createElement("article");
-            card.className = "lm-card";
+            card.className = "lm-card " + (isRent ? "lm-card--rent" : "lm-card--sale");
             card.tabIndex = 0;
             card.setAttribute("role", "button");
 
@@ -489,15 +633,21 @@
             const info = document.createElement("div");
             info.className = "lm-card-info";
 
-            // Rozet
+            // Üst satır (belirgin etiket + tür)
             const top = document.createElement("div");
             top.className = "lm-card-top";
-            const badge = document.createElement("span");
-            const isRent = item.usageTypeId === 2;
-            badge.className = "lm-badge " + (isRent ? "lm-badge--rent" : "lm-badge--sale");
-            const usageLabel = isRent ? "Kiralık" : "Satılık";
-            badge.textContent = item.listingTypeName ? `${usageLabel} · ${item.listingTypeName}` : usageLabel;
-            top.appendChild(badge);
+
+            const tag = document.createElement("span");
+            tag.className = "lm-card-tag " + (isRent ? "lm-card-tag--rent" : "lm-card-tag--sale");
+            tag.textContent = isRent ? "KİRALIK" : "SATILIK";
+            top.appendChild(tag);
+
+            if (item.listingTypeName) {
+                const typeSpan = document.createElement("span");
+                typeSpan.className = "lm-card-type";
+                typeSpan.textContent = item.listingTypeName;
+                top.appendChild(typeSpan);
+            }
             info.appendChild(top);
 
             // Başlık
@@ -506,11 +656,24 @@
             title.textContent = item.title || "";
             info.appendChild(title);
 
+            // Fiyat etiketi: Satış fiyatı / Aylık kira
+            const priceLabel = document.createElement("span");
+            priceLabel.className = "lm-price-label";
+            priceLabel.textContent = isRent ? "Aylık kira" : "Satış fiyatı";
+            info.appendChild(priceLabel);
+
             // Fiyat
             const price = document.createElement("div");
             price.className = "lm-card-price";
             const priceNum = typeof item.price === "number" ? item.price : Number(item.price) || 0;
-            price.textContent = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 }).format(priceNum) + " ₺";
+            const formattedPrice = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 0 }).format(priceNum) + " ₺";
+            price.appendChild(document.createTextNode(formattedPrice));
+            if (isRent) {
+                const period = document.createElement("span");
+                period.className = "lm-price-period";
+                period.textContent = "/ ay";
+                price.appendChild(period);
+            }
             info.appendChild(price);
 
             // Alt satır: Konum ve İncele bağlantısı

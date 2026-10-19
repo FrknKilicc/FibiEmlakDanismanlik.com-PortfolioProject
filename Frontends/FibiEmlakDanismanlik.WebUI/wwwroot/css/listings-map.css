@@ -451,3 +451,160 @@
         text-align: center;
     }
 }
+
+/* --------------------------------------------------------------------------
+   İlçe Filtresi & Satılık / Kiralık Görsel Ayrımı (Görev Harita-4)
+   -------------------------------------------------------------------------- */
+.listings-map-section .lm-city-wrapper {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.listings-map-section #lmDistrict {
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    min-width: 170px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #2d2929;
+    background-color: #ffffff;
+    outline: none;
+    cursor: pointer;
+}
+
+.listings-map-section #lmDistrict:focus {
+    border-color: #2dbe6c;
+}
+
+.listings-map-section select:disabled,
+.listings-map-section #lmDistrict:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+/* Satılık / Kiralık Kart Ayrımı */
+.listings-map-section .lm-card--sale {
+    border-left: 4px solid #2dbe6c;
+    background: linear-gradient(90deg, rgba(45, 190, 108, .07), #fff 45%);
+}
+
+.listings-map-section .lm-card--rent {
+    border-left: 4px solid #2563eb;
+    background: linear-gradient(90deg, rgba(37, 99, 235, .07), #fff 45%);
+}
+
+.listings-map-section .lm-card--sale:hover,
+.listings-map-section .lm-card--sale:focus {
+    background: linear-gradient(90deg, rgba(45, 190, 108, .12), #f9fafb 45%);
+}
+
+.listings-map-section .lm-card--rent:hover,
+.listings-map-section .lm-card--rent:focus {
+    background: linear-gradient(90deg, rgba(37, 99, 235, .12), #f9fafb 45%);
+}
+
+/* Kart & Popup Etiketleri (.lm-card-tag & .lm-card-type) */
+.listings-map-section .lm-card-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.listings-map-section .lm-card-tag--sale {
+    background-color: #2dbe6c;
+}
+
+.listings-map-section .lm-card-tag--rent {
+    background-color: #2563eb;
+}
+
+.listings-map-section .lm-card-type {
+    display: inline-block;
+    font-size: 12px;
+    color: #93959e;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+
+/* Fiyat Etiketi & Fiyat Periyodu */
+.listings-map-section .lm-price-label {
+    display: block;
+    font-size: 11px;
+    color: #93959e;
+    text-transform: none;
+    margin-top: 6px;
+    line-height: 1.2;
+}
+
+.listings-map-section .lm-card--rent .lm-card-price {
+    color: #1d4ed8;
+}
+
+.listings-map-section .lm-price-period {
+    font-size: 12px;
+    font-weight: 500;
+    color: #93959e;
+    margin-left: 3px;
+}
+
+/* Liste Bölüm Başlıkları (.lm-list-head) */
+.listings-map-section .lm-list-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 10px 12px;
+    margin: 4px 0 6px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.listings-map-section .lm-list-head--sale {
+    background-color: #ecfdf3;
+    color: #15803d;
+}
+
+.listings-map-section .lm-list-head--rent {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+}
+
+.listings-map-section .lm-list-count {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #2d2929;
+}
+
+/* Lejant */
+.listings-map-section .lm-legend-dot--rent {
+    background: #2563eb;
+}
+
+/* 575px altı duyarlı tasarım kuralı */
+@media (max-width: 575px) {
+    .listings-map-section .lm-city-wrapper {
+        width: 100%;
+    }
+
+    .listings-map-section #lmCity,
+    .listings-map-section #lmDistrict {
+        width: 100%;
+        min-width: 100%;
+    }
+}
