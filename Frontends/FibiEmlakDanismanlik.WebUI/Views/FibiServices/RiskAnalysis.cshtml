@@ -159,6 +159,7 @@
                     <!-- Analiz Sonucu -->
                     <div id="riskResult" hidden>
                         <h3 id="riskLocationTitle" class="fibi-panel-title"></h3>
+                        <div id="riskDataSource" class="fibi-source" hidden></div>
 
                         <div class="row clearfix">
                             <!-- Sol: Yapısal Risk Skoru -->
@@ -191,6 +192,38 @@
                                     <p id="transformationVerdict" class="fibi-stat-sub"></p>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Deprem Senaryosu Özeti -->
+                        <div id="riskSeismic" class="fibi-seismic" hidden>
+                            <div class="fibi-seismic-head">
+                                <div class="fibi-stat-label"><i class="fas fa-house-damage"></i> Deprem Senaryosu</div>
+                                <span id="riskSeismicBadge" class="fibi-badge"></span>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="fibi-stat-card">
+                                        <div class="fibi-stat-label">Ağır / Çok Ağır Hasar Beklentisi</div>
+                                        <div id="riskSeismicDamage" class="fibi-stat-value fibi-stat-value--compact"></div>
+                                        <div class="fibi-stat-sub">Mahalledeki binaların oranı</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="fibi-stat-card">
+                                        <div class="fibi-stat-label">Toplam Bina</div>
+                                        <div id="riskSeismicBuildings" class="fibi-stat-value fibi-stat-value--compact"></div>
+                                        <div class="fibi-stat-sub">İBB 2017 bina sayımı</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="fibi-stat-card">
+                                        <div class="fibi-stat-label">1980 Öncesi Bina</div>
+                                        <div id="riskSeismicPre1980" class="fibi-stat-value fibi-stat-value--compact"></div>
+                                        <div class="fibi-stat-sub">Bina stokundaki payı</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p id="riskSeismicSource" class="fibi-stat-sub mb-0"></p>
                         </div>
 
                         <!-- Uzman Bulguları -->

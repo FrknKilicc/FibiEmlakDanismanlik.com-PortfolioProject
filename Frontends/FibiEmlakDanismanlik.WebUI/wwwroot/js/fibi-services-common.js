@@ -520,6 +520,91 @@
         });
     }
 
+    /**
+     * Tehlike seviyesi etiketini CSS sınıf koduna dönüştürür.
+     */
+    function hazardBadgeCode(label) {
+        switch (label) {
+            case 'Düşük':
+                return 'low';
+            case 'Orta':
+                return 'medium';
+            case 'Yüksek':
+                return 'high';
+            case 'Çok yüksek':
+                return 'critical';
+            default:
+                return 'unknown';
+        }
+    }
+
+    /**
+     * Veri kaynağı etiketini DOM API ile belirtilen elemana basar.
+     */
+    function renderDataSource(el, dataSource) {
+        var targetEl = toElement(el);
+        if (!targetEl) return;
+
+        while (targetEl.firstChild) {
+            targetEl.removeChild(targetEl.firstChild);
+        }
+
+        if (!dataSource) {
+            targetEl.hidden = true;
+            targetEl.setAttribute('hidden', '');
+            return;
+        }
+
+        targetEl.hidden = false;
+        targetEl.removeAttribute('hidden');
+
+        var validScopes = ['neighborhood', 'district', 'city', 'country'];
+        var scope = (dataSource.scopeCode && validScopes.indexOf(dataSource.scopeCode) !== -1)
+            ? dataSource.scopeCode
+            : 'country';
+
+        var pill = document.createElement('span');
+        pill.className = 'fibi-source-pill fibi-source-pill--' + scope;
+
+        var icon = document.createElement('i');
+        icon.className = 'fas fa-database';
+        pill.appendChild(icon);
+
+        if (dataSource.scopeLabel) {
+            pill.appendChild(document.createTextNode(' ' + dataSource.scopeLabel));
+        }
+        targetEl.appendChild(pill);
+
+        var meta = document.createElement('span');
+        meta.className = 'fibi-source-meta';
+        var metaText = dataSource.sourceName || '';
+
+        if (dataSource.lastUpdatedDate) {
+            var d = new Date(dataSource.lastUpdatedDate);
+            if (!isNaN(d.getTime())) {
+                metaText += (metaText ? ' · Güncelleme: ' : 'Güncelleme: ') + d.toLocaleDateString('tr-TR');
+            }
+        }
+        if (dataSource.isEstimated) {
+            metaText += (metaText ? ' · Tahmini veri' : 'Tahmini veri');
+        }
+        meta.textContent = metaText;
+        targetEl.appendChild(meta);
+
+        if (scope !== 'neighborhood') {
+            var note = document.createElement('div');
+            note.className = 'fibi-source-note';
+            var scopeText = 'Türkiye ortalaması';
+            if (scope === 'district') {
+                scopeText = 'ilçe ortalaması';
+            } else if (scope === 'city') {
+                scopeText = 'il ortalaması';
+            }
+            note.textContent = 'Bu mahalle için özel emsal verisi henüz yok; sonuçlar ' + scopeText + ' üzerinden hesaplandı.';
+            targetEl.appendChild(note);
+        }
+    }
+
     // Sayfa hazır olduğunda genel seçim kartlarını ve lead formunu başlat
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () {
@@ -545,6 +630,8 @@
         setLeadContext: setLeadContext,
         scrollToLead: scrollToLead,
         initChoiceCards: initChoiceCards,
-        initRange: initRange
+        initRange: initRange,
+        renderDataSource: renderDataSource,
+        hazardBadgeCode: hazardBadgeCode
     };
 })();

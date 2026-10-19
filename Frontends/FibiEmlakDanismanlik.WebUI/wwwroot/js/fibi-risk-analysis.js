@@ -29,6 +29,12 @@
         var disclaimerTextEl = document.getElementById('riskDisclaimerText');
         var listingsLink = document.getElementById('riskListingsLink');
         var leadBtn = document.getElementById('riskLeadBtn');
+        var seismicEl = document.getElementById('riskSeismic');
+        var seismicBadgeEl = document.getElementById('riskSeismicBadge');
+        var seismicDamageEl = document.getElementById('riskSeismicDamage');
+        var seismicBuildingsEl = document.getElementById('riskSeismicBuildings');
+        var seismicPre1980El = document.getElementById('riskSeismicPre1980');
+        var seismicSourceEl = document.getElementById('riskSeismicSource');
 
         // 1. Konum kademeli seçim bağlamı
         F.bindLocationCascade({
@@ -171,6 +177,69 @@
             var cityName = loc.cityName || '';
             if (locationTitleEl) {
                 locationTitleEl.textContent = neighborhoodName + ', ' + districtName + ' / ' + cityName;
+            }
+
+            // Veri kaynağı etiketi
+            F.renderDataSource('#riskDataSource', data.dataSource);
+
+            // Deprem senaryosu özeti
+            if (seismicEl) {
+                var seismic = data.seismic;
+                if (!seismic) {
+                    seismicEl.hidden = true;
+                    seismicEl.setAttribute('hidden', '');
+                } else {
+                    seismicEl.hidden = false;
+                    seismicEl.removeAttribute('hidden');
+
+                    if (seismicBadgeEl) {
+                        seismicBadgeEl.textContent = 'Deprem tehlikesi: ' + (seismic.hazardLevelLabel || '');
+                        seismicBadgeEl.className = 'fibi-badge fibi-badge--' + F.hazardBadgeCode(seismic.hazardLevelLabel);
+                    }
+
+                    var allNumbersNull = seismic.heavyDamageRatePercentage == null &&
+                        seismic.totalBuildingCount == null &&
+                        seismic.pre1980BuildingSharePercentage == null;
+
+                    var seismicRow = seismicEl.querySelector('.row');
+                    if (seismicRow) {
+                        if (allNumbersNull) {
+                            seismicRow.hidden = true;
+                            seismicRow.setAttribute('hidden', '');
+                        } else {
+                            seismicRow.hidden = false;
+                            seismicRow.removeAttribute('hidden');
+                        }
+                    }
+
+                    if (seismicDamageEl) {
+                        seismicDamageEl.textContent = seismic.heavyDamageRatePercentage != null
+                            ? F.formatPercent(seismic.heavyDamageRatePercentage)
+                            : '—';
+                    }
+                    if (seismicBuildingsEl) {
+                        seismicBuildingsEl.textContent = seismic.totalBuildingCount != null
+                            ? F.formatNumber(seismic.totalBuildingCount, 0)
+                            : '—';
+                    }
+                    if (seismicPre1980El) {
+                        seismicPre1980El.textContent = seismic.pre1980BuildingSharePercentage != null
+                            ? F.formatPercent(seismic.pre1980BuildingSharePercentage)
+                            : '—';
+                    }
+
+                    if (seismicSourceEl) {
+                        if (allNumbersNull) {
+                            seismicSourceEl.textContent = seismic.sourceName || '';
+                        } else {
+                            var srcText = 'Kaynak: ' + (seismic.sourceName || '');
+                            if (!seismic.isOfficialData) {
+                                srcText += ' (resmi veri değil)';
+                            }
+                            seismicSourceEl.textContent = srcText;
+                        }
+                    }
+                }
             }
 
             // Gauge (Chart.js doughnut yarım daire)
@@ -320,7 +389,9 @@
                     structuralRiskScore: data.structuralRiskScore,
                     riskLevel: data.riskLevel,
                     urbanTransformationPotentialScore: data.urbanTransformationPotentialScore,
-                    urbanTransformationVerdict: data.urbanTransformationVerdict
+                    urbanTransformationVerdict: data.urbanTransformationVerdict,
+                    dataScope: data.dataSource ? data.dataSource.scopeCode : null,
+                    seismicHazard: data.seismic ? data.seismic.hazardLevelLabel : null
                 }
             });
 

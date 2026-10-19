@@ -152,6 +152,8 @@
                 locationTitleEl.textContent = titleText;
             }
 
+            F.renderDataSource('#regionDataSource', primary.dataSource);
+
             // a) Bölge Yatırım Notu kartı
             if (gradeEl) {
                 gradeEl.textContent = primary.investmentGrade || '-';
@@ -434,6 +436,11 @@
 
                     var compMetrics = [
                         {
+                            name: 'Veri Kapsamı',
+                            valA: primary.dataSource ? primary.dataSource.scopeLabel : '-',
+                            valB: comp.dataSource ? comp.dataSource.scopeLabel : '-'
+                        },
+                        {
                             name: 'Yatırım Notu',
                             valA: (primary.investmentGrade || '-') + ' (' + (primary.investmentScore != null ? primary.investmentScore : '-') + ')',
                             valB: (comp.investmentGrade || '-') + ' (' + (comp.investmentScore != null ? comp.investmentScore : '-') + ')'
@@ -533,7 +540,8 @@
                     priceBand: primary.priceBand,
                     amortizationYears: primary.amortizationYears,
                     expected12MonthGrowthRate: primary.expected12MonthGrowthRate,
-                    comparisonNeighborhood: (comp && comp.location) ? comp.location.neighborhoodName : null
+                    comparisonNeighborhood: (comp && comp.location) ? comp.location.neighborhoodName : null,
+                    dataScope: primary.dataSource ? primary.dataSource.scopeCode : null
                 }
             });
 
