@@ -1,57 +1,48 @@
 ﻿using FibiEmlakDanismanlik.Dto.PropertyDtos;
 using FibiEmlakDanismanlik.WebUI.Models;
+using FibiEmlakDanismanlik.WebUI.ViewComponents.UILayoutComponents;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponents
 {
-    public class _AllForSaleDetailPageViewComponentPartial:ViewComponent
+    public class _AllForSaleDetailPageViewComponentPartial : ViewComponent
     {
-        private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
+        private readonly IMemoryCache _memoryCache;
 
-        public _AllForSaleDetailPageViewComponentPartial(IConfiguration configuration, IHttpClientFactory httpClientFactory)
+        public _AllForSaleDetailPageViewComponentPartial(
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration,
+            IMemoryCache memoryCache)
         {
-            _configuration = configuration;
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
+            _memoryCache = memoryCache;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int id, int? listingTypeId = null)
+        public async Task<IViewComponentResult> InvokeAsync(ResultAllForSaleListinForPageDto value)
         {
-            var client = _httpClientFactory.CreateClient();
-            var url = $"{_configuration["Url:ApiUrl"]}ForSales/GetUnifiedForSalesPropertyById/{id}";
-            if (listingTypeId.HasValue)
+            if (value != null)
             {
-                url += $"?listingTypeId={listingTypeId.Value}";
-            }
-            var response = await client.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                var jsonData = await response.Content.ReadAsStringAsync();
-                var value = JsonConvert.DeserializeObject<ResultAllForSaleListinForPageDto>(jsonData);
-                if (value != null)
+                if (!string.IsNullOrWhiteSpace(value.PropertyName))
                 {
-                    if (!string.IsNullOrWhiteSpace(value.PropertyName))
-                    {
-                        HttpContext.Items[PageMeta.TitleItemKey] = value.PropertyName;
-                    }
-                    var desc = PageMeta.StripHtmlAndTruncate(value.PropertyDescription, PageMeta.DescriptionMaxLength);
-                    if (!string.IsNullOrWhiteSpace(desc))
-                    {
-                        HttpContext.Items[PageMeta.DescriptionItemKey] = desc;
-                    }
+                    HttpContext.Items[PageMeta.TitleItemKey] = value.PropertyName;
                 }
-                var apiUrl = _configuration["Url:ApiUrl"];
-                ViewBag.ApiUrl = apiUrl;
-                return View(value);
+                var desc = PageMeta.StripHtmlAndTruncate(value.PropertyDescription, PageMeta.DescriptionMaxLength);
+                if (!string.IsNullOrWhiteSpace(desc))
+                {
+                    HttpContext.Items[PageMeta.DescriptionItemKey] = desc;
+                }
             }
-            else if(response==null || response.StatusCode.Equals(500))
-            {
-                 return View(response.StatusCode);
-            }
-            return null;
 
+            ViewBag.ApiUrl = _configuration["Url:ApiUrl"];
+
+            var layout = await FooterContentLoader.LoadAsync(_httpClientFactory, _configuration, _memoryCache);
+            ViewBag.OfficeAddress = layout.Contact?.OfficeAddress;
+
+            return View(value);
         }
     }
 }
