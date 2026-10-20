@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Queries.ForRentalPropertyQueries
 {
-    public class GetForRentalPropertyByIdQuery : IRequest<GetForRentalPropertyDetailResult>
+    public class GetForRentalPropertyByIdQuery : IRequest<GetForRentalPropertyDetailResult?>
     {
         public int Id { get; set; }
         public int? ListingTypeId { get; set; }

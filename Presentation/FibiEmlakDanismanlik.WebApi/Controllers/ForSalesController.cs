@@ -35,6 +35,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         public async Task<IActionResult> GetUnifiedForSalesPropertyById(int id, [FromQuery] int? listingTypeId)
         {
             var value = await _meditor.Send(new GetForSalesPropertyByIdQueries(id, listingTypeId));
+            if (value == null) return NotFound();
             return Ok(value);
         }
         [HttpGet("GetForSaleListingTypeFacets")]

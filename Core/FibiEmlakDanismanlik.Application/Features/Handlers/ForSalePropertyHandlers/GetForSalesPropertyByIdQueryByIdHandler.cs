@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHandlers
 {
-    public class GetForSalesPropertyByIdQueryByIdHandler : IRequestHandler<GetForSalesPropertyByIdQueries, GetAllForSalePropertiesForListingResult>
+    public class GetForSalesPropertyByIdQueryByIdHandler : IRequestHandler<GetForSalesPropertyByIdQueries, GetAllForSalePropertiesForListingResult?>
     {
         private readonly IPropertyRepository _repository;
 
@@ -23,11 +23,14 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHand
             _repository = repository;
         }
 
-        public async Task<GetAllForSalePropertiesForListingResult> Handle(
+        public async Task<GetAllForSalePropertiesForListingResult?> Handle(
             GetForSalesPropertyByIdQueries request,
             CancellationToken cancellationToken)
         {
             var value = await _repository.GetUnifiedForSalePropertyById(request.Id, request.ListingTypeId);
+
+            // İlan bulunamadı, controller 404 döner
+            if (value == null) return null;
 
             var result = new GetAllForSalePropertiesForListingResult
             {
