@@ -9,6 +9,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.CommonPropertyResult
     public class SimilarPropertyItemResult
     {
         public int ListingId { get; set; }
+        public int ListingTypeId { get; set; }
         public string? ListingType { get; set; }
         public string? PropertyName { get; set; }
         public string? PropertyDescription { get; set; }

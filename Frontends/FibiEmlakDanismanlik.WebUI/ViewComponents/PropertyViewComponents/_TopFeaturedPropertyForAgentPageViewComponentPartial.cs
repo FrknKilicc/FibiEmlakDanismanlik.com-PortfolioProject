@@ -60,8 +60,8 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents
                     PropImgUrl1 = x.ImageUrl,
                     PropertyStatusLabel = x.UsageType == 2 ? "Kiralık" : "Satılık",
                     DetailUrl = (x.UsageType == 2
-                        ? Url.Action("Index", "AllForRentalDetailPage", new { id = x.ListingId })
-                        : Url.Action("Index", "AllForSaleDetailPage", new { id = x.ListingId })) ?? "#"
+                        ? Url.Action("Index", "AllForRentalDetailPage", new { id = x.ListingId, listingTypeId = x.ListingTypeId })
+                        : Url.Action("Index", "AllForSaleDetailPage", new { id = x.ListingId, listingTypeId = x.ListingTypeId })) ?? "#"
                 })
                 .ToList();
 

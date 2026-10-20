@@ -36,5 +36,27 @@ namespace FibiEmlakDanismanlik.Application.Helpers
 
             return sb.ToString();
         }
+
+        public static string NormalizeNeighborhood(string? value)
+        {
+            var normalized = Normalize(value);
+            if (string.IsNullOrEmpty(normalized))
+                return string.Empty;
+
+            if (normalized.EndsWith(" MAHALLESI", StringComparison.Ordinal))
+            {
+                normalized = normalized.Substring(0, normalized.Length - " MAHALLESI".Length);
+            }
+            else if (normalized.EndsWith(" MAH.", StringComparison.Ordinal))
+            {
+                normalized = normalized.Substring(0, normalized.Length - " MAH.".Length);
+            }
+            else if (normalized.EndsWith(" MAH", StringComparison.Ordinal))
+            {
+                normalized = normalized.Substring(0, normalized.Length - " MAH".Length);
+            }
+
+            return normalized.Trim();
+        }
     }
 }

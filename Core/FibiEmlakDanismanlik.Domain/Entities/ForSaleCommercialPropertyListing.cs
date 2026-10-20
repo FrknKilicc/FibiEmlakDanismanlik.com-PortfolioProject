@@ -36,6 +36,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string District { get; set; }
         public int? CityId { get; set; }      // Cities.CityId — City metninden otomatik çözülür
         public int? DistrictId { get; set; }  // Districts.DistrictId — District metninden otomatik çözülür
+        public int? NeighborhoodId { get; set; }
         [Required]
         public string Neighborhood { get; set; }//Mahalle
         [Display(Name = "Adres")]

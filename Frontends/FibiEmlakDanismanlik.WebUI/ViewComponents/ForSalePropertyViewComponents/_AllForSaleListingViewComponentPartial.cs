@@ -118,6 +118,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 SelectedAmenityIds = selectedAmenityIds.Any() ? selectedAmenityIds : null,
                 CityId = cityId,
                 DistrictId = districtId,
+                NeighborhoodId = neighborhoodId,
                 City = city,
                 District = district,
                 Neighborhood = neighborhood,
@@ -167,6 +168,26 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                     amenities = respObj.Amenties ?? new();
                     request.Page = page;
                     request.PageSize = pageSize;
+                }
+            }
+
+            var lastPage = (int)Math.Ceiling((double)total / pageSize);
+            if (items.Count == 0 && total > 0 && pageSize > 0 && page > lastPage)
+            {
+                page = lastPage;
+                request.Page = page;
+                body = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+                listResp = await client.PostAsync($"{apiBase}ForSales/filter", body);
+                if (listResp.IsSuccessStatusCode)
+                {
+                    var json = await listResp.Content.ReadAsStringAsync();
+                    var respObj = JsonConvert.DeserializeObject<ForSaleFilterResponseDto>(json);
+                    if (respObj != null)
+                    {
+                        items = respObj.Items ?? new();
+                        total = respObj.Total;
+                        amenities = respObj.Amenties ?? new();
+                    }
                 }
             }
 

@@ -173,22 +173,22 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 - [ ] Html.Raw alanlarına HtmlSanitizer ekle (G4)
 - [ ] Admin paneli eklenince: login ekranı + JWT'nin saklanması (HttpOnly cookie / sunucu tarafı oturum) ve write isteklerinde `Authorization: Bearer` gönderilmesi; süre dolunca yeniden login
 - [ ] Admin paneli eklenince: ilan formunda "Vitrin ilanı" (BestDeals) checkbox'ı; satılık ve kiralıkta ayrı ayrı en fazla 5 (BestDealConstants.MaxPerUsageType) uyarısı. BestDeals şu an sadece Create komutlarında ve ForSaleCommercial Update'te var; diğer Update komutlarına eklenmeli
-- [ ] Detay linklerine ilan türü ekle (id + listingTypeId): şu an detay sayfası yalnızca id ile konut/arsa/ticari tablolarına sırayla bakıyor; çakışma id aralıklarıyla (konut 1M+, arsa 2M+, ticari 3M+) geçici olarak önlendi
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) Detay linklerine ilan türü ekle (id + listingTypeId): şu an detay sayfası yalnızca id ile konut/arsa/ticari tablolarına sırayla bakıyor; çakışma id aralıklarıyla (konut 1M+, arsa 2M+, ticari 3M+) geçici olarak önlendi
 - [x] (2026-10-19) Veri: kırık ilan görselleri yerine `wwwroot/images/listings` altındaki CC0 demo görseller (`CREDITS.md`); gerçek ilan fotoğrafları admin yüklemesiyle gelmeli
 - [ ] Global exception middleware + handler'larda null kontrolü (G9)
-- [ ] PropertyLocationController → Query/Handler/Result (G5)
-- [ ] FluentValidation + MediatR ValidationBehavior pipeline (G6)
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) PropertyLocationController → Query/Handler/Result (G5)
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) FluentValidation + MediatR ValidationBehavior pipeline (G6); validator'lar: CustomerContact, Create/UpdateAgent, Login; ValidationException → 400 (`ExceptionHandlers/ValidationExceptionHandler`). Diğer write komutlarına da validator eklenmeli
 - [ ] ListingImageSelection.ListingTypeId alanı + migration (H1)
 - [x] (2026-10-19, demo veri yenilemesi) Admin: 2 hatalı ilanın ilçesini düzelt (Kayseri-Ayazağa, Giresun-Ceyhan). Bu ikisinde `DistrictId` boş; ilçe düzeltilip kaydedilince SaveChanges ID'yi kendisi doldurur
 - [ ] İlan giriş formunda il/ilçe cascade dropdown
 - [ ] Admin: ana sayfa bölüm görselleri için dosya yükleme ucu (`HomeSectionImages` şu an yalnızca URL alıyor). Karar: dosyalar WebApi `wwwroot/uploads/home-sections` altına yazılsın ve statik sunulsun; depolama bir arayüzün arkasında dursun, ileride blob'a taşınabilsin. Uzantı/MIME/boyut kontrolü yapılsın, dosya adı sunucuda üretilsin, uç `[Authorize]` olsun
-- [ ] Mahalle için `NeighborhoodId`: il/ilçede olduğu gibi (ILocatedListing + SaveChanges çözümlemesi + migration backfill) ilanlara eklensin; filtre şu an mahalleyi metinle eşleştiriyor
-- [ ] `tools/sql/seed-popular-places-demo.sql` doğrudan SQL ile eklediği için yeni demo ilanlarda `CityId`/`DistrictId` boş kalıyor; betiğin sonuna ListingLocationIds migration'ındaki backfill UPDATE'leri eklensin
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) Mahalle için `NeighborhoodId`: il/ilçede olduğu gibi (ILocatedListing + SaveChanges çözümlemesi + migration backfill) ilanlara eklensin; filtre şu an mahalleyi metinle eşleştiriyor
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) `tools/sql/seed-popular-places-demo.sql` doğrudan SQL ile eklediği için yeni demo ilanlarda `CityId`/`DistrictId` boş kalıyor; betiğin sonuna ListingLocationIds migration'ındaki backfill UPDATE'leri eklensin
 - [x] LandCategories tablosunu doldur (2026-10-12, migration ListingIdRangesAndLandCategories)
-- [ ] Teknik borç: kiralık listeleme bellekten DB sorgusuna taşı (T2)
-- [ ] Teknik borç: facet sayaçları null statüyü sayıyor (T3)
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) Teknik borç: kiralık listeleme bellekten DB sorgusuna taşı (T2)
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) Teknik borç: facet sayaçları null statüyü sayıyor (T3)
 - [x] (2026-10-19) localhost:7015 hardcode'ları appsettings'e taşı (G11): benzer ilanlar (satılık/kiralık) ve iletişim formu `Url:ApiUrl` kullanıyor; yalnızca `_SearchFieldSectionComponentPartial` içinde yedek değer olarak kaldı
-- [ ] Kiralık fiyat dönemi: demo veride kira AYLIK kabul edildi; ilan detayında ve harita sayfasında "/ ay" gösteriliyor. Liste kartları, ana sayfa vitrini ve benzer ilan kartlarına da eklenmeli; admin formunda dönem alanı netleşmeli
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) Kiralık fiyat dönemi: demo veride kira AYLIK kabul edildi; ilan detayında ve harita sayfasında "/ ay" gösteriliyor. Liste kartları, ana sayfa vitrini ve benzer ilan kartlarına da eklenmeli; eklendi. Admin formunda dönem alanı hâlâ netleşmeli
 - [ ] Ana sayfa vitrini: kiralık vitrin 5 sınırında dolu (4 işyeri + 1 arsa); yeni işaretlenen ilan en eski işaretliyi düşürür
 - [ ] Repo temizliği: dev'e birleşmiş feature branch'leri (yerel + origin) silinsin mi karar ver; `.claude/launch.json` commit'lenecek mi yoksa .gitignore'a mı eklenecek
 
@@ -206,8 +206,8 @@ Footer (`_FooterLayoutViewComponentPartial`) `AboutUs/1`, `Contact` (ilk kayıt)
 ### İlan verisi ve detay sayfası (2026-10-19)
 Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-refresh.sql` ile yenilendi (gerçek mahalleler, FİBİ emsal m² değerlerinden fiyat, türetilmiş özellikler, CC0 görseller); yakın yerler `tools/sql/nearby-from-osm.ps1` ile OpenStreetMap'ten (Nominatim) dolduruldu. Öncesinin yedeği `bak20261019` şemasında. Detay sayfasındaki "İlan Özellikleri" ortak bileşen: `Models/ListingSpecs` + `Views/Shared/_ListingSpecs.cshtml`; ada/parsel/pafta değerleri bilerek gösterilmez.
 - [ ] `bak20261019` yedek şeması, yeni veri doğrulandıktan sonra silinsin (`DROP` işlemleri onayla)
-- [ ] Kullanılmayan eski partial'lar silinsin: `_ForSaleDetailPropertyDetails_*`, `_ForRentalDetailPropertyDetails_*`, `_AmenitiesListViewComponentPartial` (detay sayfası artık `_ListingSpecs` kullanıyor; başka yerde kullanılmadığı doğrulanmalı)
-- [ ] Benzer ilanlar çok katı (aynı il + fiyat ±%30 + m² ±%30); gerçekçi veride çoğu ilanda boş dönüyor. Sonuç yoksa kademeli gevşetme (önce fiyat, sonra il) eklenmeli
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) Kullanılmayan eski partial'lar silinsin: `_ForSaleDetailPropertyDetails_*`, `_ForRentalDetailPropertyDetails_*`, `_AmenitiesListViewComponentPartial` (detay sayfası artık `_ListingSpecs` kullanıyor; başka yerde kullanılmadığı doğrulanmalı)
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) Benzer ilanlar çok katı (aynı il + fiyat ±%30 + m² ±%30); gerçekçi veride çoğu ilanda boş dönüyor. Sonuç yoksa kademeli gevşetme (önce fiyat, sonra il) eklenmeli
 - [ ] Detay sayfası danışman kutusundaki ofis adresi sabit metin; `Contacts` tablosundan gelmeli
 - [ ] Yakın yerler ilan koordinatı yaklaşık (mahalle merkezi) olduğu için yaklaşık mesafeler; admin kesin pin girince `nearby-from-osm.ps1 -OnlyMissing` (o ilanın kayıtları silinerek) yeniden çalıştırılmalı; ileride sync sağlayıcısına dönüştürülebilir
 - [ ] Demo görseller repo içinde (~9 MB, `wwwroot/images/listings`); gerçek fotoğraflar geldiğinde klasör ve CREDITS kaldırılmalı, yükleme deposu (blob) kararı verilmeli
@@ -248,7 +248,7 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 `ListingsMap` sayfası `GET api/Map/listings` ucundan satılık + kiralık tüm aktif ilanları tek haritada gösterir. Koordinatı olmayan ilanlara `listing-geocode` sağlayıcısı (sync altyapısı, 6 saatte bir) OSM Nominatim ile mahalle > ilçe > il düzeyinde yaklaşık konum yazar (`ListingGeoPoints.Source = nominatim`, `Precision = neighborhood|district|city`); haritada kesikli çerçeveyle gösterilir.
 - [ ] Admin paneli: ilan formunda haritadan kesin pin seçme (Leaflet tıkla/sürükle); kaydedince `ListingGeoPoints` kaydı `Source = manual`, `Precision = building` olarak yaklaşık kaydın yerine yazılsın (şu an `AddGeoPointsAsync` mevcut kaydı ezmiyor, güncelleme ucu ayrıca yazılmalı)
 - [x] (2026-10-19, `tools/sql/demo-listings-refresh.ps1`) Veri: demo ilanların çoğunda mahalle alanı il/ilçeyle uyumsuz (ör. Kadıköy ve Çankaya ilanlarında "Veliefendi"); bu yüzden 68 ilanın 47'si yalnızca ilçe düzeyinde konumlandı. Mahalle düzeltilince ilgili `nominatim` kayıtları silinirse sağlayıcı yeniden konumlar
-- [ ] İlan güncellenip ili/ilçesi/mahallesi değişirse `nominatim` kaynaklı eski koordinat kalıyor; adres değişikliğinde yaklaşık kayıt silinmeli (manuel pin hariç)
+- [x] (2026-10-19, `feature/antigravity-todo-batch1`) İlan güncellenip ili/ilçesi/mahallesi değişirse `nominatim` kaynaklı eski koordinat kalıyor; adres değişikliğinde yaklaşık kayıt silinmeli (manuel pin hariç)
 - [ ] Harita sayfası tüm ilanları tek istekte alıp istemci tarafında filtreliyor (şimdilik 70 ilan); ilan sayısı birkaç bini geçerse `Map/listings` ucunun mevcut `usageType/category/cityId` filtreleri ve harita sınırlarına göre (bbox) sorgu kullanılmalı
 - [ ] Nominatim kullanım politikası: User-Agent'a iletişim bilgisi (site adresi veya e-posta) eklenmeli; canlıda yoğun kullanımda kendi geocoder'ımız veya ücretli servis değerlendirilmeli
 - [ ] Leaflet ve MarkerCluster unpkg CDN'den yükleniyor (detay sayfası da öyle); CDN erişilemezse harita çalışmaz, `wwwroot/lib` altına alınabilir
@@ -280,7 +280,7 @@ Bitti: kademeli emsal şeması + migration (yerel DB'ye uygulandı), mahalle > i
 - BaseEntity yok — her entity kendi Id'sini taşıyor (T10)
 - Soft delete yok — fiziksel silme yapılıyor (T10)
 - ~570 derleme uyarısı, çoğu nullable (CS8618/CS8602/CS8603); yeni kodda yenisi eklenmemeli (T11)
-- Detay sayfası ilanı yalnızca id ile buluyor; tablolar arası çakışma şimdilik identity aralıklarıyla önleniyor (T12, TODO'da)
+- ~~Detay sayfası ilanı yalnızca id ile buluyor (T12)~~ — çözüldü: linkler listingTypeId taşıyor; parametresiz eski linkler için sıralı arama yedek olarak duruyor
 - İlan görselleri harici sitelere hotlink (emlakjet, depositphotos, unsplash); kaynak silinince kırılıyor (T13)
 - Kiralık entity'lerde `ListingTypeId` int?, satılıklarda int — tutarsız (T14)
 - `GetUnifiedForSale/RentalPropertyById` ve listeleme sorguları PropertyRepository içinde tekrar ediyor; BestDealRepository ayrı tutuldu (T1 ile birlikte ele alınmalı)

@@ -1,5 +1,6 @@
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Results.LocationResults;
+using FibiEmlakDanismanlik.Application.Features.Results.PropertyLocationResults;
 using FibiEmlakDanismanlik.Application.Interfaces.LocationInterfaces;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
@@ -192,6 +193,264 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.LocationRepositories
                 .OrderBy(d => d.Name)
                 .Select(d => new LocationOptionResult(d.DistrictId, d.Name))
                 .ToListAsync();
+        }
+
+        public async Task<List<string>> GetListingCitiesAsync(int usageType)
+        {
+            if (usageType == (int)UsageType.ForSale)
+            {
+                return await _context.forSaleHousingPropertyListings.AsNoTracking().Select(x => x.City)
+                    .Union(_context.forSaleLandListings.AsNoTracking().Select(x => x.City))
+                    .Union(_context.forSaleCommercialPropertyListings.AsNoTracking().Select(x => x.City))
+                    .Distinct()
+                    .ToListAsync();
+            }
+
+            if (usageType == (int)UsageType.ForRent)
+            {
+                return await _context.rentalHousingListings.AsNoTracking().Select(x => x.City)
+                    .Union(_context.rentalLandListings.AsNoTracking().Select(x => x.City))
+                    .Union(_context.rentalCommercialPropertyListings.AsNoTracking().Select(x => x.City))
+                    .Distinct()
+                    .ToListAsync();
+            }
+
+            return new List<string>();
+        }
+
+        public async Task<GetFilteredPropertyLocationListingsResponse> GetFilteredListingsByLocationAsync(
+            int usageType,
+            int listingTypeId,
+            string? location,
+            string? keyword)
+        {
+            var listingType = await _context.listingTypes.AsNoTracking().FirstOrDefaultAsync(x => x.ListingTypeId == listingTypeId);
+            if (listingType == null)
+            {
+                return new GetFilteredPropertyLocationListingsResponse
+                {
+                    ListingTypeFound = false,
+                    IsValidCombination = false,
+                    Items = new List<GetFilteredPropertyLocationListingResult>()
+                };
+            }
+
+            var propertyListingType = (PropertyListingType)listingTypeId;
+
+            if (usageType == (int)UsageType.ForSale)
+            {
+                switch (propertyListingType)
+                {
+                    case PropertyListingType.ForSaleLandListing:
+                    {
+                        var query = _context.forSaleLandListings.AsNoTracking();
+                        if (!string.IsNullOrEmpty(location))
+                            query = query.Where(x => x.City.Contains(location));
+                        if (!string.IsNullOrEmpty(keyword))
+                            query = query.Where(x => x.PropertyName.Contains(keyword));
+
+                        var items = await query.Select(x => new GetFilteredPropertyLocationListingResult
+                        {
+                            ListingId = x.ForSaleLandListingId,
+                            ListingTypeId = x.ListingTypeId,
+                            PropertyName = x.PropertyName,
+                            PropertyDescription = x.PropertyDescription,
+                            City = x.City,
+                            District = x.District,
+                            Neighborhood = x.Neighborhood,
+                            Price = x.Price,
+                            CoverImageUrl = x.PropImgUrl1,
+                            PropertyStatus = x.PropertyStatus
+                        }).ToListAsync();
+
+                        return new GetFilteredPropertyLocationListingsResponse
+                        {
+                            ListingTypeFound = true,
+                            IsValidCombination = true,
+                            Items = items
+                        };
+                    }
+
+                    case PropertyListingType.ForSaleHousingListing:
+                    {
+                        var query = _context.forSaleHousingPropertyListings.AsNoTracking();
+                        if (!string.IsNullOrEmpty(location))
+                            query = query.Where(x => x.City.Contains(location));
+                        if (!string.IsNullOrEmpty(keyword))
+                            query = query.Where(x => x.PropertyName.Contains(keyword));
+
+                        var items = await query.Select(x => new GetFilteredPropertyLocationListingResult
+                        {
+                            ListingId = x.ForSaleHousingListId,
+                            ListingTypeId = x.ListingTypeId,
+                            PropertyName = x.PropertyName,
+                            PropertyDescription = x.PropertyDescription,
+                            City = x.City,
+                            District = x.District,
+                            Neighborhood = x.Neighborhood,
+                            Price = x.Price,
+                            CoverImageUrl = x.PropImgUrl1,
+                            PropertyStatus = x.PropertyStatus
+                        }).ToListAsync();
+
+                        return new GetFilteredPropertyLocationListingsResponse
+                        {
+                            ListingTypeFound = true,
+                            IsValidCombination = true,
+                            Items = items
+                        };
+                    }
+
+                    case PropertyListingType.ForSaleCommercialPropertyListing:
+                    {
+                        var query = _context.forSaleCommercialPropertyListings.AsNoTracking();
+                        if (!string.IsNullOrEmpty(location))
+                            query = query.Where(x => x.City.Contains(location));
+                        if (!string.IsNullOrEmpty(keyword))
+                            query = query.Where(x => x.PropertyName.Contains(keyword));
+
+                        var items = await query.Select(x => new GetFilteredPropertyLocationListingResult
+                        {
+                            ListingId = x.ForSaleCommercialListingId,
+                            ListingTypeId = x.ListingTypeId,
+                            PropertyName = x.PropertyName,
+                            PropertyDescription = x.PropertyDescription,
+                            City = x.City,
+                            District = x.District,
+                            Neighborhood = x.Neighborhood,
+                            Price = x.Price,
+                            CoverImageUrl = x.PropImgUrl1,
+                            PropertyStatus = x.PropertyStatus
+                        }).ToListAsync();
+
+                        return new GetFilteredPropertyLocationListingsResponse
+                        {
+                            ListingTypeFound = true,
+                            IsValidCombination = true,
+                            Items = items
+                        };
+                    }
+
+                    default:
+                        return new GetFilteredPropertyLocationListingsResponse
+                        {
+                            ListingTypeFound = true,
+                            IsValidCombination = false,
+                            Items = new List<GetFilteredPropertyLocationListingResult>()
+                        };
+                }
+            }
+
+            if (usageType == (int)UsageType.ForRent)
+            {
+                switch (propertyListingType)
+                {
+                    case PropertyListingType.RentalLandListing:
+                    {
+                        var query = _context.rentalLandListings.AsNoTracking();
+                        if (!string.IsNullOrEmpty(location))
+                            query = query.Where(x => x.City.Contains(location));
+                        if (!string.IsNullOrEmpty(keyword))
+                            query = query.Where(x => x.PropertyName.Contains(keyword));
+
+                        var items = await query.Select(x => new GetFilteredPropertyLocationListingResult
+                        {
+                            ListingId = x.RentalLandListingId,
+                            ListingTypeId = x.ListingTypeId ?? 0,
+                            PropertyName = x.PropertyName,
+                            PropertyDescription = x.PropertyDescription,
+                            City = x.City,
+                            District = x.District,
+                            Neighborhood = x.Neighborhood,
+                            Price = x.Rent,
+                            CoverImageUrl = x.PropImgUrl1,
+                            PropertyStatus = x.PropertyStatus
+                        }).ToListAsync();
+
+                        return new GetFilteredPropertyLocationListingsResponse
+                        {
+                            ListingTypeFound = true,
+                            IsValidCombination = true,
+                            Items = items
+                        };
+                    }
+
+                    case PropertyListingType.RentalHousingListing:
+                    {
+                        var query = _context.rentalHousingListings.AsNoTracking();
+                        if (!string.IsNullOrEmpty(location))
+                            query = query.Where(x => x.City.Contains(location));
+                        if (!string.IsNullOrEmpty(keyword))
+                            query = query.Where(x => x.PropertyName.Contains(keyword));
+
+                        var items = await query.Select(x => new GetFilteredPropertyLocationListingResult
+                        {
+                            ListingId = x.RentalHousingListId,
+                            ListingTypeId = x.ListingTypeId ?? 0,
+                            PropertyName = x.PropertyName,
+                            PropertyDescription = x.PropertyDescription,
+                            City = x.City,
+                            District = x.District,
+                            Neighborhood = x.Neighborhood,
+                            Price = x.Rent,
+                            CoverImageUrl = x.PropImgUrl1,
+                            PropertyStatus = x.PropertyStatus
+                        }).ToListAsync();
+
+                        return new GetFilteredPropertyLocationListingsResponse
+                        {
+                            ListingTypeFound = true,
+                            IsValidCombination = true,
+                            Items = items
+                        };
+                    }
+
+                    case PropertyListingType.RentalCommercialPropertyListing:
+                    {
+                        var query = _context.rentalCommercialPropertyListings.AsNoTracking();
+                        if (!string.IsNullOrEmpty(location))
+                            query = query.Where(x => x.City.Contains(location));
+                        if (!string.IsNullOrEmpty(keyword))
+                            query = query.Where(x => x.PropertyName.Contains(keyword));
+
+                        var items = await query.Select(x => new GetFilteredPropertyLocationListingResult
+                        {
+                            ListingId = x.RentalCommercialListId,
+                            ListingTypeId = x.ListingTypeId ?? 0,
+                            PropertyName = x.PropertyName,
+                            PropertyDescription = x.PropertyDescription,
+                            City = x.City,
+                            District = x.District,
+                            Neighborhood = x.Neighborhood,
+                            Price = x.Rent,
+                            CoverImageUrl = x.PropImgUrl1,
+                            PropertyStatus = x.PropertyStatus
+                        }).ToListAsync();
+
+                        return new GetFilteredPropertyLocationListingsResponse
+                        {
+                            ListingTypeFound = true,
+                            IsValidCombination = true,
+                            Items = items
+                        };
+                    }
+
+                    default:
+                        return new GetFilteredPropertyLocationListingsResponse
+                        {
+                            ListingTypeFound = true,
+                            IsValidCombination = false,
+                            Items = new List<GetFilteredPropertyLocationListingResult>()
+                        };
+                }
+            }
+
+            return new GetFilteredPropertyLocationListingsResponse
+            {
+                ListingTypeFound = true,
+                IsValidCombination = false,
+                Items = new List<GetFilteredPropertyLocationListingResult>()
+            };
         }
     }
 }

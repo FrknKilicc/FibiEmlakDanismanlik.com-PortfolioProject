@@ -154,7 +154,7 @@
                         <div class="inner-box">
                             <div class="image-box">
                                 <figure class="image">
-                                    <a asp-controller="AllForSaleDetailPage" asp-action="Index" asp-route-id="@item.ListingId">
+                                    <a asp-controller="AllForSaleDetailPage" asp-action="Index" asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId">
                                         <img src="@propImgUrl" alt="@propName" width="370" height="278" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/Realshed/assets/images/background/Section1.jpeg';">
                                     </a>
                                 </figure>
@@ -183,7 +183,7 @@
                                 </div>
                                 <div class="title-text">
                                     <h4>
-                                        <a asp-controller="AllForSaleDetailPage" asp-action="Index" asp-route-id="@item.ListingId" title="@propName">@propName</a>
+                                        <a asp-controller="AllForSaleDetailPage" asp-action="Index" asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId" title="@propName">@propName</a>
                                     </h4>
                                 </div>
                                 @if (!string.IsNullOrEmpty(locationText))
@@ -207,7 +207,7 @@
                                     </ul>
                                 }
                                 <div class="btn-box">
-                                    <a asp-controller="AllForSaleDetailPage" asp-action="Index" asp-route-id="@item.ListingId" class="theme-btn btn-two">İlan Detayı</a>
+                                    <a asp-controller="AllForSaleDetailPage" asp-action="Index" asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId" class="theme-btn btn-two">İlan Detayı</a>
                                 </div>
                             </div>
                         </div>

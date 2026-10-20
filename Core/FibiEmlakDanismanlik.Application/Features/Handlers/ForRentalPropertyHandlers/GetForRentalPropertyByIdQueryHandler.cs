@@ -22,7 +22,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForRentalPropertyHa
 
         public async Task<GetForRentalPropertyDetailResult> Handle(GetForRentalPropertyByIdQuery request, CancellationToken cancellationToken)
         {
-            var value = await _repository.GetUnifiedForRentalPropertyById(request.Id);
+            var value = await _repository.GetUnifiedForRentalPropertyById(request.Id, request.ListingTypeId);
 
             var result = new GetForRentalPropertyDetailResult
             {

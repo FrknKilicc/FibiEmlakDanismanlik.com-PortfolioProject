@@ -10,7 +10,13 @@ namespace FibiEmlakDanismanlik.Application.Features.Queries.ForRentalPropertyQue
 {
     public class GetForRentalPropertyByIdQuery : IRequest<GetForRentalPropertyDetailResult>
     {
-        public int Id { get; }
-        public GetForRentalPropertyByIdQuery(int id) => Id = id;
+        public int Id { get; set; }
+        public int? ListingTypeId { get; set; }
+
+        public GetForRentalPropertyByIdQuery(int id, int? listingTypeId = null)
+        {
+            Id = id;
+            ListingTypeId = listingTypeId;
+        }
     }
 }

@@ -287,3 +287,73 @@ price-range alanı */
 .fibi-result-col .fibi-map-view-btn:hover { background: #2dbe6c; border-color: #2dbe6c; color: #fff; }
 .fibi-result-col .fibi-map-view-btn:hover i { color: #fff; }
 
+/* İlan Kartları - Eşit Yükseklik ve Hizalama */
+.deals-grid-content > .row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.deals-grid-content .feature-block {
+    display: flex;
+}
+
+.deals-grid-content .feature-block-one {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.deals-grid-content .feature-block-one .inner-box {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+
+.deals-grid-content .feature-block-one .inner-box .image-box .image img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+}
+
+.deals-grid-content .feature-block-one .lower-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+
+.deals-grid-content .feature-block-one .lower-content .title-text h4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 56px;
+}
+
+.deals-grid-content .feature-block-one .lower-content .title-text h4 a {
+    display: inline;
+}
+
+.deals-grid-content .feature-block-one .lower-content > p {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 78px;
+}
+
+.deals-grid-content .feature-block-one .lower-content .more-details li {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.deals-grid-content .feature-block-one .lower-content .more-details li i {
+    font-size: 15px;
+    color: #93959e;
+}
+
+.deals-grid-content .feature-block-one .lower-content .btn-box {
+    margin-top: auto;
+}
+
+

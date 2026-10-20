@@ -1,5 +1,7 @@
-﻿using FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces;
+﻿using FibiEmlakDanismanlik.Application.Behaviors;
+using FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces;
 using FibiEmlakDanismanlik.Application.Services.FibiServices;
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -15,7 +17,12 @@ namespace FibiEmlakDanismanlik.Application.Services
     {
         public static void AddApplicationService(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(ServicesRegistiration).Assembly));
+            services.AddMediatR(x =>
+            {
+                x.RegisterServicesFromAssembly(typeof(ServicesRegistiration).Assembly);
+                x.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            });
+            services.AddValidatorsFromAssembly(typeof(ServicesRegistiration).Assembly);
             services.AddAutoMapper(typeof(ServicesRegistiration).Assembly);
             services.AddScoped<IFibiMarketContextService, FibiMarketContextService>();
             services.AddScoped<IMarketDataSyncRunner, MarketDataSyncRunner>();

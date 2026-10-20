@@ -1,5 +1,9 @@
 ﻿@model List<FibiEmlakDanismanlik.WebUI.Models.AgentFeaturedPropertySidebarVm>
 
+<style>
+    .price-info .price-period { font-size: 14px; font-weight: 500; color: #93959e; }
+</style>
+
 <div class="widget-title">
     <h5>Vitrin İlanları</h5>
 </div>
@@ -39,7 +43,14 @@
                         <div class="price-box clearfix">
                             <div class="price-info">
                                 <h6>@item.PropertyStatusLabel</h6>
-                                <h4>@item.Price.ToString("N0") ₺</h4>
+                                @if (item.PropertyStatusLabel == "Kiralık")
+                                {
+                                    <h4>@item.Price.ToString("N0") ₺ <span class="price-period">/ ay</span></h4>
+                                }
+                                else
+                                {
+                                    <h4>@item.Price.ToString("N0") ₺</h4>
+                                }
                             </div>
                         </div>
 

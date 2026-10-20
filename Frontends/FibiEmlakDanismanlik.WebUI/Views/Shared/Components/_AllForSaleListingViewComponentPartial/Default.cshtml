@@ -233,18 +233,14 @@
                                                     </div>
                                                 <div class="title-text">
                                                     <h4>
-                                                        <a asp-action="Index" asp-controller="AllForSaleDetailPage" asp-route-id="@item.ListingId">
-                                                            @(string.IsNullOrWhiteSpace(item.PropertyName)
-                                                                                                                        ? "İlan Başlığı"
-                                                                                                                        : item.PropertyName.Length > 45
-                                                                                                                        ? item.PropertyName.Substring(0, 45) + "..."
-                                                                                                                        : item.PropertyName)
+                                                        <a asp-action="Index" asp-controller="AllForSaleDetailPage" asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId" title="@item.PropertyName">
+                                                            @(string.IsNullOrWhiteSpace(item.PropertyName) ? "İlan Başlığı" : item.PropertyName)
                                                         </a>
                                                     </h4>
                                                 </div>
                                                     <div class="price-box clearfix">
                                                         <div class="price-info pull-left">
-                                                            <h6>Fiyat</h6>
+                                                             <h6>Fiyat</h6>
                                                             <h4>@item.Price.ToString("N0") TL</h4>
                                                         </div>
                                                         @{
@@ -277,8 +273,8 @@
                                                     </div>
                                                     @{
                                                         var desc = item.PropertyDescription ?? "";
-                                                        var shortDesc = desc.Length > 90
-                                                        ? desc.Substring(0, 90) + "..."
+                                                        var shortDesc = desc.Length > 160
+                                                        ? desc.Substring(0, 160) + "..."
                                                         : desc;
                                                     }
                                                     <p>@shortDesc</p>
@@ -287,10 +283,10 @@
                                                 <ul class="more-details clearfix">
                                                     @foreach (var h in (item.Highlights ?? new List<ResultCardHighlightDto>()).Take(3))
                                                         {
-                                                            <li><i class="@h.Icon"></i>@h.Text</li>
+                                                            <li title="@h.Text"><i class="@h.Icon"></i>@h.Text</li>
                                                         }
                                                     </ul>
-                                                    <div class="btn-box"><a asp-route-id="@item.ListingId" asp-controller="AllForSaleDetailPage" asp-action="Index" class="theme-btn btn-two">İlan Detayı</a></div>
+                                                    <div class="btn-box"><a asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId" asp-controller="AllForSaleDetailPage" asp-action="Index" class="theme-btn btn-two">İlan Detayı</a></div>
                                                 </div>
                                             </div>
                                         </div>

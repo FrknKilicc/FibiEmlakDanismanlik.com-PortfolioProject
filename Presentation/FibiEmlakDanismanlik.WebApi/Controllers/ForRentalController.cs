@@ -45,9 +45,9 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         }
 
         [HttpGet("GetUnifiedForRentalPropertyById/{id}")]
-        public async Task<IActionResult> GetUnifiedForRentalPropertyById(int id)
+        public async Task<IActionResult> GetUnifiedForRentalPropertyById(int id, [FromQuery] int? listingTypeId)
         {
-            var value = await mediator.Send(new GetForRentalPropertyByIdQuery(id));
+            var value = await mediator.Send(new GetForRentalPropertyByIdQuery(id, listingTypeId));
             return Ok(value);
         }
         [HttpGet("GetSimilarForRentalProperties/{id}")]
