@@ -3,11 +3,11 @@
 <section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
     <div class="auto-container">
         <div class="content-box clearfix">
-            <h1>Satılık İlanlar</h1>
+            <h1>@Model.PropertyName</h1>
             <ul class="bread-crumb clearfix">
                 <li><a href="@Url.Action("Index","UILayout")">Anasayfa</a></li>
                 <li><a href="@Url.Action("Index","AllForSalePage")">Satılık İlanlar</a></li>
-                <li>İlan Detayı</li>
+                <li>@Model.PropertyName</li>
             </ul>
         </div>
     </div>
@@ -18,7 +18,7 @@
     <div class="auto-container">
         <div class="top-details clearfix">
             <div class="left-column pull-left clearfix">
-                <h3>@Model.PropertyName</h3>
+                <h3>@Model.PropertyName@if (string.Equals(Model.PropertyStatus?.Trim(), "Opsiyonlu", StringComparison.OrdinalIgnoreCase)) { <span class="listing-status-badge listing-status-badge--inline" title="Bu ilan için opsiyon verildi">Opsiyonlu</span> }</h3>
                 <div class="author-info clearfix">
                     <div class="author-box pull-left">
                         <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt=""></figure>

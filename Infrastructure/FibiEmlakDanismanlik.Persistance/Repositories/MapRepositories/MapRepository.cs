@@ -23,7 +23,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
             _context = context;
         }
 
-        public async Task<ListingMarkerResult> GetListingMarkerAsync(int listingId, int listingTypeId)
+        public async Task<ListingMarkerResult?> GetListingMarkerAsync(int listingId, int listingTypeId)
         {
             var lt = await _context.listingTypes.FirstOrDefaultAsync(x => x.ListingTypeId == listingTypeId);
             if (lt == null) return null;

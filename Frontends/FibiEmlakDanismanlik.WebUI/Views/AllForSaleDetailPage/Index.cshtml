@@ -1,6 +1,6 @@
 ﻿   @model ResultAllForSaleListinForPageDto
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Satılık İlan Detayı";
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
 @await Component.InvokeAsync("_AllForSaleDetailPageViewComponentPartial", new { id = Model.ListingId, listingTypeId = Model.ListingTypeId > 0 ? Model.ListingTypeId : (int?)null })

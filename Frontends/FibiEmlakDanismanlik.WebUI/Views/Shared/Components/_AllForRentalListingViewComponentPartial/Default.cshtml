@@ -214,6 +214,10 @@
                                                             <div class="batch"><i class="icon-11"></i></div>
                                                             <span class="category">En İyi Fiyat</span>
                                                         }
+                                                        @if (string.Equals(item.PropertyStatus?.Trim(), "Opsiyonlu", StringComparison.OrdinalIgnoreCase))
+                                                        {
+                                                            <span class="listing-status-badge" title="Bu ilan için opsiyon verildi">Opsiyonlu</span>
+                                                        }
                                                     </div>
 
                                                     <div class="lower-content">
@@ -377,5 +381,3 @@
             color: #fff !important;
         }
 </style>
-
-

@@ -1,0 +1,47 @@
+﻿@model FibiEmlakDanismanlik.WebUI.Models.Footer.FooterViewModel
+
+<div class="mobile-menu">
+    <div class="menu-backdrop"></div>
+    <div class="close-btn"><i class="fas fa-times"></i></div>
+
+    <nav class="menu-box">
+        <div class="nav-logo">
+            <a href="@Url.Action("Index", "UILayout")">
+                <img src="/Realshed/assets/images/FibiLogo.png" alt="Fibi Emlak">
+            </a>
+        </div>
+        <div class="menu-outer"><!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header--></div>
+        @if (Model.Contact != null)
+        {
+            var email = Model.Contact.EMail1?.ToLowerInvariant();
+            <div class="contact-info">
+                <h4>İletişim Bilgisi</h4>
+                <ul>
+                    @if (!string.IsNullOrWhiteSpace(Model.Contact.OfficeAddress))
+                    {
+                        <li>@Model.Contact.OfficeAddress</li>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.PhoneDisplay))
+                    {
+                        <li><a href="@Model.PhoneHref">@Model.PhoneDisplay</a></li>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(email))
+                    {
+                        <li><a href="mailto:@email">@email</a></li>
+                    }
+                </ul>
+            </div>
+        }
+        @if (Model.SocialMedias.Any())
+        {
+            <div class="social-links">
+                <ul class="clearfix">
+                    @foreach (var item in Model.SocialMedias)
+                    {
+                        <li><a href="@item.Url" target="_blank" rel="noopener" title="@item.Name" aria-label="@item.Name"><span class="@item.Icon"></span></a></li>
+                    }
+                </ul>
+            </div>
+        }
+    </nav>
+</div>
