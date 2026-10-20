@@ -260,6 +260,22 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [ ] API'deki diğer GetById handler'ları da kayıt yoksa null kontrolsüz olabilir (ör. blog detayı); G9 kapsamında taranmalı
 - [ ] Veri: `Contacts.PhoneNumber2` = `PhoneNumber1` (iletişim sayfasında aynı numara iki kez), `EMail2` kişisel Gmail (`fibiinfo@gmail.com`)
 - [ ] Kozmetik: uzun ilan adlarında detay sayfası üst başlığı iki satıra iniyor; 404 sayfasında mobilde "404" yazısı sabit header'a çok yakın
+- [ ] Veri: `Contacts.EMail1` iletişim sayfasında olduğu gibi `info@fibiEmlak.com` (büyük harfli) görünüyor; link küçük harfe çevriliyor ama kayıt düzeltilmeli
+- [ ] Ana sayfadaki bülten aboneliği formu tema kalıntısı (`UILayout/Index.cshtml`, `action="contact.html"`): çalışmıyor; ya gerçek bir abonelik ucuna (KVKK onayı + spam koruması ile) bağlanmalı ya kaldırılmalı
+- [ ] Blog detayında yazar adı linki tema kalıntısı (`href="blog-details.html"`); yazarın yazılarına filtreli blog listesine gitmeli ya da link kaldırılmalı
+- [ ] İletişim sayfasındaki "harita" aslında harici bir stok fotoğraf (pexels hotlink); ofis konumu gerçek harita (Leaflet, ilan detayındaki gibi) ile gösterilmeli
+- [ ] Bu branch dev'e birleştirilmedi; aşağıdaki testlerden sonra kullanıcı onayıyla birleştirilip push edilecek
+
+**Elle test listesi (bu branch için, kullanıcı 2026-10-21'de yapacak)**
+- [ ] Eski ilan linki (`/AllForSaleDetailPage/Index/{id}?listingTypeId=..`) yeni adrese 301 ile gidiyor; tarayıcı adres çubuğunda okunabilir adres görünüyor
+- [ ] Satılık ve kiralık her ilan türünde (konut, arsa, işyeri) detay açılıyor; olmayan id Türkçe 404 sayfası veriyor
+- [ ] Ana sayfa vitrini, sıcak fırsatlar, liste sayfaları, benzer ilanlar, danışman sayfası ve harita popup'larındaki ilan linkleri doğru ilana gidiyor
+- [ ] Sayfa kaynağında `<link rel="canonical">` ve ilan detayında `application/ld+json` var; filtreli liste sayfasında canonical filtresiz
+- [ ] İletişim formu: gönderim başarılı mesajı, kayıt `customerContacts` tablosunda; 5 gönderimden sonra (10 dk) "çok fazla deneme" uyarısı
+- [ ] İlan detayında randevu formu: gönderim sonrası aynı ilana dönüyor, toastr mesajı çıkıyor
+- [ ] İletişim sayfası telefon/e-posta linkleri telefonda tıklanınca arama/e-posta açıyor
+- [ ] Footer'da "Devamını Oku" yeşil, blog küçük görselleri kare; blog detayında sekme başlığı yazının adı
+- [ ] VS ile çalıştırırken (WebUI 5146, API 7015) harita sayfası ilanları gösteriyor
 
 ### Haritada İlanlar (2026-10-19, branch `feature/antigravity-listings-map`)
 `ListingsMap` sayfası `GET api/Map/listings` ucundan satılık + kiralık tüm aktif ilanları tek haritada gösterir. Koordinatı olmayan ilanlara `listing-geocode` sağlayıcısı (sync altyapısı, 6 saatte bir) OSM Nominatim ile mahalle > ilçe > il düzeyinde yaklaşık konum yazar (`ListingGeoPoints.Source = nominatim`, `Precision = neighborhood|district|city`); haritada kesikli çerçeveyle gösterilir.
