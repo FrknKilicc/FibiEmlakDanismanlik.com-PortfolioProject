@@ -48,7 +48,8 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.UILayoutComponents
             {
                 Title = title,
                 Description = description,
-                CanonicalUrl = canonicalUrl
+                CanonicalUrl = canonicalUrl,
+                Robots = (ViewData["Robots"] as string) ?? string.Empty
             });
         }
     }

@@ -58,8 +58,6 @@
                         @foreach (var item in panel.Items)
                         {
                             var detailUrl = ListingUrl.DetailPath(isRent, item.ListingId, item.ListingTypeId, null, item.PropertyName, item.District);
-                                
-                                
 
                             var locParts = new List<string>();
                             if (!string.IsNullOrWhiteSpace(item.District))

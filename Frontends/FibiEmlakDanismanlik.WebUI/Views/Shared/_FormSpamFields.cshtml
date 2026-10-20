@@ -1,0 +1,8 @@
+﻿@inject FibiEmlakDanismanlik.WebUI.Services.FormSpamGuard SpamGuard
+
+<div class="fibi-hp" aria-hidden="true"><label>Web siteniz <input type="text" name="Website" tabindex="-1" autocomplete="off" value=""></label></div>
+@if (SpamGuard.CaptchaEnabled)
+{
+    <div class="cf-turnstile" data-sitekey="@SpamGuard.CaptchaSiteKey" data-language="tr"></div>
+    <script src="@SpamGuard.CaptchaScriptUrl" async defer></script>
+}

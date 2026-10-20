@@ -1,6 +1,5 @@
-﻿    
-@model List<ResultContactDto>    
-
+﻿@using FibiEmlakDanismanlik.WebUI.Models
+@model List<ResultContactDto>
 
 <!--Page Title-->
 <section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
@@ -22,43 +21,74 @@
             <h5>Bizimle İletişime geç</h5>
             <h2>İletişim Adresleri</h2>
         </div>
-        @foreach(var item in Model)
+        @foreach (var item in Model ?? new List<ResultContactDto>())
         {
-             <div class="row clearfix">
-            <div class="col-lg-4 col-md-6 col-sm-12 info-block">
-                <div class="info-block-one">
-                    <div class="inner-box">
-                        <div class="icon-box"><i class="icon-32"></i></div>
-                        <h4>Email Address</h4>
-                            <p><a href="mailto:info@example.com">@item.EMail1</a><br /><a href="mailto:info@example.com">@item.EMail2</a></p>
+            var hasEmail1 = !string.IsNullOrWhiteSpace(item.EMail1);
+            var hasEmail2 = !string.IsNullOrWhiteSpace(item.EMail2);
+            var email1 = (item.EMail1 ?? string.Empty).Trim().ToLowerInvariant();
+            var email2 = (item.EMail2 ?? string.Empty).Trim().ToLowerInvariant();
+
+            var p1 = PhoneFormatter.Format(item.PhoneNumber1);
+            var p2 = PhoneFormatter.Format(item.PhoneNumber2);
+            var hasPhone1 = !string.IsNullOrWhiteSpace(p1.Display);
+            var hasPhone2 = !string.IsNullOrWhiteSpace(p2.Display);
+
+            <div class="row clearfix">
+                <div class="col-lg-4 col-md-6 col-sm-12 info-block">
+                    <div class="info-block-one">
+                        <div class="inner-box">
+                            <div class="icon-box"><i class="icon-32"></i></div>
+                            <h4>E-posta</h4>
+                            <p>
+                                @if (hasEmail1)
+                                {
+                                    <a href="mailto:@email1">@item.EMail1</a>
+                                }
+                                @if (hasEmail1 && hasEmail2)
+                                {
+                                    <br />
+                                }
+                                @if (hasEmail2)
+                                {
+                                    <a href="mailto:@email2">@item.EMail2</a>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12 info-block">
+                    <div class="info-block-one">
+                        <div class="inner-box">
+                            <div class="icon-box"><i class="icon-33"></i></div>
+                            <h4>Telefon</h4>
+                            <p>
+                                @if (hasPhone1)
+                                {
+                                    <a href="@p1.Href">@p1.Display</a>
+                                }
+                                @if (hasPhone1 && hasPhone2)
+                                {
+                                    <br />
+                                }
+                                @if (hasPhone2)
+                                {
+                                    <a href="@p2.Href">@p2.Display</a>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-12 info-block">
+                    <div class="info-block-one">
+                        <div class="inner-box" style="height:344px;">
+                            <div class="icon-box"><i class="icon-34"></i></div>
+                            <h4>Ofis Adresi</h4>
+                            <p>@item.OfficeAddress <br />Türkiye</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6 col-sm-12 info-block">
-                <div class="info-block-one">
-                    <div class="inner-box">
-                        <div class="icon-box"><i class="icon-33"></i></div>
-                        <h4>Telefon</h4>
-                            <p><a href="tel:+23055873407">+(90)@item.PhoneNumber1</a><br /><a href="tel:+23055873408">+(90)@item.PhoneNumber2</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 col-sm-12 info-block">
-                <div class="info-block-one">
-                    <div class="inner-box" style="height:344px;">
-                        <div class="icon-box"><i class="icon-34"></i></div>
-                        <h4>Ofis Adresi</h4>
-                        <p>@item.OfficeAddress <br />Türkiye</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-            
         }
-       
     </div>
 </section>
 <!-- contact-info-section end -->
-<!-- contact-section -->
-
-<!-- contact-section end -->

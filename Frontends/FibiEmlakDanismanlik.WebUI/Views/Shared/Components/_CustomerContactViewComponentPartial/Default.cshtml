@@ -25,18 +25,13 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 form-group">
                                     <textarea name="CustomerContactMessage" placeholder="Mesajınızı Buraya Yazın"></textarea>
                                 </div>
+                                <partial name="_FormSpamFields" />
                                 <div class="col-lg-12 col-md-12 col-sm-12 form-group message-btn">
-                                    <button class="theme-btn btn-one" type="submit"name="submit-form">Gönder</button>
+                                    <button class="theme-btn btn-one" type="submit" name="submit-form">Gönder</button>
                                 </div>
                             </div>
                         </form>
                     </div>
-                    @if (!string.IsNullOrEmpty(ViewBag.Message))
-                    {
-                        <div class="alert alert-success">
-                            @ViewBag.Message
-                        </div>
-                    }
                 </div>
             </div>
             <div class="col-lg-6 col-md-12 col-sm-12 map-column">

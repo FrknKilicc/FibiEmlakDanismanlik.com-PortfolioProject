@@ -6,6 +6,10 @@
 <title>@Model.Title</title>
 <meta name="description" content="@Model.Description">
 <link rel="canonical" href="@Model.CanonicalUrl">
+@if (!string.IsNullOrWhiteSpace(Model.Robots))
+{
+    <meta name="robots" content="@Model.Robots">
+}
 
 <!-- Fav Icon -->
 <link rel="icon" href="/Realshed/assets/images/favicon.ico" type="image/x-icon">

@@ -62,7 +62,9 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.UILayoutComponents
                 {
                     var contact = contacts[0];
                     model.Contact = contact;
-                    FormatPhone(model, contact.PhoneNumber1);
+                    var (display, href) = PhoneFormatter.Format(contact.PhoneNumber1);
+                    model.PhoneDisplay = display;
+                    model.PhoneHref = href;
                     anySuccess = true;
                 }
             }
@@ -137,36 +139,6 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.UILayoutComponents
                 // İstek başarısız olursa null dön
             }
             return null;
-        }
-
-        /// <summary>
-        /// Telefon numarasını biçimlendirir: display ve href alanlarını doldurur.
-        /// </summary>
-        private static void FormatPhone(FooterViewModel model, string? phoneNumber)
-        {
-            if (string.IsNullOrWhiteSpace(phoneNumber))
-                return;
-
-            var digits = new string(phoneNumber.Where(char.IsDigit).ToArray());
-
-            if (digits.Length == 11 && digits.StartsWith('0'))
-            {
-                // 0XXX XXX XX XX
-                model.PhoneDisplay = $"0{digits[1..4]} {digits[4..7]} {digits[7..9]} {digits[9..11]}";
-                model.PhoneHref = $"tel:+90{digits[1..]}";
-            }
-            else if (digits.Length == 10)
-            {
-                // Başına 0 ekleyerek aynı biçim
-                model.PhoneDisplay = $"0{digits[0..3]} {digits[3..6]} {digits[6..8]} {digits[8..10]}";
-                model.PhoneHref = $"tel:+90{digits}";
-            }
-            else
-            {
-                // Diğer durumlarda ham değer
-                model.PhoneDisplay = phoneNumber;
-                model.PhoneHref = $"tel:{digits}";
-            }
         }
     }
 }
