@@ -1,6 +1,7 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Results.ForRentalPropertyResults;
 using FibiEmlakDanismanlik.Application.ViewModels;
 using FibiEmlakDanismanlik.Dto.PropertyDtos;
+using FibiEmlakDanismanlik.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -38,6 +39,16 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForRentalPropertyViewCompone
 
                 if (string.IsNullOrWhiteSpace(value.ListingType))
                     value.ListingType = value.ListingTypeName;
+
+                if (!string.IsNullOrWhiteSpace(value.PropertyName))
+                {
+                    HttpContext.Items[PageMeta.TitleItemKey] = value.PropertyName;
+                }
+                var desc = PageMeta.StripHtmlAndTruncate(value.PropertyDescription, PageMeta.DescriptionMaxLength);
+                if (!string.IsNullOrWhiteSpace(desc))
+                {
+                    HttpContext.Items[PageMeta.DescriptionItemKey] = desc;
+                }
 
                 ViewBag.ApiUrl = _configuration["Url:ApiUrl"];
                 return View(value);

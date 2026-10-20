@@ -1,4 +1,5 @@
 ﻿using FibiEmlakDanismanlik.Dto.PropertyDtos;
+using FibiEmlakDanismanlik.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
@@ -29,6 +30,18 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             {
                 var jsonData = await response.Content.ReadAsStringAsync();
                 var value = JsonConvert.DeserializeObject<ResultAllForSaleListinForPageDto>(jsonData);
+                if (value != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(value.PropertyName))
+                    {
+                        HttpContext.Items[PageMeta.TitleItemKey] = value.PropertyName;
+                    }
+                    var desc = PageMeta.StripHtmlAndTruncate(value.PropertyDescription, PageMeta.DescriptionMaxLength);
+                    if (!string.IsNullOrWhiteSpace(desc))
+                    {
+                        HttpContext.Items[PageMeta.DescriptionItemKey] = desc;
+                    }
+                }
                 var apiUrl = _configuration["Url:ApiUrl"];
                 ViewBag.ApiUrl = apiUrl;
                 return View(value);
