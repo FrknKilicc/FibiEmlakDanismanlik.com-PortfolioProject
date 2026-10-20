@@ -1,10 +1,10 @@
-var builder = WebApplication.CreateBuilder(args);
+ï»¿var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 
-// IConfiguration aracılığıyla AppSettings.json'daki yapılandırmayı yükleme
+// IConfiguration aracÄ±lÄ±ÄŸÄ±yla AppSettings.json'daki yapÄ±landÄ±rmayÄ± yÃ¼kleme
 
 
 var app = builder.Build();
