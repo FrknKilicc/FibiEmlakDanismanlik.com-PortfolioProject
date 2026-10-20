@@ -199,6 +199,7 @@
                             <div class="row clearfix">
                                     @foreach (var item in Model.Items)
                                     {
+                                        var detailUrl = ListingUrl.DetailPath(true, item.ListingId, item.ListingTypeId, item.ListingType, item.PropertyName, item.District);
                                         var img = (item.ImageUrls != null && item.ImageUrls.Any())
                                         ? item.ImageUrls.First()
                                         : "/images/no-image.png";
@@ -207,7 +208,7 @@
                                             <div class="feature-block-one">
                                                 <div class="inner-box">
                                                     <div class="image-box">
-                                                        <figure class="image"><img src="@img" alt="image"></figure>
+                                                        <figure class="image"><img src="@img" alt="@item.PropertyName"></figure>
 
                                                         @if (item.BestDeals)
                                                         {
@@ -223,7 +224,7 @@
                                                     <div class="lower-content">
                                                         <div class="author-info clearfix">
                                                             <div class="author pull-left">
-                                                                <figure class="author-thumb"><img src="@item.AgentImgUrl" alt=""></figure>
+                                                                <figure class="author-thumb"><img src="@item.AgentImgUrl" alt="@item.AgentName"></figure>
                                                                 <h6>@item.AgentName</h6>
                                                             </div>
                                                             <div class="buy-btn pull-right">
@@ -233,11 +234,11 @@
 
                                                         <div class="title-text">
                                                             <h4>
-                                                                <a asp-action="Index"
-                                                                   asp-controller="AllForRentalDetailPage"
-                                                                   asp-route-id="@item.ListingId"
-                                                                   asp-route-listingTypeId="@item.ListingTypeId"
-                                                                   title="@item.PropertyName">
+
+
+
+
+                                                                   <a href="@detailUrl" title="@item.PropertyName">
                                                                     @(string.IsNullOrWhiteSpace(item.PropertyName) ? "İlan Başlığı" : item.PropertyName)
                                                                 </a>
                                                             </h4>
@@ -295,11 +296,11 @@
                                                         </ul>
 
                                                         <div class="btn-box">
-                                                            <a asp-route-id="@item.ListingId"
-                                                           asp-action="Index"
-                                                           asp-controller="AllForRentalDetailPage"
-                                                           asp-route-listingTypeId="@item.ListingTypeId"
-                                                               class="theme-btn btn-two">
+                                                            <a 
+                                                           
+                                                           
+                                                           
+                                                               href="@detailUrl" class="theme-btn btn-two">
                                                                 İlan Detayı
                                                             </a>
                                                         </div>

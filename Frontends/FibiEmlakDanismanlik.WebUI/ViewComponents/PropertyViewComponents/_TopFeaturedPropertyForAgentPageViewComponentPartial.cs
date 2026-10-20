@@ -59,9 +59,9 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents
                     Price = x.Price,
                     PropImgUrl1 = x.ImageUrl,
                     PropertyStatusLabel = x.UsageType == 2 ? "Kiralık" : "Satılık",
-                    DetailUrl = (x.UsageType == 2
-                        ? Url.Action("Index", "AllForRentalDetailPage", new { id = x.ListingId, listingTypeId = x.ListingTypeId })
-                        : Url.Action("Index", "AllForSaleDetailPage", new { id = x.ListingId, listingTypeId = x.ListingTypeId })) ?? "#"
+                    DetailUrl = ListingUrl.DetailPath(x.UsageType == 2, x.ListingId, x.ListingTypeId, null, x.PropertyName, x.District)
+                        
+                        
                 })
                 .ToList();
 

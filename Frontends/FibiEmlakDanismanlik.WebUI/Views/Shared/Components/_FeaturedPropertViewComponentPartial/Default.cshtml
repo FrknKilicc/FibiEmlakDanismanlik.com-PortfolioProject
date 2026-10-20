@@ -129,6 +129,7 @@
             <div class="latest-listings-carousel owl-carousel owl-theme owl-dots-none nav-style-one">
                 @foreach (var item in Model)
                 {
+                    var detailUrl = ListingUrl.DetailPath(item.UsageTypeId == 2, item.ListingId, item.ListingTypeId, item.ListingType, item.PropertyName, item.District);
                     var propImgUrl = !string.IsNullOrWhiteSpace(item.PropImgUrl1) ? item.PropImgUrl1 : "/Realshed/assets/images/background/Section1.jpeg";
                     var propName = !string.IsNullOrWhiteSpace(item.PropertyName) ? item.PropertyName : "İlan Başlığı";
                     var agentImgUrl = !string.IsNullOrWhiteSpace(item.AgentImgUrl) ? item.AgentImgUrl : "/Realshed/assets/images/FibiLogo.png";
@@ -154,7 +155,7 @@
                         <div class="inner-box">
                             <div class="image-box">
                                 <figure class="image">
-                                    <a asp-controller="AllForSaleDetailPage" asp-action="Index" asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId">
+                                    <a href="@detailUrl">
                                         <img src="@propImgUrl" alt="@propName" width="370" height="278" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/Realshed/assets/images/background/Section1.jpeg';">
                                     </a>
                                 </figure>
@@ -183,7 +184,7 @@
                                 </div>
                                 <div class="title-text">
                                     <h4>
-                                        <a asp-controller="AllForSaleDetailPage" asp-action="Index" asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId" title="@propName">@propName</a>
+                                        <a href="@detailUrl" title="@propName">@propName</a>
                                     </h4>
                                 </div>
                                 @if (!string.IsNullOrEmpty(locationText))
@@ -207,7 +208,7 @@
                                     </ul>
                                 }
                                 <div class="btn-box">
-                                    <a asp-controller="AllForSaleDetailPage" asp-action="Index" asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId" class="theme-btn btn-two">İlan Detayı</a>
+                                    <a href="@detailUrl" class="theme-btn btn-two">İlan Detayı</a>
                                 </div>
                             </div>
                         </div>
