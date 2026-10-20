@@ -222,15 +222,15 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 
 **Hata ve tutarsızlıklar**
 - [ ] WebUI sayfaları API kapalıyken 500 veriyor (ör. Hakkımızda, İletişim ViewComponent'leri try/catch'siz); footer ve benzer ilanlardaki gibi boş içerikle açılmalı. API tarafı G9 ile birlikte ele alınmalı
-- [ ] Tüm sayfalarda `<title>` sabit ("Fibi Yapı Emlak & Danışmanlık", `_HeadLayoutViewComponentPartial`); `ViewData["Title"]` kullanılmıyor ve 8 view'da "Index" yazıyor. Sayfa başına başlık + meta description; ilan detayında ilan adı
-- [ ] Mobil menüde (`ScaffTemplate.cshtml`) tema kalıntıları: sahte telefon `+88 01682648101`, `info@example.com` linki, sosyal linkler `/Realshed/index.html`; footer gibi `Contact` ve `SocialMedia` tablolarından gelmeli
-- [ ] Header "Sayfalar" mega menüsü İngilizce tema demo linkleri (About Us, Our Services, Pricing Table, Compare Properties → `/Realshed/*.html`); gerçek sayfalara bağlanmalı veya kaldırılmalı
+- [x] (2026-10-20, `feature/antigravity-ui-polish`) Tüm sayfalarda `<title>` sabit ("Fibi Yapı Emlak & Danışmanlık", `_HeadLayoutViewComponentPartial`); `ViewData["Title"]` kullanılmıyor ve 8 view'da "Index" yazıyor. Sayfa başına başlık + meta description; ilan detayında ilan adı
+- [x] (2026-10-20, `feature/antigravity-ui-polish`) Mobil menüde (`ScaffTemplate.cshtml`) tema kalıntıları: sahte telefon `+88 01682648101`, `info@example.com` linki, sosyal linkler `/Realshed/index.html`; footer gibi `Contact` ve `SocialMedia` tablolarından gelmeli
+- [x] (2026-10-20, `feature/antigravity-ui-polish`) Header "Sayfalar" mega menüsü İngilizce tema demo linkleri (About Us, Our Services, Pricing Table, Compare Properties → `/Realshed/*.html`); gerçek sayfalara bağlanmalı veya kaldırılmalı
 - [ ] Sayfa başlığı arka plan görselleri (detay, liste, blog, SSS, iletişim, karşılaştırma; 9 dosya) `images.stockcake.com` vb. harici sitelerden hotlink; `wwwroot` altına alınmalı
-- [ ] Detay sayfası `h1` her ilanda "Satılık İlanlar"/"Kiralık İlanlar" (sayfa başlığı bandı); breadcrumb ilan adını göstermiyor
+- [x] (2026-10-20, `feature/antigravity-ui-polish`) Detay sayfası `h1` her ilanda "Satılık İlanlar"/"Kiralık İlanlar" (sayfa başlığı bandı); breadcrumb ilan adını göstermiyor
 - [ ] `Blogs` tablosunda neredeyse aynı iki yazı ("Gayrimenkul/Emlak Yatırımında Lokasyon Neden Her Şeydir?", Id 15 ve 10); biri tekrar kayıt olabilir
-- [ ] `MapRepository.GetListingMarkerAsync` nullable uyarıları (dönüş tipi `ListingMarkerResult` ama null dönüyor); imza `Task<ListingMarkerResult?>` yapılmalı
+- [x] (2026-10-20, `feature/antigravity-ui-polish`) `MapRepository.GetListingMarkerAsync` nullable uyarıları (dönüş tipi `ListingMarkerResult` ama null dönüyor); imza `Task<ListingMarkerResult?>` yapılmalı
 - [ ] Danışman e-postaları kişisel Gmail adresleri (`...fibi@gmail.com`); kurumsal alan adı adresleri tercih edilmeli
-- [ ] Liste ve detayda ilan "Durum" etiketi (Aktif/Opsiyonlu) ziyaretçiye gösterilmiyor; "Opsiyonlu" ilanlarda rozet gösterilmesi düşünülmeli
+- [x] (2026-10-20, `feature/antigravity-ui-polish`) Liste ve detayda ilan "Durum" etiketi (Aktif/Opsiyonlu) ziyaretçiye gösterilmiyor; "Opsiyonlu" ilanlarda rozet gösterilmesi düşünülmeli
 
 **Beklenen / önerilen geliştirmeler**
 - [ ] Danışman kutusuna WhatsApp ile yaz ve tek tıkla ara butonları (mobilde sabit alt çubuk)
