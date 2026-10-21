@@ -225,7 +225,7 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [x] (2026-10-20, `feature/antigravity-ui-polish`) Tüm sayfalarda `<title>` sabit ("Fibi Yapı Emlak & Danışmanlık", `_HeadLayoutViewComponentPartial`); `ViewData["Title"]` kullanılmıyor ve 8 view'da "Index" yazıyor. Sayfa başına başlık + meta description; ilan detayında ilan adı
 - [x] (2026-10-20, `feature/antigravity-ui-polish`) Mobil menüde (`ScaffTemplate.cshtml`) tema kalıntıları: sahte telefon `+88 01682648101`, `info@example.com` linki, sosyal linkler `/Realshed/index.html`; footer gibi `Contact` ve `SocialMedia` tablolarından gelmeli
 - [x] (2026-10-20, `feature/antigravity-ui-polish`) Header "Sayfalar" mega menüsü İngilizce tema demo linkleri (About Us, Our Services, Pricing Table, Compare Properties → `/Realshed/*.html`); gerçek sayfalara bağlanmalı veya kaldırılmalı
-- [ ] Sayfa başlığı arka plan görselleri (detay, liste, blog, SSS, iletişim, karşılaştırma; 9 dosya) `images.stockcake.com` vb. harici sitelerden hotlink; `wwwroot` altına alınmalı
+- [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Sayfa başlığı arka plan görselleri (9 dosya) yerel: `wwwroot/images/page-title/page-title-bg.jpg` (`CREDITS.md`; StockCake lisansı canlı öncesi teyit edilmeli). İletişim sayfasındaki pexels "harita" fotoğrafı hâlâ hotlink (aşağıdaki harita maddesiyle çözülecek)
 - [x] (2026-10-20, `feature/antigravity-ui-polish`) Detay sayfası `h1` her ilanda "Satılık İlanlar"/"Kiralık İlanlar" (sayfa başlığı bandı); breadcrumb ilan adını göstermiyor
 - [ ] `Blogs` tablosunda neredeyse aynı iki yazı ("Gayrimenkul/Emlak Yatırımında Lokasyon Neden Her Şeydir?", Id 15 ve 10); biri tekrar kayıt olabilir
 - [x] (2026-10-20, `feature/antigravity-ui-polish`) `MapRepository.GetListingMarkerAsync` nullable uyarıları (dönüş tipi `ListingMarkerResult` ama null dönüyor); imza `Task<ListingMarkerResult?>` yapılmalı
@@ -251,8 +251,9 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [ ] Canlıya çıkarken: `Seo:SiteBaseUrl` canlı alan adıyla ayarlanmalı; Google Search Console kaydı ve sitemap gönderimi
 - [ ] `sitemap.xml` (yukarıdaki SEO maddesi) ilan adreslerini `ListingUrl.DetailPath` ile üretmeli
 - [ ] Open Graph ile birlikte Twitter Card etiketleri
-- [ ] Blog adresleri de SEO dostu olsun (`/blog/{slug}-{id}`, eski `/Blog/Detail/{id}` 301); geçersiz blog id'sinde 404 dönmeli (şu an ViewComponent `View(null)` dönüyor)
-- [ ] Liste sayfası adresleri okunabilir olabilir (`/AllForSalePage` → `/satilik`); il/ilçe açılış sayfaları (`/satilik/istanbul/kadikoy`) SEO için değerlendirilmeli
+- [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Blog adresleri `/blog/{slug}-{id}` (`Models/BlogUrl.cs`), liste `/blog`; eski `/Blog/Detail/{id}` ve `/Blog/Index` 301; olmayan blogda 404, API hatasında 500. Öneri ucu `blog/suggest` (JSON'a `url` alanı eklendi)
+- [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Liste adresleri `/satilik`, `/kiralik`; açılış sayfaları `/satilik/{il}` ve `/satilik/{il}/{ilce}` (`Services/ListingLocationResolver.cs`, il/ilçe API listesinden slug ile, 6 saat önbellek; bulunamazsa 404). Detay route'u `listingcategory` constraint'i ile ayrışır (`konut|arsa|isyeri|ilan`; bir il bu adlardan birini alamaz). Eski `/AllForSalePage`, `/AllForRentalPage` 301
+- [ ] Açılış sayfaları için: kategori + konum (`/satilik/konut/istanbul`) yok; filtre panelinden yalnızca il/ilçe seçilince `?cityId=..` query'li adrese gidiliyor (canonical `/satilik`), istenirse açılış sayfasına 301 ile çevrilebilir; sitemap'e açılış sayfaları eklenmeli
 - [ ] Captcha'yı açmak için Cloudflare Turnstile anahtarı: `Captcha:TurnstileSiteKey`, `Captcha:ScriptUrl`, `Captcha:VerifyUrl` appsettings'e, `Captcha:TurnstileSecretKey` User Secrets'a; dördü de doluysa formlarda kendiliğinden açılır
 - [ ] WebUI'de `UseForwardedHeaders` yok: canlıda reverse proxy arkasında `RemoteIpAddress` proxy IP'si olur ve form sınırı tüm ziyaretçileri tek kişi sayar; WebUI'ye de ForwardedHeaders + `KnownProxies` eklenmeli
 - [ ] `FormSpamGuard` sayaçları bellek içi; WebUI birden fazla örnekle çalışırsa paylaşılmaz (gerekirse dağıtık önbellek)
@@ -285,7 +286,7 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [ ] Harita sayfası tüm ilanları tek istekte alıp istemci tarafında filtreliyor (şimdilik 70 ilan); ilan sayısı birkaç bini geçerse `Map/listings` ucunun mevcut `usageType/category/cityId` filtreleri ve harita sınırlarına göre (bbox) sorgu kullanılmalı
 - [ ] Nominatim kullanım politikası: User-Agent'a iletişim bilgisi (site adresi veya e-posta) eklenmeli; canlıda yoğun kullanımda kendi geocoder'ımız veya ücretli servis değerlendirilmeli
 - [ ] Leaflet ve MarkerCluster unpkg CDN'den yükleniyor (detay sayfası da öyle); CDN erişilemezse harita çalışmaz, `wwwroot/lib` altına alınabilir
-- [ ] Site geneli: yalnızca `/Realshed/...` görsel yolları kaldı ama birçok bileşende hâlâ `/Realshed/property-details.html`, `/Realshed/property-list.html`, `/Realshed/blog-details.html` gibi tema demo sayfası linkleri var (ör. `_FeaturedRentalPropertViewComponentPartial`); gerçek route'lara çevrilmeli
+- [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Tema demo `.html` linkleri temizlendi (danışman karuseli, satılık liste ikonu, blog yazar linki, Hakkımızda'daki İngilizce uygulama bölümü); kullanılmayan `_FeaturedRentalPropertViewComponentPartial` silindi. Yalnızca ana sayfa bülten formu (`action="contact.html"`) kaldı, kendi maddesinde
 
 ---
 
