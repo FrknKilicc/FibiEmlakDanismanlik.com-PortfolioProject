@@ -148,7 +148,7 @@
 
             list.innerHTML = items.map(x => `
                 <li style="padding:10px 12px; border-bottom:1px solid #eee;">
-                    <a href="/Blog/Detail/${x.blogId}" style="display:block;">
+                    <a href="${escapeHtml(x.url)}" style="display:block;">
                         <div style="font-weight:600;color : black ; ">${escapeHtml(x.blogTitle)}</div>
                         <div style="font-size:13px; color:black; opacity:.75; margin-top:4px;">
                             ${escapeHtml(x.blogDescPrew)}

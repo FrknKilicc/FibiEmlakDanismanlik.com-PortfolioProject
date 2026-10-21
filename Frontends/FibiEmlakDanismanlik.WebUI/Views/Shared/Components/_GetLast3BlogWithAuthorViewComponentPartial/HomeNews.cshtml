@@ -138,7 +138,7 @@
                             <div class="inner-box">
                                 <div class="image-box">
                                     <figure class="image">
-                                        <a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">
+                                        <a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)">
                                             <img src="@blogImgUrl" alt="@item.BlogTitle" width="370" height="250" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/Realshed/assets/images/background/Section1.jpeg';">
                                         </a>
                                     </figure>
@@ -150,7 +150,7 @@
                                 </div>
                                 <div class="lower-content">
                                     <h4>
-                                        <a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId" title="@item.BlogTitle">@item.BlogTitle</a>
+                                        <a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)" title="@item.BlogTitle">@item.BlogTitle</a>
                                     </h4>
                                     <ul class="post-info clearfix">
                                         <li class="author-box">
@@ -172,7 +172,7 @@
                                         }
                                     </ul>
                                     <div class="btn-box">
-                                        <a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId" class="theme-btn btn-two">Devamını Oku</a>
+                                        <a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)" class="theme-btn btn-two">Devamını Oku</a>
                                     </div>
                                 </div>
                             </div>

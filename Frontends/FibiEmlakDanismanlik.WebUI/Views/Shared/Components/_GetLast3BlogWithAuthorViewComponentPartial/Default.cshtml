@@ -10,8 +10,8 @@
         {
             <div class="post-inner">
                 <div class="post">
-                    <figure class="post-thumb"><a asp-action="Detail" asp-controller="Blog" asp-route-id="@item.BlogId"><img src="@item.BlogImgUrl" alt="@item.BlogTitle"></a></figure>
-                    <h5><a asp-action="Detail" asp-controller="Blog" asp-route-id="@item.BlogId">@item.BlogTitle</a></h5>
+                    <figure class="post-thumb"><a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)"><img src="@item.BlogImgUrl" alt="@item.BlogTitle"></a></figure>
+                    <h5><a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)">@item.BlogTitle</a></h5>
                     <span class="post-date">@item.CreatedDate.ToString("dd.MM.yyyy")</span>
                 </div>
             </div>
