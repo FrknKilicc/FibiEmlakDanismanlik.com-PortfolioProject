@@ -88,10 +88,12 @@
                                             <figure class="image">
                                                 <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "/Realshed/assets/images/resource/deals-1.jpg" : item.ImageUrl)" alt="@item.PropertyName" onerror="this.onerror=null;this.src='/Realshed/assets/images/resource/deals-1.jpg';">
                                             </figure>
-                                            <div class="batch"><i class="icon-11"></i></div>
-                                            <span class="category">@item.ListingTypeName</span>
-                                            <div class="buy-btn">
-                                                <a href="@detailUrl">@(isRent ? "Kiralık" : "Satılık")</a>
+                                            <div class="listing-badges">
+                                                <div class="batch"><i class="icon-11"></i></div>
+                                                <span class="category">@item.ListingTypeName</span>
+                                                <div class="buy-btn">
+                                                    <a href="@detailUrl">@(isRent ? "Kiralık" : "Satılık")</a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

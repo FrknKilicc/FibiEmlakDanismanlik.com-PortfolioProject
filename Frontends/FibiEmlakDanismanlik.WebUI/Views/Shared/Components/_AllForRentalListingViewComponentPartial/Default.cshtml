@@ -220,16 +220,17 @@
                                                 <div class="inner-box">
                                                     <div class="image-box">
                                                         <figure class="image"><img src="@img" alt="@item.PropertyName"></figure>
-
-                                                        @if (item.BestDeals)
-                                                        {
-                                                            <div class="batch"><i class="icon-11"></i></div>
-                                                            <span class="category">En İyi Fiyat</span>
-                                                        }
-                                                        @if (string.Equals(item.PropertyStatus?.Trim(), "Opsiyonlu", StringComparison.OrdinalIgnoreCase))
-                                                        {
-                                                            <span class="listing-status-badge" title="Bu ilan için opsiyon verildi">Opsiyonlu</span>
-                                                        }
+                                                        <div class="listing-badges">
+                                                            @if (item.BestDeals)
+                                                            {
+                                                                <div class="batch"><i class="icon-11"></i></div>
+                                                                <span class="category">En İyi Fiyat</span>
+                                                            }
+                                                            @if (string.Equals(item.PropertyStatus?.Trim(), "Opsiyonlu", StringComparison.OrdinalIgnoreCase))
+                                                            {
+                                                                <span class="listing-status-badge" title="Bu ilan için opsiyon verildi">Opsiyonlu</span>
+                                                            }
+                                                        </div>
                                                     </div>
 
                                                     <div class="lower-content">
