@@ -184,5 +184,22 @@ namespace FibiEmlakDanismanlik.WebUI.Models
 
             return false;
         }
+
+        /// <summary>
+        /// Liste veya açılış sayfası yolu adresini üretir.
+        /// </summary>
+        public static string ListPath(bool isRent, string? city = null, string? district = null)
+        {
+            var prefix = isRent ? "kiralik" : "satilik";
+            var citySlug = Slugify(city);
+            if (string.IsNullOrEmpty(citySlug))
+                return $"/{prefix}";
+
+            var districtSlug = Slugify(district);
+            if (string.IsNullOrEmpty(districtSlug))
+                return $"/{prefix}/{citySlug}";
+
+            return $"/{prefix}/{citySlug}/{districtSlug}";
+        }
     }
 }

@@ -534,8 +534,8 @@
 
             function submitSearch() {
                 var targetBase = ut === 1
-                    ? ($root.attr('data-sale-url') || '/AllForSalePage')
-                    : ($root.attr('data-rent-url') || '/AllForRentalPage');
+                    ? ($root.attr('data-sale-url') || '/satilik')
+                    : ($root.attr('data-rent-url') || '/kiralik');
 
                 var params = new URLSearchParams();
                 var ltId = $('#' + ID.lt).val();
@@ -709,4 +709,3 @@
         createTabModule({ usageType: 2, suffix: 'forrent', tabSelector: '#tab-2' });
     });
 })();
-

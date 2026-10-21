@@ -9,14 +9,25 @@
         _ => "İlan"
     };
 }
+@{
+    var heading = ViewBag.Heading as string;
+}
 <!--Page Title-->
 <section class="page-title centred" style="background-image: url(/images/page-title/page-title-bg.jpg);">
     <div class="auto-container">
         <div class="content-box clearfix">
-            <h1>Satılık İlanlar</h1>
+            <h1>@(string.IsNullOrWhiteSpace(heading) ? "Satılık İlanlar" : heading)</h1>
             <ul class="bread-crumb clearfix">
                 <li><a href="@Url.Action("Index","UILayout")">Anasayfa</a></li>
-                <li>Satılık İlanlar</li>
+                @if (string.IsNullOrWhiteSpace(heading))
+                {
+                    <li>Satılık İlanlar</li>
+                }
+                else
+                {
+                    <li><a href="@Url.Action("Index","AllForSalePage")">Satılık İlanlar</a></li>
+                    <li>@heading</li>
+                }
             </ul>
         </div>
     </div>

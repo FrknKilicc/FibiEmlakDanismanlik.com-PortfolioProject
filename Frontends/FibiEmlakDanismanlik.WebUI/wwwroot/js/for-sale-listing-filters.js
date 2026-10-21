@@ -254,6 +254,7 @@
 
         btn.addEventListener("click", function () {
             const url = new URL(window.location.href);
+            url.pathname = "/satilik";
 
             [
                 "listingTypeIds",

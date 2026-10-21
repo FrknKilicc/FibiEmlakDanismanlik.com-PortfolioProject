@@ -246,6 +246,7 @@
 
         btn.addEventListener("click", function () {
             const url = new URL(window.location.href);
+            url.pathname = "/kiralik";
 
             [
                 "listingTypeIds",
@@ -300,5 +301,4 @@
         attachPriceFormatter(document.getElementById("minPrice"));
         attachPriceFormatter(document.getElementById("maxPrice"));
     });
-
 })();

@@ -1,9 +1,10 @@
-﻿@{
+﻿@model FibiEmlakDanismanlik.WebUI.Models.ListingLocationVm?
+@{
     ViewData["Title"] = "Satılık İlanlar";
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
 
-@await Component.InvokeAsync("_AllForSaleListingViewComponentPartial");
+@await Component.InvokeAsync("_AllForSaleListingViewComponentPartial", new { location = Model })
 
 @section Scripts {
     <script src="/js/for-sale-listing-filters.js"></script>
