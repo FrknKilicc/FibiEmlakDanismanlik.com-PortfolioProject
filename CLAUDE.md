@@ -190,6 +190,7 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 - [x] (2026-10-19) localhost:7015 hardcode'ları appsettings'e taşı (G11): benzer ilanlar (satılık/kiralık) ve iletişim formu `Url:ApiUrl` kullanıyor; yalnızca `_SearchFieldSectionComponentPartial` içinde yedek değer olarak kaldı
 - [x] (2026-10-19, `feature/antigravity-todo-batch1`) Kiralık fiyat dönemi: demo veride kira AYLIK kabul edildi; ilan detayında ve harita sayfasında "/ ay" gösteriliyor. Liste kartları, ana sayfa vitrini ve benzer ilan kartlarına da eklenmeli; eklendi. Admin formunda dönem alanı hâlâ netleşmeli
 - [ ] Ana sayfa vitrini: kiralık vitrin 5 sınırında dolu (4 işyeri + 1 arsa); yeni işaretlenen ilan en eski işaretliyi düşürür
+- [ ] **[GÜVENLİK]** GitHub reposu herkese açık (kimlik doğrulamasız erişilebiliyor). Repoda: kod, `appsettings`'teki `info@fibiemlak.com`, danışman ad ve telefonlarının geçtiği SQL demo betikleri, iş kuralları ve yönetim paneli tasarım belgesi; şifre ve anahtar yok. Yönetim paneli ve hak ediş modülü eklenmeden repo private yapılmalı: GitHub → Settings → Danger Zone → Change visibility
 - [ ] Repo temizliği: dev'e birleşmiş feature branch'leri (yerel + origin) silinsin mi karar ver; `.claude/launch.json` commit'lenecek mi yoksa .gitignore'a mı eklenecek
 
 ### Footer (2026-10-19'da DB'den dinamik yapıldı)
