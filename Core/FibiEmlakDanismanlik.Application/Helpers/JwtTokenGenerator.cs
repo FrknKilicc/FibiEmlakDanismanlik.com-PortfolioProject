@@ -52,7 +52,10 @@ namespace FibiEmlakDanismanlik.Application.Helpers
             return new GetLoginResult
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                ExpireDate = expireDate
+                ExpireDate = expireDate,
+                Status = AuthConstants.LoginStatusSuccess,
+                AgentName = agent.AgentName,
+                Role = agent.Role.ToString()
             };
         }
     }

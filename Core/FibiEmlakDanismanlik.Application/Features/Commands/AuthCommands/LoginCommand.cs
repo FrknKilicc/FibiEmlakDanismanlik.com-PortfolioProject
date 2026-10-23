@@ -7,5 +7,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.AuthCommands
     {
         public string Mail { get; set; }
         public string Password { get; set; }
+        public string? CaptchaToken { get; set; }
     }
 }

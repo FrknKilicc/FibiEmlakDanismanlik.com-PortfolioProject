@@ -210,6 +210,15 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromMinutes(CustomerContactConstants.RateLimitWindowMinutes),
                 QueueLimit = 0
             }));
+    options.AddPolicy(AuthConstants.AuthRateLimitPolicy, httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = AuthConstants.AuthRateLimitPermitCount,
+                Window = TimeSpan.FromMinutes(AuthConstants.AuthRateLimitWindowMinutes),
+                QueueLimit = 0
+            }));
 });
 
 var app = builder.Build();

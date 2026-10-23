@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
+using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Infrastructure.Security;
 namespace FibiEmlakDanismanlik.Infrastructure
 {
     /// <summary>Altyapı katmanı servis kayıtları.</summary>
@@ -34,6 +36,9 @@ namespace FibiEmlakDanismanlik.Infrastructure
             services.AddScoped<IMarketDataProvider, ListingGeocodeProvider>();
 
             services.AddHostedService<MarketDataSyncBackgroundService>();
+
+            services.AddHttpClient("turnstile", c => c.Timeout = TimeSpan.FromSeconds(10));
+            services.AddScoped<ICaptchaVerifier, TurnstileCaptchaVerifier>();
 
             return services;
         }
