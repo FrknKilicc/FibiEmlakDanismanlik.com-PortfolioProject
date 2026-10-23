@@ -1,3 +1,4 @@
+using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Commands.AgentCommands;
 using FluentValidation;
 
@@ -26,10 +27,20 @@ namespace FibiEmlakDanismanlik.Application.Features.Validators.AgentValidators
             RuleFor(x => x.AgentDescription)
                 .MaximumLength(500).WithMessage("Danışman açıklaması en fazla 500 karakter olabilir.");
 
-            When(x => !string.IsNullOrEmpty(x.Password), () =>
+            When(x => !string.IsNullOrWhiteSpace(x.Password), () =>
             {
                 RuleFor(x => x.Password)
-                    .MinimumLength(8).WithMessage("Şifre en az 8 karakter olmalıdır.");
+                    .MinimumLength(AuthConstants.MinPasswordLength).WithMessage($"Şifre en az {AuthConstants.MinPasswordLength} karakter olmalıdır.")
+                    .MaximumLength(128).WithMessage("Şifre en fazla 128 karakter olabilir.")
+                    .Matches(@"[A-Z]").WithMessage("Şifre en az bir büyük harf içermelidir.")
+                    .Matches(@"[a-z]").WithMessage("Şifre en az bir küçük harf içermelidir.")
+                    .Matches(@"[0-9]").WithMessage("Şifre en az bir rakam içermelidir.");
+            });
+
+            When(x => x.Role.HasValue, () =>
+            {
+                RuleFor(x => x.Role!.Value)
+                    .IsInEnum().WithMessage("Geçerli bir personel rolü seçiniz.");
             });
         }
     }

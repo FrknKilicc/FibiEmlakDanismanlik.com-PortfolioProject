@@ -20,6 +20,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         {
             _mediator = mediator;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAgentList()
         {
@@ -33,6 +34,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _mediator.Send(new GetAgentPagedQuery(page, pageSize));
             return Ok(value);
         }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAgentById(int id)
         {
@@ -43,6 +45,15 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             }
             return Ok(value);
         }
+
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
+        [HttpGet("admin")]
+        public async Task<IActionResult> GetAgentAdminList()
+        {
+            var value = await _mediator.Send(new GetAgentAdminListQuery());
+            return Ok(value);
+        }
+
         [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateAgent(CreateAgentCommand command)
@@ -56,7 +67,16 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             {
                 return Conflict(ex.Message);
             }
+            catch (AgentManagementForbiddenException ex)
+            {
+                return StatusCode(403, ex.Message);
+            }
+            catch (AgentNotFoundException)
+            {
+                return NotFound();
+            }
         }
+
         [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateAgent(UpdateAgentCommand command)
@@ -70,13 +90,37 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             {
                 return Conflict(ex.Message);
             }
+            catch (AgentManagementForbiddenException ex)
+            {
+                return StatusCode(403, ex.Message);
+            }
+            catch (AgentNotFoundException)
+            {
+                return NotFound();
+            }
         }
+
         [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveAgent(int id)
         {
-            await _mediator.Send(new RemoveAgentCommand(id));
-            return Ok("Personel Silme İşlemi Başarılı");
+            try
+            {
+                await _mediator.Send(new RemoveAgentCommand(id));
+                return Ok("Personel pasife alındı.");
+            }
+            catch (DuplicateAgentMailException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (AgentManagementForbiddenException ex)
+            {
+                return StatusCode(403, ex.Message);
+            }
+            catch (AgentNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

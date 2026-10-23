@@ -1,5 +1,6 @@
 using FibiEmlakDanismanlik.Application.Interfaces.AgentInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -105,6 +106,22 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AgentRepositories
                 code.UsedAtUtc = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<int> CountActiveOwnersAsync(int? excludeAgentId = null)
+        {
+            return await _context.Agents
+                .Where(x => x.IsActive && x.Role == AgentRole.Owner && (excludeAgentId == null || x.AgentId != excludeAgentId))
+                .CountAsync();
+        }
+
+        public async Task<List<Agent>> GetAllForAdminAsync()
+        {
+            return await _context.Agents
+                .AsNoTracking()
+                .OrderBy(x => x.Role)
+                .ThenBy(x => x.AgentName)
+                .ToListAsync();
         }
     }
 }

@@ -154,6 +154,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddSingleton<IAuthStateCache, AuthStateCache>();
 
 // Data Protection anahtarları kalıcı dosya sisteminde saklanır; anahtarlar kaybolursa kayıtlı 2FA anahtarları çözülemez, sunucuda yedeklenmelidir.
 var dataProtection = builder.Services.AddDataProtection()

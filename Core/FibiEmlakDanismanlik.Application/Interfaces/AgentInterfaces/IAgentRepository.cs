@@ -35,5 +35,15 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.AgentInterfaces
         /// Belirtilen kurtarma kodunu kullanıldı olarak işaretler.
         /// </summary>
         Task MarkRecoveryCodeUsedAsync(int agentRecoveryCodeId);
+
+        /// <summary>
+        /// Sistemdeki aktif Sahip (Owner) sayısını döndürür. İsteğe bağlı olarak belirtilen personel hariç tutulabilir.
+        /// </summary>
+        Task<int> CountActiveOwnersAsync(int? excludeAgentId = null);
+
+        /// <summary>
+        /// Yönetim paneli için tüm personelleri (gizli ve pasifler dahil) rol ve ada göre sıralı olarak döndürür.
+        /// </summary>
+        Task<List<Agent>> GetAllForAdminAsync();
     }
 }
