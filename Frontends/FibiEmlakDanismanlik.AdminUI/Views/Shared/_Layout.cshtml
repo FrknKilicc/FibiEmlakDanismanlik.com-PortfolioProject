@@ -7,6 +7,7 @@
     bool isListings = string.Equals(currentController, "Listings", StringComparison.OrdinalIgnoreCase);
     bool isSatilik = isListings && string.Equals(currentTur, "satilik", StringComparison.OrdinalIgnoreCase);
     bool isKiralik = isListings && string.Equals(currentTur, "kiralik", StringComparison.OrdinalIgnoreCase);
+    bool isLeads = string.Equals(currentController, "Leads", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
 <html lang="tr">
@@ -117,10 +118,9 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link @(isLeads ? "" : "collapsed")" href="/talepler">
           <i class="bi bi-chat-square-text"></i>
           <span>Talepler</span>
-          <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
         </a>
       </li>
 

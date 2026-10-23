@@ -9,6 +9,7 @@ using FibiEmlakDanismanlik.Application.Interfaces.LeadInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.LeadHandlers
@@ -46,7 +47,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.LeadHandlers
                 var isActive = await _leadRepository.IsActiveAgentAsync(request.AgentId.Value);
                 if (!isActive)
                 {
-                    throw new ValidationException("Atanan danışman bulunamadı veya aktif durumda değil.");
+                    throw new ValidationException(new[] { new ValidationFailure("AgentId", "Atanan danışman bulunamadı veya aktif durumda değil.") });
                 }
             }
 

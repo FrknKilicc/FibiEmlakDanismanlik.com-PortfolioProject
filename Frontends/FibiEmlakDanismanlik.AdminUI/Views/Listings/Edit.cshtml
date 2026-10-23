@@ -1061,6 +1061,11 @@
                 </div>
             </div>
 
+            @if (!Model.IsNew)
+            {
+                <partial name="_ListingLeadsCard" model="Model.Leads" />
+            }
+
             <!-- 3. Vitrin Kartı (Sahip/Yönetici) -->
             @if (CurrentAdmin.IsManagerOrAbove)
             {

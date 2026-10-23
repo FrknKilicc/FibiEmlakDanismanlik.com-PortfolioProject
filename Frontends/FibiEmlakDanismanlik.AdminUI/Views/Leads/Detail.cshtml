@@ -1,0 +1,409 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.Leads.LeadDetailViewModel
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.CurrentAdmin CurrentAdmin
+@using FibiEmlakDanismanlik.AdminUI.Models.Leads
+@{
+    ViewData["Title"] = $"Talep {Model.Detail.Key} - {Model.Detail.FullName}";
+    var slug = LeadLabels.SourceSlug(Model.Detail.Source);
+    var waLink = LeadLabels.ToWhatsAppLink(Model.Detail.Phone);
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1>Talep Detayı <span class="text-muted fs-5 font-monospace">#@Model.Detail.Key</span></h1>
+        <nav>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item"><a href="/talepler">Talepler</a></li>
+                <li class="breadcrumb-item active">@Model.Detail.Key</li>
+            </ol>
+        </nav>
+    </div>
+    <div>
+        <a href="/talepler" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Taleplere Dön
+        </a>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Success"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Error"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Sol Sütun: Müşteri Kartı ve Hareket Zaman Çizelgesi -->
+    <div class="col-lg-8 col-12">
+        <!-- 1. Müşteri Bilgileri Kartı -->
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body pt-3">
+                <div class="d-flex justify-content-between align-items-start pb-3 border-bottom mb-3 flex-wrap gap-2">
+                    <div>
+                        <span class="badge @(Model.Detail.Source == 1 ? "bg-info-subtle text-info border border-info-subtle" : "bg-purple-subtle text-purple border border-purple-subtle") mb-1">
+                            @LeadLabels.SourceName(Model.Detail.Source)
+                        </span>
+                        <h4 class="card-title p-0 m-0 text-dark fw-bold">@Model.Detail.FullName</h4>
+                    </div>
+                    <span class="badge bg-@LeadLabels.StatusBadge(Model.Detail.Status) fs-6">
+                        @LeadLabels.StatusName(Model.Detail.Status)
+                    </span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">Telefon Numarası</label>
+                        <div class="d-flex align-items-center flex-wrap gap-2 mt-1">
+                            <a href="tel:@Model.Detail.Phone" class="fw-semibold text-decoration-none text-dark fs-6">
+                                <i class="bi bi-telephone text-primary me-1"></i>@Model.Detail.Phone
+                            </a>
+                            @if (!string.IsNullOrWhiteSpace(waLink))
+                            {
+                                <a href="@waLink" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-success py-0 px-2">
+                                    <i class="bi bi-whatsapp me-1"></i>WhatsApp
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">E-posta Adresi</label>
+                        <div class="mt-1">
+                            @if (!string.IsNullOrWhiteSpace(Model.Detail.Email))
+                            {
+                                <a href="mailto:@Model.Detail.Email" class="text-decoration-none">
+                                    <i class="bi bi-envelope text-primary me-1"></i>@Model.Detail.Email
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">—</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">Talep Oluşturulma Tarihi</label>
+                        <div class="fw-medium mt-1">
+                            <i class="bi bi-clock text-muted me-1"></i>@Model.Detail.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">Randevu Tarihi</label>
+                        <div class="mt-1">
+                            @if (Model.Detail.AppointmentDateTime.HasValue)
+                            {
+                                <span class="badge bg-warning-subtle text-dark border border-warning-subtle fs-6">
+                                    <i class="bi bi-calendar-event me-1"></i>@Model.Detail.AppointmentDateTime.Value.ToString("dd.MM.yyyy HH:mm")
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">Randevu belirtilmedi</span>
+                            }
+                        </div>
+                    </div>
+
+                    @if (Model.Detail.ListingId.HasValue && Model.Detail.ListingId.Value > 0)
+                    {
+                        <div class="col-12">
+                            <label class="text-muted small d-block">İlgilenilen İlan</label>
+                            <div class="mt-1">
+                                <a href="/ilanlar/@Model.Detail.ListingTypeId/@Model.Detail.ListingId" class="text-decoration-none fw-semibold">
+                                    <i class="bi bi-link-45deg me-1"></i>@(Model.Detail.ListingTitle ?? $"İlan #{Model.Detail.ListingId}")
+                                </a>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Detail.ServiceModule))
+                    {
+                        <div class="col-12">
+                            <label class="text-muted small d-block">FİBİ Hizmet Modülü</label>
+                            <div class="fw-medium mt-1">
+                                <i class="bi bi-gear text-primary me-1"></i>@Model.Detail.ServiceModule
+                                @if (!string.IsNullOrWhiteSpace(Model.Detail.NeighborhoodName))
+                                {
+                                    <span class="text-muted">(@Model.Detail.NeighborhoodName)</span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="col-12">
+                        <label class="text-muted small d-block">Atanan Danışman</label>
+                        <div class="mt-1">
+                            @if (!string.IsNullOrWhiteSpace(Model.Detail.AssignedAgentName))
+                            {
+                                <span class="fw-semibold text-dark"><i class="bi bi-person me-1 text-primary"></i>@Model.Detail.AssignedAgentName</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-light text-secondary border">Henüz Danışman Atanmamış</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Detail.Message))
+                {
+                    <div class="mt-4">
+                        <h6 class="fw-semibold text-dark mb-2">
+                            <i class="bi bi-chat-left-quote text-primary me-1"></i>Müşteri Mesajı
+                        </h6>
+                        <div class="p-3 bg-light border rounded text-dark" style="white-space: pre-wrap;">@Model.Detail.Message</div>
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.Detail.CustomerNote) &&
+                     !string.Equals(Model.Detail.CustomerNote.Trim(), Model.Detail.Message?.Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    <div class="mt-3">
+                        <h6 class="fw-semibold text-dark mb-2">
+                            <i class="bi bi-card-text text-primary me-1"></i>Müşteri Ek Notu
+                        </h6>
+                        <div class="p-3 bg-light border rounded text-dark" style="white-space: pre-wrap;">@Model.Detail.CustomerNote</div>
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.Detail.CalculationSummaryJson))
+                {
+                    <div class="mt-3">
+                        <details>
+                            <summary class="fw-semibold text-primary" style="cursor: pointer;">
+                                <i class="bi bi-calculator me-1"></i>Hesaplama Özeti (JSON)
+                            </summary>
+                            <pre class="bg-dark text-light p-3 rounded mt-2 small" style="white-space: pre-wrap; word-break: break-all;"><code>@Model.Detail.CalculationSummaryJson</code></pre>
+                        </details>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- 2. Hareket Zaman Çizelgesi Kartı -->
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body pt-3">
+                <h5 class="card-title p-0 pb-3 border-bottom mb-3">
+                    <i class="bi bi-clock-history me-2 text-primary"></i>Talep Hareket Geçmişi
+                </h5>
+
+                @if (Model.Detail.Activities == null || !Model.Detail.Activities.Any())
+                {
+                    <p class="text-muted small py-3 mb-0">Bu talebe ait henüz bir hareket kaydı bulunmuyor.</p>
+                }
+                else
+                {
+                    <div class="timeline">
+                        @foreach (var act in Model.Detail.Activities.OrderByDescending(a => a.CreatedAtUtc))
+                        {
+                            var actTypeBadge = act.Type switch
+                            {
+                                1 => "secondary",
+                                2 => "primary",
+                                3 => "info",
+                                4 => "success",
+                                _ => "secondary"
+                            };
+
+                            var actIcon = act.Type switch
+                            {
+                                1 => "bi-chat-text",
+                                2 => "bi-arrow-repeat",
+                                3 => "bi-person-check",
+                                4 => "bi-telephone-outbound",
+                                _ => "bi-dot"
+                            };
+
+                            <div class="p-3 mb-2 rounded border bg-light">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-1">
+                                    <div>
+                                        <span class="badge bg-@actTypeBadge me-1">
+                                            <i class="bi @actIcon me-1"></i>@LeadLabels.ActivityName(act.Type)
+                                        </span>
+                                        <span class="small fw-semibold text-dark">
+                                            @(string.IsNullOrWhiteSpace(act.AgentName) ? "Sistem" : act.AgentName)
+                                        </span>
+                                    </div>
+                                    <span class="small text-muted">
+                                        <i class="bi bi-clock me-1"></i>@LeadLabels.ToTurkeyTime(act.CreatedAtUtc).ToString("dd.MM.yyyy HH:mm")
+                                    </span>
+                                </div>
+
+                                @if (act.Type == 2)
+                                {
+                                    <!-- Durum Değişikliği -->
+                                    <div class="mt-2 small">
+                                        @if (act.OldStatus.HasValue)
+                                        {
+                                            <span class="badge bg-@LeadLabels.StatusBadge(act.OldStatus.Value)">@LeadLabels.StatusName(act.OldStatus.Value)</span>
+                                        }
+                                        <i class="bi bi-arrow-right mx-1 text-muted"></i>
+                                        @if (act.NewStatus.HasValue)
+                                        {
+                                            <span class="badge bg-@LeadLabels.StatusBadge(act.NewStatus.Value)">@LeadLabels.StatusName(act.NewStatus.Value)</span>
+                                        }
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(act.Text))
+                                    {
+                                        <div class="small text-muted mt-2 p-2 bg-white rounded border" style="white-space: pre-wrap;">@act.Text</div>
+                                    }
+                                }
+                                else if (act.Type == 3)
+                                {
+                                    <!-- Atama -->
+                                    <div class="mt-2 small">
+                                        <i class="bi bi-arrow-right me-1 text-muted"></i>
+                                        @if (!string.IsNullOrWhiteSpace(act.AssignedAgentName))
+                                        {
+                                            <span class="fw-semibold text-dark">@act.AssignedAgentName</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-secondary fst-italic">Atama kaldırıldı</span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <!-- Not veya Arama -->
+                                    @if (!string.IsNullOrWhiteSpace(act.Text))
+                                    {
+                                        <div class="small text-dark mt-2 p-2 bg-white rounded border" style="white-space: pre-wrap;">@act.Text</div>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Sağ Sütun: Durum, Not/Arama ve Atama Formları -->
+    <div class="col-lg-4 col-12">
+        <!-- 1. Durum Güncelleme Kartı -->
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body pt-3">
+                <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                    <h5 class="card-title p-0 m-0">
+                        <i class="bi bi-flag me-2 text-primary"></i>Talep Durumu
+                    </h5>
+                    <span class="badge bg-@LeadLabels.StatusBadge(Model.Detail.Status) fs-6">
+                        @LeadLabels.StatusName(Model.Detail.Status)
+                    </span>
+                </div>
+
+                <form action="/talepler/@slug/@Model.Detail.LeadId/durum" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="leadStatusSelect" class="form-label fw-semibold small">Durum Seçin</label>
+                        <select id="leadStatusSelect" name="status" class="form-select">
+                            @for (int st = 1; st <= 7; st++)
+                            {
+                                <option value="@st" selected="@(Model.Detail.Status == st ? "selected" : null)">
+                                    @LeadLabels.StatusName(st)
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="leadStatusNote" class="form-label fw-semibold small">Durum Notu (İsteğe Bağlı)</label>
+                        <textarea id="leadStatusNote" name="note" class="form-control" rows="3" maxlength="2000" placeholder="Durum değişikliğine dair açıklama..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                        <i class="bi bi-check2 me-1"></i> Durumu Kaydet
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 2. Not / Arama Ekleme Kartı -->
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body pt-3">
+                <h5 class="card-title p-0 pb-2 border-bottom mb-3">
+                    <i class="bi bi-journal-plus me-2 text-primary"></i>Not / Görüşme Ekle
+                </h5>
+
+                <form action="/talepler/@slug/@Model.Detail.LeadId/not" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="leadNoteText" class="form-label fw-semibold small">Not / Görüşme Detayı</label>
+                        <textarea id="leadNoteText" name="text" class="form-control" rows="3" required maxlength="2000" placeholder="Müşteriyle yapılan görüşme veya talep notu..."></textarea>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="checkIsCall" name="isCall" value="true" />
+                        <label class="form-check-label small" for="checkIsCall">
+                            <i class="bi bi-telephone-outbound me-1 text-success"></i>Telefon görüşmesi yapıldı
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="bi bi-plus-lg me-1"></i> Notu Kaydet
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 3. Danışman Atama Kartı (Yalnızca Sahip ve Yönetici) -->
+        @if (Model.CanAssign)
+        {
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-body pt-3">
+                    <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                        <h5 class="card-title p-0 m-0">
+                            <i class="bi bi-person-gear me-2 text-primary"></i>Danışman Atama
+                        </h5>
+                    </div>
+
+                    <p class="small text-muted mb-3">
+                        Bu talebin takibinden sorumlu danışmanı belirleyin veya mevcut atamayı kaldırın.
+                    </p>
+
+                    <form action="/talepler/@slug/@Model.Detail.LeadId/ata" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="leadAgentSelect" class="form-label fw-semibold small">Atanan Danışman</label>
+                            <select id="leadAgentSelect" name="agentId" class="form-select">
+                                <option value="">— Atanmamış —</option>
+                                @foreach (var ag in Model.Agents)
+                                {
+                                    <option value="@ag.AgentId" selected="@(Model.Detail.AssignedAgentId == ag.AgentId ? "selected" : null)">
+                                        @ag.AgentName
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-outline-info btn-sm w-100">
+                            <i class="bi bi-person-check me-1"></i> Atamayı Kaydet
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>
