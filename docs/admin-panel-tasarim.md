@@ -16,7 +16,7 @@ AdminUI, WebUI gibi WebApi'yi `HttpClient` ile çağırır. JWT tarayıcıya ver
 | Yönetici ekleme / çıkarma | ✔ | ✘ | ✘ |
 | Danışman ekleme / çıkarma | ✔ | ✔ | ✘ |
 | Toplam kazanç, komisyon ve şirket raporları | ✔ | ✔ | ✘ |
-| Hak ediş: kendi primi | ✔ | ✔ | (soru açık) |
+| Hak ediş ve işlem tutarları (kapora, komisyon, prim) | ✔ | ✔ | ✘ (hiçbir tutar görmez) |
 | İlanlar | Hepsi | Hepsi | Kendi ilanları + izin verilenler |
 | İlan erişim izni verme | ✔ | ✔ | ✘ |
 | İçerik (blog, Hakkımızda, SSS, banner, sosyal medya) | ✔ | ✔ | ✘ |
@@ -39,9 +39,9 @@ Kurallar:
 ## 2. Güvenlik (panel dışa kapalı)
 
 Katmanlar, dıştan içe:
-1. **Erişim kapısı:** isteğe bağlı Cloudflare Access (e-posta tek kullanımlık kod) ya da ofis IP izin listesi (`AdminSecurity:AllowedIps`). Yalnızca şifre bilen kişi giriş ekranını bile göremez.
+1. **Erişim kapısı:** karar (2026-10-23): ek kapı yok, koruma uygulama içinde. İleride gerekirse Cloudflare Access veya IP izin listesi eklenebilir.
 2. **Bot koruması:** girişte Cloudflare Turnstile (reCAPTCHA muadili, ücretsiz). Sunucu tarafında doğrulanır.
-3. **İki adımlı doğrulama (TOTP):** Google/Microsoft Authenticator. Sahip ve Yönetici için zorunlu; Danışman için (soru açık). Kurtarma kodları tek kullanımlık ve hash'li saklanır.
+3. **İki adımlı doğrulama (TOTP):** Google/Microsoft Authenticator. Sahip ve Yönetici için zorunlu; Danışman için isteğe bağlı. Kurtarma kodları tek kullanımlık ve hash'li saklanır.
 4. **Giriş sertleştirme:**
    - IP başına ve hesap başına deneme sınırı.
    - 5 hatalı denemede 15 dakika kilit.
@@ -109,11 +109,13 @@ Yükleme hattı:
 | `Status` | Kapora Alındı → Tamamlandı / İptal (kapora iade edildi / yandı) |
 | `AgreedPrice` | Anlaşılan satış bedeli veya aylık kira |
 | `DepositAmount`, `DepositDate` | Kapora |
-| `BuyerCommissionRate`, `SellerCommissionRate` | Alıcı ve satıcıdan alınan komisyon oranları (%) |
-| `BuyerCommissionAmount`, `SellerCommissionAmount` | Hesaplanır, elle düzeltilebilir |
+| `BuyerCommissionAmount`, `SellerCommissionAmount` | Komisyon kimden alındıysa o taraf dolar: yalnızca alıcı, yalnızca satıcı ya da ikisi. Satışta isteğe bağlı oran (%) girilince tutar hesaplanır, elle düzeltilebilir |
+| (kiralama) | Komisyon genellikle kiracıdan, bir kira bedeli; **tutar** olarak girilir (varsayılan = aylık kira), oran yok |
 | `VatIncluded` | Komisyona KDV dahil mi |
 | `CompletedDate`, `Notes` | |
-| `CustomerName`, `CustomerPhone` | KVKK kapsamında; Danışman yalnızca kendi işlemlerinde görür |
+| `CustomerName`, `CustomerPhone` | KVKK kapsamında |
+
+Danışman işlem ekranını ve hiçbir tutarı görmez; yalnızca ilanın "kapora alındı / satıldı / kiralandı" durumunu görür.
 
 Tamamlanınca ilan durumu "Satıldı / Kiralandı" olur ve sitede yayından kalkar.
 
