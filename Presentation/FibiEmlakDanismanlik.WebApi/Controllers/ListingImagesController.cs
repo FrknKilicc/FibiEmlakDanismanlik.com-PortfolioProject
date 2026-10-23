@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
 {
-    // Danışmanın yalnızca kendi ilanına fotoğraf yükleyebilmesi kontrolü sonraki fazda eklenecektir.
     [Route("api/[controller]")]
     [ApiController]
     public class ListingImagesController : ControllerBase
@@ -62,6 +61,10 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
                 var result = await _mediator.Send(command);
                 return Ok(result);
             }
+            catch (ListingAccessDeniedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
+            }
             catch (ImageValidationException ex)
             {
                 return BadRequest(ex.Message);
@@ -72,13 +75,20 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         [HttpDelete("{listingImageId:int}")]
         public async Task<IActionResult> RemoveListingImage(int listingImageId)
         {
-            var deleted = await _mediator.Send(new RemoveListingImageCommand(listingImageId));
-            if (!deleted)
+            try
             {
-                return NotFound("Fotoğraf bulunamadı.");
-            }
+                var deleted = await _mediator.Send(new RemoveListingImageCommand(listingImageId));
+                if (!deleted)
+                {
+                    return NotFound("Fotoğraf bulunamadı.");
+                }
 
-            return Ok("Fotoğraf silindi.");
+                return Ok("Fotoğraf silindi.");
+            }
+            catch (ListingAccessDeniedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
+            }
         }
 
         [Authorize(Policy = AuthConstants.PolicyStaff)]
@@ -89,6 +99,10 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             {
                 await _mediator.Send(command);
                 return Ok("Sıralama kaydedildi.");
+            }
+            catch (ListingAccessDeniedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
             }
             catch (ImageValidationException ex)
             {

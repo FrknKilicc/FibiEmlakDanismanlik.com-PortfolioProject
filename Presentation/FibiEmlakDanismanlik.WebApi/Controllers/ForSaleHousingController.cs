@@ -26,7 +26,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok(value);
         }
 
-        [Authorize(Policy = AuthConstants.PolicyStaff)]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateForSaleHousingListing(CreateForSaleHousingCommand command)
         {

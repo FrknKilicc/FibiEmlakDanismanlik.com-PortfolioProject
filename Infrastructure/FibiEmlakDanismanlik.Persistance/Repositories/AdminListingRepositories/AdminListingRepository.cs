@@ -4,8 +4,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Commands.AdminListingCommands;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -693,6 +695,870 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                 .ToListAsync();
 
             return list.Select(x => (x.AgentId, x.AgentName)).ToList();
+        }
+
+        public async Task<(int ListingTypeId, int ListingId)> SaveAsync(SaveAdminListingCommand cmd, int agentId, bool isNew)
+        {
+            int listingId = cmd.ListingId ?? 0;
+
+            switch (cmd.ListingTypeId)
+            {
+                case 1: // Satılık Arsa
+                    {
+                        ForSaleLandListing entity;
+                        if (isNew)
+                        {
+                            entity = new ForSaleLandListing
+                            {
+                                CreatedDate = DateTime.Now,
+                                PropertyStatus = PropertyStatuses.Aktif,
+                                BestDeals = false,
+                                AgentId = agentId,
+                                ListingTypeId = cmd.ListingTypeId,
+                                PropImgUrl1 = string.Empty
+                            };
+                            _context.forSaleLandListings.Add(entity);
+                        }
+                        else
+                        {
+                            var existing = await _context.forSaleLandListings.FirstOrDefaultAsync(x => x.ForSaleLandListingId == listingId);
+                            if (existing == null) throw new InvalidOperationException("İlan bulunamadı.");
+                            entity = existing;
+                            entity.AgentId = agentId;
+                        }
+
+                        entity.PropertyNo = cmd.PropertyNo;
+                        entity.PropertyName = cmd.PropertyName ?? string.Empty;
+                        entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
+                        entity.City = cmd.City ?? string.Empty;
+                        entity.District = cmd.District ?? string.Empty;
+                        entity.Neighborhood = cmd.Neighborhood ?? string.Empty;
+                        entity.AddressDesc = cmd.AddressDesc ?? string.Empty;
+                        entity.ZoningStatus = cmd.ZoningStatus ?? string.Empty;
+                        entity.Area = cmd.Area ?? 0;
+                        entity.Price = cmd.Price ?? 0;
+                        entity.PricePerSquareMeter = cmd.PricePerSquareMeter ?? (cmd.Area > 0 ? (cmd.Price ?? 0) / (decimal)cmd.Area : 0);
+                        entity.SharePercentage = cmd.SharePercentage;
+                        entity.ParcelNumber = cmd.ParcelNumber;
+                        entity.PlotNumber = cmd.PlotNumber;
+                        entity.MapSheetNumber = cmd.MapSheetNumber;
+                        entity.FloorAreaRatio = cmd.FloorAreaRatio;
+                        entity.BaseAreaRatio = cmd.BaseAreaRatio;
+                        entity.ZoningPlan = cmd.ZoningPlan;
+                        entity.TitleDeedStatus = cmd.TitleDeedStatus ?? string.Empty;
+                        entity.LandLoan = cmd.LandLoan;
+                        entity.Exchange = cmd.Exchange;
+                        entity.LandCategoryId = cmd.LandCategoryId ?? 0;
+                        entity.DevelopmentRight = bool.TryParse(cmd.DevelopmentRight, out var drBool) ? drBool : (bool?)null;
+
+                        if (isNew)
+                        {
+                            await _context.SaveChangesAsync();
+                            listingId = entity.ForSaleLandListingId;
+                        }
+
+                        await ReplaceAmenitiesAsync(1, listingId, cmd.AmenityIds);
+                        await _context.SaveChangesAsync();
+                        return (1, listingId);
+                    }
+
+                case 2: // Satılık Konut
+                    {
+                        ForSaleHousingListing entity;
+                        if (isNew)
+                        {
+                            entity = new ForSaleHousingListing
+                            {
+                                CreatedDate = DateTime.Now,
+                                PropertyStatus = PropertyStatuses.Aktif,
+                                BestDeals = false,
+                                AgentId = agentId,
+                                ListingTypeId = cmd.ListingTypeId,
+                                PropImgUrl1 = string.Empty
+                            };
+                            _context.forSaleHousingPropertyListings.Add(entity);
+                        }
+                        else
+                        {
+                            var existing = await _context.forSaleHousingPropertyListings.FirstOrDefaultAsync(x => x.ForSaleHousingListId == listingId);
+                            if (existing == null) throw new InvalidOperationException("İlan bulunamadı.");
+                            entity = existing;
+                            entity.AgentId = agentId;
+                        }
+
+                        entity.PropertyNo = cmd.PropertyNo;
+                        entity.PropertyName = cmd.PropertyName ?? string.Empty;
+                        entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
+                        entity.City = cmd.City ?? string.Empty;
+                        entity.District = cmd.District ?? string.Empty;
+                        entity.Neighborhood = cmd.Neighborhood ?? string.Empty;
+                        entity.AddressDesc = cmd.AddressDesc;
+                        entity.Price = cmd.Price ?? 0;
+                        entity.Facade = cmd.Facade;
+                        entity.IsElevator = cmd.IsElevator ?? false;
+                        entity.GrossArea = cmd.GrossArea ?? 0;
+                        entity.NetArea = cmd.NetArea ?? 0;
+                        entity.OpenArea = cmd.OpenArea;
+                        entity.BuildingAge = cmd.BuildingAge ?? string.Empty;
+                        entity.TotalNumberOfFloor = cmd.TotalNumberOfFloor ?? 0;
+                        entity.NumberOfFloors = cmd.NumberOfFloors ?? 0;
+                        entity.NumberOfBathRoom = cmd.NumberOfBathRoom ?? cmd.NumberOfBathrooms;
+                        entity.NumberOfRoom = cmd.NumberOfRoom ?? string.Empty;
+                        entity.Heating = cmd.Heating ?? string.Empty;
+                        entity.BlackBox = cmd.BlackBox;
+                        entity.NumberOfBalconies = cmd.NumberOfBalconies;
+                        entity.ParkingLot = cmd.ParkingLot;
+                        entity.Furnished = cmd.Furnished;
+                        entity.UsageStatus = cmd.UsageStatus ?? string.Empty;
+                        entity.WithinTheComplex = cmd.WithinTheComplex;
+                        entity.Dues = cmd.Dues;
+                        entity.Exchange = cmd.Exchange ?? false;
+                        entity.TitleDeedStatus = cmd.TitleDeedStatus ?? string.Empty;
+                        entity.HomeLoan = cmd.HomeLoan ?? false;
+                        entity.HousingCategoryId = cmd.HousingCategoryId ?? 0;
+
+                        if (isNew)
+                        {
+                            await _context.SaveChangesAsync();
+                            listingId = entity.ForSaleHousingListId;
+                        }
+
+                        await ReplaceAmenitiesAsync(2, listingId, cmd.AmenityIds);
+                        await _context.SaveChangesAsync();
+                        return (2, listingId);
+                    }
+
+                case 3: // Satılık İşyeri
+                    {
+                        ForSaleCommercialPropertyListing entity;
+                        if (isNew)
+                        {
+                            entity = new ForSaleCommercialPropertyListing
+                            {
+                                CreatedDate = DateTime.Now,
+                                PropertyStatus = PropertyStatuses.Aktif,
+                                BestDeals = false,
+                                AgentId = agentId,
+                                ListingTypeId = cmd.ListingTypeId,
+                                PropImgUrl1 = string.Empty
+                            };
+                            _context.forSaleCommercialPropertyListings.Add(entity);
+                        }
+                        else
+                        {
+                            var existing = await _context.forSaleCommercialPropertyListings.FirstOrDefaultAsync(x => x.ForSaleCommercialListingId == listingId);
+                            if (existing == null) throw new InvalidOperationException("İlan bulunamadı.");
+                            entity = existing;
+                            entity.AgentId = agentId;
+                        }
+
+                        entity.PropertyNo = cmd.PropertyNo;
+                        entity.PropertyName = cmd.PropertyName ?? string.Empty;
+                        entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
+                        entity.City = cmd.City ?? string.Empty;
+                        entity.District = cmd.District ?? string.Empty;
+                        entity.Neighborhood = cmd.Neighborhood ?? string.Empty;
+                        entity.AddressDesc = cmd.AddressDesc ?? string.Empty;
+                        entity.Price = cmd.Price ?? 0;
+                        entity.Facade = cmd.Facade;
+                        entity.NumberOfSection = cmd.NumberOfSection;
+                        entity.NumberOfKitchens = cmd.NumberOfKitchens;
+                        entity.NumberOfBathrooms = cmd.NumberOfBathrooms ?? cmd.NumberOfBathRoom;
+                        entity.NumberOfFloors = cmd.NumberOfFloors ?? 0;
+                        entity.GrossArea = cmd.GrossArea ?? 0;
+                        entity.Area = cmd.Area;
+                        entity.TitleDeedStatus = cmd.TitleDeedStatus ?? string.Empty;
+                        entity.SharePercentage = cmd.SharePercentage;
+                        entity.LandLoan = cmd.LandLoan ?? false;
+                        entity.Exchange = cmd.Exchange ?? false;
+                        entity.Transferable = cmd.Transferable ?? false;
+
+                        if (isNew)
+                        {
+                            await _context.SaveChangesAsync();
+                            listingId = entity.ForSaleCommercialListingId;
+                        }
+
+                        await ReplaceAmenitiesAsync(3, listingId, cmd.AmenityIds);
+                        await _context.SaveChangesAsync();
+                        return (3, listingId);
+                    }
+
+                case 7: // Kiralık Arsa
+                    {
+                        RentalLandListing entity;
+                        if (isNew)
+                        {
+                            entity = new RentalLandListing
+                            {
+                                CreatedDate = DateTime.Now,
+                                PropertyStatus = PropertyStatuses.Aktif,
+                                BestDeals = false,
+                                AgentId = agentId,
+                                ListingTypeId = cmd.ListingTypeId,
+                                PropImgUrl1 = string.Empty
+                            };
+                            _context.rentalLandListings.Add(entity);
+                        }
+                        else
+                        {
+                            var existing = await _context.rentalLandListings.FirstOrDefaultAsync(x => x.RentalLandListingId == listingId);
+                            if (existing == null) throw new InvalidOperationException("İlan bulunamadı.");
+                            entity = existing;
+                            entity.AgentId = agentId;
+                        }
+
+                        entity.PropertyNo = cmd.PropertyNo;
+                        entity.PropertyName = cmd.PropertyName ?? string.Empty;
+                        entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
+                        entity.City = cmd.City ?? string.Empty;
+                        entity.District = cmd.District ?? string.Empty;
+                        entity.Neighborhood = cmd.Neighborhood ?? string.Empty;
+                        entity.AddressDesc = cmd.AddressDesc ?? string.Empty;
+                        entity.Rent = cmd.Rent ?? cmd.Price ?? 0;
+                        entity.PricePerSquareMeter = cmd.PricePerSquareMeter ?? (cmd.Area > 0 ? ((cmd.Rent ?? cmd.Price ?? 0) / (decimal)cmd.Area) : 0);
+                        entity.Area = cmd.Area ?? 0;
+                        entity.ZoningStatus = cmd.ZoningStatus ?? string.Empty;
+                        entity.ParcelNumber = cmd.ParcelNumber;
+                        entity.PlotNumber = cmd.PlotNumber;
+                        entity.MapSheetNumber = cmd.MapSheetNumber;
+                        entity.FloorAreaRatio = cmd.FloorAreaRatio;
+                        entity.BaseAreaRatio = cmd.BaseAreaRatio;
+                        entity.ZoningPlan = cmd.ZoningPlan;
+                        entity.TitleDeedStatus = cmd.TitleDeedStatus;
+                        entity.DevelopmentRight = cmd.DevelopmentRight;
+                        entity.LandCategoryId = cmd.LandCategoryId ?? 0;
+
+                        if (isNew)
+                        {
+                            await _context.SaveChangesAsync();
+                            listingId = entity.RentalLandListingId;
+                        }
+
+                        await ReplaceAmenitiesAsync(7, listingId, cmd.AmenityIds);
+                        await _context.SaveChangesAsync();
+                        return (7, listingId);
+                    }
+
+                case 8: // Kiralık Konut
+                    {
+                        RentalHousingListing entity;
+                        if (isNew)
+                        {
+                            entity = new RentalHousingListing
+                            {
+                                CreatedDate = DateTime.Now,
+                                PropertyStatus = PropertyStatuses.Aktif,
+                                BestDeals = false,
+                                AgentId = agentId,
+                                ListingTypeId = cmd.ListingTypeId,
+                                PropImgUrl1 = string.Empty
+                            };
+                            _context.rentalHousingListings.Add(entity);
+                        }
+                        else
+                        {
+                            var existing = await _context.rentalHousingListings.FirstOrDefaultAsync(x => x.RentalHousingListId == listingId);
+                            if (existing == null) throw new InvalidOperationException("İlan bulunamadı.");
+                            entity = existing;
+                            entity.AgentId = agentId;
+                        }
+
+                        entity.PropertyNo = cmd.PropertyNo;
+                        entity.PropertyName = cmd.PropertyName ?? string.Empty;
+                        entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
+                        entity.City = cmd.City ?? string.Empty;
+                        entity.District = cmd.District ?? string.Empty;
+                        entity.Neighborhood = cmd.Neighborhood ?? string.Empty;
+                        entity.AddressDesc = cmd.AddressDesc;
+                        entity.Rent = cmd.Rent ?? cmd.Price ?? 0;
+                        entity.Deposit = cmd.Deposit ?? 0;
+                        entity.Facade = cmd.Facade;
+                        entity.IsElevator = cmd.IsElevator ?? false;
+                        entity.GrossArea = cmd.GrossArea ?? 0;
+                        entity.NetArea = cmd.NetArea ?? 0;
+                        entity.OpenArea = cmd.OpenArea;
+                        entity.BuildingAge = cmd.BuildingAge ?? string.Empty;
+                        entity.TotalNumberOfFloor = cmd.TotalNumberOfFloor ?? 0;
+                        entity.NumberOfFloors = cmd.NumberOfFloors ?? 0;
+                        entity.NumberOfBathRoom = cmd.NumberOfBathRoom ?? cmd.NumberOfBathrooms;
+                        entity.NumberOfRoom = cmd.NumberOfRoom ?? string.Empty;
+                        entity.NumberOfBalconies = cmd.NumberOfBalconies;
+                        entity.Heating = cmd.Heating ?? string.Empty;
+                        entity.BlackBox = cmd.BlackBox;
+                        entity.ParkingLot = cmd.ParkingLot;
+                        entity.Furnished = cmd.Furnished;
+                        entity.WithinTheComplex = cmd.WithinTheComplex;
+                        entity.Dues = cmd.Dues;
+                        entity.HousingCategoryId = cmd.HousingCategoryId ?? 0;
+
+                        if (isNew)
+                        {
+                            await _context.SaveChangesAsync();
+                            listingId = entity.RentalHousingListId;
+                        }
+
+                        await ReplaceAmenitiesAsync(8, listingId, cmd.AmenityIds);
+                        await _context.SaveChangesAsync();
+                        return (8, listingId);
+                    }
+
+                case 9: // Kiralık İşyeri
+                    {
+                        RentalCommercialPropertyListing entity;
+                        if (isNew)
+                        {
+                            entity = new RentalCommercialPropertyListing
+                            {
+                                CreatedDate = DateTime.Now,
+                                PropertyStatus = PropertyStatuses.Aktif,
+                                BestDeals = false,
+                                AgentId = agentId,
+                                ListingTypeId = cmd.ListingTypeId,
+                                PropImgUrl1 = string.Empty
+                            };
+                            _context.rentalCommercialPropertyListings.Add(entity);
+                        }
+                        else
+                        {
+                            var existing = await _context.rentalCommercialPropertyListings.FirstOrDefaultAsync(x => x.RentalCommercialListId == listingId);
+                            if (existing == null) throw new InvalidOperationException("İlan bulunamadı.");
+                            entity = existing;
+                            entity.AgentId = agentId;
+                        }
+
+                        entity.PropertyNo = cmd.PropertyNo;
+                        entity.PropertyName = cmd.PropertyName ?? string.Empty;
+                        entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
+                        entity.City = cmd.City ?? string.Empty;
+                        entity.District = cmd.District ?? string.Empty;
+                        entity.Neighborhood = cmd.Neighborhood ?? string.Empty;
+                        entity.AddressDesc = cmd.AddressDesc;
+                        entity.Rent = cmd.Rent ?? cmd.Price ?? 0;
+                        entity.Deposit = cmd.Deposit ?? 0;
+                        entity.Facade = cmd.Facade;
+                        entity.NumberOfSection = cmd.NumberOfSection;
+                        entity.NumberOfKitchens = cmd.NumberOfKitchens;
+                        entity.NumberOfBathrooms = cmd.NumberOfBathrooms ?? cmd.NumberOfBathRoom;
+                        entity.NumberOfFloors = cmd.NumberOfFloors ?? 0;
+                        entity.GrossArea = cmd.GrossArea;
+                        entity.NetArea = cmd.NetArea;
+                        entity.BuildingAge = cmd.BuildingAge ?? string.Empty;
+                        entity.Heating = cmd.Heating ?? string.Empty;
+                        entity.TitleDeedStatus = cmd.TitleDeedStatus;
+
+                        if (isNew)
+                        {
+                            await _context.SaveChangesAsync();
+                            listingId = entity.RentalCommercialListId;
+                        }
+
+                        await ReplaceAmenitiesAsync(9, listingId, cmd.AmenityIds);
+                        await _context.SaveChangesAsync();
+                        return (9, listingId);
+                    }
+
+                default:
+                    throw new ArgumentException($"Desteklenmeyen ilan türü: {cmd.ListingTypeId}");
+            }
+        }
+
+        private async Task ReplaceAmenitiesAsync(int listingTypeId, int listingId, List<int>? requestedAmenityIds)
+        {
+            var category = AdminListingConstants.Category(listingTypeId);
+            var activeAmenities = await _context.AmenityDefinitions
+                .AsNoTracking()
+                .Where(a => a.isActive)
+                .ToListAsync();
+
+            var validAmenityIds = (requestedAmenityIds ?? new List<int>())
+                .Distinct()
+                .Where(id => activeAmenities.Any(a => a.AmenityId == id && category switch
+                {
+                    "land" => a.AppliesToLand,
+                    "housing" => a.AppliesToHousing,
+                    "commercial" => a.AppliesToCommercial,
+                    _ => false
+                }))
+                .ToList();
+
+            switch (listingTypeId)
+            {
+                case 1:
+                    {
+                        var current = await _context.ForSaleLandListingAmenities
+                            .Where(x => x.ForSaleLandListId == listingId)
+                            .ToListAsync();
+                        _context.ForSaleLandListingAmenities.RemoveRange(current);
+
+                        if (validAmenityIds.Count > 0)
+                        {
+                            var newRows = validAmenityIds.Select(id => new ForSaleLandListingAmenity
+                            {
+                                ForSaleLandListId = listingId,
+                                AmenityId = id
+                            });
+                            _context.ForSaleLandListingAmenities.AddRange(newRows);
+                        }
+                        break;
+                    }
+
+                case 2:
+                    {
+                        var current = await _context.ForSaleHousingListingAmenities
+                            .Where(x => x.ForSaleHousingListId == listingId)
+                            .ToListAsync();
+                        _context.ForSaleHousingListingAmenities.RemoveRange(current);
+
+                        if (validAmenityIds.Count > 0)
+                        {
+                            var newRows = validAmenityIds.Select(id => new ForSaleHousingListingAmenity
+                            {
+                                ForSaleHousingListId = listingId,
+                                AmenityId = id
+                            });
+                            _context.ForSaleHousingListingAmenities.AddRange(newRows);
+                        }
+                        break;
+                    }
+
+                case 3:
+                    {
+                        var current = await _context.ForSaleCommercialListingAmenities
+                            .Where(x => x.ForSaleCommercialListingId == listingId)
+                            .ToListAsync();
+                        _context.ForSaleCommercialListingAmenities.RemoveRange(current);
+
+                        if (validAmenityIds.Count > 0)
+                        {
+                            var newRows = validAmenityIds.Select(id => new ForSaleCommercialListingAmenity
+                            {
+                                ForSaleCommercialListingId = listingId,
+                                AmenityId = id
+                            });
+                            _context.ForSaleCommercialListingAmenities.AddRange(newRows);
+                        }
+                        break;
+                    }
+
+                case 7:
+                    {
+                        var current = await _context.RentalLandListingAmenities
+                            .Where(x => x.RentalLandListingId == listingId)
+                            .ToListAsync();
+                        _context.RentalLandListingAmenities.RemoveRange(current);
+
+                        if (validAmenityIds.Count > 0)
+                        {
+                            var newRows = validAmenityIds.Select(id => new RentalLandListingAmenities
+                            {
+                                RentalLandListingId = listingId,
+                                AmenityId = id
+                            });
+                            _context.RentalLandListingAmenities.AddRange(newRows);
+                        }
+                        break;
+                    }
+
+                case 8:
+                    {
+                        var current = await _context.RentalHousingListingAmenities
+                            .Where(x => x.RentalHousingListId == listingId)
+                            .ToListAsync();
+                        _context.RentalHousingListingAmenities.RemoveRange(current);
+
+                        if (validAmenityIds.Count > 0)
+                        {
+                            var newRows = validAmenityIds.Select(id => new RentalHousingListingAmenities
+                            {
+                                RentalHousingListId = listingId,
+                                AmenityId = id
+                            });
+                            _context.RentalHousingListingAmenities.AddRange(newRows);
+                        }
+                        break;
+                    }
+
+                case 9:
+                    {
+                        var current = await _context.RentalCommercialListingAmenities
+                            .Where(x => x.RentalCommercialListId == listingId)
+                            .ToListAsync();
+                        _context.RentalCommercialListingAmenities.RemoveRange(current);
+
+                        if (validAmenityIds.Count > 0)
+                        {
+                            var newRows = validAmenityIds.Select(id => new RentalCommercialListingAmenities
+                            {
+                                RentalCommercialListId = listingId,
+                                AmenityId = id
+                            });
+                            _context.RentalCommercialListingAmenities.AddRange(newRows);
+                        }
+                        break;
+                    }
+            }
+        }
+
+        public async Task<bool> SetStatusAsync(int listingTypeId, int listingId, string status)
+        {
+            switch (listingTypeId)
+            {
+                case 1:
+                    {
+                        var item = await _context.forSaleLandListings.FirstOrDefaultAsync(x => x.ForSaleLandListingId == listingId);
+                        if (item == null) return false;
+                        item.PropertyStatus = status;
+                        if (status != PropertyStatuses.Aktif && status != PropertyStatuses.Opsiyonlu) item.BestDeals = false;
+                        break;
+                    }
+                case 2:
+                    {
+                        var item = await _context.forSaleHousingPropertyListings.FirstOrDefaultAsync(x => x.ForSaleHousingListId == listingId);
+                        if (item == null) return false;
+                        item.PropertyStatus = status;
+                        if (status != PropertyStatuses.Aktif && status != PropertyStatuses.Opsiyonlu) item.BestDeals = false;
+                        break;
+                    }
+                case 3:
+                    {
+                        var item = await _context.forSaleCommercialPropertyListings.FirstOrDefaultAsync(x => x.ForSaleCommercialListingId == listingId);
+                        if (item == null) return false;
+                        item.PropertyStatus = status;
+                        if (status != PropertyStatuses.Aktif && status != PropertyStatuses.Opsiyonlu) item.BestDeals = false;
+                        break;
+                    }
+                case 7:
+                    {
+                        var item = await _context.rentalLandListings.FirstOrDefaultAsync(x => x.RentalLandListingId == listingId);
+                        if (item == null) return false;
+                        item.PropertyStatus = status;
+                        if (status != PropertyStatuses.Aktif && status != PropertyStatuses.Opsiyonlu) item.BestDeals = false;
+                        break;
+                    }
+                case 8:
+                    {
+                        var item = await _context.rentalHousingListings.FirstOrDefaultAsync(x => x.RentalHousingListId == listingId);
+                        if (item == null) return false;
+                        item.PropertyStatus = status;
+                        if (status != PropertyStatuses.Aktif && status != PropertyStatuses.Opsiyonlu) item.BestDeals = false;
+                        break;
+                    }
+                case 9:
+                    {
+                        var item = await _context.rentalCommercialPropertyListings.FirstOrDefaultAsync(x => x.RentalCommercialListId == listingId);
+                        if (item == null) return false;
+                        item.PropertyStatus = status;
+                        if (status != PropertyStatuses.Aktif && status != PropertyStatuses.Opsiyonlu) item.BestDeals = false;
+                        break;
+                    }
+                default:
+                    return false;
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<string?> GetListingStatusAsync(int listingTypeId, int listingId)
+        {
+            return listingTypeId switch
+            {
+                1 => await _context.forSaleLandListings.AsNoTracking().Where(x => x.ForSaleLandListingId == listingId).Select(x => x.PropertyStatus).FirstOrDefaultAsync(),
+                2 => await _context.forSaleHousingPropertyListings.AsNoTracking().Where(x => x.ForSaleHousingListId == listingId).Select(x => x.PropertyStatus).FirstOrDefaultAsync(),
+                3 => await _context.forSaleCommercialPropertyListings.AsNoTracking().Where(x => x.ForSaleCommercialListingId == listingId).Select(x => x.PropertyStatus).FirstOrDefaultAsync(),
+                7 => await _context.rentalLandListings.AsNoTracking().Where(x => x.RentalLandListingId == listingId).Select(x => x.PropertyStatus).FirstOrDefaultAsync(),
+                8 => await _context.rentalHousingListings.AsNoTracking().Where(x => x.RentalHousingListId == listingId).Select(x => x.PropertyStatus).FirstOrDefaultAsync(),
+                9 => await _context.rentalCommercialPropertyListings.AsNoTracking().Where(x => x.RentalCommercialListId == listingId).Select(x => x.PropertyStatus).FirstOrDefaultAsync(),
+                _ => null
+            };
+        }
+
+        public async Task<int> CountBestDealsAsync(bool isRent)
+        {
+            if (!isRent)
+            {
+                var land = await _context.forSaleLandListings.CountAsync(x => x.BestDeals == true);
+                var house = await _context.forSaleHousingPropertyListings.CountAsync(x => x.BestDeals == true);
+                var comm = await _context.forSaleCommercialPropertyListings.CountAsync(x => x.BestDeals == true);
+                return land + house + comm;
+            }
+            else
+            {
+                var rland = await _context.rentalLandListings.CountAsync(x => x.BestDeals == true);
+                var rhouse = await _context.rentalHousingListings.CountAsync(x => x.BestDeals == true);
+                var rcomm = await _context.rentalCommercialPropertyListings.CountAsync(x => x.BestDeals == true);
+                return rland + rhouse + rcomm;
+            }
+        }
+
+        public async Task<bool> SetBestDealAsync(int listingTypeId, int listingId, bool isBestDeal)
+        {
+            switch (listingTypeId)
+            {
+                case 1:
+                    {
+                        var item = await _context.forSaleLandListings.FirstOrDefaultAsync(x => x.ForSaleLandListingId == listingId);
+                        if (item == null) return false;
+                        item.BestDeals = isBestDeal;
+                        break;
+                    }
+                case 2:
+                    {
+                        var item = await _context.forSaleHousingPropertyListings.FirstOrDefaultAsync(x => x.ForSaleHousingListId == listingId);
+                        if (item == null) return false;
+                        item.BestDeals = isBestDeal;
+                        break;
+                    }
+                case 3:
+                    {
+                        var item = await _context.forSaleCommercialPropertyListings.FirstOrDefaultAsync(x => x.ForSaleCommercialListingId == listingId);
+                        if (item == null) return false;
+                        item.BestDeals = isBestDeal;
+                        break;
+                    }
+                case 7:
+                    {
+                        var item = await _context.rentalLandListings.FirstOrDefaultAsync(x => x.RentalLandListingId == listingId);
+                        if (item == null) return false;
+                        item.BestDeals = isBestDeal;
+                        break;
+                    }
+                case 8:
+                    {
+                        var item = await _context.rentalHousingListings.FirstOrDefaultAsync(x => x.RentalHousingListId == listingId);
+                        if (item == null) return false;
+                        item.BestDeals = isBestDeal;
+                        break;
+                    }
+                case 9:
+                    {
+                        var item = await _context.rentalCommercialPropertyListings.FirstOrDefaultAsync(x => x.RentalCommercialListId == listingId);
+                        if (item == null) return false;
+                        item.BestDeals = isBestDeal;
+                        break;
+                    }
+                default:
+                    return false;
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SetGeoPointAsync(int listingTypeId, int listingId, decimal latitude, decimal longitude)
+        {
+            var existing = await _context.ListingGeoPoints
+                .Where(g => g.ListingTypeId == listingTypeId && g.ListingId == listingId)
+                .ToListAsync();
+
+            if (existing.Count > 0)
+            {
+                _context.ListingGeoPoints.RemoveRange(existing);
+            }
+
+            _context.ListingGeoPoints.Add(new ListingGeoPoint
+            {
+                ListingTypeId = listingTypeId,
+                ListingId = listingId,
+                Latitude = latitude,
+                Longitude = longitude,
+                Source = ListingGeoConstants.SourceManual,
+                Precision = ListingGeoConstants.PrecisionBuilding,
+                CreatedDate = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<string>> DeleteListingAsync(int listingTypeId, int listingId)
+        {
+            // 1. Olanak ara kayıtlarını sil
+            switch (listingTypeId)
+            {
+                case 1:
+                    {
+                        var ams = await _context.ForSaleLandListingAmenities.Where(x => x.ForSaleLandListId == listingId).ToListAsync();
+                        if (ams.Count > 0) _context.ForSaleLandListingAmenities.RemoveRange(ams);
+                        break;
+                    }
+                case 2:
+                    {
+                        var ams = await _context.ForSaleHousingListingAmenities.Where(x => x.ForSaleHousingListId == listingId).ToListAsync();
+                        if (ams.Count > 0) _context.ForSaleHousingListingAmenities.RemoveRange(ams);
+                        break;
+                    }
+                case 3:
+                    {
+                        var ams = await _context.ForSaleCommercialListingAmenities.Where(x => x.ForSaleCommercialListingId == listingId).ToListAsync();
+                        if (ams.Count > 0) _context.ForSaleCommercialListingAmenities.RemoveRange(ams);
+                        break;
+                    }
+                case 7:
+                    {
+                        var ams = await _context.RentalLandListingAmenities.Where(x => x.RentalLandListingId == listingId).ToListAsync();
+                        if (ams.Count > 0) _context.RentalLandListingAmenities.RemoveRange(ams);
+                        break;
+                    }
+                case 8:
+                    {
+                        var ams = await _context.RentalHousingListingAmenities.Where(x => x.RentalHousingListId == listingId).ToListAsync();
+                        if (ams.Count > 0) _context.RentalHousingListingAmenities.RemoveRange(ams);
+                        break;
+                    }
+                case 9:
+                    {
+                        var ams = await _context.RentalCommercialListingAmenities.Where(x => x.RentalCommercialListId == listingId).ToListAsync();
+                        if (ams.Count > 0) _context.RentalCommercialListingAmenities.RemoveRange(ams);
+                        break;
+                    }
+            }
+
+            // 2. ListingGeoPoints sil
+            var geoPoints = await _context.ListingGeoPoints
+                .Where(g => g.ListingTypeId == listingTypeId && g.ListingId == listingId)
+                .ToListAsync();
+            if (geoPoints.Count > 0) _context.ListingGeoPoints.RemoveRange(geoPoints);
+
+            // 3. ListingAccessGrants sil
+            var grants = await _context.ListingAccessGrants
+                .Where(g => g.ListingTypeId == listingTypeId && g.ListingId == listingId)
+                .ToListAsync();
+            if (grants.Count > 0) _context.ListingAccessGrants.RemoveRange(grants);
+
+            // 4. ListingNearbyPlaces sil
+            var places = await _context.ListingNearbyPlaces
+                .Where(p => p.ListingTypeId == listingTypeId && p.ListingId == listingId)
+                .ToListAsync();
+            if (places.Count > 0) _context.ListingNearbyPlaces.RemoveRange(places);
+
+            // 5. ListingImages sil ve StoragePath listesini topla
+            var images = await _context.ListingImages
+                .Where(i => i.ListingTypeId == listingTypeId && i.ListingId == listingId)
+                .ToListAsync();
+            var storagePaths = images
+                .Where(i => !string.IsNullOrWhiteSpace(i.StoragePath))
+                .Select(i => i.StoragePath!)
+                .ToList();
+            if (images.Count > 0) _context.ListingImages.RemoveRange(images);
+
+            // 6. İlan ana kaydını sil
+            switch (listingTypeId)
+            {
+                case 1:
+                    {
+                        var entity = await _context.forSaleLandListings.FirstOrDefaultAsync(x => x.ForSaleLandListingId == listingId);
+                        if (entity != null) _context.forSaleLandListings.Remove(entity);
+                        break;
+                    }
+                case 2:
+                    {
+                        var entity = await _context.forSaleHousingPropertyListings.FirstOrDefaultAsync(x => x.ForSaleHousingListId == listingId);
+                        if (entity != null) _context.forSaleHousingPropertyListings.Remove(entity);
+                        break;
+                    }
+                case 3:
+                    {
+                        var entity = await _context.forSaleCommercialPropertyListings.FirstOrDefaultAsync(x => x.ForSaleCommercialListingId == listingId);
+                        if (entity != null) _context.forSaleCommercialPropertyListings.Remove(entity);
+                        break;
+                    }
+                case 7:
+                    {
+                        var entity = await _context.rentalLandListings.FirstOrDefaultAsync(x => x.RentalLandListingId == listingId);
+                        if (entity != null) _context.rentalLandListings.Remove(entity);
+                        break;
+                    }
+                case 8:
+                    {
+                        var entity = await _context.rentalHousingListings.FirstOrDefaultAsync(x => x.RentalHousingListId == listingId);
+                        if (entity != null) _context.rentalHousingListings.Remove(entity);
+                        break;
+                    }
+                case 9:
+                    {
+                        var entity = await _context.rentalCommercialPropertyListings.FirstOrDefaultAsync(x => x.RentalCommercialListId == listingId);
+                        if (entity != null) _context.rentalCommercialPropertyListings.Remove(entity);
+                        break;
+                    }
+            }
+
+            await _context.SaveChangesAsync();
+            return storagePaths;
+        }
+
+        public async Task<List<ListingAccessGrant>> GetGrantsForListingAsync(int listingTypeId, int listingId)
+        {
+            return await _context.ListingAccessGrants
+                .AsNoTracking()
+                .Where(g => g.ListingTypeId == listingTypeId && g.ListingId == listingId)
+                .OrderByDescending(g => g.GrantedAtUtc)
+                .ToListAsync();
+        }
+
+        public async Task AddOrUpdateGrantAsync(int listingTypeId, int listingId, int targetAgentId, ListingAccessLevel access, int grantedByAgentId)
+        {
+            var existing = await _context.ListingAccessGrants
+                .FirstOrDefaultAsync(g => g.ListingTypeId == listingTypeId && g.ListingId == listingId && g.AgentId == targetAgentId);
+
+            if (existing != null)
+            {
+                existing.Access = access;
+                existing.GrantedByAgentId = grantedByAgentId;
+                existing.GrantedAtUtc = DateTime.UtcNow;
+            }
+            else
+            {
+                _context.ListingAccessGrants.Add(new ListingAccessGrant
+                {
+                    ListingTypeId = listingTypeId,
+                    ListingId = listingId,
+                    AgentId = targetAgentId,
+                    Access = access,
+                    GrantedByAgentId = grantedByAgentId,
+                    GrantedAtUtc = DateTime.UtcNow
+                });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> RemoveGrantAsync(int listingAccessGrantId)
+        {
+            var grant = await _context.ListingAccessGrants
+                .FirstOrDefaultAsync(g => g.ListingAccessGrantId == listingAccessGrantId);
+
+            if (grant == null) return false;
+
+            _context.ListingAccessGrants.Remove(grant);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> AgentExistsAndActiveAsync(int agentId)
+        {
+            return await _context.Agents.AsNoTracking().AnyAsync(a => a.AgentId == agentId && a.IsActive);
+        }
+
+        public async Task<bool> IsActiveAgentAsync(int agentId)
+        {
+            return await _context.Agents.AsNoTracking().AnyAsync(a => a.AgentId == agentId && a.IsActive);
+        }
+
+        public async Task<bool> HousingCategoryExistsAsync(int id)
+        {
+            return await _context.HousingCategories.AsNoTracking().AnyAsync(c => c.HousingCategoryId == id);
+        }
+
+        public async Task<bool> LandCategoryExistsAsync(int id)
+        {
+            return await _context.LandCategories.AsNoTracking().AnyAsync(c => c.LandCategoryId == id);
+        }
+
+        public async Task<Agent?> GetAgentByIdAsync(int agentId)
+        {
+            return await _context.Agents.AsNoTracking().FirstOrDefaultAsync(a => a.AgentId == agentId);
         }
 
         #region Yardımcı Metotlar ve Birleşik Projeksiyon

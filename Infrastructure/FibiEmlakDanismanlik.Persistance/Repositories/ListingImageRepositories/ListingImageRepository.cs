@@ -137,9 +137,25 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories
                 setClauses.Add($"[PropImgUrl{i}] = {paramName}");
 
                 string? url = (i - 1 < images.Count) ? images[i - 1] : null;
+
+                // PropImgUrl1 veritabanında NOT NULL
+                object paramValue;
+                if (url != null)
+                {
+                    paramValue = url;
+                }
+                else if (i == 1)
+                {
+                    paramValue = string.Empty;
+                }
+                else
+                {
+                    paramValue = DBNull.Value;
+                }
+
                 var param = new SqlParameter(paramName, System.Data.SqlDbType.NVarChar, 1024)
                 {
-                    Value = (object?)url ?? DBNull.Value
+                    Value = paramValue
                 };
                 parameters.Add(param);
             }

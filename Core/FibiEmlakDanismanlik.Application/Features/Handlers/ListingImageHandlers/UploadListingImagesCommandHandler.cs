@@ -7,6 +7,7 @@ using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Exceptions;
 using FibiEmlakDanismanlik.Application.Features.Commands.ListingImageCommands;
 using FibiEmlakDanismanlik.Application.Features.Results.ListingImageResults;
+using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
@@ -21,15 +22,18 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
         private readonly IListingImageRepository _listingImageRepository;
         private readonly IImageProcessor _imageProcessor;
         private readonly IFileStorage _fileStorage;
+        private readonly IListingAccessService _listingAccessService;
 
         public UploadListingImagesCommandHandler(
             IListingImageRepository listingImageRepository,
             IImageProcessor imageProcessor,
-            IFileStorage fileStorage)
+            IFileStorage fileStorage,
+            IListingAccessService listingAccessService)
         {
             _listingImageRepository = listingImageRepository;
             _imageProcessor = imageProcessor;
             _fileStorage = fileStorage;
+            _listingAccessService = listingAccessService;
         }
 
         public async Task<List<GetListingImageResult>> Handle(UploadListingImagesCommand request, CancellationToken cancellationToken)
@@ -38,6 +42,12 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
                 !await _listingImageRepository.ListingExistsAsync(request.ListingTypeId, request.ListingId))
             {
                 throw new ImageValidationException("İlan bulunamadı.");
+            }
+
+            var access = await _listingAccessService.GetAccessAsync(request.ListingTypeId, request.ListingId);
+            if (access != ListingAccess.Edit)
+            {
+                throw new ListingAccessDeniedException("Bu ilana fotoğraf yükleme yetkiniz bulunmamaktadır.");
             }
 
             var existingImages = await _listingImageRepository.GetByListingAsync(request.ListingTypeId, request.ListingId);

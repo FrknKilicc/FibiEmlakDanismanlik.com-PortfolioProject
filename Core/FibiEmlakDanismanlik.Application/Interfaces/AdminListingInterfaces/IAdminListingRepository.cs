@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FibiEmlakDanismanlik.Application.Features.Commands.AdminListingCommands;
 using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Enums;
 
 namespace FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces
 {
     /// <summary>
-    /// Yönetim paneli ilan okuma, filtreleme, özet ve yardımcı veri erişim arayüzü.
+    /// Yönetim paneli ilan okuma, filtreleme, özet, yardımcı veri erişim ve yazma arayüzü.
     /// </summary>
     public interface IAdminListingRepository
     {
@@ -58,5 +60,80 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces
         /// Aktif danışmanların kimlik ve ad listesini ada göre sıralı döner.
         /// </summary>
         Task<List<(int AgentId, string AgentName)>> GetActiveAgentsAsync();
+
+        /// <summary>
+        /// İlan kaydeder (ekler veya günceller) ve olanak ara tablosunu günceller.
+        /// </summary>
+        Task<(int ListingTypeId, int ListingId)> SaveAsync(SaveAdminListingCommand cmd, int agentId, bool isNew);
+
+        /// <summary>
+        /// İlanın durumunu günceller; Aktif/Opsiyonlu dışına çıkarsa BestDeals = false yapar.
+        /// </summary>
+        Task<bool> SetStatusAsync(int listingTypeId, int listingId, string status);
+
+        /// <summary>
+        /// İlanın mevcut durumunu döner. Bulunamazsa null döner.
+        /// </summary>
+        Task<string?> GetListingStatusAsync(int listingTypeId, int listingId);
+
+        /// <summary>
+        /// Satılık veya kiralık vitrinde (BestDeals=true) bulunan aktif ilan sayısını döner.
+        /// </summary>
+        Task<int> CountBestDealsAsync(bool isRent);
+
+        /// <summary>
+        /// İlanın vitrin (BestDeals) durumunu günceller.
+        /// </summary>
+        Task<bool> SetBestDealAsync(int listingTypeId, int listingId, bool isBestDeal);
+
+        /// <summary>
+        /// İlanın harita koordinatını manuel kaynakla ve building hassasiyetiyle kaydeder.
+        /// </summary>
+        Task<bool> SetGeoPointAsync(int listingTypeId, int listingId, decimal latitude, decimal longitude);
+
+        /// <summary>
+        /// İlanı ve bağlı tüm kayıtları (olanaklar, harita pini, izinler, yakındaki yerler, görseller) siler ve silinen görsellerin dosya yollarını döner.
+        /// </summary>
+        Task<List<string>> DeleteListingAsync(int listingTypeId, int listingId);
+
+        /// <summary>
+        /// Belirli bir ilana tanımlanmış özel erişim izinlerini döner.
+        /// </summary>
+        Task<List<ListingAccessGrant>> GetGrantsForListingAsync(int listingTypeId, int listingId);
+
+        /// <summary>
+        /// Bir ilana danışman için özel erişim izni ekler veya mevcutsa günceller.
+        /// </summary>
+        Task AddOrUpdateGrantAsync(int listingTypeId, int listingId, int targetAgentId, ListingAccessLevel access, int grantedByAgentId);
+
+        /// <summary>
+        /// Belirtilen erişim iznini siler.
+        /// </summary>
+        Task<bool> RemoveGrantAsync(int listingAccessGrantId);
+
+        /// <summary>
+        /// Belirtilen danışmanın var ve aktif olup olmadığını sorgular.
+        /// </summary>
+        Task<bool> AgentExistsAndActiveAsync(int agentId);
+
+        /// <summary>
+        /// Belirtilen danışmanın var ve aktif olup olmadığını sorgular.
+        /// </summary>
+        Task<bool> IsActiveAgentAsync(int agentId);
+
+        /// <summary>
+        /// Konut kategorisinin mevcut olup olmadığını doğrular.
+        /// </summary>
+        Task<bool> HousingCategoryExistsAsync(int id);
+
+        /// <summary>
+        /// Arsa kategorisinin mevcut olup olmadığını doğrular.
+        /// </summary>
+        Task<bool> LandCategoryExistsAsync(int id);
+
+        /// <summary>
+        /// Danışman bilgilerini döner.
+        /// </summary>
+        Task<Agent?> GetAgentByIdAsync(int agentId);
     }
 }

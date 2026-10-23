@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Exceptions;
 using FibiEmlakDanismanlik.Application.Features.Commands.ListingImageCommands;
+using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces;
 using MediatR;
 
@@ -15,10 +16,14 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
     public class ReorderListingImagesCommandHandler : IRequestHandler<ReorderListingImagesCommand>
     {
         private readonly IListingImageRepository _listingImageRepository;
+        private readonly IListingAccessService _listingAccessService;
 
-        public ReorderListingImagesCommandHandler(IListingImageRepository listingImageRepository)
+        public ReorderListingImagesCommandHandler(
+            IListingImageRepository listingImageRepository,
+            IListingAccessService listingAccessService)
         {
             _listingImageRepository = listingImageRepository;
+            _listingAccessService = listingAccessService;
         }
 
         public async Task Handle(ReorderListingImagesCommand request, CancellationToken cancellationToken)
@@ -27,6 +32,12 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
                 !await _listingImageRepository.ListingExistsAsync(request.ListingTypeId, request.ListingId))
             {
                 throw new ImageValidationException("İlan bulunamadı.");
+            }
+
+            var access = await _listingAccessService.GetAccessAsync(request.ListingTypeId, request.ListingId);
+            if (access != ListingAccess.Edit)
+            {
+                throw new ListingAccessDeniedException("Bu ilanın fotoğraflarını sıralama yetkiniz bulunmamaktadır.");
             }
 
             if (request.OrderedImageIds == null || request.OrderedImageIds.Count == 0)

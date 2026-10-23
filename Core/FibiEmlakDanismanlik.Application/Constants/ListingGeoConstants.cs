@@ -8,6 +8,7 @@ namespace FibiEmlakDanismanlik.Application.Constants
         public const string SourceManual = "manual";
         public const string SourceNominatim = "nominatim";
 
+        public const string PrecisionBuilding = "building";
         public const string PrecisionNeighborhood = "neighborhood";
         public const string PrecisionDistrict = "district";
         public const string PrecisionCity = "city";

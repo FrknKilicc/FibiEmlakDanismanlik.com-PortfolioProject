@@ -1,7 +1,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FibiEmlakDanismanlik.Application.Exceptions;
 using FibiEmlakDanismanlik.Application.Features.Commands.ListingImageCommands;
+using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces;
 using MediatR;
 
@@ -14,13 +16,16 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
     {
         private readonly IListingImageRepository _listingImageRepository;
         private readonly IFileStorage _fileStorage;
+        private readonly IListingAccessService _listingAccessService;
 
         public RemoveListingImageCommandHandler(
             IListingImageRepository listingImageRepository,
-            IFileStorage fileStorage)
+            IFileStorage fileStorage,
+            IListingAccessService listingAccessService)
         {
             _listingImageRepository = listingImageRepository;
             _fileStorage = fileStorage;
+            _listingAccessService = listingAccessService;
         }
 
         public async Task<bool> Handle(RemoveListingImageCommand request, CancellationToken cancellationToken)
@@ -33,6 +38,12 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
 
             int listingTypeId = image.ListingTypeId;
             int listingId = image.ListingId;
+
+            var access = await _listingAccessService.GetAccessAsync(listingTypeId, listingId);
+            if (access != ListingAccess.Edit)
+            {
+                throw new ListingAccessDeniedException("Bu ilanın fotoğrafını silme yetkiniz bulunmamaktadır.");
+            }
             bool wasCover = image.IsCover;
             string? storagePath = image.StoragePath;
 

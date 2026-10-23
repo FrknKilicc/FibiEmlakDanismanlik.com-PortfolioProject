@@ -21,7 +21,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             _mediator = mediator;
         }
 
-        [Authorize(Policy = AuthConstants.PolicyStaff)]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
 
         public async Task<IActionResult> CreateForRentalHousingListing(CreateRentalHousingPropertyListingCommand command)
