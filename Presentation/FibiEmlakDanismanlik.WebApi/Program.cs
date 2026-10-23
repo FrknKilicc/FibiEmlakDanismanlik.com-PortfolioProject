@@ -31,6 +31,8 @@ using FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories;
+using FibiEmlakDanismanlik.Application.Interfaces.LeadInterfaces;
+using FibiEmlakDanismanlik.Persistence.Repositories.LeadRepositories;
 using FibiEmlakDanismanlik.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -189,6 +191,7 @@ builder.Services.AddScoped(typeof(IMarketDataSyncRepository), typeof(MarketDataS
 builder.Services.AddScoped(typeof(IAuditLogRepository), typeof(AuditLogRepository));
 builder.Services.AddScoped(typeof(IListingImageRepository), typeof(ListingImageRepository));
 builder.Services.AddScoped(typeof(IAdminListingRepository), typeof(AdminListingRepository));
+builder.Services.AddScoped(typeof(ILeadRepository), typeof(LeadRepository));
 //Configure IRepositories
 
 //MediaTR tried
