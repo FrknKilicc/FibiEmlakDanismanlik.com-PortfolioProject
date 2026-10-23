@@ -93,14 +93,58 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("CanViewAllListings")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("FailedLoginCount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime?>("LastLoginAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LockoutEndUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Mail")
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<bool>("MustChangePassword")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("PasswordChangedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int")
+                        .HasDefaultValue(3);
+
+                    b.Property<string>("SecurityStamp")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasDefaultValueSql("CONVERT(nvarchar(64), NEWID())");
+
+                    b.Property<bool>("ShowOnWebsite")
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("TwoFactorSecretProtected")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
                     b.HasKey("AgentId");
 
@@ -108,6 +152,35 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Agents");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.AgentRecoveryCode", b =>
+                {
+                    b.Property<int>("AgentRecoveryCodeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AgentRecoveryCodeId"));
+
+                    b.Property<int>("AgentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CodeHash")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UsedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AgentRecoveryCodeId");
+
+                    b.HasIndex("AgentId");
+
+                    b.ToTable("AgentRecoveryCodes");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.AmenityDefinition", b =>
@@ -147,6 +220,52 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasIndex("Name");
 
                     b.ToTable("AmenityDefinitions");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.AuditLog", b =>
+                {
+                    b.Property<int>("AuditLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuditLogId"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("AgentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ChangesJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EntityKey")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.HasKey("AuditLogId");
+
+                    b.HasIndex("AgentId");
+
+                    b.HasIndex("CreatedAtUtc");
+
+                    b.HasIndex("EntityName", "EntityKey");
+
+                    b.ToTable("AuditLogs");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.Author", b =>
@@ -1518,6 +1637,42 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("LandCategories");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingAccessGrant", b =>
+                {
+                    b.Property<int>("ListingAccessGrantId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ListingAccessGrantId"));
+
+                    b.Property<int>("Access")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AgentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("GrantedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("GrantedByAgentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ListingTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ListingAccessGrantId");
+
+                    b.HasIndex("ListingTypeId", "ListingId");
+
+                    b.HasIndex("AgentId", "ListingTypeId", "ListingId")
+                        .IsUnique();
+
+                    b.ToTable("ListingAccessGrants");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingGeoPoint", b =>
                 {
                     b.Property<int>("ListingGeoPointId")
@@ -1651,6 +1806,49 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasKey("ListingTypeId");
 
                     b.ToTable("listingTypes");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.LoginAuditLog", b =>
+                {
+                    b.Property<int>("LoginAuditLogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LoginAuditLogId"));
+
+                    b.Property<int?>("AgentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AttemptedMail")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<bool>("Succeeded")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.HasKey("LoginAuditLogId");
+
+                    b.HasIndex("AgentId");
+
+                    b.HasIndex("CreatedAtUtc");
+
+                    b.ToTable("LoginAuditLogs");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.MainBanner", b =>
@@ -2668,6 +2866,15 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("Testimonials");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.AgentRecoveryCode", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Agent", null)
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.Blog", b =>
                 {
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Author", "Author")
@@ -2934,6 +3141,15 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Navigation("AmenityDefinition");
 
                     b.Navigation("ForSaleLandListing");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingAccessGrant", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Agent", null)
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingNearbyPlace", b =>

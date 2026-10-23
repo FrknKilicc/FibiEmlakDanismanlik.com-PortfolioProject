@@ -1,6 +1,7 @@
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Helpers;
 using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -123,6 +124,10 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<MarketDataSyncLog> MarketDataSyncLogs { get; set; }
         public DbSet<BankLoanRate> BankLoanRates { get; set; }
         public DbSet<FibiServiceLead> FibiServiceLeads { get; set; }
+        public DbSet<AgentRecoveryCode> AgentRecoveryCodes { get; set; }
+        public DbSet<ListingAccessGrant> ListingAccessGrants { get; set; }
+        public DbSet<LoginAuditLog> LoginAuditLogs { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -394,6 +399,107 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             {
                 entity.Property(x => x.Mail).IsRequired().HasMaxLength(256);
                 entity.HasIndex(x => x.Mail).IsUnique();
+
+                // DB varsayılanı yalnızca mevcut satırlar için; EF değeri her zaman gönderir (false/0 yutulmasın)
+                entity.Property(x => x.Role)
+                      .HasConversion<int>()
+                      .HasDefaultValue(AgentRole.Consultant)
+                      .ValueGeneratedNever();
+
+                // DB varsayılanı yalnızca mevcut satırlar için; EF değeri her zaman gönderir (false/0 yutulmasın)
+                entity.Property(x => x.ShowOnWebsite)
+                      .HasDefaultValue(true)
+                      .ValueGeneratedNever();
+
+                // DB varsayılanı yalnızca mevcut satırlar için; EF değeri her zaman gönderir (false/0 yutulmasın)
+                entity.Property(x => x.IsActive)
+                      .HasDefaultValue(true)
+                      .ValueGeneratedNever();
+
+                entity.Property(x => x.SecurityStamp)
+                      .IsRequired()
+                      .HasMaxLength(64)
+                      .HasDefaultValueSql("CONVERT(nvarchar(64), NEWID())");
+
+                entity.Property(x => x.TwoFactorSecretProtected)
+                      .HasMaxLength(1024);
+            });
+
+            // AgentRecoveryCode: 2FA kurtarma kodları
+            modelBuilder.Entity<AgentRecoveryCode>(entity =>
+            {
+                entity.Property(x => x.CodeHash)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.HasOne<Agent>()
+                      .WithMany()
+                      .HasForeignKey(x => x.AgentId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(x => x.AgentId);
+            });
+
+            // ListingAccessGrant: Danışman özel ilan erişim izinleri
+            modelBuilder.Entity<ListingAccessGrant>(entity =>
+            {
+                entity.Property(x => x.Access)
+                      .HasConversion<int>();
+
+                entity.HasOne<Agent>()
+                      .WithMany()
+                      .HasForeignKey(x => x.AgentId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(x => new { x.AgentId, x.ListingTypeId, x.ListingId })
+                      .IsUnique();
+
+                entity.HasIndex(x => new { x.ListingTypeId, x.ListingId });
+            });
+
+            // LoginAuditLog: Giriş denetim günlükleri
+            modelBuilder.Entity<LoginAuditLog>(entity =>
+            {
+                entity.Property(x => x.AttemptedMail)
+                      .IsRequired()
+                      .HasMaxLength(256);
+
+                entity.Property(x => x.IpAddress)
+                      .HasMaxLength(64);
+
+                entity.Property(x => x.UserAgent)
+                      .HasMaxLength(512);
+
+                entity.Property(x => x.FailureReason)
+                      .HasMaxLength(100);
+
+                entity.HasIndex(x => x.CreatedAtUtc);
+                entity.HasIndex(x => x.AgentId);
+            });
+
+            // AuditLog: Sistem işlem denetim günlükleri
+            modelBuilder.Entity<AuditLog>(entity =>
+            {
+                entity.Property(x => x.Action)
+                      .IsRequired()
+                      .HasMaxLength(50);
+
+                entity.Property(x => x.EntityName)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.Property(x => x.EntityKey)
+                      .HasMaxLength(100);
+
+                entity.Property(x => x.IpAddress)
+                      .HasMaxLength(64);
+
+                entity.Property(x => x.ChangesJson)
+                      .HasColumnType("nvarchar(max)");
+
+                entity.HasIndex(x => x.CreatedAtUtc);
+                entity.HasIndex(x => new { x.EntityName, x.EntityKey });
+                entity.HasIndex(x => x.AgentId);
             });
 
             // HomeSectionImage: Ana sayfa bölümlerine ait görseller (bölüm anahtarı + slot)

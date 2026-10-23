@@ -32,15 +32,24 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AgentRepositories
                 .AnyAsync(x => x.Mail == trimmed && (excludeAgentId == null || x.AgentId != excludeAgentId));
         }
 
+        /// <summary>
+        /// Yalnızca sitede görünen aktif danışmanların toplam sayısını döndürür.
+        /// </summary>
         public async Task<int> GetCountAsync()
         {
-            return await _context.Agents.CountAsync();
+            return await _context.Agents
+                .Where(x => x.IsActive && x.ShowOnWebsite)
+                .CountAsync();
         }
 
+        /// <summary>
+        /// Yalnızca sitede görünen aktif danışmanları sayfalanmış olarak döndürür.
+        /// </summary>
         public async Task<List<Agent>> GetPagedAsync(int skip, int take)
         {
             return await _context.Agents
                 .AsNoTracking()
+                .Where(x => x.IsActive && x.ShowOnWebsite)
                 .OrderBy(x => x.AgentId)
                 .Skip(skip)
                 .Take(take)

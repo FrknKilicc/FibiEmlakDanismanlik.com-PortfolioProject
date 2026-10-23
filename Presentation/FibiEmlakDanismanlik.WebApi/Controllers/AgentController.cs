@@ -36,6 +36,10 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         public async Task<IActionResult> GetAgentById(int id)
         {
             var value = await _mediator.Send(new GetAgentByIdQuery(id));
+            if (value == null)
+            {
+                return NotFound();
+            }
             return Ok(value);
         }
         [Authorize]

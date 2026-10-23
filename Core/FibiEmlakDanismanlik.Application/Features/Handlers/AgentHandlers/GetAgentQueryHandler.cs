@@ -23,7 +23,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers
         public async Task<List<GetAgentResult>> Handle(GetAgentQuery request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetAllAsync();
-            return value.Select(x=> new GetAgentResult
+            return value.Where(x => x.IsActive && x.ShowOnWebsite).Select(x=> new GetAgentResult
             {
                 AgentDescription = x.AgentDescription,
                 AgentId = x.AgentId,
