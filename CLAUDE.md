@@ -170,7 +170,7 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 - [x] **[KRİTİK]** JWT + [Authorize] tüm write endpoint'lere (2026-10-12)
 - [x] **[KRİTİK]** Agent şifrelerini BCrypt ile hash'le (2026-10-12)
 - [x] Agents.Mail için unique index + migration; Create/UpdateAgent aynı maile 409 döner (2026-10-12)
-- [ ] Html.Raw alanlarına HtmlSanitizer ekle (G4)
+- [x] (2026-10-23, `feature/antigravity-todo-batch2`) Html.Raw alanlarına HtmlSanitizer ekle (G4)
 - [ ] Admin paneli eklenince: login ekranı + JWT'nin saklanması (HttpOnly cookie / sunucu tarafı oturum) ve write isteklerinde `Authorization: Bearer` gönderilmesi; süre dolunca yeniden login
 - [ ] Admin paneli eklenince: ilan formunda "Vitrin ilanı" (BestDeals) checkbox'ı; satılık ve kiralıkta ayrı ayrı en fazla 5 (BestDealConstants.MaxPerUsageType) uyarısı. BestDeals şu an sadece Create komutlarında ve ForSaleCommercial Update'te var; diğer Update komutlarına eklenmeli
 - [x] (2026-10-19, `feature/antigravity-todo-batch1`) Detay linklerine ilan türü ekle (id + listingTypeId): şu an detay sayfası yalnızca id ile konut/arsa/ticari tablolarına sırayla bakıyor; çakışma id aralıklarıyla (konut 1M+, arsa 2M+, ticari 3M+) geçici olarak önlendi
@@ -193,14 +193,14 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 - [ ] Repo temizliği: dev'e birleşmiş feature branch'leri (yerel + origin) silinsin mi karar ver; `.claude/launch.json` commit'lenecek mi yoksa .gitignore'a mı eklenecek
 
 ### Footer (2026-10-19'da DB'den dinamik yapıldı)
-Footer (`_FooterLayoutViewComponentPartial`) `AboutUs/1`, `Contact` (ilk kayıt), `SocialMedia` (aktif, yalnızca http/https URL'ler) ve `Blog/GetLast3BlogWithAuthor` (son 2) uçlarından beslenir, 5 dk `IMemoryCache`'te tutulur (admin değişikliği en geç 5 dk'da görünür). "Sayfalar" sütunu bilerek sabit route listesi.
+Footer (`_FooterLayoutViewComponentPartial`) `AboutUs/current` (en küçük id), `Contact` (ilk kayıt), `SocialMedia` (aktif, yalnızca http/https URL'ler) ve `Blog/GetLast3BlogWithAuthor` (son 2) uçlarından beslenir, 5 dk `IMemoryCache`'te tutulur (admin değişikliği en geç 5 dk'da görünür). "Sayfalar" sütunu bilerek sabit route listesi.
 - [ ] Admin paneli: Hakkımızda, İletişim, Sosyal Medya ve Blog ekranları (`[Authorize]` CRUD uçları mevcut; footer, iletişim ve hakkımızda sayfaları bu tablolardan okuyor)
-- [ ] `AboutUsController`'da liste/aktif kayıt ucu yok; footer ve Hakkımızda sayfası `AboutUs/1`'e sabit bağlı. "Aktif/ilk kaydı getir" ucu eklenip ikisi de ona geçmeli
+- [x] (2026-10-23, `feature/antigravity-todo-batch2`) `AboutUsController`'da liste/aktif kayıt ucu yok; footer ve Hakkımızda sayfası `AboutUs/1`'e sabit bağlı. "Aktif/ilk kaydı getir" ucu eklenip ikisi de ona geçmeli
 - [ ] Veri: `SocialMedias` tablosunda bozuk kayıtlar var (Google Plus → `blog-1.html`, Twitter → `/UIlayout/Index`); footer bunları gizliyor ama düzeltilmeli/pasife alınmalı. Google+ kapandı, kaydı silinebilir
 - [ ] Veri: `Contacts.EMail1` = `info@fibiEmlak.com` (footer küçük harfe çeviriyor); eski footer'da elle yazılı `(0212) 510 01 14` vardı, DB'de `05442603193` — doğru ofis telefonu teyit edilmeli
 - [x] (2026-10-20, `feature/antigravity-seo-and-fixes`) İletişim sayfası (`_GetContactInfoViewComponentPartial`) telefon linkleri sabit ve yanlış: `tel:+23055873407` / `tel:+23055873408` (tema kalıntısı); footer'daki gibi DB numarasından üretilmeli
 - [x] (2026-10-20, `feature/antigravity-seo-and-fixes`) Footer kozmetik: blog küçük görselleri eşit 90x90 değil (tema CSS'i `width/height`'ı eziyor), "Devamını Oku" linki yeşil yerine gri görünüyor
-- [ ] Footer "Kullanım Koşulları" ve "Gizlilik Politikası" linkleri `#`; sayfalar yazılınca bağlanmalı (KVKK aydınlatma metni ile birlikte)
+- [x] (2026-10-23, `feature/antigravity-todo-batch2`) Footer "Kullanım Koşulları" (`/kullanim-kosullari`) ve "Gizlilik Politikası" (`/gizlilik-politikasi`) sayfaları yazıldı ve bağlandı. Metinler taslak: canlı öncesi hukukçu okumalı; ayrıntılı KVKK aydınlatma metni ayrı madde
 - [ ] İstenirse "Sayfalar" sütunu admin'den yönetilebilir menü olur (`FooterLink` tablosu: başlık, URL, sıra, aktif + CRUD + migration)
 
 ### İlan verisi ve detay sayfası (2026-10-19)
@@ -233,10 +233,10 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [x] (2026-10-20, `feature/antigravity-ui-polish`) Liste ve detayda ilan "Durum" etiketi (Aktif/Opsiyonlu) ziyaretçiye gösterilmiyor; "Opsiyonlu" ilanlarda rozet gösterilmesi düşünülmeli
 
 **Beklenen / önerilen geliştirmeler**
-- [ ] Danışman kutusuna WhatsApp ile yaz ve tek tıkla ara butonları (mobilde sabit alt çubuk)
-- [ ] İlan detayında kredi taksit hesaplayıcı (FİBİ Finans modülüyle ortak; `BankLoanRates` verisi)
-- [ ] Galeri: küçük resim şeridi, fotoğraf sayısı rozeti, tam ekran (fancybox zaten yüklü)
-- [ ] SEO: ilan detayına schema.org `RealEstateListing`/`Offer` yapılandırılmış verisi, Open Graph görseli, `sitemap.xml` ve `robots.txt`
+- [x] (2026-10-23, `feature/antigravity-todo-batch2`) Danışman kutusuna WhatsApp ile yaz ve tek tıkla ara butonları (mobilde sabit alt çubuk)
+- [x] (2026-10-23, `feature/antigravity-todo-batch2`) İlan detayında kredi taksit hesaplayıcı (FİBİ Finans modülüyle ortak; `BankLoanRates` verisi). Oranlar `BankLoanRates` tahmini başlangıç verisi; banka sağlayıcıları yazılınca güncellenir
+- [x] (2026-10-23, `feature/antigravity-todo-batch2`) Galeri: küçük resim şeridi, fotoğraf sayısı rozeti, tam ekran (fancybox zaten yüklü)
+- [x] (2026-10-23, `feature/antigravity-todo-batch2`) SEO: ilan detayına schema.org `RealEstateListing`/`Offer` yapılandırılmış verisi, Open Graph görseli, `sitemap.xml` ve `robots.txt`
 - [ ] Görseller: WebP + duyarlı boyutlar (srcset), liste kartlarında küçük boy; şu an 1024px JPEG her yerde
 - [x] (2026-10-20, `feature/antigravity-seo-and-fixes`) Spam koruması: iletişim ve randevu formlarına rate limit (FİBİ lead formundaki gibi) ve isteğe bağlı captcha
 - [ ] "Benzer ilan çıkınca haber ver" talep formu (lead olarak `FibiServiceLeads` benzeri tabloya)
@@ -249,8 +249,8 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [x] SEO dostu ilan adresleri + 301, canonical etiketi, detayda BreadcrumbList (JSON-LD), blog detayında başlık/açıklama, görsel alt metinleri, Türkçe 404/hata sayfası (`noindex`), olmayan ilanda API 404
 - [x] İletişim ve randevu formlarına IP başına sınır + honeypot + isteğe bağlı captcha; iletişim formu artık POST'ta API'ye gönderiyor; randevu dönüşü yalnızca aynı host'a
 - [ ] Canlıya çıkarken: `Seo:SiteBaseUrl` canlı alan adıyla ayarlanmalı; Google Search Console kaydı ve sitemap gönderimi
-- [ ] `sitemap.xml` (yukarıdaki SEO maddesi) ilan adreslerini `ListingUrl.DetailPath` ile üretmeli
-- [ ] Open Graph ile birlikte Twitter Card etiketleri
+- [x] (2026-10-23, `feature/antigravity-todo-batch2`) `sitemap.xml` (yukarıdaki SEO maddesi) ilan adreslerini `ListingUrl.DetailPath` ile üretmeli
+- [x] (2026-10-23, `feature/antigravity-todo-batch2`) Open Graph ile birlikte Twitter Card etiketleri
 - [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Blog adresleri `/blog/{slug}-{id}` (`Models/BlogUrl.cs`), liste `/blog`; eski `/Blog/Detail/{id}` ve `/Blog/Index` 301; olmayan blogda 404, API hatasında 500. Öneri ucu `blog/suggest` (JSON'a `url` alanı eklendi)
 - [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Liste adresleri `/satilik`, `/kiralik`; açılış sayfaları `/satilik/{il}` ve `/satilik/{il}/{ilce}` (`Services/ListingLocationResolver.cs`, il/ilçe API listesinden slug ile, 6 saat önbellek; bulunamazsa 404). Detay route'u `listingcategory` constraint'i ile ayrışır (`konut|arsa|isyeri|ilan`; bir il bu adlardan birini alamaz). Eski `/AllForSalePage`, `/AllForRentalPage` 301
 - [ ] Açılış sayfaları için: kategori + konum (`/satilik/konut/istanbul`) yok; filtre panelinden yalnızca il/ilçe seçilince `?cityId=..` query'li adrese gidiliyor (canonical `/satilik`), istenirse açılış sayfasına 301 ile çevrilebilir; sitemap'e açılış sayfaları eklenmeli
@@ -284,8 +284,8 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [x] (2026-10-19, `tools/sql/demo-listings-refresh.ps1`) Veri: demo ilanların çoğunda mahalle alanı il/ilçeyle uyumsuz (ör. Kadıköy ve Çankaya ilanlarında "Veliefendi"); bu yüzden 68 ilanın 47'si yalnızca ilçe düzeyinde konumlandı. Mahalle düzeltilince ilgili `nominatim` kayıtları silinirse sağlayıcı yeniden konumlar
 - [x] (2026-10-19, `feature/antigravity-todo-batch1`) İlan güncellenip ili/ilçesi/mahallesi değişirse `nominatim` kaynaklı eski koordinat kalıyor; adres değişikliğinde yaklaşık kayıt silinmeli (manuel pin hariç)
 - [ ] Harita sayfası tüm ilanları tek istekte alıp istemci tarafında filtreliyor (şimdilik 70 ilan); ilan sayısı birkaç bini geçerse `Map/listings` ucunun mevcut `usageType/category/cityId` filtreleri ve harita sınırlarına göre (bbox) sorgu kullanılmalı
-- [ ] Nominatim kullanım politikası: User-Agent'a iletişim bilgisi (site adresi veya e-posta) eklenmeli; canlıda yoğun kullanımda kendi geocoder'ımız veya ücretli servis değerlendirilmeli
-- [ ] Leaflet ve MarkerCluster unpkg CDN'den yükleniyor (detay sayfası da öyle); CDN erişilemezse harita çalışmaz, `wwwroot/lib` altına alınabilir
+- [ ] Nominatim: User-Agent'a iletişim eklendi (2026-10-23, `FibiMarketDataSync:UserAgentContact` = info@fibiemlak.com; adresin çalıştığı teyit edilmeli). Canlıda yoğun kullanımda kendi geocoder'ımız veya ücretli servis değerlendirilmeli
+- [x] (2026-10-23, `feature/antigravity-todo-batch2`) Leaflet ve MarkerCluster unpkg CDN'den yükleniyor (detay sayfası da öyle); CDN erişilemezse harita çalışmaz, `wwwroot/lib` altına alınabilir
 - [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Tema demo `.html` linkleri temizlendi (danışman karuseli, satılık liste ikonu, blog yazar linki, Hakkımızda'daki İngilizce uygulama bölümü); kullanılmayan `_FeaturedRentalPropertViewComponentPartial` silindi. Yalnızca ana sayfa bülten formu (`action="contact.html"`) kaldı, kendi maddesinde
 
 ---
