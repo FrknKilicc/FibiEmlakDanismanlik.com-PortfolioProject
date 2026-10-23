@@ -14,10 +14,12 @@ public sealed class ListingsController : Controller
 {
     private const int PageSize = 20;
     private readonly ApiClient _apiClient;
+    private readonly CurrentAdmin _currentAdmin;
 
-    public ListingsController(ApiClient apiClient)
+    public ListingsController(ApiClient apiClient, CurrentAdmin currentAdmin)
     {
         _apiClient = apiClient;
+        _currentAdmin = currentAdmin;
     }
 
     /// <summary>
@@ -137,5 +139,205 @@ public sealed class ListingsController : Controller
         }
 
         return View(viewModel);
+    }
+
+    /// <summary>
+    /// Yeni ilan ekleme formu sayfası.
+    /// </summary>
+    [HttpGet("/ilanlar/yeni")]
+    public async Task<IActionResult> Create(int tur)
+    {
+        // Tür 1, 2, 3, 7, 8, 9 değilse /ilanlar sayfasına yönlendir
+        if (tur is not (1 or 2 or 3 or 7 or 8 or 9))
+        {
+            return Redirect("/ilanlar");
+        }
+
+        var lookupsResult = await _apiClient.GetAsync<AdminListingLookupsDto>("AdminListings/lookups");
+        if (lookupsResult.StatusCode == StatusCodes.Status401Unauthorized)
+        {
+            return Redirect("/giris");
+        }
+
+        var form = new ListingFormModel
+        {
+            ListingTypeId = tur
+        };
+
+        // Eğer kullanıcı bir danışman ise kendi AgentId değerini varsayılan yap
+        if (_currentAdmin.AgentId.HasValue && !_currentAdmin.IsManagerOrAbove)
+        {
+            form.AgentId = _currentAdmin.AgentId.Value;
+        }
+
+        var viewModel = new ListingFormViewModel
+        {
+            Form = form,
+            Lookups = lookupsResult.Data ?? new AdminListingLookupsDto(),
+            CanEdit = true
+        };
+
+        return View("Edit", viewModel);
+    }
+
+    /// <summary>
+    /// İlan düzenleme sayfası.
+    /// </summary>
+    [HttpGet("/ilanlar/{listingTypeId:int}/{listingId:int}")]
+    public async Task<IActionResult> Edit(int listingTypeId, int listingId)
+    {
+        var detailTask = _apiClient.GetAsync<AdminListingDetailResponse>($"AdminListings/{listingTypeId}/{listingId}");
+        var lookupsTask = _apiClient.GetAsync<AdminListingLookupsDto>("AdminListings/lookups");
+
+        await Task.WhenAll(detailTask, lookupsTask);
+
+        var detailResult = await detailTask;
+        var lookupsResult = await lookupsTask;
+
+        if (detailResult.StatusCode == StatusCodes.Status401Unauthorized ||
+            lookupsResult.StatusCode == StatusCodes.Status401Unauthorized)
+        {
+            return Redirect("/giris");
+        }
+
+        if (detailResult.StatusCode == StatusCodes.Status403Forbidden)
+        {
+            return Redirect("/yetkisiz");
+        }
+
+        if (detailResult.StatusCode == StatusCodes.Status404NotFound || detailResult.Data?.Listing == null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new ListingFormViewModel
+        {
+            Form = detailResult.Data.Listing,
+            Lookups = lookupsResult.Data ?? new AdminListingLookupsDto(),
+            CanEdit = detailResult.Data.CanEdit
+        };
+
+        return View("Edit", viewModel);
+    }
+
+    /// <summary>
+    /// İlan kaydetme (POST/PUT) işlemi.
+    /// </summary>
+    [HttpPost("/ilanlar/kaydet")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Save(ListingFormModel form)
+    {
+        var isNew = !form.ListingId.HasValue || form.ListingId.Value <= 0;
+
+        if (!ModelState.IsValid)
+        {
+            var lookups = await LoadLookupsAsync();
+            var vm = BuildViewModel(form, lookups, canEdit: true, errorMessage: "Lütfen formdaki eksik veya hatalı alanları düzeltin.");
+            foreach (var state in ModelState)
+            {
+                if (state.Value.Errors.Count > 0)
+                {
+                    vm.FieldErrors[state.Key] = state.Value.Errors.Select(e => e.ErrorMessage).ToArray();
+                }
+            }
+            return View("Edit", vm);
+        }
+
+        ApiResult<SaveListingResponse> saveResult;
+        if (isNew)
+        {
+            saveResult = await _apiClient.PostAsync<SaveListingResponse>("AdminListings", form);
+        }
+        else
+        {
+            saveResult = await _apiClient.PutAsync<SaveListingResponse>("AdminListings", form);
+        }
+
+        if (saveResult.StatusCode == StatusCodes.Status401Unauthorized)
+        {
+            return Redirect("/giris");
+        }
+
+        if (saveResult.StatusCode == StatusCodes.Status403Forbidden)
+        {
+            var lookups = await LoadLookupsAsync();
+            var vm = BuildViewModel(form, lookups, canEdit: false, errorMessage: "Bu ilanı düzenleme yetkiniz yok.");
+            return View("Edit", vm);
+        }
+
+        if (saveResult.StatusCode == StatusCodes.Status400BadRequest)
+        {
+            var lookups = await LoadLookupsAsync();
+            var vm = BuildViewModel(form, lookups, canEdit: true, errorMessage: saveResult.ErrorMessage ?? "Lütfen formdaki hataları kontrol ediniz.");
+            if (saveResult.Errors != null)
+            {
+                foreach (var (key, msgs) in saveResult.Errors)
+                {
+                    vm.FieldErrors[key] = msgs;
+                    ModelState.AddModelError(key, string.Join(" ", msgs));
+                }
+            }
+            return View("Edit", vm);
+        }
+
+        if (!saveResult.Success)
+        {
+            var lookups = await LoadLookupsAsync();
+            var vm = BuildViewModel(form, lookups, canEdit: true, errorMessage: saveResult.ErrorMessage ?? "İlan kaydedilirken bir hata oluştu.");
+            return View("Edit", vm);
+        }
+
+        TempData["Success"] = "İlan kaydedildi.";
+        var targetTypeId = saveResult.Data?.ListingTypeId > 0 ? saveResult.Data.ListingTypeId : form.ListingTypeId;
+        var targetId = saveResult.Data?.ListingId > 0 ? saveResult.Data.ListingId : form.ListingId ?? 0;
+
+        return Redirect($"/ilanlar/{targetTypeId}/{targetId}");
+    }
+
+    /// <summary>
+    /// Konum illeri listesi proxy ucu.
+    /// </summary>
+    [HttpGet("/ilanlar/konum/iller")]
+    public async Task<IActionResult> GetCities()
+    {
+        var result = await _apiClient.GetAnonymousAsync<List<LocationOptionDto>>("Location/cities");
+        return Json(result.Data ?? new List<LocationOptionDto>());
+    }
+
+    /// <summary>
+    /// Konum ilçeleri listesi proxy ucu.
+    /// </summary>
+    [HttpGet("/ilanlar/konum/ilceler")]
+    public async Task<IActionResult> GetDistricts(int cityId)
+    {
+        var result = await _apiClient.GetAnonymousAsync<List<LocationOptionDto>>($"Location/districts?cityId={cityId}");
+        return Json(result.Data ?? new List<LocationOptionDto>());
+    }
+
+    /// <summary>
+    /// Konum mahalleleri listesi proxy ucu.
+    /// </summary>
+    [HttpGet("/ilanlar/konum/mahalleler")]
+    public async Task<IActionResult> GetNeighborhoods(int districtId)
+    {
+        var result = await _apiClient.GetAnonymousAsync<List<LocationOptionDto>>($"Location/neighborhoods?districtId={districtId}");
+        return Json(result.Data ?? new List<LocationOptionDto>());
+    }
+
+    private async Task<AdminListingLookupsDto> LoadLookupsAsync()
+    {
+        var lookupsResult = await _apiClient.GetAsync<AdminListingLookupsDto>("AdminListings/lookups");
+        return lookupsResult.Data ?? new AdminListingLookupsDto();
+    }
+
+    private static ListingFormViewModel BuildViewModel(ListingFormModel form, AdminListingLookupsDto lookups, bool canEdit, string? errorMessage)
+    {
+        return new ListingFormViewModel
+        {
+            Form = form,
+            Lookups = lookups,
+            CanEdit = canEdit,
+            ErrorMessage = errorMessage
+        };
     }
 }

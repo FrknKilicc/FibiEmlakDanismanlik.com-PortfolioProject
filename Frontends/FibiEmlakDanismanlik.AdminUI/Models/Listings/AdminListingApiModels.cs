@@ -92,6 +92,10 @@ public sealed class AmenityLookupDto
     public int AmenityId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? AmenityName { get; set; }
+    public string GroupName { get; set; } = string.Empty;
+    public bool AppliesToHousing { get; set; }
+    public bool AppliesToLand { get; set; }
+    public bool AppliesToCommercial { get; set; }
 
     public int Key => Id > 0 ? Id : AmenityId;
     public string DisplayName => !string.IsNullOrWhiteSpace(Name) ? Name : (AmenityName ?? string.Empty);
@@ -122,4 +126,31 @@ public sealed class CategoryLookupDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// İlan detay API yanıt modeli.
+/// </summary>
+public sealed class AdminListingDetailResponse
+{
+    public ListingFormModel? Listing { get; set; }
+    public bool CanEdit { get; set; }
+}
+
+/// <summary>
+/// İlan kaydetme (POST/PUT) API yanıt modeli.
+/// </summary>
+public sealed class SaveListingResponse
+{
+    public int ListingTypeId { get; set; }
+    public int ListingId { get; set; }
+}
+
+/// <summary>
+/// Konum seçim API öğesi (İl, İlçe, Mahalle).
+/// </summary>
+public sealed class LocationOptionDto
+{
+    public int Id { get; set; }
+    public string Text { get; set; } = string.Empty;
 }

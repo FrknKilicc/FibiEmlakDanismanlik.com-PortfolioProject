@@ -56,6 +56,12 @@ public sealed class ApiClient
         SendAsync<T>(HttpMethod.Delete, path, body: null, isAnonymous: false);
 
     /// <summary>
+    /// Kimlik doğrulama gerektirmeyen (anonim) GET isteği gönderir.
+    /// </summary>
+    public Task<ApiResult<T>> GetAnonymousAsync<T>(string path) =>
+        SendAsync<T>(HttpMethod.Get, path, body: null, isAnonymous: true);
+
+    /// <summary>
     /// Kimlik doğrulama gerektirmeyen (anonim) POST isteği gönderir.
     /// </summary>
     public Task<ApiResult<T>> PostAnonymousAsync<T>(string path, object body) =>
@@ -100,7 +106,7 @@ public sealed class ApiClient
                     await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 }
 
-                var errorMsg = ExtractErrorMessage(rawContent);
+                var (errorMsg, _) = ExtractErrorDetails(rawContent);
                 if (string.IsNullOrWhiteSpace(errorMsg))
                 {
                     errorMsg = "Oturum süreniz sona erdi. Lütfen tekrar giriş yapın.";
@@ -111,13 +117,13 @@ public sealed class ApiClient
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorMsg = ExtractErrorMessage(rawContent);
+                var (errorMsg, fieldErrors) = ExtractErrorDetails(rawContent);
                 if (string.IsNullOrWhiteSpace(errorMsg))
                 {
                     errorMsg = $"İşlem başarısız oldu (HTTP {statusCode}).";
                 }
 
-                return ApiResult<T>.Fail(errorMsg, statusCode);
+                return ApiResult<T>.Fail(errorMsg, statusCode, errors: fieldErrors);
             }
 
             if (string.IsNullOrWhiteSpace(rawContent))
@@ -168,24 +174,30 @@ public sealed class ApiClient
         }
     }
 
-    private static string ExtractErrorMessage(string rawResponse)
+    private static string ExtractErrorMessage(string rawResponse) =>
+        ExtractErrorDetails(rawResponse).ErrorMessage;
+
+    private static (string ErrorMessage, Dictionary<string, string[]>? Errors) ExtractErrorDetails(string rawResponse)
     {
         if (string.IsNullOrWhiteSpace(rawResponse))
         {
-            return string.Empty;
+            return (string.Empty, null);
         }
 
         try
         {
             using var doc = JsonDocument.Parse(rawResponse);
             var root = doc.RootElement;
+            Dictionary<string, string[]>? fieldErrors = null;
+            var errorMessages = new List<string>();
 
             // ValidationProblemDetails (errors sözlüğü) kontrolü
             if (root.TryGetProperty("errors", out var errorsProp) && errorsProp.ValueKind == JsonValueKind.Object)
             {
-                var messages = new List<string>();
+                fieldErrors = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
                 foreach (var property in errorsProp.EnumerateObject())
                 {
+                    var messages = new List<string>();
                     if (property.Value.ValueKind == JsonValueKind.Array)
                     {
                         foreach (var item in property.Value.EnumerateArray())
@@ -194,6 +206,7 @@ public sealed class ApiClient
                             if (!string.IsNullOrWhiteSpace(str))
                             {
                                 messages.Add(str);
+                                errorMessages.Add(str);
                             }
                         }
                     }
@@ -203,13 +216,14 @@ public sealed class ApiClient
                         if (!string.IsNullOrWhiteSpace(str))
                         {
                             messages.Add(str);
+                            errorMessages.Add(str);
                         }
                     }
-                }
 
-                if (messages.Count > 0)
-                {
-                    return string.Join(" ", messages);
+                    if (messages.Count > 0)
+                    {
+                        fieldErrors[property.Name] = messages.ToArray();
+                    }
                 }
             }
 
@@ -219,8 +233,13 @@ public sealed class ApiClient
                 var detail = detailProp.GetString();
                 if (!string.IsNullOrWhiteSpace(detail))
                 {
-                    return detail;
+                    return (detail, fieldErrors);
                 }
+            }
+
+            if (errorMessages.Count > 0)
+            {
+                return (string.Join(" ", errorMessages), fieldErrors);
             }
 
             // ProblemDetails formatındaki title alanı
@@ -229,7 +248,7 @@ public sealed class ApiClient
                 var title = titleProp.GetString();
                 if (!string.IsNullOrWhiteSpace(title))
                 {
-                    return title;
+                    return (title, fieldErrors);
                 }
             }
 
@@ -239,15 +258,16 @@ public sealed class ApiClient
                 var message = messageProp.GetString();
                 if (!string.IsNullOrWhiteSpace(message))
                 {
-                    return message;
+                    return (message, fieldErrors);
                 }
             }
+
+            return (string.Empty, fieldErrors);
         }
         catch (JsonException)
         {
             // JSON ayrıştırılamadıysa düz metin olarak kabul et
+            return (rawResponse.Trim(), null);
         }
-
-        return rawResponse.Trim();
     }
 }
