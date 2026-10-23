@@ -44,12 +44,32 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.UILayoutComponents
 
             var canonicalUrl = SeoUrl.Absolute(HttpContext, canonicalPath);
 
+            var rawImage = HttpContext.Items[PageMeta.ImageItemKey] as string;
+            var imagePath = !string.IsNullOrWhiteSpace(rawImage)
+                ? rawImage.Trim()
+                : PageMeta.DefaultImagePath;
+
+            var imageUrl = (imagePath.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                            imagePath.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                ? imagePath
+                : SeoUrl.Absolute(HttpContext, imagePath);
+
+            var rawOgType = HttpContext.Items[PageMeta.OgTypeItemKey] as string;
+            var ogType = !string.IsNullOrWhiteSpace(rawOgType)
+                ? rawOgType.Trim()
+                : "website";
+
+            var siteName = PageMeta.SiteName;
+
             return View(new PageMetaVm
             {
                 Title = title,
                 Description = description,
                 CanonicalUrl = canonicalUrl,
-                Robots = (ViewData["Robots"] as string) ?? string.Empty
+                Robots = (ViewData["Robots"] as string) ?? string.Empty,
+                ImageUrl = imageUrl,
+                OgType = ogType,
+                SiteName = siteName
             });
         }
     }

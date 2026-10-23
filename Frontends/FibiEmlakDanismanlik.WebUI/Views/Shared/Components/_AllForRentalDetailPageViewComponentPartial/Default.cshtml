@@ -19,9 +19,30 @@
         ("Anasayfa", Url.Action("Index", "UILayout") ?? "/"),
         ("Kiralık İlanlar", Url.Action("Index", "AllForRentalPage") ?? "/"),
         (Model.PropertyName ?? "İlan", canonicalPath));
+    var listingJson = ListingStructuredData.RealEstateListingJsonLd(
+        Context,
+        canonicalPath,
+        Model.PropertyName,
+        Model.PropertyDescription,
+        new[]
+        {
+            Model.PropImgUrl1, Model.PropImgUrl2, Model.PropImgUrl3, Model.PropImgUrl4, Model.PropImgUrl5,
+            Model.PropImgUrl6, Model.PropImgUrl7, Model.PropImgUrl8, Model.PropImgUrl9, Model.PropImgUrl10,
+            Model.PropImgUrl11, Model.PropImgUrl12, Model.PropImgUrl13, Model.PropImgUrl14, Model.PropImgUrl15,
+            Model.PropImgUrl16, Model.PropImgUrl17, Model.PropImgUrl18, Model.PropImgUrl19, Model.PropImgUrl20,
+            Model.PropImgUrl21, Model.PropImgUrl22, Model.PropImgUrl23, Model.PropImgUrl24, Model.PropImgUrl25,
+            Model.PropImgUrl26, Model.PropImgUrl27, Model.PropImgUrl28, Model.PropImgUrl29, Model.PropImgUrl30
+        },
+        Model.Rent,
+        true,
+        Model.CreatedDate,
+        Model.City,
+        Model.District,
+        Model.Neighborhood);
 }
 @* System.Text.Json varsayılan encoder'ı HTML özel karakterlerini (<, >, &) kaçırdığından Html.Raw kullanımı güvenlidir. *@
 <script type="application/ld+json">@Html.Raw(breadcrumbJson)</script>
+<script type="application/ld+json">@Html.Raw(listingJson)</script>
 <!-- property-details -->
 <section class="property-details property-details-one">
     <div class="auto-container">
