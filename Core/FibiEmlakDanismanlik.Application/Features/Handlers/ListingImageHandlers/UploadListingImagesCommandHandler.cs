@@ -117,6 +117,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
                 }
 
                 await _listingImageRepository.AddRangeAsync(newEntities);
+                await _listingImageRepository.NormalizeAsync(request.ListingTypeId, request.ListingId);
                 await _listingImageRepository.SyncLegacyColumnsAsync(request.ListingTypeId, request.ListingId);
             }
             catch (Exception)

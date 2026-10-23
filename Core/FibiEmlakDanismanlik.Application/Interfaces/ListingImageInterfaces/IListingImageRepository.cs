@@ -55,6 +55,16 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces
         Task SaveOrderAsync(int listingTypeId, int listingId, IReadOnlyList<int> orderedImageIds, int coverImageId);
 
         /// <summary>
+        /// İlanın tüm görsellerini SortOrder → ListingImageId sırasıyla yeniden numaralandırır (1'den kesintisiz)
+        /// ve tam olarak bir kapak görseli olmasını garanti eder. Eşzamanlı yüklemelerin yarattığı
+        /// tekrarlı SortOrder / çoklu IsCover tutarsızlıklarını düzeltir.
+        /// Görsel yoksa hiçbir şey yapmaz.
+        /// </summary>
+        /// <param name="listingTypeId">İlan türü kimliği.</param>
+        /// <param name="listingId">İlan kimliği.</param>
+        Task NormalizeAsync(int listingTypeId, int listingId);
+
+        /// <summary>
         /// O ilanın görsellerini (kapak önce, sonra SortOrder) okur ve ilgili tablonun PropImgUrl1..PropImgUrl30
         /// kolonlarına Url değerlerini yazar; kalan kolonları NULL yapar.
         /// </summary>

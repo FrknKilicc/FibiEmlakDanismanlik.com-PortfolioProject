@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using FibiEmlakDanismanlik.AdminUI.Infrastructure;
@@ -188,11 +189,25 @@ public sealed class ListingsController : Controller
     {
         var detailTask = _apiClient.GetAsync<AdminListingDetailResponse>($"AdminListings/{listingTypeId}/{listingId}");
         var lookupsTask = _apiClient.GetAsync<AdminListingLookupsDto>("AdminListings/lookups");
+        var photosTask = _apiClient.GetAsync<List<ListingImageDto>>($"ListingImages/{listingTypeId}/{listingId}");
+        Task<ApiResult<List<ListingAccessGrantDto>>>? grantsTask = null;
+        if (_currentAdmin.IsManagerOrAbove)
+        {
+            grantsTask = _apiClient.GetAsync<List<ListingAccessGrantDto>>($"AdminListings/{listingTypeId}/{listingId}/grants");
+        }
 
-        await Task.WhenAll(detailTask, lookupsTask);
+        if (grantsTask != null)
+        {
+            await Task.WhenAll(detailTask, lookupsTask, photosTask, grantsTask);
+        }
+        else
+        {
+            await Task.WhenAll(detailTask, lookupsTask, photosTask);
+        }
 
         var detailResult = await detailTask;
         var lookupsResult = await lookupsTask;
+        var photosResult = await photosTask;
 
         if (detailResult.StatusCode == StatusCodes.Status401Unauthorized ||
             lookupsResult.StatusCode == StatusCodes.Status401Unauthorized)
@@ -210,11 +225,20 @@ public sealed class ListingsController : Controller
             return NotFound();
         }
 
+        var grantsResult = grantsTask != null ? await grantsTask : null;
+
         var viewModel = new ListingFormViewModel
         {
             Form = detailResult.Data.Listing,
             Lookups = lookupsResult.Data ?? new AdminListingLookupsDto(),
-            CanEdit = detailResult.Data.CanEdit
+            CanEdit = detailResult.Data.CanEdit,
+            Images = photosResult.Data ?? new List<ListingImageDto>(),
+            Grants = grantsResult?.Data ?? new List<ListingAccessGrantDto>(),
+            CurrentStatus = detailResult.Data.Listing.PropertyStatus,
+            BestDeals = detailResult.Data.Listing.BestDeals ?? detailResult.Data.BestDeals ?? false,
+            Latitude = detailResult.Data.Listing.Latitude ?? detailResult.Data.Latitude,
+            Longitude = detailResult.Data.Listing.Longitude ?? detailResult.Data.Longitude,
+            GeoSource = detailResult.Data.Listing.GeoSource ?? detailResult.Data.GeoSource
         };
 
         return View("Edit", viewModel);
@@ -232,7 +256,7 @@ public sealed class ListingsController : Controller
         if (!ModelState.IsValid)
         {
             var lookups = await LoadLookupsAsync();
-            var vm = BuildViewModel(form, lookups, canEdit: true, errorMessage: "Lütfen formdaki eksik veya hatalı alanları düzeltin.");
+            var vm = await BuildViewModelAsync(form, lookups, canEdit: true, errorMessage: "Lütfen formdaki eksik veya hatalı alanları düzeltin.");
             foreach (var state in ModelState)
             {
                 if (state.Value.Errors.Count > 0)
@@ -261,14 +285,14 @@ public sealed class ListingsController : Controller
         if (saveResult.StatusCode == StatusCodes.Status403Forbidden)
         {
             var lookups = await LoadLookupsAsync();
-            var vm = BuildViewModel(form, lookups, canEdit: false, errorMessage: "Bu ilanı düzenleme yetkiniz yok.");
+            var vm = await BuildViewModelAsync(form, lookups, canEdit: false, errorMessage: "Bu ilanı düzenleme yetkiniz yok.");
             return View("Edit", vm);
         }
 
         if (saveResult.StatusCode == StatusCodes.Status400BadRequest)
         {
             var lookups = await LoadLookupsAsync();
-            var vm = BuildViewModel(form, lookups, canEdit: true, errorMessage: saveResult.ErrorMessage ?? "Lütfen formdaki hataları kontrol ediniz.");
+            var vm = await BuildViewModelAsync(form, lookups, canEdit: true, errorMessage: saveResult.ErrorMessage ?? "Lütfen formdaki hataları kontrol ediniz.");
             if (saveResult.Errors != null)
             {
                 foreach (var (key, msgs) in saveResult.Errors)
@@ -283,7 +307,7 @@ public sealed class ListingsController : Controller
         if (!saveResult.Success)
         {
             var lookups = await LoadLookupsAsync();
-            var vm = BuildViewModel(form, lookups, canEdit: true, errorMessage: saveResult.ErrorMessage ?? "İlan kaydedilirken bir hata oluştu.");
+            var vm = await BuildViewModelAsync(form, lookups, canEdit: true, errorMessage: saveResult.ErrorMessage ?? "İlan kaydedilirken bir hata oluştu.");
             return View("Edit", vm);
         }
 
@@ -324,20 +348,298 @@ public sealed class ListingsController : Controller
         return Json(result.Data ?? new List<LocationOptionDto>());
     }
 
+    /// <summary>
+    /// İlanın fotoğraflarını listeler.
+    /// </summary>
+    [HttpGet("/ilanlar/{t:int}/{id:int}/fotograflar")]
+    public async Task<IActionResult> GetPhotos(int t, int id)
+    {
+        var result = await _apiClient.GetAsync<List<ListingImageDto>>($"ListingImages/{t}/{id}");
+        if (result.Success)
+        {
+            return Ok(new { ok = true, message = string.Empty, data = result.Data ?? new List<ListingImageDto>() });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Fotoğraflar alınamadı.", data = (object?)null });
+    }
+
+    /// <summary>
+    /// İlana yeni fotoğraflar yükler.
+    /// </summary>
+    [HttpPost("/ilanlar/{t:int}/{id:int}/fotograflar")]
+    [RequestSizeLimit(320 * 1024 * 1024)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 320 * 1024 * 1024)]
+    public async Task<IActionResult> UploadPhotos(int t, int id, List<IFormFile> files)
+    {
+        if (files == null || files.Count == 0)
+        {
+            return BadRequest(new { ok = false, message = "Lütfen yüklenecek fotoğraf seçin.", data = (object?)null });
+        }
+
+        if (files.Count > 20)
+        {
+            return BadRequest(new { ok = false, message = "Tek seferde en fazla 20 fotoğraf yükleyebilirsiniz.", data = (object?)null });
+        }
+
+        var allowedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".jpg", ".jpeg", ".png", ".webp"
+        };
+
+        foreach (var file in files)
+        {
+            var extension = Path.GetExtension(file.FileName);
+            if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
+            {
+                return BadRequest(new { ok = false, message = $"Desteklenmeyen dosya türü: {file.FileName}. Sadece JPG, PNG veya WebP yükleyebilirsiniz.", data = (object?)null });
+            }
+        }
+
+        var result = await _apiClient.PostMultipartAsync<List<ListingImageDto>>($"ListingImages/{t}/{id}", files, "files");
+        if (result.Success)
+        {
+            return Ok(new { ok = true, message = "Fotoğraflar başarıyla yüklendi.", data = result.Data ?? new List<ListingImageDto>() });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Fotoğraflar yüklenemedi.", data = (object?)null });
+    }
+
+    /// <summary>
+    /// Belirtilen fotoğrafı siler.
+    /// </summary>
+    [HttpDelete("/ilanlar/fotograf/{imageId:int}")]
+    public async Task<IActionResult> DeletePhoto(int imageId)
+    {
+        var result = await _apiClient.DeleteAsync<object>($"ListingImages/{imageId}");
+        if (result.Success)
+        {
+            return Ok(new { ok = true, message = "Fotoğraf başarıyla silindi.", data = (object?)null });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Fotoğraf silinemedi.", data = (object?)null });
+    }
+
+    /// <summary>
+    /// Fotoğraf sıralamasını ve kapak fotoğrafını günceller.
+    /// </summary>
+    [HttpPut("/ilanlar/{t:int}/{id:int}/fotograf-sirasi")]
+    public async Task<IActionResult> ReorderPhotos(int t, int id, [FromBody] ReorderPhotosInputModel body)
+    {
+        var request = new ReorderImagesRequest
+        {
+            ListingTypeId = t,
+            ListingId = id,
+            OrderedImageIds = body?.OrderedImageIds ?? new List<int>(),
+            CoverImageId = body?.CoverImageId
+        };
+
+        var result = await _apiClient.PutAsync<object>("ListingImages/order", request);
+        if (result.Success)
+        {
+            return Ok(new { ok = true, message = "Fotoğraf sıralaması güncellendi.", data = (object?)null });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Fotoğraf sıralaması güncellenemedi.", data = (object?)null });
+    }
+
+    /// <summary>
+    /// İlanın harita koordinatlarını günceller.
+    /// </summary>
+    [HttpPut("/ilanlar/{t:int}/{id:int}/konum")]
+    public async Task<IActionResult> UpdateLocation(int t, int id, [FromBody] UpdateLocationInputModel body)
+    {
+        var request = new UpdateLocationRequest
+        {
+            Latitude = body?.Latitude,
+            Longitude = body?.Longitude
+        };
+
+        var result = await _apiClient.PutAsync<object>($"AdminListings/{t}/{id}/location", request);
+        if (result.Success)
+        {
+            return Ok(new { ok = true, message = "Konum bilgisi başarıyla güncellendi.", data = (object?)null });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Konum bilgisi güncellenemedi.", data = (object?)null });
+    }
+
+    /// <summary>
+    /// İlan durumunu günceller.
+    /// </summary>
+    [HttpPost("/ilanlar/{t:int}/{id:int}/durum")]
+    public async Task<IActionResult> UpdateStatus(int t, int id, [FromForm] string? status)
+    {
+        if (string.IsNullOrWhiteSpace(status))
+        {
+            TempData["Error"] = "Lütfen geçerli bir durum seçiniz.";
+            return Redirect($"/ilanlar/{t}/{id}");
+        }
+
+        var request = new UpdateStatusRequest { Status = status.Trim() };
+        var result = await _apiClient.PutAsync<object>($"AdminListings/{t}/{id}/status", request);
+
+        if (result.Success)
+        {
+            TempData["Success"] = "İlan durumu başarıyla güncellendi.";
+        }
+        else
+        {
+            TempData["Error"] = result.ErrorMessage ?? "İlan durumu güncellenemedi.";
+        }
+
+        return Redirect($"/ilanlar/{t}/{id}");
+    }
+
+    /// <summary>
+    /// İlanın vitrin (best-deal) durumunu günceller (Sahip veya Yönetici).
+    /// </summary>
+    [HttpPost("/ilanlar/{t:int}/{id:int}/vitrin")]
+    public async Task<IActionResult> UpdateBestDeal(int t, int id, [FromForm] bool isBestDeal)
+    {
+        if (!_currentAdmin.IsManagerOrAbove)
+        {
+            return Redirect("/yetkisiz");
+        }
+
+        var request = new UpdateBestDealRequest { IsBestDeal = isBestDeal };
+        var result = await _apiClient.PutAsync<object>($"AdminListings/{t}/{id}/best-deal", request);
+
+        if (result.Success)
+        {
+            TempData["Success"] = isBestDeal ? "İlan başarıyla vitrine eklendi." : "İlan vitrinden çıkarıldı.";
+        }
+        else
+        {
+            TempData["Error"] = result.ErrorMessage ?? "Vitrin durumu güncellenemedi.";
+        }
+
+        return Redirect($"/ilanlar/{t}/{id}");
+    }
+
+    /// <summary>
+    /// İlan için danışman erişim izni tanımlar (Sahip veya Yönetici).
+    /// </summary>
+    [HttpPost("/ilanlar/{t:int}/{id:int}/izinler")]
+    public async Task<IActionResult> AddGrant(int t, int id, [FromForm] int agentId, [FromForm] string? access)
+    {
+        if (!_currentAdmin.IsManagerOrAbove)
+        {
+            return Redirect("/yetkisiz");
+        }
+
+        if (agentId <= 0 || string.IsNullOrWhiteSpace(access))
+        {
+            TempData["Error"] = "Lütfen danışman ve erişim düzeyini seçiniz.";
+            return Redirect($"/ilanlar/{t}/{id}");
+        }
+
+        var request = new CreateListingAccessGrantRequest
+        {
+            AgentId = agentId,
+            Access = access.Trim()
+        };
+
+        var result = await _apiClient.PostAsync<List<ListingAccessGrantDto>>($"AdminListings/{t}/{id}/grants", request);
+
+        if (result.Success)
+        {
+            TempData["Success"] = "Erişim izni başarıyla eklendi.";
+        }
+        else
+        {
+            TempData["Error"] = result.ErrorMessage ?? "Erişim izni eklenemedi.";
+        }
+
+        return Redirect($"/ilanlar/{t}/{id}");
+    }
+
+    /// <summary>
+    /// Tanımlı danışman erişim iznini kaldırır (Sahip veya Yönetici).
+    /// </summary>
+    [HttpPost("/ilanlar/izinler/{grantId:int}/kaldir")]
+    public async Task<IActionResult> RemoveGrant(int grantId, [FromForm] int t, [FromForm] int id)
+    {
+        if (!_currentAdmin.IsManagerOrAbove)
+        {
+            return Redirect("/yetkisiz");
+        }
+
+        var result = await _apiClient.DeleteAsync<object>($"AdminListings/grants/{grantId}");
+
+        if (result.Success)
+        {
+            TempData["Success"] = "Erişim izni başarıyla kaldırıldı.";
+        }
+        else
+        {
+            TempData["Error"] = result.ErrorMessage ?? "Erişim izni kaldırılamadı.";
+        }
+
+        return Redirect($"/ilanlar/{t}/{id}");
+    }
+
+    /// <summary>
+    /// İlanı ve bağlı tüm verilerini kalıcı olarak siler (Yalnızca Sahip).
+    /// </summary>
+    [HttpPost("/ilanlar/{t:int}/{id:int}/sil")]
+    public async Task<IActionResult> DeleteListing(int t, int id, [FromForm] string? confirmText)
+    {
+        if (!_currentAdmin.IsOwner)
+        {
+            return Redirect("/yetkisiz");
+        }
+
+        if (!string.Equals(confirmText?.Trim(), "SİL", StringComparison.Ordinal))
+        {
+            TempData["Error"] = "İlanı kalıcı olarak silmek için onay kutusuna 'SİL' yazmalısınız.";
+            return Redirect($"/ilanlar/{t}/{id}");
+        }
+
+        var result = await _apiClient.DeleteAsync<object>($"AdminListings/{t}/{id}");
+
+        if (result.Success)
+        {
+            TempData["Success"] = "İlan ve bağlı fotoğraflar kalıcı olarak silindi.";
+            return Redirect("/ilanlar");
+        }
+
+        TempData["Error"] = result.ErrorMessage ?? "İlan silinirken bir hata oluştu.";
+        return Redirect($"/ilanlar/{t}/{id}");
+    }
+
     private async Task<AdminListingLookupsDto> LoadLookupsAsync()
     {
         var lookupsResult = await _apiClient.GetAsync<AdminListingLookupsDto>("AdminListings/lookups");
         return lookupsResult.Data ?? new AdminListingLookupsDto();
     }
 
-    private static ListingFormViewModel BuildViewModel(ListingFormModel form, AdminListingLookupsDto lookups, bool canEdit, string? errorMessage)
+    private async Task<ListingFormViewModel> BuildViewModelAsync(ListingFormModel form, AdminListingLookupsDto lookups, bool canEdit, string? errorMessage)
     {
-        return new ListingFormViewModel
+        var vm = new ListingFormViewModel
         {
             Form = form,
             Lookups = lookups,
             CanEdit = canEdit,
-            ErrorMessage = errorMessage
+            ErrorMessage = errorMessage,
+            CurrentStatus = form.PropertyStatus,
+            BestDeals = form.BestDeals ?? false,
+            Latitude = form.Latitude,
+            Longitude = form.Longitude,
+            GeoSource = form.GeoSource
         };
+
+        if (form.ListingId.HasValue && form.ListingId.Value > 0)
+        {
+            var photosResult = await _apiClient.GetAsync<List<ListingImageDto>>($"ListingImages/{form.ListingTypeId}/{form.ListingId.Value}");
+            vm.Images = photosResult.Data ?? new List<ListingImageDto>();
+
+            if (_currentAdmin.IsManagerOrAbove)
+            {
+                var grantsResult = await _apiClient.GetAsync<List<ListingAccessGrantDto>>($"AdminListings/{form.ListingTypeId}/{form.ListingId.Value}/grants");
+                vm.Grants = grantsResult.Data ?? new List<ListingAccessGrantDto>();
+            }
+        }
+
+        return vm;
     }
 }

@@ -12,6 +12,14 @@ public sealed class ListingFormViewModel
     public string? ErrorMessage { get; set; }
     public Dictionary<string, string[]> FieldErrors { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
+    public List<ListingImageDto> Images { get; set; } = new();
+    public List<ListingAccessGrantDto> Grants { get; set; } = new();
+    public string? CurrentStatus { get; set; }
+    public bool BestDeals { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
+    public string? GeoSource { get; set; }
+
     // Statik Seçenek Listeleri
     public static readonly IReadOnlyList<string> BuildingAgeOptions = new[]
     {

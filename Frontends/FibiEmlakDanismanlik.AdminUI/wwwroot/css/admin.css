@@ -52,3 +52,53 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+/* İlan Fotoğraf Yöneticisi Stilleri */
+.photo-dropzone {
+  border-color: #cbd5e1 !important;
+  background-color: #f8fafc !important;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.photo-dropzone:hover,
+.photo-dropzone-active {
+  border-color: #0d6efd !important;
+  background-color: #f0f7ff !important;
+}
+
+.photo-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 6px;
+}
+
+.photo-card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.photo-thumb-wrapper {
+  background-color: #f1f5f9;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.photo-item {
+  cursor: grab;
+  transition: opacity 0.2s ease;
+}
+
+.photo-item.is-dragging {
+  opacity: 0.35;
+  cursor: grabbing;
+}
+
+.cover-badge {
+  z-index: 2;
+  font-size: 0.72rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Harita Stilleri */
+#listingMap {
+  z-index: 1;
+}
+

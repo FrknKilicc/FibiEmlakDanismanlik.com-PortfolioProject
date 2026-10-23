@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
 namespace FibiEmlakDanismanlik.AdminUI.Infrastructure;
 
@@ -66,6 +67,112 @@ public sealed class ApiClient
     /// </summary>
     public Task<ApiResult<T>> PostAnonymousAsync<T>(string path, object body) =>
         SendAsync<T>(HttpMethod.Post, path, body, isAnonymous: true);
+
+    /// <summary>
+    /// Çok parçalı (multipart/form-data) dosya yükleme POST isteği gönderir.
+    /// </summary>
+    public async Task<ApiResult<T>> PostMultipartAsync<T>(string path, IEnumerable<IFormFile> files, string fieldName = "files")
+    {
+        var client = _httpClientFactory.CreateClient("api");
+        using var request = new HttpRequestMessage(HttpMethod.Post, path);
+
+        // Ziyaretçi bilgilerini ve yetkilendirme başlıklarını ekle
+        ApplyHeaders(request, isAnonymous: false);
+
+        var multipartContent = new MultipartFormDataContent();
+        var openedStreams = new List<Stream>();
+
+        try
+        {
+            foreach (var file in files)
+            {
+                if (file == null || file.Length == 0)
+                {
+                    continue;
+                }
+
+                var stream = file.OpenReadStream();
+                openedStreams.Add(stream);
+                var streamContent = new StreamContent(stream);
+
+                if (!string.IsNullOrWhiteSpace(file.ContentType))
+                {
+                    streamContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                }
+
+                multipartContent.Add(streamContent, fieldName, file.FileName);
+            }
+
+            request.Content = multipartContent;
+
+            HttpResponseMessage response;
+            try
+            {
+                response = await client.SendAsync(request);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<T>.Fail($"API sunucusuna ulaşılamadı: {ex.Message}", StatusCodes.Status503ServiceUnavailable);
+            }
+
+            using (response)
+            {
+                var statusCode = (int)response.StatusCode;
+                var rawContent = await response.Content.ReadAsStringAsync();
+
+                // Yetkili çağrılarda 401 gelirse oturumu kapat
+                if (statusCode == StatusCodes.Status401Unauthorized)
+                {
+                    var httpContext = _httpContextAccessor.HttpContext;
+                    if (httpContext != null)
+                    {
+                        await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                    }
+
+                    var (errorMsg, _) = ExtractErrorDetails(rawContent);
+                    if (string.IsNullOrWhiteSpace(errorMsg))
+                    {
+                        errorMsg = "Oturum süreniz sona erdi. Lütfen tekrar giriş yapın.";
+                    }
+
+                    return ApiResult<T>.Fail(errorMsg, statusCode);
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var (errorMsg, fieldErrors) = ExtractErrorDetails(rawContent);
+                    if (string.IsNullOrWhiteSpace(errorMsg))
+                    {
+                        errorMsg = $"İşlem başarısız oldu (HTTP {statusCode}).";
+                    }
+
+                    return ApiResult<T>.Fail(errorMsg, statusCode, errors: fieldErrors);
+                }
+
+                if (string.IsNullOrWhiteSpace(rawContent))
+                {
+                    return ApiResult<T>.Ok(default, statusCode);
+                }
+
+                try
+                {
+                    var data = JsonSerializer.Deserialize<T>(rawContent, JsonOptions);
+                    return ApiResult<T>.Ok(data, statusCode);
+                }
+                catch (JsonException ex)
+                {
+                    return ApiResult<T>.Fail($"API yanıtı işlenirken hata oluştu: {ex.Message}", statusCode);
+                }
+            }
+        }
+        finally
+        {
+            foreach (var stream in openedStreams)
+            {
+                await stream.DisposeAsync();
+            }
+        }
+    }
 
     private async Task<ApiResult<T>> SendAsync<T>(HttpMethod method, string path, object? body, bool isAnonymous)
     {

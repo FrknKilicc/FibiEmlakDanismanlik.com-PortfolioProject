@@ -111,6 +111,42 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories
         }
 
         /// <inheritdoc />
+        public async Task NormalizeAsync(int listingTypeId, int listingId)
+        {
+            var images = await _context.ListingImages
+                .Where(x => x.ListingTypeId == listingTypeId && x.ListingId == listingId)
+                .OrderBy(x => x.SortOrder)
+                .ThenBy(x => x.ListingImageId)
+                .ToListAsync();
+
+            if (images.Count == 0)
+            {
+                return;
+            }
+
+            // SortOrder'ı 1'den kesintisiz yeniden ver
+            int order = 1;
+            foreach (var img in images)
+            {
+                img.SortOrder = order++;
+            }
+
+            // Kapak: IsCover olanlardan sıralamada ilk geleni koru, hiç yoksa ilk görsel kapak
+            var firstCover = images.FirstOrDefault(x => x.IsCover);
+            if (firstCover == null)
+            {
+                firstCover = images[0];
+            }
+
+            foreach (var img in images)
+            {
+                img.IsCover = ReferenceEquals(img, firstCover);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        /// <inheritdoc />
         public async Task SyncLegacyColumnsAsync(int listingTypeId, int listingId)
         {
             if (!ListingImageConstants.ListingTables.TryGetValue(listingTypeId, out var mapping))

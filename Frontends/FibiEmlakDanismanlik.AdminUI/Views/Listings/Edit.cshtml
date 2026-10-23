@@ -54,6 +54,15 @@
     </div>
 }
 
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Error"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
 @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
 {
     <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
@@ -71,7 +80,96 @@
     </div>
 }
 
-<form action="/ilanlar/kaydet" method="post" id="listingForm" novalidate>
+@if (!isNew)
+{
+    <!-- Fotoğraflar Kartı (Formun Üstünde, Tam Genişlik) -->
+    <div class="card mb-4 shadow-sm border-0" id="photosCard"
+         data-listing-type-id="@Model.Form.ListingTypeId"
+         data-listing-id="@Model.Form.ListingId"
+         data-can-edit="@Model.CanEdit.ToString().ToLowerInvariant()">
+        <div class="card-body pt-3">
+            <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3 flex-wrap gap-2">
+                <h5 class="card-title p-0 m-0">
+                    <i class="bi bi-images me-2 text-primary"></i>İlan Fotoğrafları
+                </h5>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted small fw-medium" id="photoCountBadge">
+                        Toplam @(Model.Images?.Count ?? 0) / 30 fotoğraf
+                    </span>
+                    @if (Model.CanEdit)
+                    {
+                        <button type="button" id="saveOrderBtn" class="btn btn-success btn-sm d-none">
+                            <i class="bi bi-check2-circle me-1"></i> Sıralamayı Kaydet
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div id="photosAlertArea"></div>
+
+            @if (Model.CanEdit)
+            {
+                <div id="photoDropzone" class="photo-dropzone p-4 mb-3 text-center border border-2 border-dashed rounded-3 bg-light">
+                    <i class="bi bi-cloud-arrow-up display-5 text-primary mb-2 d-block"></i>
+                    <div class="fw-semibold fs-6">Fotoğrafları buraya sürükleyip bırakın</div>
+                    <div class="text-muted small mb-2">veya bilgisayarınızdan seçin</div>
+                    <label class="btn btn-outline-primary btn-sm mb-1 px-3">
+                        <i class="bi bi-folder2-open me-1"></i> Fotoğraf Seç
+                        <input type="file" id="photoFileInput" class="d-none" multiple accept="image/jpeg,image/png,image/webp" />
+                    </label>
+                    <div class="text-muted small mt-2">
+                        En fazla 30 fotoğraf, her biri en fazla 15 MB. JPG, PNG veya WebP desteklenir. Konum (GPS) bilgisi otomatik silinir.
+                    </div>
+                </div>
+
+                <div id="photoUploadProgressWrapper" class="progress mb-3 d-none" style="height: 10px;">
+                    <div id="photoUploadProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            }
+
+            <div id="photoGrid" class="row g-3 photo-grid">
+                @if (Model.Images != null && Model.Images.Count > 0)
+                {
+                    @foreach (var img in Model.Images.OrderBy(i => i.SortOrder))
+                    {
+                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 photo-item" data-image-id="@img.ListingImageId" draggable="@(Model.CanEdit ? "true" : "false")">
+                            <div class="card h-100 border shadow-none photo-card position-relative overflow-hidden">
+                                <div class="photo-thumb-wrapper ratio ratio-4x3 bg-light">
+                                    <img src="@(string.IsNullOrWhiteSpace(img.ThumbUrl) ? img.Url : img.ThumbUrl)" class="object-fit-cover w-100 h-100" alt="Fotoğraf @img.ListingImageId" loading="lazy" />
+                                </div>
+                                <span class="badge bg-primary position-absolute top-0 start-0 m-2 cover-badge @(img.IsCover ? "" : "d-none")">
+                                    <i class="bi bi-star-fill me-1"></i> Kapak
+                                </span>
+                                @if (Model.CanEdit)
+                                {
+                                    <div class="card-footer p-1 bg-white border-top-0 d-flex justify-content-between gap-1">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary flex-grow-1 p-1 set-cover-btn @(img.IsCover ? "d-none" : "")" data-action="set-cover" title="Kapak yap">
+                                            <i class="bi bi-star"></i> Kapak
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger p-1 px-2 delete-photo-btn" data-action="delete" title="Fotoğrafı sil">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12 text-center py-4 text-muted empty-photos-placeholder">
+                        <i class="bi bi-images display-6 d-block mb-2 text-secondary"></i>
+                        Henüz hiç fotoğraf eklenmemiş.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row g-4">
+    <div class="@(!isNew ? "col-lg-8 col-12" : "col-12")">
+        <form action="/ilanlar/kaydet" method="post" id="listingForm" novalidate>
     @Html.AntiForgeryToken()
 
     <input type="hidden" name="ListingTypeId" value="@Model.Form.ListingTypeId" />
@@ -867,8 +965,242 @@
             </div>
         </div>
     </div>
-</form>
+        </form>
+    </div>
+
+    @if (!isNew)
+    {
+        <div class="col-lg-4 col-12">
+            <!-- 1. Konum Haritası Kartı -->
+            <div class="card mb-4 shadow-sm border-0" id="listingMapCard"
+                 data-type-id="@Model.Form.ListingTypeId"
+                 data-listing-id="@Model.Form.ListingId"
+                 data-lat="@Model.Latitude?.ToString(invCulture)"
+                 data-lng="@Model.Longitude?.ToString(invCulture)"
+                 data-geo-source="@Model.GeoSource"
+                 data-can-edit="@Model.CanEdit.ToString().ToLowerInvariant()">
+                <div class="card-body pt-3">
+                    <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3 flex-wrap gap-2">
+                        <h5 class="card-title p-0 m-0">
+                            <i class="bi bi-geo-alt me-2 text-primary"></i>Harita Konumu
+                        </h5>
+                        <span id="geoSourceBadge" class="badge @(Model.Latitude.HasValue && Model.Longitude.HasValue ? (string.Equals(Model.GeoSource, "manual", StringComparison.OrdinalIgnoreCase) ? "bg-success" : "bg-warning text-dark") : "bg-secondary")">
+                            @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+                            {
+                                @(string.Equals(Model.GeoSource, "manual", StringComparison.OrdinalIgnoreCase) ? "Kesin Konum" : "Yaklaşık Konum")
+                            }
+                            else
+                            {
+                                <text>Konum Belirlenmedi</text>
+                            }
+                        </span>
+                    </div>
+
+                    <div id="mapAlertArea"></div>
+
+                    <div id="listingMap" style="height: 280px; width: 100%; border-radius: 6px;" class="border"></div>
+
+                    <div class="small text-muted mt-2 d-flex justify-content-between align-items-center">
+                        <span id="coordDisplay">
+                            @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+                            {
+                                <text>@Model.Latitude.Value.ToString("F5", invCulture), @Model.Longitude.Value.ToString("F5", invCulture)</text>
+                            }
+                            else
+                            {
+                                <text>Haritaya tıklayarak konum seçin</text>
+                            }
+                        </span>
+                        <span class="text-muted" style="font-size: 0.75rem;">© OpenStreetMap katkıcıları</span>
+                    </div>
+
+                    @if (Model.CanEdit)
+                    {
+                        <button type="button" id="saveLocationBtn" class="btn btn-primary btn-sm w-100 mt-3" disabled>
+                            <i class="bi bi-geo-alt me-1"></i> Konumu Kaydet
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- 2. Durum Kartı -->
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-body pt-3">
+                    <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                        <h5 class="card-title p-0 m-0">
+                            <i class="bi bi-flag me-2 text-primary"></i>İlan Durumu
+                        </h5>
+                        <span class="badge bg-@Model.StatusBadgeClass(Model.Form.PropertyStatus) fs-6">
+                            @(string.IsNullOrWhiteSpace(Model.Form.PropertyStatus) ? "Taslak" : Model.Form.PropertyStatus)
+                        </span>
+                    </div>
+
+                    <form action="/ilanlar/@Model.Form.ListingTypeId/@Model.Form.ListingId/durum" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="statusSelect" class="form-label fw-semibold small">Durumu Güncelle</label>
+                            <select id="statusSelect" name="status" class="form-select" disabled="@disabledAttr">
+                                @{
+                                    var statusOptions = Model.Form.IsRent
+                                        ? new[] { "Aktif", "Opsiyonlu", "Pasif", "Kiralandı" }
+                                        : new[] { "Aktif", "Opsiyonlu", "Pasif", "Satıldı" };
+                                }
+                                @foreach (var opt in statusOptions)
+                                {
+                                    <option value="@opt" selected="@(string.Equals(Model.Form.PropertyStatus, opt, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@opt</option>
+                                }
+                            </select>
+                        </div>
+                        @if (Model.CanEdit)
+                        {
+                            <button type="submit" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="bi bi-arrow-repeat me-1"></i> Durumu Güncelle
+                            </button>
+                        }
+                    </form>
+                </div>
+            </div>
+
+            <!-- 3. Vitrin Kartı (Sahip/Yönetici) -->
+            @if (CurrentAdmin.IsManagerOrAbove)
+            {
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-body pt-3">
+                        <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                            <h5 class="card-title p-0 m-0">
+                                <i class="bi bi-star me-2 text-warning"></i>Vitrin Durumu
+                            </h5>
+                            <span class="badge @(Model.BestDeals ? "bg-warning text-dark" : "bg-secondary")">
+                                @(Model.BestDeals ? "Vitrinde" : "Vitrinde Değil")
+                            </span>
+                        </div>
+
+                        <p class="small text-muted mb-3">
+                            Satılık ve kiralık vitrinde en fazla 5 ilan gösterilebilir.
+                        </p>
+
+                        <form action="/ilanlar/@Model.Form.ListingTypeId/@Model.Form.ListingId/vitrin" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="isBestDeal" value="@((!Model.BestDeals).ToString().ToLowerInvariant())" />
+                            <button type="submit" class="btn @(Model.BestDeals ? "btn-outline-warning" : "btn-outline-success") btn-sm w-100">
+                                <i class="bi @(Model.BestDeals ? "bi-star" : "bi-star-fill") me-1"></i>
+                                @(Model.BestDeals ? "Vitrinden Çıkar" : "Vitrine Ekle")
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <!-- 4. Erişim İzinleri Kartı (Sahip/Yönetici) -->
+            @if (CurrentAdmin.IsManagerOrAbove)
+            {
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-body pt-3">
+                        <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                            <h5 class="card-title p-0 m-0">
+                                <i class="bi bi-shield-lock me-2 text-primary"></i>Erişim İzinleri
+                            </h5>
+                            <span class="badge bg-secondary">@(Model.Grants?.Count ?? 0)</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Mevcut İzinler</label>
+                            @if (Model.Grants != null && Model.Grants.Count > 0)
+                            {
+                                <ul class="list-group list-group-flush border rounded-3 mb-0">
+                                    @foreach (var grant in Model.Grants)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center p-2">
+                                            <div>
+                                                <div class="fw-semibold small">@grant.AgentName</div>
+                                                <span class="badge @(grant.Access == "Edit" ? "bg-info text-dark" : "bg-light text-dark border")" style="font-size: 0.7rem;">
+                                                    @(grant.Access == "Edit" ? "Düzenleme" : "Görüntüleme")
+                                                </span>
+                                            </div>
+                                            <form action="/ilanlar/izinler/@grant.ListingAccessGrantId/kaldir" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="t" value="@Model.Form.ListingTypeId" />
+                                                <input type="hidden" name="id" value="@Model.Form.ListingId" />
+                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" title="İzni Kaldır">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <div class="text-muted small p-2 bg-light rounded text-center">
+                                    Özel tanımlanmış danışman izni yok.
+                                </div>
+                            }
+                        </div>
+
+                        <form action="/ilanlar/@Model.Form.ListingTypeId/@Model.Form.ListingId/izinler" method="post" class="border-top pt-3">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-2">
+                                <label for="grantAgentSelect" class="form-label fw-semibold small">Danışman Ekle</label>
+                                <select id="grantAgentSelect" name="agentId" class="form-select form-select-sm" required>
+                                    <option value="">Danışman Seçiniz</option>
+                                    @foreach (var agent in Model.Lookups.Agents.Where(a => a.AgentId != Model.Form.AgentId))
+                                    {
+                                        <option value="@agent.AgentId">@agent.AgentName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="grantAccessSelect" class="form-label fw-semibold small">Erişim Düzeyi</label>
+                                <select id="grantAccessSelect" name="access" class="form-select form-select-sm" required>
+                                    <option value="View">Görüntüleme</option>
+                                    <option value="Edit">Düzenleme</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-person-plus me-1"></i> İzin Ver
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <!-- 5. Tehlikeli Bölge Kartı (Sahip) -->
+            @if (CurrentAdmin.IsOwner)
+            {
+                <div class="card mb-4 shadow-sm border border-danger border-opacity-50">
+                    <div class="card-body pt-3">
+                        <h5 class="card-title text-danger p-0 pb-2 border-bottom border-danger border-opacity-25 mb-2">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Tehlikeli Bölge
+                        </h5>
+                        <p class="small text-muted mb-3">
+                            İlanı kalıcı olarak silmek fotoğraflar dahil tüm verileri tamamen kaldırır ve bu işlem geri alınamaz. Geçici olarak gizlemek için durumu <strong>Pasif</strong> yapabilirsiniz.
+                        </p>
+                        <form action="/ilanlar/@Model.Form.ListingTypeId/@Model.Form.ListingId/sil" method="post" id="deleteListingForm">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-3">
+                                <label for="deleteConfirmInput" class="form-label small fw-semibold text-danger">
+                                    Onaylamak için <strong>SİL</strong> yazın:
+                                </label>
+                                <input type="text" id="deleteConfirmInput" name="confirmText" class="form-control form-control-sm border-danger" placeholder="SİL" autocomplete="off" required />
+                            </div>
+                            <button type="submit" id="deleteSubmitBtn" class="btn btn-danger btn-sm w-100" disabled>
+                                <i class="bi bi-trash3-fill me-1"></i> İlanı Kalıcı Olarak Sil
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" asp-append-version="true" />
+}
 
 @section Scripts {
+    <script src="~/lib/leaflet/leaflet.js" asp-append-version="true"></script>
+    <script src="~/js/listing-photos.js" asp-append-version="true"></script>
+    <script src="~/js/listing-map.js" asp-append-version="true"></script>
     <script src="~/js/listing-form.js" asp-append-version="true"></script>
 }

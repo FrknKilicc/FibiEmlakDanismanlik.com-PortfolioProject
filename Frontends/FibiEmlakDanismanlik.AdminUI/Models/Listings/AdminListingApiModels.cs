@@ -135,6 +135,10 @@ public sealed class AdminListingDetailResponse
 {
     public ListingFormModel? Listing { get; set; }
     public bool CanEdit { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
+    public string? GeoSource { get; set; }
+    public bool? BestDeals { get; set; }
 }
 
 /// <summary>
@@ -153,4 +157,94 @@ public sealed class LocationOptionDto
 {
     public int Id { get; set; }
     public string Text { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// İlan fotoğrafı veri aktarım modeli.
+/// </summary>
+public sealed class ListingImageDto
+{
+    public int ListingImageId { get; set; }
+    public string Url { get; set; } = string.Empty;
+    public string? MediumUrl { get; set; }
+    public string? ThumbUrl { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public bool IsCover { get; set; }
+    public int SortOrder { get; set; }
+}
+
+/// <summary>
+/// Fotoğraf sıralama ve kapak belirleme API istek modeli.
+/// </summary>
+public sealed class ReorderImagesRequest
+{
+    public int ListingTypeId { get; set; }
+    public int ListingId { get; set; }
+    public List<int> OrderedImageIds { get; set; } = new();
+    public int? CoverImageId { get; set; }
+}
+
+/// <summary>
+/// AdminUI fotoğraf sıralama uç noktası girdi modeli.
+/// </summary>
+public sealed class ReorderPhotosInputModel
+{
+    public List<int> OrderedImageIds { get; set; } = new();
+    public int? CoverImageId { get; set; }
+}
+
+/// <summary>
+/// İlan konum güncelleme API istek modeli.
+/// </summary>
+public sealed class UpdateLocationRequest
+{
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
+}
+
+/// <summary>
+/// AdminUI konum güncelleme uç noktası girdi modeli.
+/// </summary>
+public sealed class UpdateLocationInputModel
+{
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
+}
+
+/// <summary>
+/// İlan durum güncelleme API istek modeli.
+/// </summary>
+public sealed class UpdateStatusRequest
+{
+    public string Status { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// İlan vitrin durumu API istek modeli.
+/// </summary>
+public sealed class UpdateBestDealRequest
+{
+    public bool IsBestDeal { get; set; }
+}
+
+/// <summary>
+/// Danışman erişim izni modeli.
+/// </summary>
+public sealed class ListingAccessGrantDto
+{
+    public int ListingAccessGrantId { get; set; }
+    public int AgentId { get; set; }
+    public string AgentName { get; set; } = string.Empty;
+    public string Access { get; set; } = string.Empty;
+    public DateTime GrantedAtUtc { get; set; }
+}
+
+/// <summary>
+/// Danışman erişim izni ekleme API istek modeli.
+/// </summary>
+public sealed class CreateListingAccessGrantRequest
+{
+    public int AgentId { get; set; }
+    public string Access { get; set; } = string.Empty;
 }

@@ -37,6 +37,10 @@ public sealed class ListingFormModel
     public int? DistrictId { get; set; }
     public int? NeighborhoodId { get; set; }
     public string? AddressDesc { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
+    public string? GeoSource { get; set; }
+    public bool? BestDeals { get; set; }
 
     public string? Facade { get; set; }
     public bool? IsElevator { get; set; }
