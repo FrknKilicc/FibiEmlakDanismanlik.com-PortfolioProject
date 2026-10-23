@@ -1,0 +1,106 @@
+@model FibiEmlakDanismanlik.WebUI.Models.Footer.FooterViewModel
+@{
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+}
+
+<!-- Başlık Bandı -->
+<section class="page-title centred" style="background-image: url(/images/page-title/page-title-bg.jpg);">
+    <div class="auto-container">
+        <div class="content-box clearfix">
+            <h1>Kullanım Koşulları</h1>
+            <ul class="bread-crumb clearfix">
+                <li><a href="@Url.Action("Index","UILayout")">Anasayfa</a></li>
+                <li>Kullanım Koşulları</li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- Başlık Bandı Sonu -->
+
+<!-- İçerik Alanı -->
+<section class="sidebar-page-container blog-details sec-pad-2">
+    <div class="auto-container">
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 content-side">
+                <div class="legal-content">
+                    <h3>1. Taraflar ve Kapsam</h3>
+                    <p>Bu internet sitesi ("Site"), Fibi Yapı Emlak & Danışmanlık tarafından yönetilmektedir. Sitemizi ziyaret eden, inceleyen veya sitemizde yer alan hizmet ve formlardan faydalanan tüm kullanıcılar ("Kullanıcı"), işbu Kullanım Koşulları'nda yer alan şartların tamamını kabul etmiş sayılır. Belirtilen koşulları kabul etmemeniz hâlinde sitemizi kullanmamanız gerekmektedir.</p>
+
+                    <h3>2. İlan Bilgileri</h3>
+                    <p>Sitemizde yayımlanan satılık ve kiralık gayrimenkul ilanları, fiyatlar, metrekareler, bina özellikleri ve görseller yalnızca genel bilgilendirme amacıyla sunulmaktadır:</p>
+                    <ul>
+                        <li>İlanlarda sunulan fiyat, nitelik ve müsaitlik bilgileri mülk sahiplerinin beyanlarına veya güncel piyasa şartlarına göre değişiklik gösterebilir.</li>
+                        <li>Kesin ve bağlayıcı bilgiler gayrimenkul danışmanlarımızla yapılacak birebir görüşmelerde; tapu kayıtları, belediye imar durumu ve resmî kurum belgeleri üzerinden teyit edilir.</li>
+                        <li>İlan detaylarındaki haritalarda gösterilen konumlar güvenlik ve gizlilik gereği yaklaşık olarak işaretlenmektedir; taşınmazın tam açık adresi danışmanlarımızla randevu aşamasında paylaşılmaktadır.</li>
+                    </ul>
+
+                    <h3>3. FİBİ Hesaplama ve Analiz Araçları</h3>
+                    <p>Sitemizde yer alan bölge analizi, mahalle düzeyinde deprem risk analizi ile kredi ve maliyet hesaplama araçları simülasyon ve ön fikir verme amaçlıdır:</p>
+                    <ul>
+                        <li>Hesaplama ve analiz araçlarının sunduğu sonuçlar tahmini veriler olup resmî ekspertiz raporu, değerleme belgesi veya yatırım tavsiyesi yerine geçmez.</li>
+                        <li>Deprem ve bölge risk verileri, İstanbul Büyükşehir Belediyesi (İBB) açık veri kaynakları ve kamuya açık senaryolar dikkate alınarak hazırlanmıştır. Münferit bir yapının zemin veya statik dayanıklılığını tek başına kanıtlamaz.</li>
+                    </ul>
+
+                    <h3>4. Kullanıcı Yükümlülükleri</h3>
+                    <p>Kullanıcılar Site'yi yürürlükteki mevzuata, genel ahlak kurallarına ve dürüstlük ilkelerine uygun kullanmakla yükümlüdür:</p>
+                    <ul>
+                        <li>İletişim, randevu veya talep formlarında doğru, eksiksiz ve güncel bilgiler verilmelidir. Başkası adına yanıltıcı bilgi girişi yapılamaz.</li>
+                        <li>Sitenin güvenliğini tehdit edecek, sunuculara veya veri tabanına aşırı yük bindirecek eylemlerden kaçınılmalıdır.</li>
+                        <li>Sitede bulunan ilan, metin, grafik ve görsellerin otomatik botlar, web kazıma (scraping) veya diğer yazılımlarla toplu olarak çekilmesi ve kopyalanması kesinlikle yasaktır.</li>
+                    </ul>
+
+                    <h3>5. Fikrî Mülkiyet Hakları</h3>
+                    <p>Sitede yer alan tüm tasarım ögeleri, metinler, logolar, yazılım kodları ve içerik derlemeleri Fibi Yapı Emlak & Danışmanlık'a aittir veya lisans hakkı saklı tutularak kullanılmaktadır:</p>
+                    <ul>
+                        <li>Yazılı izin alınmaksızın bu içeriklerin kopyalanması, çoğaltılması, başka bir mecrada yayımlanması veya ticari amaçla kullanılması yasaktır.</li>
+                        <li>Sitede kullanılan bazı genel ikon ve açık lisanslı görseller ilgili hak sahiplerine aittir.</li>
+                    </ul>
+
+                    <h3>6. Dış Bağlantılar ve Üçüncü Taraf Hizmetleri</h3>
+                    <p>Sitemiz harita gösterimleri (OpenStreetMap gibi) ve harici servisler için üçüncü taraf sağlayıcılara ait bileşenler barındırabilir. Bu servislerin kullanımı sırasında ilgili sağlayıcıların kendi koşulları geçerlidir. Fibi Yapı Emlak & Danışmanlık, üçüncü taraf platformların sürekliliğinden veya içeriklerinden sorumlu değildir.</p>
+
+                    <h3>7. Sorumluluğun Sınırlandırılması</h3>
+                    <p>Fibi Yapı Emlak & Danışmanlık, sitedeki bilgilerin doğruluğunu korumak için gerekli çabayı göstermektedir. Ancak internet altyapısından, üçüncü şahısların müdahalelerinden veya sehven meydana gelen gecikme ve yazım hatalarından doğabilecek doğrudan ya da dolaylı zararlardan sorumluluk kabul edilmez. Kullanıcıların sitedeki bilgilere dayanarak alacağı kararlar kendi sorumluluğundadır.</p>
+
+                    <h3>8. Değişiklikler</h3>
+                    <p>Fibi Yapı Emlak & Danışmanlık, işbu Kullanım Koşulları'nı mevzuat değişiklikleri veya operasyonel ihtiyaçlar doğrultusunda dilediği zaman güncelleme hakkını saklı tutar. Değişiklikler sitede yayımlandığı andan itibaren geçerlilik kazanır.</p>
+
+                    <h3>9. Uygulanacak Hukuk</h3>
+                    <p>İşbu koşulların yorumlanması ve uygulanmasında Türkiye Cumhuriyeti hukuku geçerlidir. Çıkabilecek uyuşmazlıklarda yetkili Türk mahkemeleri ve icra daireleri görevlidir.</p>
+
+                    <h3>10. İletişim</h3>
+                    <p>Kullanım Koşulları hakkındaki soru ve bildirimleriniz için Fibi Yapı Emlak & Danışmanlık ile aşağıdaki kanallardan irtibat kurabilirsiniz:</p>
+                    @if (Model.Contact != null)
+                    {
+                        var email = Model.Contact.EMail1?.ToLowerInvariant() ?? "";
+                        <div class="contact-info-box">
+                            @if (!string.IsNullOrWhiteSpace(Model.Contact.OfficeAddress))
+                            {
+                                <p><strong>Adres:</strong> @Model.Contact.OfficeAddress</p>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.PhoneDisplay) && !string.IsNullOrWhiteSpace(Model.PhoneHref))
+                            {
+                                <p><strong>Telefon:</strong> <a href="@Model.PhoneHref">@Model.PhoneDisplay</a></p>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(email))
+                            {
+                                <p><strong>E-posta:</strong> <a href="mailto:@email">@email</a></p>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p>Sorularınız için bizimle <a href="@Url.Action("Index", "Contact")">İletişim sayfamız</a> üzerinden irtibata geçebilirsiniz.</p>
+                    }
+
+                    <div class="legal-date">Son güncelleme: 23 Ekim 2026</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- İçerik Alanı Sonu -->
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/legal-pages.css" asp-append-version="true" />
+}
