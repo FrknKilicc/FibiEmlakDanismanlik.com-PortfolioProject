@@ -1,4 +1,5 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.AuthorCommands;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Commands.AuthorCommands;
 using FibiEmlakDanismanlik.Application.Features.Queries.AuthorQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -29,21 +30,21 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _mediator.Send(new GetAuthorByIdQuery(id));
             return Ok(value);
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateAuthor(CreateAuthorCommand command)
         {
             await _mediator.Send(command);
             return Ok("Yazar Bilgisi Başarıyla Oluşturuldu");
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateAuthor(UpdateAuthorCommand command)
         {
             await _mediator.Send(command);
             return Ok("Yazar Başarıyla Güncellendi");
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveAuthor(int id)
         {

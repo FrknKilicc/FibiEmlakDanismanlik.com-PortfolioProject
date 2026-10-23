@@ -19,11 +19,11 @@
                     <a class="lightbox-image" href="@url" data-gallery-index="@i">
                         @if (i == 0)
                         {
-                            <img src="@url" alt="@Model.Title - fotoğraf @(i + 1)">
+                            <img src="@url" alt="@Model.Title - fotoğraf @(i + 1)" fibi-responsive fibi-sizes="(max-width: 991px) 100vw, 770px">
                         }
                         else
                         {
-                            <img src="@url" alt="@Model.Title - fotoğraf @(i + 1)" loading="lazy">
+                            <img src="@url" alt="@Model.Title - fotoğraf @(i + 1)" loading="lazy" fibi-responsive fibi-sizes="(max-width: 991px) 100vw, 770px">
                         }
                     </a>
                 </figure>
@@ -41,7 +41,7 @@
                 var url = Model.ImageUrls[i];
                 <li>
                     <button type="button" class="@(i == 0 ? "is-active" : "")" data-index="@i" aria-label="Fotoğraf @(i + 1)">
-                        <img src="@url" alt="@Model.Title - küçük resim @(i + 1)" loading="lazy">
+                        <img src="@url" alt="@Model.Title - küçük resim @(i + 1)" loading="lazy" fibi-responsive fibi-sizes="96px">
                     </button>
                 </li>
             }

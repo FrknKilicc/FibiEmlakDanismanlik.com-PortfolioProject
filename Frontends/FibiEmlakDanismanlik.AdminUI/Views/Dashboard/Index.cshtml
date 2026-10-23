@@ -1,0 +1,35 @@
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.CurrentAdmin CurrentAdmin
+@{
+    ViewData["Title"] = "Kontrol Paneli";
+}
+
+<div class="pagetitle">
+    <h1>Kontrol Paneli</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+            <li class="breadcrumb-item active">Kontrol Paneli</li>
+        </ol>
+    </nav>
+</div><!-- End Page Title -->
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-12">
+            <div class="card info-card">
+                <div class="card-body pt-4">
+                    <h5 class="card-title p-0 mb-2">Hoş geldiniz, @CurrentAdmin.Name (@CurrentAdmin.RoleDisplayName)</h5>
+                    <p class="card-text text-muted mb-3">
+                        Fibi Emlak Danışmanlık yönetim paneline başarıyla giriş yaptınız.
+                    </p>
+                    <div class="alert alert-info d-flex align-items-center mb-0" role="alert">
+                        <i class="bi bi-info-circle-fill me-2 flex-shrink-0"></i>
+                        <div>
+                            Kontrol paneli grafikleri ve raporlar yakında eklenecektir.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,5 +1,8 @@
 ﻿using FibiEmlakDanismanlik.Application.Behaviors;
+using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
+using FibiEmlakDanismanlik.Application.Services.AdminListings;
 using FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces;
+using FibiEmlakDanismanlik.Application.Services.Auth;
 using FibiEmlakDanismanlik.Application.Services.FibiServices;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +29,8 @@ namespace FibiEmlakDanismanlik.Application.Services
             services.AddAutoMapper(typeof(ServicesRegistiration).Assembly);
             services.AddScoped<IFibiMarketContextService, FibiMarketContextService>();
             services.AddScoped<IMarketDataSyncRunner, MarketDataSyncRunner>();
+            services.AddScoped<ILoginFlowService, LoginFlowService>();
+            services.AddScoped<IListingAccessService, ListingAccessService>();
         }
 
 

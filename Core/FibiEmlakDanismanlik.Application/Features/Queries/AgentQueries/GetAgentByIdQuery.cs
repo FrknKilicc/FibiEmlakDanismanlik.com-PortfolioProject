@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Queries.AgentQueries
 {
-    public class GetAgentByIdQuery:IRequest<GetAgentByIdResult>
+    public class GetAgentByIdQuery:IRequest<GetAgentByIdResult?>
     {
         public int Id { get; set; }
 

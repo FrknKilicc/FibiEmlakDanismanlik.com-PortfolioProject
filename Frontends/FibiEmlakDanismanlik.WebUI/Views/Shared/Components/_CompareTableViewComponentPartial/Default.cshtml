@@ -36,7 +36,7 @@
                             {
                                 <th>
                                     <figure class="image-box compare-image-box">
-                                        <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "/Realshed/assets/images/resource/table-img-1.jpg" : item.ImageUrl)" alt="">
+                                        <img src="@(string.IsNullOrWhiteSpace(item.ImageUrl) ? "/Realshed/assets/images/resource/table-img-1.jpg" : item.ImageUrl)" alt="" fibi-responsive fibi-sizes="240px">
                                     </figure>
                                     <div class="title">@item.PropertyName</div>
                                     <div class="price">@item.Price.ToString("N0") TL</div>

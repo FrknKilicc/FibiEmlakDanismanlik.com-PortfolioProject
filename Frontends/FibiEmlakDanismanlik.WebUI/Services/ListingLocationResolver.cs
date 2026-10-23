@@ -22,17 +22,7 @@ namespace FibiEmlakDanismanlik.WebUI.Services
             if (string.IsNullOrWhiteSpace(citySlug))
                 return null;
 
-            const string citiesCacheKey = "listing-location:cities";
-            if (!_memoryCache.TryGetValue(citiesCacheKey, out List<LocationOptionVm>? cities) || cities == null)
-            {
-                var client = _httpClientFactory.CreateClient();
-                var apiUrl = _configuration["Url:ApiUrl"];
-                var response = await client.GetAsync(apiUrl + "Location/cities");
-                response.EnsureSuccessStatusCode();
-                var json = await response.Content.ReadAsStringAsync();
-                cities = JsonConvert.DeserializeObject<List<LocationOptionVm>>(json) ?? new List<LocationOptionVm>();
-                _memoryCache.Set(citiesCacheKey, cities, TimeSpan.FromHours(6));
-            }
+            var cities = await GetCitiesAsync();
 
             var city = cities.FirstOrDefault(x => ListingUrl.Slugify(x.Text) == citySlug.ToLowerInvariant());
             if (city == null)
@@ -41,17 +31,7 @@ namespace FibiEmlakDanismanlik.WebUI.Services
             LocationOptionVm? district = null;
             if (!string.IsNullOrWhiteSpace(districtSlug))
             {
-                var districtsCacheKey = $"listing-location:districts:{city.Id}";
-                if (!_memoryCache.TryGetValue(districtsCacheKey, out List<LocationOptionVm>? districts) || districts == null)
-                {
-                    var client = _httpClientFactory.CreateClient();
-                    var apiUrl = _configuration["Url:ApiUrl"];
-                    var response = await client.GetAsync(apiUrl + $"Location/districts?cityId={city.Id}");
-                    response.EnsureSuccessStatusCode();
-                    var json = await response.Content.ReadAsStringAsync();
-                    districts = JsonConvert.DeserializeObject<List<LocationOptionVm>>(json) ?? new List<LocationOptionVm>();
-                    _memoryCache.Set(districtsCacheKey, districts, TimeSpan.FromHours(6));
-                }
+                var districts = await GetDistrictsAsync(city.Id);
 
                 var targetDistrictSlug = districtSlug.ToLowerInvariant();
                 district = districts.FirstOrDefault(x => ListingUrl.Slugify(x.Text) == targetDistrictSlug);
@@ -76,6 +56,65 @@ namespace FibiEmlakDanismanlik.WebUI.Services
                 CanonicalPath = canonicalPath,
                 Heading = heading
             };
+        }
+
+        /// <summary>
+        /// İl ve ilçe adlarını slug karşılaştırmasıyla çözümler ve kimliklerini döner.
+        /// İl bulunamazsa (null, null) döner.
+        /// </summary>
+        public async Task<(int? CityId, int? DistrictId)> ResolveIdsByNameAsync(string? cityName, string? districtName)
+        {
+            if (string.IsNullOrWhiteSpace(cityName))
+                return (null, null);
+
+            var cities = await GetCitiesAsync();
+            var targetCitySlug = ListingUrl.Slugify(cityName);
+            var city = cities.FirstOrDefault(x => ListingUrl.Slugify(x.Text) == targetCitySlug);
+            if (city == null)
+                return (null, null);
+
+            if (string.IsNullOrWhiteSpace(districtName))
+                return (city.Id, null);
+
+            var districts = await GetDistrictsAsync(city.Id);
+            var targetDistrictSlug = ListingUrl.Slugify(districtName);
+            var district = districts.FirstOrDefault(x => ListingUrl.Slugify(x.Text) == targetDistrictSlug);
+
+            return (city.Id, district?.Id);
+        }
+
+        private async Task<List<LocationOptionVm>> GetCitiesAsync()
+        {
+            const string citiesCacheKey = "listing-location:cities";
+            if (!_memoryCache.TryGetValue(citiesCacheKey, out List<LocationOptionVm>? cities) || cities == null)
+            {
+                var client = _httpClientFactory.CreateClient();
+                var apiUrl = _configuration["Url:ApiUrl"];
+                var response = await client.GetAsync(apiUrl + "Location/cities");
+                response.EnsureSuccessStatusCode();
+                var json = await response.Content.ReadAsStringAsync();
+                cities = JsonConvert.DeserializeObject<List<LocationOptionVm>>(json) ?? new List<LocationOptionVm>();
+                _memoryCache.Set(citiesCacheKey, cities, TimeSpan.FromHours(6));
+            }
+
+            return cities;
+        }
+
+        private async Task<List<LocationOptionVm>> GetDistrictsAsync(int cityId)
+        {
+            var districtsCacheKey = $"listing-location:districts:{cityId}";
+            if (!_memoryCache.TryGetValue(districtsCacheKey, out List<LocationOptionVm>? districts) || districts == null)
+            {
+                var client = _httpClientFactory.CreateClient();
+                var apiUrl = _configuration["Url:ApiUrl"];
+                var response = await client.GetAsync(apiUrl + $"Location/districts?cityId={cityId}");
+                response.EnsureSuccessStatusCode();
+                var json = await response.Content.ReadAsStringAsync();
+                districts = JsonConvert.DeserializeObject<List<LocationOptionVm>>(json) ?? new List<LocationOptionVm>();
+                _memoryCache.Set(districtsCacheKey, districts, TimeSpan.FromHours(6));
+            }
+
+            return districts;
         }
     }
 }

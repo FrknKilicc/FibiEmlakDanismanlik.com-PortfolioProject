@@ -1,3 +1,4 @@
+using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Commands.OurPartnersCommands;
 using FibiEmlakDanismanlik.Application.Features.Queries.OurPartnersQueries;
 using MediatR;
@@ -39,7 +40,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok(value);
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateOurPartner([FromBody] CreateOurPartnerCommand command)
         {
@@ -54,7 +55,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateOurPartner([FromBody] UpdateOurPartnerCommand command)
         {
@@ -73,7 +74,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveOurPartner(int id)
         {

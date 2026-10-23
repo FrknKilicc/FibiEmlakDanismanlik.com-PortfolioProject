@@ -1,0 +1,1217 @@
+@using System.Globalization
+@using FibiEmlakDanismanlik.AdminUI.Models.ListingAlerts
+@model FibiEmlakDanismanlik.AdminUI.Models.Listings.ListingFormViewModel
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.CurrentAdmin CurrentAdmin
+@{
+    var isNew = Model.IsNew;
+    var pageTitle = isNew ? $"Yeni İlan: {Model.Form.TypeTitle}" : Model.Form.PropertyName;
+    ViewData["Title"] = pageTitle;
+    var disabledAttr = !Model.CanEdit ? "disabled" : null;
+    var invCulture = CultureInfo.InvariantCulture;
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <h1 class="mb-0">@pageTitle</h1>
+            @if (!isNew)
+            {
+                <span class="text-muted fs-5 fw-normal">#@Model.Form.ListingId</span>
+                <span class="badge bg-@Model.StatusBadgeClass(Model.Form.PropertyStatus) fs-6">
+                    @(string.IsNullOrWhiteSpace(Model.Form.PropertyStatus) ? "Taslak" : Model.Form.PropertyStatus)
+                </span>
+            }
+        </div>
+        <nav class="mt-1">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item"><a href="/ilanlar">İlanlar</a></li>
+                @if (isNew)
+                {
+                    <li class="breadcrumb-item active">Yeni İlan (@Model.Form.TypeTitle)</li>
+                }
+                else
+                {
+                    <li class="breadcrumb-item active">@Model.Form.TypeTitle</li>
+                    <li class="breadcrumb-item active">#@Model.Form.ListingId</li>
+                }
+            </ol>
+        </nav>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a href="/ilanlar" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> İlan Listesine Dön
+        </a>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Success"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Error"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!Model.CanEdit)
+{
+    <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-info-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>Bu ilanı yalnızca görüntüleyebilirsiniz. Düzenleme yetkiniz bulunmamaktadır.</div>
+    </div>
+}
+
+@if (!isNew)
+{
+    <!-- Fotoğraflar Kartı (Formun Üstünde, Tam Genişlik) -->
+    <div class="card mb-4 shadow-sm border-0" id="photosCard"
+         data-listing-type-id="@Model.Form.ListingTypeId"
+         data-listing-id="@Model.Form.ListingId"
+         data-can-edit="@Model.CanEdit.ToString().ToLowerInvariant()">
+        <div class="card-body pt-3">
+            <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3 flex-wrap gap-2">
+                <h5 class="card-title p-0 m-0">
+                    <i class="bi bi-images me-2 text-primary"></i>İlan Fotoğrafları
+                </h5>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted small fw-medium" id="photoCountBadge">
+                        Toplam @(Model.Images?.Count ?? 0) / 30 fotoğraf
+                    </span>
+                    @if (Model.CanEdit)
+                    {
+                        <button type="button" id="saveOrderBtn" class="btn btn-success btn-sm d-none">
+                            <i class="bi bi-check2-circle me-1"></i> Sıralamayı Kaydet
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div id="photosAlertArea"></div>
+
+            @if (Model.CanEdit)
+            {
+                <div id="photoDropzone" class="photo-dropzone p-4 mb-3 text-center border border-2 border-dashed rounded-3 bg-light">
+                    <i class="bi bi-cloud-arrow-up display-5 text-primary mb-2 d-block"></i>
+                    <div class="fw-semibold fs-6">Fotoğrafları buraya sürükleyip bırakın</div>
+                    <div class="text-muted small mb-2">veya bilgisayarınızdan seçin</div>
+                    <label class="btn btn-outline-primary btn-sm mb-1 px-3">
+                        <i class="bi bi-folder2-open me-1"></i> Fotoğraf Seç
+                        <input type="file" id="photoFileInput" class="d-none" multiple accept="image/jpeg,image/png,image/webp" />
+                    </label>
+                    <div class="text-muted small mt-2">
+                        En fazla 30 fotoğraf, her biri en fazla 15 MB. JPG, PNG veya WebP desteklenir. Konum (GPS) bilgisi otomatik silinir.
+                    </div>
+                </div>
+
+                <div id="photoUploadProgressWrapper" class="progress mb-3 d-none" style="height: 10px;">
+                    <div id="photoUploadProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            }
+
+            <div id="photoGrid" class="row g-3 photo-grid">
+                @if (Model.Images != null && Model.Images.Count > 0)
+                {
+                    @foreach (var img in Model.Images.OrderBy(i => i.SortOrder))
+                    {
+                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 photo-item" data-image-id="@img.ListingImageId" draggable="@(Model.CanEdit ? "true" : "false")">
+                            <div class="card h-100 border shadow-none photo-card position-relative overflow-hidden">
+                                <div class="photo-thumb-wrapper ratio ratio-4x3 bg-light">
+                                    <img src="@(string.IsNullOrWhiteSpace(img.ThumbUrl) ? img.Url : img.ThumbUrl)" class="object-fit-cover w-100 h-100" alt="Fotoğraf @img.ListingImageId" loading="lazy" />
+                                </div>
+                                <span class="badge bg-primary position-absolute top-0 start-0 m-2 cover-badge @(img.IsCover ? "" : "d-none")">
+                                    <i class="bi bi-star-fill me-1"></i> Kapak
+                                </span>
+                                @if (Model.CanEdit)
+                                {
+                                    <div class="card-footer p-1 bg-white border-top-0 d-flex justify-content-between gap-1">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary flex-grow-1 p-1 set-cover-btn @(img.IsCover ? "d-none" : "")" data-action="set-cover" title="Kapak yap">
+                                            <i class="bi bi-star"></i> Kapak
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger p-1 px-2 delete-photo-btn" data-action="delete" title="Fotoğrafı sil">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12 text-center py-4 text-muted empty-photos-placeholder">
+                        <i class="bi bi-images display-6 d-block mb-2 text-secondary"></i>
+                        Henüz hiç fotoğraf eklenmemiş.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row g-4">
+    <div class="@(!isNew ? "col-lg-8 col-12" : "col-12")">
+        <form action="/ilanlar/kaydet" method="post" id="listingForm" novalidate>
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="ListingTypeId" value="@Model.Form.ListingTypeId" />
+    <input type="hidden" name="ListingId" value="@Model.Form.ListingId" />
+    <input type="hidden" name="PropertyStatus" value="@Model.Form.PropertyStatus" />
+
+    <!-- Konum Gizli Değerleri (Adlar metin olarak API'ye gider) -->
+    <input type="hidden" id="cityInput" name="City" value="@Model.Form.City" />
+    <input type="hidden" id="districtInput" name="District" value="@Model.Form.District" />
+    <input type="hidden" id="neighborhoodInput" name="Neighborhood" value="@Model.Form.Neighborhood" />
+    <input type="hidden" id="cityIdInput" name="CityId" value="@Model.Form.CityId" />
+    <input type="hidden" id="districtIdInput" name="DistrictId" value="@Model.Form.DistrictId" />
+    <input type="hidden" id="neighborhoodIdInput" name="NeighborhoodId" value="@Model.Form.NeighborhoodId" />
+
+    <!-- 1. Temel Bilgiler Kartı -->
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body pt-3">
+            <h5 class="card-title p-0 pb-3 border-bottom mb-3">
+                <i class="bi bi-info-circle me-2 text-primary"></i>Temel Bilgiler
+            </h5>
+            <div class="row g-3">
+                <div class="col-12">
+                    <label for="propertyName" class="form-label fw-semibold">
+                        İlan Başlığı <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control @(Model.GetFieldError("PropertyName") != null ? "is-invalid" : "")" id="propertyName" name="PropertyName" value="@Model.Form.PropertyName" maxlength="200" required disabled="@disabledAttr" placeholder="Örn: Kadıköy Moda Sahilde Geniş 3+1 Daire" />
+                    @if (Model.GetFieldError("PropertyName") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("PropertyName")</div>
+                    }
+                </div>
+
+                <div class="col-12">
+                    <label for="propertyDescription" class="form-label fw-semibold">
+                        İlan Açıklaması <span class="text-danger">*</span>
+                    </label>
+                    <textarea class="form-control @(Model.GetFieldError("PropertyDescription") != null ? "is-invalid" : "")" id="propertyDescription" name="PropertyDescription" rows="8" maxlength="8000" required disabled="@disabledAttr" placeholder="İlan detaylarını buraya yazınız... Paragraflar için boş satır bırakabilirsiniz.">@Model.Form.PropertyDescription</textarea>
+                    <div class="form-text">Düz metin olarak giriniz, paragraflar için boş satır bırakabilirsiniz.</div>
+                    @if (Model.GetFieldError("PropertyDescription") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("PropertyDescription")</div>
+                    }
+                </div>
+
+                @if (Model.Form.Category == "housing")
+                {
+                    <div class="col-md-6 col-12">
+                        <label for="housingCategoryId" class="form-label fw-semibold">Konut Kategorisi</label>
+                        <select class="form-select @(Model.GetFieldError("HousingCategoryId") != null ? "is-invalid" : "")" id="housingCategoryId" name="HousingCategoryId" disabled="@disabledAttr">
+                            <option value="">Seçiniz</option>
+                            @foreach (var cat in Model.Lookups.HousingCategories)
+                            {
+                                <option value="@cat.HousingCategoryId" selected="@(Model.Form.HousingCategoryId == cat.HousingCategoryId ? "selected" : null)">@cat.HousingCategoryName</option>
+                            }
+                        </select>
+                        @if (Model.GetFieldError("HousingCategoryId") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("HousingCategoryId")</div>
+                        }
+                    </div>
+                }
+                else if (Model.Form.Category == "land")
+                {
+                    <div class="col-md-6 col-12">
+                        <label for="landCategoryId" class="form-label fw-semibold">Arsa Kategorisi</label>
+                        <select class="form-select @(Model.GetFieldError("LandCategoryId") != null ? "is-invalid" : "")" id="landCategoryId" name="LandCategoryId" disabled="@disabledAttr">
+                            <option value="">Seçiniz</option>
+                            @foreach (var cat in Model.Lookups.LandCategories)
+                            {
+                                <option value="@cat.LandCategoryId" selected="@(Model.Form.LandCategoryId == cat.LandCategoryId ? "selected" : null)">@cat.LandCategoryName</option>
+                            }
+                        </select>
+                        @if (Model.GetFieldError("LandCategoryId") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("LandCategoryId")</div>
+                        }
+                    </div>
+                }
+
+                @if (CurrentAdmin.IsManagerOrAbove)
+                {
+                    <div class="col-md-6 col-12">
+                        <label for="agentId" class="form-label fw-semibold">Sorumlu Danışman</label>
+                        <select class="form-select @(Model.GetFieldError("AgentId") != null ? "is-invalid" : "")" id="agentId" name="AgentId" disabled="@disabledAttr">
+                            <option value="">Danışman Seçiniz</option>
+                            @foreach (var agent in Model.Lookups.Agents)
+                            {
+                                <option value="@agent.AgentId" selected="@(Model.Form.AgentId == agent.AgentId ? "selected" : null)">@agent.AgentName</option>
+                            }
+                        </select>
+                        @if (Model.GetFieldError("AgentId") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("AgentId")</div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" name="AgentId" value="@Model.Form.AgentId" />
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Fiyat Kartı -->
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body pt-3">
+            <h5 class="card-title p-0 pb-3 border-bottom mb-3">
+                <i class="bi bi-tag me-2 text-primary"></i>Fiyat ve Ödeme Bilgileri
+            </h5>
+            <div class="row g-3">
+                @if (Model.Form.Has("Price"))
+                {
+                    <div class="col-md-6 col-12">
+                        <label for="priceInput" class="form-label fw-semibold">
+                            Satış Fiyatı <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("Price") != null ? "is-invalid" : "")" id="priceInput" name="Price" value="@Model.Form.Price?.ToString(invCulture)" disabled="@disabledAttr" />
+                            <span class="input-group-text">₺</span>
+                        </div>
+                        @if (Model.GetFieldError("Price") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("Price")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("Rent"))
+                {
+                    <div class="col-md-6 col-12">
+                        <label for="rentInput" class="form-label fw-semibold">
+                            Aylık Kira <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("Rent") != null ? "is-invalid" : "")" id="rentInput" name="Rent" value="@Model.Form.Rent?.ToString(invCulture)" disabled="@disabledAttr" />
+                            <span class="input-group-text">₺ / ay</span>
+                        </div>
+                        @if (Model.GetFieldError("Rent") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("Rent")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("Deposit"))
+                {
+                    <div class="col-md-6 col-12">
+                        <label for="depositInput" class="form-label fw-semibold">Depozito</label>
+                        <div class="input-group">
+                            <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("Deposit") != null ? "is-invalid" : "")" id="depositInput" name="Deposit" value="@Model.Form.Deposit?.ToString(invCulture)" disabled="@disabledAttr" />
+                            <span class="input-group-text">₺</span>
+                        </div>
+                        @if (Model.GetFieldError("Deposit") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("Deposit")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("Dues"))
+                {
+                    <div class="col-md-6 col-12">
+                        <label for="duesInput" class="form-label fw-semibold">Aidat</label>
+                        <div class="input-group">
+                            <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("Dues") != null ? "is-invalid" : "")" id="duesInput" name="Dues" value="@Model.Form.Dues?.ToString(invCulture)" disabled="@disabledAttr" />
+                            <span class="input-group-text">₺ / ay</span>
+                        </div>
+                        @if (Model.GetFieldError("Dues") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("Dues")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("PricePerSquareMeter"))
+                {
+                    <div class="col-md-6 col-12">
+                        <label for="m2PriceInput" class="form-label fw-semibold">m² Birim Fiyatı</label>
+                        <div class="input-group">
+                            <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("PricePerSquareMeter") != null ? "is-invalid" : "")" id="m2PriceInput" name="PricePerSquareMeter" value="@Model.Form.PricePerSquareMeter?.ToString(invCulture)" disabled="@disabledAttr" />
+                            <span class="input-group-text">₺ / m²</span>
+                        </div>
+                        <div class="form-text">Alan ve Fiyat/Kira girildiğinde otomatik önerilir, elle değiştirilebilir.</div>
+                        @if (Model.GetFieldError("PricePerSquareMeter") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("PricePerSquareMeter")</div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Konum Kartı -->
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body pt-3">
+            <h5 class="card-title p-0 pb-3 border-bottom mb-3">
+                <i class="bi bi-geo-alt me-2 text-primary"></i>Konum Bilgileri
+            </h5>
+            <div class="row g-3">
+                <div class="col-md-4 col-12">
+                    <label for="citySelect" class="form-label fw-semibold">
+                        İl <span class="text-danger">*</span>
+                    </label>
+                    <select id="citySelect" class="form-select @(Model.GetFieldError("City") != null ? "is-invalid" : "")" data-current-name="@Model.Form.City" data-current-id="@Model.Form.CityId" disabled="@disabledAttr">
+                        <option value="">Yükleniyor...</option>
+                    </select>
+                    @if (Model.GetFieldError("City") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("City")</div>
+                    }
+                </div>
+
+                <div class="col-md-4 col-12">
+                    <label for="districtSelect" class="form-label fw-semibold">
+                        İlçe <span class="text-danger">*</span>
+                    </label>
+                    <select id="districtSelect" class="form-select @(Model.GetFieldError("District") != null ? "is-invalid" : "")" data-current-name="@Model.Form.District" data-current-id="@Model.Form.DistrictId" disabled="@(disabledAttr != null ? "disabled" : "disabled")">
+                        <option value="">Önce İl Seçiniz</option>
+                    </select>
+                    @if (Model.GetFieldError("District") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("District")</div>
+                    }
+                </div>
+
+                <div class="col-md-4 col-12">
+                    <label for="neighborhoodSelect" class="form-label fw-semibold">Mahalle</label>
+                    <select id="neighborhoodSelect" class="form-select @(Model.GetFieldError("Neighborhood") != null ? "is-invalid" : "")" data-current-name="@Model.Form.Neighborhood" data-current-id="@Model.Form.NeighborhoodId" disabled="@(disabledAttr != null ? "disabled" : "disabled")">
+                        <option value="">Önce İlçe Seçiniz</option>
+                    </select>
+                    @if (Model.GetFieldError("Neighborhood") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("Neighborhood")</div>
+                    }
+                </div>
+
+                <div class="col-12">
+                    <label for="addressDesc" class="form-label fw-semibold">Açık Adres</label>
+                    <textarea class="form-control @(Model.GetFieldError("AddressDesc") != null ? "is-invalid" : "")" id="addressDesc" name="AddressDesc" rows="3" disabled="@disabledAttr" placeholder="Cadde, sokak, bina no, kapı no...">@Model.Form.AddressDesc</textarea>
+                    @if (Model.GetFieldError("AddressDesc") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("AddressDesc")</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Özellikler Kartı -->
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body pt-3">
+            <h5 class="card-title p-0 pb-3 border-bottom mb-3">
+                <i class="bi bi-sliders me-2 text-primary"></i>İlan Özellikleri
+            </h5>
+            <div class="row g-3">
+                @if (Model.Form.Has("NumberOfRoom"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="numberOfRoom" class="form-label fw-semibold">Oda Sayısı</label>
+                        <select class="form-select @(Model.GetFieldError("NumberOfRoom") != null ? "is-invalid" : "")" id="numberOfRoom" name="NumberOfRoom" disabled="@disabledAttr">
+                            <option value="">Seçiniz</option>
+                            @foreach (var opt in ListingFormViewModel.GetOptionsWithCustom(ListingFormViewModel.NumberOfRoomOptions, Model.Form.NumberOfRoom))
+                            {
+                                <option value="@opt" selected="@(string.Equals(Model.Form.NumberOfRoom, opt, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@opt</option>
+                            }
+                        </select>
+                        @if (Model.GetFieldError("NumberOfRoom") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("NumberOfRoom")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("GrossArea"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="grossArea" class="form-label fw-semibold">Brüt Alan</label>
+                        <div class="input-group">
+                            <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("GrossArea") != null ? "is-invalid" : "")" id="grossArea" name="GrossArea" value="@Model.Form.GrossArea?.ToString(invCulture)" disabled="@disabledAttr" />
+                            <span class="input-group-text">m²</span>
+                        </div>
+                        @if (Model.GetFieldError("GrossArea") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("GrossArea")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("NetArea"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="netArea" class="form-label fw-semibold">Net Alan</label>
+                        <div class="input-group">
+                            <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("NetArea") != null ? "is-invalid" : "")" id="netArea" name="NetArea" value="@Model.Form.NetArea?.ToString(invCulture)" disabled="@disabledAttr" />
+                            <span class="input-group-text">m²</span>
+                        </div>
+                        @if (Model.GetFieldError("NetArea") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("NetArea")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("OpenArea"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="openArea" class="form-label fw-semibold">Açık Alan</label>
+                        <div class="input-group">
+                            <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("OpenArea") != null ? "is-invalid" : "")" id="openArea" name="OpenArea" value="@Model.Form.OpenArea?.ToString(invCulture)" disabled="@disabledAttr" />
+                            <span class="input-group-text">m²</span>
+                        </div>
+                        @if (Model.GetFieldError("OpenArea") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("OpenArea")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("Area"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="areaInput" class="form-label fw-semibold">Alan</label>
+                        <div class="input-group">
+                            <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("Area") != null ? "is-invalid" : "")" id="areaInput" name="Area" value="@Model.Form.Area?.ToString(invCulture)" disabled="@disabledAttr" />
+                            <span class="input-group-text">m²</span>
+                        </div>
+                        @if (Model.GetFieldError("Area") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("Area")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("BuildingAge"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="buildingAge" class="form-label fw-semibold">Bina Yaşı</label>
+                        <select class="form-select @(Model.GetFieldError("BuildingAge") != null ? "is-invalid" : "")" id="buildingAge" name="BuildingAge" disabled="@disabledAttr">
+                            <option value="">Seçiniz</option>
+                            @foreach (var opt in ListingFormViewModel.GetOptionsWithCustom(ListingFormViewModel.BuildingAgeOptions, Model.Form.BuildingAge))
+                            {
+                                <option value="@opt" selected="@(string.Equals(Model.Form.BuildingAge, opt, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@opt</option>
+                            }
+                        </select>
+                        @if (Model.GetFieldError("BuildingAge") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("BuildingAge")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("TotalNumberOfFloor"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="totalNumberOfFloor" class="form-label fw-semibold">Toplam Kat Sayısı</label>
+                        <input type="number" min="0" class="form-control @(Model.GetFieldError("TotalNumberOfFloor") != null ? "is-invalid" : "")" id="totalNumberOfFloor" name="TotalNumberOfFloor" value="@Model.Form.TotalNumberOfFloor" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("TotalNumberOfFloor") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("TotalNumberOfFloor")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("NumberOfFloors"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="numberOfFloors" class="form-label fw-semibold">
+                            @(Model.Form.Category == "commercial" ? "Kat Sayısı" : "Bulunduğu Kat")
+                        </label>
+                        <input type="number" min="0" class="form-control @(Model.GetFieldError("NumberOfFloors") != null ? "is-invalid" : "")" id="numberOfFloors" name="NumberOfFloors" value="@Model.Form.NumberOfFloors" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("NumberOfFloors") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("NumberOfFloors")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("NumberOfBathRoom"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="numberOfBathRoom" class="form-label fw-semibold">Banyo Sayısı</label>
+                        <input type="number" min="0" class="form-control @(Model.GetFieldError("NumberOfBathRoom") != null ? "is-invalid" : "")" id="numberOfBathRoom" name="NumberOfBathRoom" value="@Model.Form.NumberOfBathRoom" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("NumberOfBathRoom") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("NumberOfBathRoom")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("NumberOfBathrooms"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="numberOfBathrooms" class="form-label fw-semibold">Banyo Sayısı</label>
+                        <input type="number" min="0" class="form-control @(Model.GetFieldError("NumberOfBathrooms") != null ? "is-invalid" : "")" id="numberOfBathrooms" name="NumberOfBathrooms" value="@Model.Form.NumberOfBathrooms" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("NumberOfBathrooms") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("NumberOfBathrooms")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("NumberOfBalconies"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="numberOfBalconies" class="form-label fw-semibold">Balkon Sayısı</label>
+                        <input type="number" min="0" class="form-control @(Model.GetFieldError("NumberOfBalconies") != null ? "is-invalid" : "")" id="numberOfBalconies" name="NumberOfBalconies" value="@Model.Form.NumberOfBalconies" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("NumberOfBalconies") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("NumberOfBalconies")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("NumberOfSection"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="numberOfSection" class="form-label fw-semibold">Bölüm / Oda Sayısı</label>
+                        <input type="number" min="0" class="form-control @(Model.GetFieldError("NumberOfSection") != null ? "is-invalid" : "")" id="numberOfSection" name="NumberOfSection" value="@Model.Form.NumberOfSection" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("NumberOfSection") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("NumberOfSection")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("NumberOfKitchens"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="numberOfKitchens" class="form-label fw-semibold">Mutfak Sayısı</label>
+                        <input type="number" min="0" class="form-control @(Model.GetFieldError("NumberOfKitchens") != null ? "is-invalid" : "")" id="numberOfKitchens" name="NumberOfKitchens" value="@Model.Form.NumberOfKitchens" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("NumberOfKitchens") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("NumberOfKitchens")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("Heating"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="heating" class="form-label fw-semibold">Isıtma</label>
+                        <select class="form-select @(Model.GetFieldError("Heating") != null ? "is-invalid" : "")" id="heating" name="Heating" disabled="@disabledAttr">
+                            <option value="">Seçiniz</option>
+                            @foreach (var opt in ListingFormViewModel.GetOptionsWithCustom(ListingFormViewModel.HeatingOptions, Model.Form.Heating))
+                            {
+                                <option value="@opt" selected="@(string.Equals(Model.Form.Heating, opt, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@opt</option>
+                            }
+                        </select>
+                        @if (Model.GetFieldError("Heating") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("Heating")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("Facade"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="facade" class="form-label fw-semibold">Cephe</label>
+                        <select class="form-select @(Model.GetFieldError("Facade") != null ? "is-invalid" : "")" id="facade" name="Facade" disabled="@disabledAttr">
+                            <option value="">Seçiniz</option>
+                            @foreach (var opt in ListingFormViewModel.GetOptionsWithCustom(ListingFormViewModel.FacadeOptions, Model.Form.Facade))
+                            {
+                                <option value="@opt" selected="@(string.Equals(Model.Form.Facade, opt, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@opt</option>
+                            }
+                        </select>
+                        @if (Model.GetFieldError("Facade") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("Facade")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("UsageStatus"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="usageStatus" class="form-label fw-semibold">Kullanım Durumu</label>
+                        <select class="form-select @(Model.GetFieldError("UsageStatus") != null ? "is-invalid" : "")" id="usageStatus" name="UsageStatus" disabled="@disabledAttr">
+                            <option value="">Seçiniz</option>
+                            @foreach (var opt in ListingFormViewModel.GetOptionsWithCustom(ListingFormViewModel.UsageStatusOptions, Model.Form.UsageStatus))
+                            {
+                                <option value="@opt" selected="@(string.Equals(Model.Form.UsageStatus, opt, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@opt</option>
+                            }
+                        </select>
+                        @if (Model.GetFieldError("UsageStatus") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("UsageStatus")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("TitleDeedStatus"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="titleDeedStatus" class="form-label fw-semibold">Tapu Durumu</label>
+                        <select class="form-select @(Model.GetFieldError("TitleDeedStatus") != null ? "is-invalid" : "")" id="titleDeedStatus" name="TitleDeedStatus" disabled="@disabledAttr">
+                            <option value="">Seçiniz</option>
+                            @foreach (var opt in ListingFormViewModel.GetOptionsWithCustom(ListingFormViewModel.TitleDeedStatusOptions, Model.Form.TitleDeedStatus))
+                            {
+                                <option value="@opt" selected="@(string.Equals(Model.Form.TitleDeedStatus, opt, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@opt</option>
+                            }
+                        </select>
+                        @if (Model.GetFieldError("TitleDeedStatus") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("TitleDeedStatus")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("ZoningStatus"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="zoningStatus" class="form-label fw-semibold">İmar Durumu</label>
+                        <select class="form-select @(Model.GetFieldError("ZoningStatus") != null ? "is-invalid" : "")" id="zoningStatus" name="ZoningStatus" disabled="@disabledAttr">
+                            <option value="">Seçiniz</option>
+                            @foreach (var opt in ListingFormViewModel.GetOptionsWithCustom(ListingFormViewModel.ZoningStatusOptions, Model.Form.ZoningStatus))
+                            {
+                                <option value="@opt" selected="@(string.Equals(Model.Form.ZoningStatus, opt, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@opt</option>
+                            }
+                        </select>
+                        @if (Model.GetFieldError("ZoningStatus") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("ZoningStatus")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("SharePercentage"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="sharePercentage" class="form-label fw-semibold">Hisse Oranı</label>
+                        <div class="input-group">
+                            <input type="number" step="any" min="0" max="100" class="form-control @(Model.GetFieldError("SharePercentage") != null ? "is-invalid" : "")" id="sharePercentage" name="SharePercentage" value="@Model.Form.SharePercentage?.ToString(invCulture)" disabled="@disabledAttr" />
+                            <span class="input-group-text">%</span>
+                        </div>
+                        @if (Model.GetFieldError("SharePercentage") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("SharePercentage")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("ParcelNumber"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="parcelNumber" class="form-label fw-semibold">Parsel No</label>
+                        <input type="text" class="form-control @(Model.GetFieldError("ParcelNumber") != null ? "is-invalid" : "")" id="parcelNumber" name="ParcelNumber" value="@Model.Form.ParcelNumber" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("ParcelNumber") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("ParcelNumber")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("PlotNumber"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="plotNumber" class="form-label fw-semibold">Ada No</label>
+                        <input type="text" class="form-control @(Model.GetFieldError("PlotNumber") != null ? "is-invalid" : "")" id="plotNumber" name="PlotNumber" value="@Model.Form.PlotNumber" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("PlotNumber") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("PlotNumber")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("MapSheetNumber"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="mapSheetNumber" class="form-label fw-semibold">Pafta No</label>
+                        <input type="text" class="form-control @(Model.GetFieldError("MapSheetNumber") != null ? "is-invalid" : "")" id="mapSheetNumber" name="MapSheetNumber" value="@Model.Form.MapSheetNumber" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("MapSheetNumber") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("MapSheetNumber")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("FloorAreaRatio"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="floorAreaRatio" class="form-label fw-semibold">KAKS / Emsal</label>
+                        <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("FloorAreaRatio") != null ? "is-invalid" : "")" id="floorAreaRatio" name="FloorAreaRatio" value="@Model.Form.FloorAreaRatio?.ToString(invCulture)" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("FloorAreaRatio") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("FloorAreaRatio")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("BaseAreaRatio"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="baseAreaRatio" class="form-label fw-semibold">TAKS</label>
+                        <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("BaseAreaRatio") != null ? "is-invalid" : "")" id="baseAreaRatio" name="BaseAreaRatio" value="@Model.Form.BaseAreaRatio?.ToString(invCulture)" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("BaseAreaRatio") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("BaseAreaRatio")</div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Form.Has("ZoningPlan"))
+                {
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <label for="zoningPlan" class="form-label fw-semibold">İmar Planı</label>
+                        <input type="text" class="form-control @(Model.GetFieldError("ZoningPlan") != null ? "is-invalid" : "")" id="zoningPlan" name="ZoningPlan" value="@Model.Form.ZoningPlan" disabled="@disabledAttr" />
+                        @if (Model.GetFieldError("ZoningPlan") != null)
+                        {
+                            <div class="invalid-feedback d-block">@Model.GetFieldError("ZoningPlan")</div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Evet / Hayır Seçenekleri (Form-Switch) -->
+            <div class="row g-3 mt-3 pt-3 border-top">
+                @if (Model.Form.Has("IsElevator"))
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="isElevator" name="IsElevator" value="true" checked="@(Model.Form.IsElevator == true ? "checked" : null)" disabled="@disabledAttr" />
+                            <input type="hidden" name="IsElevator" value="false" disabled="@disabledAttr" />
+                            <label class="form-check-label fw-medium" for="isElevator">Asansör</label>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Form.Has("BlackBox"))
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="blackBox" name="BlackBox" value="true" checked="@(Model.Form.BlackBox == true ? "checked" : null)" disabled="@disabledAttr" />
+                            <input type="hidden" name="BlackBox" value="false" disabled="@disabledAttr" />
+                            <label class="form-check-label fw-medium" for="blackBox">Karanlık Oda / Kiler</label>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Form.Has("ParkingLot"))
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="parkingLot" name="ParkingLot" value="true" checked="@(Model.Form.ParkingLot == true ? "checked" : null)" disabled="@disabledAttr" />
+                            <input type="hidden" name="ParkingLot" value="false" disabled="@disabledAttr" />
+                            <label class="form-check-label fw-medium" for="parkingLot">Otopark</label>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Form.Has("Furnished"))
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="furnished" name="Furnished" value="true" checked="@(Model.Form.Furnished == true ? "checked" : null)" disabled="@disabledAttr" />
+                            <input type="hidden" name="Furnished" value="false" disabled="@disabledAttr" />
+                            <label class="form-check-label fw-medium" for="furnished">Eşyalı</label>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Form.Has("WithinTheComplex"))
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="withinTheComplex" name="WithinTheComplex" value="true" checked="@(Model.Form.WithinTheComplex == true ? "checked" : null)" disabled="@disabledAttr" />
+                            <input type="hidden" name="WithinTheComplex" value="false" disabled="@disabledAttr" />
+                            <label class="form-check-label fw-medium" for="withinTheComplex">Site İçerisinde</label>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Form.Has("Exchange"))
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="exchange" name="Exchange" value="true" checked="@(Model.Form.Exchange == true ? "checked" : null)" disabled="@disabledAttr" />
+                            <input type="hidden" name="Exchange" value="false" disabled="@disabledAttr" />
+                            <label class="form-check-label fw-medium" for="exchange">Takaslı</label>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Form.Has("HomeLoan"))
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="homeLoan" name="HomeLoan" value="true" checked="@(Model.Form.HomeLoan == true ? "checked" : null)" disabled="@disabledAttr" />
+                            <input type="hidden" name="HomeLoan" value="false" disabled="@disabledAttr" />
+                            <label class="form-check-label fw-medium" for="homeLoan">Konut Kredisine Uygun</label>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Form.Has("LandLoan"))
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="landLoan" name="LandLoan" value="true" checked="@(Model.Form.LandLoan == true ? "checked" : null)" disabled="@disabledAttr" />
+                            <input type="hidden" name="LandLoan" value="false" disabled="@disabledAttr" />
+                            <label class="form-check-label fw-medium" for="landLoan">Krediye Uygun</label>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Form.Has("DevelopmentRight"))
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="developmentRight" name="DevelopmentRight" value="true" checked="@(Model.Form.DevelopmentRight == true ? "checked" : null)" disabled="@disabledAttr" />
+                            <input type="hidden" name="DevelopmentRight" value="false" disabled="@disabledAttr" />
+                            <label class="form-check-label fw-medium" for="developmentRight">Kat Karşılığı / İmar İzni</label>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Form.Has("Transferable"))
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="transferable" name="Transferable" value="true" checked="@(Model.Form.Transferable == true ? "checked" : null)" disabled="@disabledAttr" />
+                            <input type="hidden" name="Transferable" value="false" disabled="@disabledAttr" />
+                            <label class="form-check-label fw-medium" for="transferable">Devren</label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Olanaklar Kartı -->
+    @if (Model.ApplicableAmenities.Any())
+    {
+        var groupedAmenities = Model.ApplicableAmenities
+            .GroupBy(a => string.IsNullOrWhiteSpace(a.GroupName) ? "Genel Özellikler" : a.GroupName)
+            .OrderBy(g => g.Key);
+
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body pt-3">
+                <h5 class="card-title p-0 pb-3 border-bottom mb-3">
+                    <i class="bi bi-check2-square me-2 text-primary"></i>Olanaklar ve Donatılar
+                </h5>
+                @foreach (var group in groupedAmenities)
+                {
+                    <div class="mb-3">
+                        <h6 class="fw-bold text-muted small text-uppercase mb-2">
+                            <i class="bi bi-tag me-1"></i>@group.Key
+                        </h6>
+                        <div class="row g-2">
+                            @foreach (var amenity in group)
+                            {
+                                <div class="col-lg-3 col-md-4 col-sm-6 col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="AmenityIds" value="@amenity.Key" id="amenity_@amenity.Key" checked="@(Model.Form.AmenityIds != null && Model.Form.AmenityIds.Contains(amenity.Key) ? "checked" : null)" disabled="@disabledAttr" />
+                                        <label class="form-check-label small" for="amenity_@amenity.Key">
+                                            @amenity.DisplayName
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- 6. Altta Sabit (Sticky) Eylem Çubuğu -->
+    <div class="card shadow-lg border position-sticky bottom-0 bg-white z-3 mb-4 rounded-3">
+        <div class="card-body p-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="text-muted small">
+                @if (Model.IsNew)
+                {
+                    <span>Yeni ilan oluşturuluyor. Kaydettikten sonra fotoğraf ve vitrin ayarlarını düzenleyebilirsiniz.</span>
+                }
+                else
+                {
+                    <span>İlan No: #@Model.Form.ListingId</span>
+                }
+            </div>
+            <div class="d-flex align-items-center gap-2 ms-auto">
+                <a href="/ilanlar" class="btn btn-outline-secondary px-4">
+                    <i class="bi bi-x-lg me-1"></i> Vazgeç
+                </a>
+                @if (Model.CanEdit)
+                {
+                    <button type="submit" id="submitBtn" class="btn btn-primary px-4 shadow-sm">
+                        <i class="bi bi-check-lg me-1"></i> @(Model.IsNew ? "Kaydet ve fotoğraf eklemeye geç" : "Değişiklikleri Kaydet")
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+        </form>
+    </div>
+
+    @if (!isNew)
+    {
+        <div class="col-lg-4 col-12">
+            <!-- 1. Konum Haritası Kartı -->
+            <div class="card mb-4 shadow-sm border-0" id="listingMapCard"
+                 data-type-id="@Model.Form.ListingTypeId"
+                 data-listing-id="@Model.Form.ListingId"
+                 data-lat="@Model.Latitude?.ToString(invCulture)"
+                 data-lng="@Model.Longitude?.ToString(invCulture)"
+                 data-geo-source="@Model.GeoSource"
+                 data-can-edit="@Model.CanEdit.ToString().ToLowerInvariant()">
+                <div class="card-body pt-3">
+                    <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3 flex-wrap gap-2">
+                        <h5 class="card-title p-0 m-0">
+                            <i class="bi bi-geo-alt me-2 text-primary"></i>Harita Konumu
+                        </h5>
+                        <span id="geoSourceBadge" class="badge @(Model.Latitude.HasValue && Model.Longitude.HasValue ? (string.Equals(Model.GeoSource, "manual", StringComparison.OrdinalIgnoreCase) ? "bg-success" : "bg-warning text-dark") : "bg-secondary")">
+                            @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+                            {
+                                @(string.Equals(Model.GeoSource, "manual", StringComparison.OrdinalIgnoreCase) ? "Kesin Konum" : "Yaklaşık Konum")
+                            }
+                            else
+                            {
+                                <text>Konum Belirlenmedi</text>
+                            }
+                        </span>
+                    </div>
+
+                    <div id="mapAlertArea"></div>
+
+                    <div id="listingMap" style="height: 280px; width: 100%; border-radius: 6px;" class="border"></div>
+
+                    <div class="small text-muted mt-2 d-flex justify-content-between align-items-center">
+                        <span id="coordDisplay">
+                            @if (Model.Latitude.HasValue && Model.Longitude.HasValue)
+                            {
+                                <text>@Model.Latitude.Value.ToString("F5", invCulture), @Model.Longitude.Value.ToString("F5", invCulture)</text>
+                            }
+                            else
+                            {
+                                <text>Haritaya tıklayarak konum seçin</text>
+                            }
+                        </span>
+                        <span class="text-muted" style="font-size: 0.75rem;">© OpenStreetMap katkıcıları</span>
+                    </div>
+
+                    @if (Model.CanEdit)
+                    {
+                        <button type="button" id="saveLocationBtn" class="btn btn-primary btn-sm w-100 mt-3" disabled>
+                            <i class="bi bi-geo-alt me-1"></i> Konumu Kaydet
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- 2. Durum Kartı -->
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-body pt-3">
+                    <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                        <h5 class="card-title p-0 m-0">
+                            <i class="bi bi-flag me-2 text-primary"></i>İlan Durumu
+                        </h5>
+                        <span class="badge bg-@Model.StatusBadgeClass(Model.Form.PropertyStatus) fs-6">
+                            @(string.IsNullOrWhiteSpace(Model.Form.PropertyStatus) ? "Taslak" : Model.Form.PropertyStatus)
+                        </span>
+                    </div>
+
+                    <form action="/ilanlar/@Model.Form.ListingTypeId/@Model.Form.ListingId/durum" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label for="statusSelect" class="form-label fw-semibold small">Durumu Güncelle</label>
+                            <select id="statusSelect" name="status" class="form-select" disabled="@disabledAttr">
+                                @{
+                                    var statusOptions = Model.Form.IsRent
+                                        ? new[] { "Aktif", "Opsiyonlu", "Pasif", "Kiralandı" }
+                                        : new[] { "Aktif", "Opsiyonlu", "Pasif", "Satıldı" };
+                                }
+                                @foreach (var opt in statusOptions)
+                                {
+                                    <option value="@opt" selected="@(string.Equals(Model.Form.PropertyStatus, opt, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@opt</option>
+                                }
+                            </select>
+                        </div>
+                        @if (Model.CanEdit)
+                        {
+                            <button type="submit" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="bi bi-arrow-repeat me-1"></i> Durumu Güncelle
+                            </button>
+                        }
+                    </form>
+                </div>
+            </div>
+
+            @if (!Model.IsNew)
+            {
+                <partial name="_ListingLeadsCard" model="Model.Leads" />
+                <partial name="_ListingAlertsCard" model="new ListingAlertsCardModel { Data = Model.Alerts, ListingTypeId = Model.Form.ListingTypeId, ListingId = Model.Form.ListingId ?? 0 }" />
+                @if (CurrentAdmin.IsManagerOrAbove)
+                {
+                    <partial name="_ListingDealsCard" model="new FibiEmlakDanismanlik.AdminUI.Models.Deals.ListingDealsCardModel { Deals = Model.Deals, ListingTypeId = Model.Form.ListingTypeId, ListingId = Model.Form.ListingId ?? 0, ListingStatus = Model.CurrentStatus }" />
+                }
+            }
+
+            <!-- 3. Vitrin Kartı (Sahip/Yönetici) -->
+            @if (CurrentAdmin.IsManagerOrAbove)
+            {
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-body pt-3">
+                        <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                            <h5 class="card-title p-0 m-0">
+                                <i class="bi bi-star me-2 text-warning"></i>Vitrin Durumu
+                            </h5>
+                            <span class="badge @(Model.BestDeals ? "bg-warning text-dark" : "bg-secondary")">
+                                @(Model.BestDeals ? "Vitrinde" : "Vitrinde Değil")
+                            </span>
+                        </div>
+
+                        <p class="small text-muted mb-3">
+                            Satılık ve kiralık vitrinde en fazla 5 ilan gösterilebilir.
+                        </p>
+
+                        <form action="/ilanlar/@Model.Form.ListingTypeId/@Model.Form.ListingId/vitrin" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="isBestDeal" value="@((!Model.BestDeals).ToString().ToLowerInvariant())" />
+                            <button type="submit" class="btn @(Model.BestDeals ? "btn-outline-warning" : "btn-outline-success") btn-sm w-100">
+                                <i class="bi @(Model.BestDeals ? "bi-star" : "bi-star-fill") me-1"></i>
+                                @(Model.BestDeals ? "Vitrinden Çıkar" : "Vitrine Ekle")
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <!-- 4. Erişim İzinleri Kartı (Sahip/Yönetici) -->
+            @if (CurrentAdmin.IsManagerOrAbove)
+            {
+                <div class="card mb-4 shadow-sm border-0">
+                    <div class="card-body pt-3">
+                        <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                            <h5 class="card-title p-0 m-0">
+                                <i class="bi bi-shield-lock me-2 text-primary"></i>Erişim İzinleri
+                            </h5>
+                            <span class="badge bg-secondary">@(Model.Grants?.Count ?? 0)</span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Mevcut İzinler</label>
+                            @if (Model.Grants != null && Model.Grants.Count > 0)
+                            {
+                                <ul class="list-group list-group-flush border rounded-3 mb-0">
+                                    @foreach (var grant in Model.Grants)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center p-2">
+                                            <div>
+                                                <div class="fw-semibold small">@grant.AgentName</div>
+                                                <span class="badge @(grant.Access == "Edit" ? "bg-info text-dark" : "bg-light text-dark border")" style="font-size: 0.7rem;">
+                                                    @(grant.Access == "Edit" ? "Düzenleme" : "Görüntüleme")
+                                                </span>
+                                            </div>
+                                            <form action="/ilanlar/izinler/@grant.ListingAccessGrantId/kaldir" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="t" value="@Model.Form.ListingTypeId" />
+                                                <input type="hidden" name="id" value="@Model.Form.ListingId" />
+                                                <button type="submit" class="btn btn-outline-danger btn-sm py-0 px-2" title="İzni Kaldır">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <div class="text-muted small p-2 bg-light rounded text-center">
+                                    Özel tanımlanmış danışman izni yok.
+                                </div>
+                            }
+                        </div>
+
+                        <form action="/ilanlar/@Model.Form.ListingTypeId/@Model.Form.ListingId/izinler" method="post" class="border-top pt-3">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-2">
+                                <label for="grantAgentSelect" class="form-label fw-semibold small">Danışman Ekle</label>
+                                <select id="grantAgentSelect" name="agentId" class="form-select form-select-sm" required>
+                                    <option value="">Danışman Seçiniz</option>
+                                    @foreach (var agent in Model.Lookups.Agents.Where(a => a.AgentId != Model.Form.AgentId))
+                                    {
+                                        <option value="@agent.AgentId">@agent.AgentName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="grantAccessSelect" class="form-label fw-semibold small">Erişim Düzeyi</label>
+                                <select id="grantAccessSelect" name="access" class="form-select form-select-sm" required>
+                                    <option value="View">Görüntüleme</option>
+                                    <option value="Edit">Düzenleme</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-person-plus me-1"></i> İzin Ver
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <!-- 5. Tehlikeli Bölge Kartı (Sahip) -->
+            @if (CurrentAdmin.IsOwner)
+            {
+                <div class="card mb-4 shadow-sm border border-danger border-opacity-50">
+                    <div class="card-body pt-3">
+                        <h5 class="card-title text-danger p-0 pb-2 border-bottom border-danger border-opacity-25 mb-2">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Tehlikeli Bölge
+                        </h5>
+                        <p class="small text-muted mb-3">
+                            İlanı kalıcı olarak silmek fotoğraflar dahil tüm verileri tamamen kaldırır ve bu işlem geri alınamaz. Geçici olarak gizlemek için durumu <strong>Pasif</strong> yapabilirsiniz.
+                        </p>
+                        <form action="/ilanlar/@Model.Form.ListingTypeId/@Model.Form.ListingId/sil" method="post" id="deleteListingForm">
+                            @Html.AntiForgeryToken()
+                            <div class="mb-3">
+                                <label for="deleteConfirmInput" class="form-label small fw-semibold text-danger">
+                                    Onaylamak için <strong>SİL</strong> yazın:
+                                </label>
+                                <input type="text" id="deleteConfirmInput" name="confirmText" class="form-control form-control-sm border-danger" placeholder="SİL" autocomplete="off" required />
+                            </div>
+                            <button type="submit" id="deleteSubmitBtn" class="btn btn-danger btn-sm w-100" disabled>
+                                <i class="bi bi-trash3-fill me-1"></i> İlanı Kalıcı Olarak Sil
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/lib/leaflet/leaflet.js" asp-append-version="true"></script>
+    <script src="~/js/listing-photos.js" asp-append-version="true"></script>
+    <script src="~/js/listing-map.js" asp-append-version="true"></script>
+    <script src="~/js/listing-form.js" asp-append-version="true"></script>
+}

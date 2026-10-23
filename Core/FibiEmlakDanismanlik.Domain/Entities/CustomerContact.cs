@@ -27,5 +27,20 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 
         // Randevu tarihi
         public DateTime? AppointmentDateTime { get; set; }
+
+        /// <summary>
+        /// Talep takip durumu.
+        /// </summary>
+        public LeadStatus LeadStatus { get; set; } = LeadStatus.New;
+
+        /// <summary>
+        /// Talebe atanan danışman kimliği.
+        /// </summary>
+        public int? AssignedAgentId { get; set; }
+
+        /// <summary>
+        /// Talep durumunun son güncellenme tarihi (UTC).
+        /// </summary>
+        public DateTime? StatusUpdatedAtUtc { get; set; }
     }
 }

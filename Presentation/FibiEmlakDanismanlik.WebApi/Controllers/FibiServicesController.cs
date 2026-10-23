@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
 {
-    // Analiz ve lead uçları bilerek anonimdir (analizler salt okunur, lead formu ziyaretçiden gelir). Veri senkronizasyonu uçları [Authorize] ile korunur.
+    // Analiz ve lead uçları bilerek anonimdir (analizler salt okunur, lead formu ziyaretçiden gelir). Veri senkronizasyonu uçları yalnızca Sahip ve Yönetici içindir.
     [Route("api/[controller]")]
     [ApiController]
     public class FibiServicesController : ControllerBase
@@ -49,7 +49,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok("Talebiniz alınmıştır. Uzmanımız en kısa sürede sizinle iletişime geçecektir.");
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost("sync")]
         public async Task<IActionResult> RunMarketDataSync([FromQuery] string? providerKey)
         {
@@ -60,7 +60,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok(result);
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpGet("sync/logs")]
         public async Task<IActionResult> GetMarketDataSyncLogs()
             => Ok(await _mediator.Send(new GetMarketDataSyncLogsQuery()));

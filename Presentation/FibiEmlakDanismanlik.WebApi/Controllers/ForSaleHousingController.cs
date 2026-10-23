@@ -1,4 +1,5 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.ForSaleHousingCommands;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Commands.ForSaleHousingCommands;
 using FibiEmlakDanismanlik.Application.Features.Handlers.ForSaleHousingListingHandlers;
 using FibiEmlakDanismanlik.Application.Features.Queries.ForSaleHousingListingQueries;
 using MediatR;
@@ -25,7 +26,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok(value);
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateForSaleHousingListing(CreateForSaleHousingCommand command)
         {

@@ -1,0 +1,114 @@
+/* Fibi Yönetim Özel Stilleri */
+:root {
+  --fibi-accent: #2dbe6c;
+}
+
+/* Menü Yakında Rozeti */
+.badge-soon {
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.25em 0.55em;
+  border-radius: 0.25rem;
+  background-color: #6c757d;
+  color: #fff;
+  text-transform: lowercase;
+  letter-spacing: 0.3px;
+}
+
+/* Profil Açılır Menüsü Çıkış Butonu */
+.header .profile .dropdown-item button.logout-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* İlan Listesi Tablo ve Kart Stilleri */
+.admin-listing-thumb-table {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.admin-listing-thumb-mobile {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.hover-card {
+  transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.hover-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* İlan Fotoğraf Yöneticisi Stilleri */
+.photo-dropzone {
+  border-color: #cbd5e1 !important;
+  background-color: #f8fafc !important;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.photo-dropzone:hover,
+.photo-dropzone-active {
+  border-color: #0d6efd !important;
+  background-color: #f0f7ff !important;
+}
+
+.photo-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 6px;
+}
+
+.photo-card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.photo-thumb-wrapper {
+  background-color: #f1f5f9;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.photo-item {
+  cursor: grab;
+  transition: opacity 0.2s ease;
+}
+
+.photo-item.is-dragging {
+  opacity: 0.35;
+  cursor: grabbing;
+}
+
+.cover-badge {
+  z-index: 2;
+  font-size: 0.72rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Harita Stilleri */
+#listingMap {
+  z-index: 1;
+}
+
+/* İşlemler ve Hak Ediş Stilleri */
+.deal-summary .card-body {
+  padding: 0.75rem;
+}
+
+details > summary {
+  cursor: pointer;
+}
+
+

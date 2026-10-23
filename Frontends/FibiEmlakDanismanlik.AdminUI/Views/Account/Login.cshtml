@@ -1,0 +1,67 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.Account.LoginViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = "_AuthLayout";
+    var captchaEnabled = string.Equals(Configuration["Captcha:Enabled"], "true", StringComparison.OrdinalIgnoreCase);
+    var turnstileSiteKey = Configuration["Captcha:TurnstileSiteKey"];
+    var turnstileScriptUrl = Configuration["Captcha:ScriptUrl"] ?? "https://challenges.cloudflare.com/turnstile/v0/api.js";
+}
+
+<div class="card mb-3 w-100">
+  <div class="card-body">
+    <div class="pt-4 pb-2">
+      <h5 class="card-title text-center pb-0 fs-4">Yönetici Girişi</h5>
+      <p class="text-center small">Fibi Emlak yönetim paneline erişmek için giriş yapın</p>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+    {
+      <div class="alert alert-danger" role="alert">
+        <i class="bi bi-exclamation-octagon me-1"></i>
+        @foreach (var error in ViewData.ModelState[string.Empty]!.Errors)
+        {
+          <div>@error.ErrorMessage</div>
+        }
+      </div>
+    }
+
+    <form asp-action="Login" asp-controller="Account" asp-route-returnUrl="@Model?.ReturnUrl" method="post" class="row g-3">
+      <div class="col-12">
+        <label asp-for="Mail" class="form-label">E-posta Adresi</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+          <input asp-for="Mail" class="form-control" type="email" autocomplete="username" placeholder="ornek@fibiemlak.com" required>
+        </div>
+        <span asp-validation-for="Mail" class="text-danger small mt-1 d-block"></span>
+      </div>
+
+      <div class="col-12">
+        <label asp-for="Password" class="form-label">Şifre</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          <input asp-for="Password" class="form-control" type="password" autocomplete="current-password" placeholder="••••••••" required>
+        </div>
+        <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+      </div>
+
+      @if (captchaEnabled && !string.IsNullOrWhiteSpace(turnstileSiteKey))
+      {
+        <div class="col-12 d-flex justify-content-center my-2">
+          <div class="cf-turnstile" data-sitekey="@turnstileSiteKey" data-language="tr" data-theme="light"></div>
+        </div>
+      }
+
+      <div class="col-12">
+        <button class="btn btn-primary w-100" type="submit">Giriş Yap</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@if (captchaEnabled && !string.IsNullOrWhiteSpace(turnstileSiteKey))
+{
+  @section Scripts {
+    <script src="@turnstileScriptUrl" async defer></script>
+  }
+}

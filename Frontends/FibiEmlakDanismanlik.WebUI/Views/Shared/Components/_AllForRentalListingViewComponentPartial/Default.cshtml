@@ -219,7 +219,7 @@
                                             <div class="feature-block-one">
                                                 <div class="inner-box">
                                                     <div class="image-box">
-                                                        <figure class="image"><img src="@img" alt="@item.PropertyName"></figure>
+                                                        <figure class="image"><img src="@img" alt="@item.PropertyName" fibi-responsive fibi-sizes="(max-width: 767px) 100vw, 370px"></figure>
                                                         <div class="listing-badges">
                                                             @if (item.BestDeals)
                                                             {
@@ -315,6 +315,38 @@
                                     }
 
                             </div>
+                        </div>
+                    </div>
+                    @{
+                        var alertTur = (Model.SelectedListingTypeIds != null && Model.SelectedListingTypeIds.Count == 1)
+                            ? Model.SelectedListingTypeIds[0]
+                            : 8;
+
+                        var alertQuery = new List<string> { $"tur={alertTur}" };
+                        if (Model.CityId.HasValue && Model.CityId.Value > 0)
+                            alertQuery.Add($"cityId={Model.CityId.Value}");
+                        if (Model.DistrictId.HasValue && Model.DistrictId.Value > 0)
+                            alertQuery.Add($"districtId={Model.DistrictId.Value}");
+                        if (Model.MinPrice.HasValue && Model.MinPrice.Value > 0)
+                            alertQuery.Add($"min={Uri.EscapeDataString(Model.MinPrice.Value.ToString("0"))}");
+                        if (Model.MaxPrice.HasValue && Model.MaxPrice.Value > 0)
+                            alertQuery.Add($"max={Uri.EscapeDataString(Model.MaxPrice.Value.ToString("0"))}");
+                        if (!string.IsNullOrWhiteSpace(Model.NumberOfRoom))
+                            alertQuery.Add($"oda={Uri.EscapeDataString(Model.NumberOfRoom.Trim())}");
+
+                        var alertHref = "/haber-ver?" + string.Join("&", alertQuery);
+                    }
+                    <link rel="stylesheet" href="~/css/listing-alert.css" asp-append-version="true" />
+                    <div class="listing-alert-banner">
+                        <div class="alert-content">
+                            <div class="alert-icon"><i class="fas fa-bell"></i></div>
+                            <div class="alert-text">
+                                <h6>Aradığınızı bulamadınız mı?</h6>
+                                <p>Kriterlerinize uygun ilan çıkınca size haber verelim.</p>
+                            </div>
+                        </div>
+                        <div class="alert-action">
+                            <a href="@alertHref" class="theme-btn btn-one">Haber Ver</a>
                         </div>
                     </div>
                     @await Html.PartialAsync("~/Views/Shared/Components/_PaginationViewComponentPartial/Default.cshtml", new FibiEmlakDanismanlik.WebUI.Models.PaginationVm

@@ -39,6 +39,38 @@
         Model.City,
         Model.District,
         Model.Neighborhood);
+
+    var alertMinPrice = Model.Price > 0 ? Math.Round((Model.Price * 0.8m) / 1000m) * 1000m : (decimal?)null;
+    var alertMaxPrice = Model.Price > 0 ? Math.Round((Model.Price * 1.2m) / 1000m) * 1000m : (decimal?)null;
+    var alertRoomCounts = new List<string>();
+    if (FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm.IsHousing(Model.ListingTypeId) && !string.IsNullOrWhiteSpace(Model.NumberOfRoom))
+    {
+        var rawRoom = Model.NumberOfRoom.Trim();
+        if (FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm.RoomOptions.Contains(rawRoom))
+        {
+            alertRoomCounts.Add(rawRoom);
+        }
+        else
+        {
+            var roomMatch = System.Text.RegularExpressions.Regex.Match(rawRoom, @"^(\d+)");
+            if (roomMatch.Success && int.TryParse(roomMatch.Groups[1].Value, out var roomNum) && roomNum >= 5)
+            {
+                alertRoomCounts.Add("5+1 ve üzeri");
+            }
+        }
+    }
+
+    var listingAlertModel = new FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm
+    {
+        ListingTypeId = Model.ListingTypeId,
+        CityName = Model.City,
+        DistrictName = Model.District,
+        MinPrice = alertMinPrice,
+        MaxPrice = alertMaxPrice,
+        RoomCounts = alertRoomCounts,
+        SourceListingTypeId = Model.ListingTypeId,
+        SourceListingId = Model.ListingId
+    };
 }
 @* System.Text.Json varsayılan encoder'ı HTML özel karakterlerini (<, >, &) kaçırdığından Html.Raw kullanımı güvenlidir. *@
 <script type="application/ld+json">@Html.Raw(breadcrumbJson)</script>
@@ -273,6 +305,7 @@
                         </div>
                         
                     </div>
+                    <partial name="_ListingAlertWidget" model="listingAlertModel" />
                     @await Component.InvokeAsync("_LoanCalculatorViewComponentPartial", new { price = Model.Price, listingType = Model.ListingType })
                 </div>
             </div>

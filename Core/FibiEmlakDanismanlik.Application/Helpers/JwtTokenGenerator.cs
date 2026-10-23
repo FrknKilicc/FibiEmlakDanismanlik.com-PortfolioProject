@@ -1,3 +1,4 @@
+using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Results.AuthResults;
 using FibiEmlakDanismanlik.Domain.Entities;
 using Microsoft.Extensions.Configuration;
@@ -35,6 +36,8 @@ namespace FibiEmlakDanismanlik.Application.Helpers
                 new Claim(ClaimTypes.NameIdentifier, agent.AgentId.ToString()),
                 new Claim(ClaimTypes.Name, agent.AgentName ?? string.Empty),
                 new Claim(ClaimTypes.Email, agent.Mail ?? string.Empty),
+                new Claim(ClaimTypes.Role, agent.Role.ToString()),
+                new Claim(AuthConstants.SecurityStampClaimType, agent.SecurityStamp ?? string.Empty),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -49,7 +52,10 @@ namespace FibiEmlakDanismanlik.Application.Helpers
             return new GetLoginResult
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                ExpireDate = expireDate
+                ExpireDate = expireDate,
+                Status = AuthConstants.LoginStatusSuccess,
+                AgentName = agent.AgentName,
+                Role = agent.Role.ToString()
             };
         }
     }

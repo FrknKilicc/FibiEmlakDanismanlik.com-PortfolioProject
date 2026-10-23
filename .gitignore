@@ -362,3 +362,9 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+
+# Data Protection anahtarlari ve yerel uygulama verisi (repoya girmez)
+**/App_Data/
+
+# Panelden yuklenen ilan fotograflari (sunucuda tutulur, repoya girmez)
+Presentation/FibiEmlakDanismanlik.WebApi/uploads/
