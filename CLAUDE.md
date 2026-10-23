@@ -227,7 +227,7 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [x] (2026-10-20, `feature/antigravity-ui-polish`) Header "Sayfalar" mega menüsü İngilizce tema demo linkleri (About Us, Our Services, Pricing Table, Compare Properties → `/Realshed/*.html`); gerçek sayfalara bağlanmalı veya kaldırılmalı
 - [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Sayfa başlığı arka plan görselleri (9 dosya) yerel: `wwwroot/images/page-title/page-title-bg.jpg` (`CREDITS.md`; StockCake lisansı canlı öncesi teyit edilmeli). İletişim sayfasındaki pexels "harita" fotoğrafı hâlâ hotlink (aşağıdaki harita maddesiyle çözülecek)
 - [x] (2026-10-20, `feature/antigravity-ui-polish`) Detay sayfası `h1` her ilanda "Satılık İlanlar"/"Kiralık İlanlar" (sayfa başlığı bandı); breadcrumb ilan adını göstermiyor
-- [ ] `Blogs` tablosunda neredeyse aynı iki yazı ("Gayrimenkul/Emlak Yatırımında Lokasyon Neden Her Şeydir?", Id 15 ve 10); biri tekrar kayıt olabilir
+- [x] (2026-10-23) `Blogs` Id 15 başlığı Id 10'un, metni Id 1'in kopyasıydı; yeni yazıyla değiştirildi ("Ev Alırken Tapu Öncesi Kontrol Listesi", kategori Ev Alım Satım Süreçleri, yerel görsel). Eski kayıt `bak20261019.Blogs_15_before_20261023` ve `BlogTags_15_before_20261023`
 - [x] (2026-10-20, `feature/antigravity-ui-polish`) `MapRepository.GetListingMarkerAsync` nullable uyarıları (dönüş tipi `ListingMarkerResult` ama null dönüyor); imza `Task<ListingMarkerResult?>` yapılmalı
 - [ ] Danışman e-postaları kişisel Gmail adresleri (`...fibi@gmail.com`); kurumsal alan adı adresleri tercih edilmeli
 - [x] (2026-10-20, `feature/antigravity-ui-polish`) Liste ve detayda ilan "Durum" etiketi (Aktif/Opsiyonlu) ziyaretçiye gösterilmiyor; "Opsiyonlu" ilanlarda rozet gösterilmesi düşünülmeli
@@ -289,6 +289,18 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Tema demo `.html` linkleri temizlendi (danışman karuseli, satılık liste ikonu, blog yazar linki, Hakkımızda'daki İngilizce uygulama bölümü); kullanılmayan `_FeaturedRentalPropertViewComponentPartial` silindi. Yalnızca ana sayfa bülten formu (`action="contact.html"`) kaldı, kendi maddesinde
 
 ---
+
+### Yönetim Paneli (karar 2026-10-23, tasarım `docs/admin-panel-tasarim.md`)
+Ayrı proje `Frontends/FibiEmlakDanismanlik.AdminUI`, adres `yonetim.fibiemlak.com`, tema NiceAdmin (ücretsiz sürüm; footer kredi linki kalır, Quill kullanılmaz, TinyMCE 6.x'te kalınır, ECharts/ApexCharts/Boxicons/Remixicon atılır). Roller: Sahip (1-2 kişi, her şey + Yönetici/Danışman yönetimi), Yönetici (Sahip yönetimi hariç her şey, Danışman ekler/çıkarır), Danışman (kendi ilanları + izin verilen ilanlar; kazanç ve üye yönetimi yok). Yetki API'de zorlanır.
+- [ ] Faz 0: `todo-batch2` tarayıcı testi, bekleyen branch zincirinin dev'e birleştirilmesi (onayla)
+- [ ] Faz 1 — API güvenlik ve roller: `Agents.Role`, `SecurityStamp`, `CanViewAllListings`, `ListingAccessGrants`; politikalar; giriş sertleştirme (deneme sınırı, kilit, `LoginAuditLogs`); `AuditLogs`; TOTP 2FA; Turnstile doğrulama; son Sahip korunur
+- [ ] Faz 2 — Fotoğraf yapısı (T5): `ListingImages` + backfill, okuma yardımcısı her yerde (detay, kartlar, vitrin, benzer, harita, karşılaştırma, OG/JSON-LD, danışman), çift yazma, yükleme ucu (`IFileStorage`, SkiaSharp, 3 boy WebP, EXIF silme); eski kolonlar en son onayla kaldırılır
+- [ ] Faz 3 — AdminUI iskeleti: NiceAdmin ayıklama + Türkçe, giriş + 2FA + captcha, cookie oturumu (JWT sunucuda), güvenlik başlıkları, noindex
+- [ ] Faz 4 — İlan yönetimi: satılık/kiralık ayrımlı liste ve sayılar, ekle/düzenle, fotoğraflar, vitrin (BestDeals), harita pini, durum, erişim izinleri
+- [ ] Faz 5 — Talepler: durum akışı, atama, `LeadActivities`, ilan bazlı müşteri durumu, haber bekleyenler (`ListingAlerts`)
+- [ ] Faz 6 — **Hak ediş**: ilan satılınca/kiralanınca kapora ve alıcı/satıcı komisyon oranları (`ListingDeals`); komisyondan Yönetici ve Danışman'a farklı oranlarda prim (`DealShares`, rol bazlı varsayılan + danışman/işlem bazında değiştirilebilir), ödeme durumu; şirket payı = komisyon − primler
+- [ ] Faz 7 — Kontrol paneli grafik ve raporları (Chart.js, animasyonlu sayaçlar, mobil uyumlu, CSV/Excel dışa aktarım)
+- [ ] Faz 8 — Kullanıcı yönetimi, içerik ekranları, ayarlar
 
 ### FİBİ Hizmetler Faz 2 (branch `feature/antigravity-fibi-services-phase2`, 2026-10-18'de yarıda kaldı)
 Bitti: kademeli emsal şeması + migration (yerel DB'ye uygulandı), mahalle > ilçe > il > Türkiye fallback'i, İBB senaryosundan deprem tehlikesi, senkronizasyon çekirdeği, Infrastructure projesi (seed / İBB / TCMB KFE bülteni / opsiyonel EVDS sağlayıcıları, arka plan servisi, `[Authorize]` sync uçları), KvkkApprovedAt, ForwardedHeaders.
