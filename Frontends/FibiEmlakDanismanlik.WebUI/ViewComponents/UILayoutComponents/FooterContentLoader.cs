@@ -32,7 +32,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.UILayoutComponents
             bool anySuccess = false;
 
             // Dört isteği paralel at
-            var aboutTask = FetchAsync<ResultAboutUsDto>(client, $"{apiUrl}AboutUs/1");
+            var aboutTask = FetchAsync<ResultAboutUsDto>(client, $"{apiUrl}AboutUs/current");
             var contactTask = FetchAsync<List<ResultContactDto>>(client, $"{apiUrl}Contact");
             var socialTask = FetchAsync<List<ResultSocialMediaDto>>(client, $"{apiUrl}SocialMedia");
             var blogTask = FetchAsync<List<ResultBlogWithAuthorDto>>(client, $"{apiUrl}Blog/GetLast3BlogWithAuthor");

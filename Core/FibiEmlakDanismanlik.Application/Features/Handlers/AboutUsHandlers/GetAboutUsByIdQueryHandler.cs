@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.AboutUsHandlers
 {
-    public class GetAboutUsByIdQueryHandler : IRequestHandler<GetAboutUsByIdQuery, GetAboutUsByIdResult>
+    public class GetAboutUsByIdQueryHandler : IRequestHandler<GetAboutUsByIdQuery, GetAboutUsByIdResult?>
     {
         private readonly IRepository<AboutUs> _repository;
 
@@ -20,9 +20,14 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AboutUsHandlers
             _repository = repository;
         }
 
-        public async Task<GetAboutUsByIdResult> Handle(GetAboutUsByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GetAboutUsByIdResult?> Handle(GetAboutUsByIdQuery request, CancellationToken cancellationToken)
         {
-           var value = await _repository.GetByIdAsync(request.Id);
+            var value = await _repository.GetByIdAsync(request.Id);
+            if (value == null)
+            {
+                return null;
+            }
+
             return new GetAboutUsByIdResult
             {
                 AboutUsId = value.AboutUsId,

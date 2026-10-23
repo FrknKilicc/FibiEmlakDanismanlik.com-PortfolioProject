@@ -10,5 +10,7 @@ namespace FibiEmlakDanismanlik.Infrastructure.MarketData
         /// <summary>Opsiyonel. Boşsa EVDS sağlayıcısı sessizce atlanır. Yalnızca User Secrets / ortam değişkeninde tutulur.</summary>
         public string? EvdsApiKey { get; set; }
         public string EvdsBaseUrl { get; set; } = "https://evds2.tcmb.gov.tr/service/evds/";
+        /// <summary>Dış servislere User-Agent içinde gönderilen iletişim bilgisi, site adresi veya kurumsal e-posta; Nominatim politikası gereği.</summary>
+        public string? UserAgentContact { get; set; }
     }
 }

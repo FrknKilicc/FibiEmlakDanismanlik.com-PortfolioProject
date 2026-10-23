@@ -9,6 +9,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<FormSpamGuard>();
 builder.Services.AddSingleton<ListingLocationResolver>();
+builder.Services.AddSingleton<HtmlContentSanitizer>();
 // İlan detay adresindeki kategori segmenti; il/ilçe açılış sayfalarıyla çakışmayı önler
 builder.Services.Configure<RouteOptions>(o => o.ConstraintMap["listingcategory"] = typeof(ListingCategoryRouteConstraint));
 

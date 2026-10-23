@@ -13,12 +13,18 @@ namespace FibiEmlakDanismanlik.Infrastructure
     {
         public static IServiceCollection AddFibiInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<MarketDataSyncOptions>(configuration.GetSection(MarketDataSyncOptions.SectionName));
+            var syncSection = configuration.GetSection(MarketDataSyncOptions.SectionName);
+            services.Configure<MarketDataSyncOptions>(syncSection);
+
+            var userAgentContact = syncSection[nameof(MarketDataSyncOptions.UserAgentContact)];
+            var userAgent = !string.IsNullOrWhiteSpace(userAgentContact)
+                ? $"{FibiMarketDataSyncConstants.UserAgent} (+{userAgentContact.Trim()})"
+                : FibiMarketDataSyncConstants.UserAgent;
 
             services.AddHttpClient(FibiMarketDataSyncConstants.HttpClientName, client =>
             {
                 client.Timeout = TimeSpan.FromSeconds(FibiMarketDataSyncConstants.HttpTimeoutSeconds);
-                client.DefaultRequestHeaders.UserAgent.ParseAdd(FibiMarketDataSyncConstants.UserAgent);
+                client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", userAgent);
             });
 
             services.AddScoped<IMarketDataProvider, SeedMarketDataProvider>();

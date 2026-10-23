@@ -17,10 +17,25 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("current")]
+        public async Task<IActionResult> GetCurrentAboutUs()
+        {
+            var value = await _mediator.Send(new GetCurrentAboutUsQuery());
+            if (value == null)
+            {
+                return NotFound();
+            }
+            return Ok(value);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAboutUsById(int id)
         {
             var value = await _mediator.Send(new GetAboutUsByIdQuery(id));
+            if (value == null)
+            {
+                return NotFound();
+            }
             return Ok(value);
         }
         [Authorize]
