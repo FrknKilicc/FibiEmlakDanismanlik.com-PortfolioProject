@@ -1,0 +1,321 @@
+/* ==========================================================================
+   Fibi Emlak Danışmanlık - İlan Detay Ek Stilleri
+   (Galeri, Danışman İletişim Butonları, Mobil Sabit Alt Çubuk)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Gelişmiş Galeri Stilleri
+   -------------------------------------------------------------------------- */
+.listing-gallery {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.listing-gallery .carousel-inner {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    background-color: #0b0f19;
+}
+
+.listing-gallery .single-item-carousel {
+    position: relative;
+    z-index: 1;
+}
+
+.listing-gallery .single-item-carousel .image-box {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+}
+
+.listing-gallery .single-item-carousel .image-box a.lightbox-image {
+    display: block;
+    cursor: pointer;
+}
+
+.listing-gallery .single-item-carousel .image-box img {
+    width: 100%;
+    height: 520px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+@media (max-width: 991px) {
+    .listing-gallery .single-item-carousel .image-box img {
+        height: 420px;
+    }
+}
+
+@media (max-width: 767px) {
+    .listing-gallery .single-item-carousel .image-box img {
+        height: 280px;
+    }
+}
+
+/* Galeri Rozeti (Sağ Alt) */
+.listing-gallery .listing-gallery-count {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    z-index: 4;
+    background: rgba(17, 24, 39, 0.75);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    pointer-events: none;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    letter-spacing: 0.3px;
+}
+
+.listing-gallery .listing-gallery-count i {
+    font-size: 13px;
+    color: #ffffff;
+}
+
+/* Galeri Tam Ekran Butonu (Sağ Üst) */
+.listing-gallery .listing-gallery-fullscreen {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    z-index: 4;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(17, 24, 39, 0.75);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    outline: none;
+}
+
+.listing-gallery .listing-gallery-fullscreen:hover {
+    background-color: #2dbe6c;
+    color: #ffffff;
+    transform: scale(1.06);
+}
+
+/* Küçük Resim Şeridi (Thumbs) */
+.listing-gallery .listing-gallery-thumbs {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0 0 0;
+    padding: 4px 2px 8px 2px;
+    list-style: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.listing-gallery .listing-gallery-thumbs::-webkit-scrollbar {
+    height: 5px;
+}
+
+.listing-gallery .listing-gallery-thumbs::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.listing-gallery .listing-gallery-thumbs::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.listing-gallery .listing-gallery-thumbs::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.listing-gallery .listing-gallery-thumbs li {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.listing-gallery .listing-gallery-thumbs button {
+    display: block;
+    padding: 0;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+    overflow: hidden;
+    line-height: 0;
+    outline: none;
+    transition: border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0.75;
+}
+
+.listing-gallery .listing-gallery-thumbs button:hover {
+    opacity: 1;
+}
+
+.listing-gallery .listing-gallery-thumbs button.is-active {
+    border-color: #2dbe6c;
+    opacity: 1;
+    box-shadow: 0 0 0 1px #2dbe6c;
+}
+
+.listing-gallery .listing-gallery-thumbs button img {
+    width: 90px;
+    height: 64px;
+    object-fit: cover;
+    display: block;
+    border-radius: 3px;
+}
+
+@media (max-width: 767px) {
+    .listing-gallery .listing-gallery-thumbs button img {
+        width: 75px;
+        height: 52px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   2. Danışman Sidebar İletişim Butonları
+   -------------------------------------------------------------------------- */
+.author-widget .agent-contact-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.agent-contact-buttons a {
+    flex: 1;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.agent-contact-buttons a.btn-contact-call {
+    background-color: #2dbe6c;
+    border: 1px solid #2dbe6c;
+    color: #ffffff !important;
+}
+
+.agent-contact-buttons a.btn-contact-call:hover {
+    background-color: #26a85f;
+    border-color: #26a85f;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(45, 190, 108, 0.25);
+}
+
+.agent-contact-buttons a.btn-contact-whatsapp {
+    background-color: #25d366;
+    border: 1px solid #25d366;
+    color: #ffffff !important;
+}
+
+.agent-contact-buttons a.btn-contact-whatsapp:hover {
+    background-color: #20bd5a;
+    border-color: #20bd5a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(37, 211, 102, 0.25);
+}
+
+.agent-contact-buttons a i {
+    font-size: 15px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Mobil Sabit Alt Çubuk (Sticky Bottom Bar)
+   -------------------------------------------------------------------------- */
+.listing-mobile-contact-bar {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .listing-mobile-contact-bar {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 56px;
+        background: #ffffff;
+        box-shadow: 0 -2px 14px rgba(0, 0, 0, 0.12);
+        z-index: 999;
+        align-items: stretch;
+        justify-content: space-around;
+        padding-bottom: env(safe-area-inset-bottom);
+        border-top: 1px solid #eef0f3;
+    }
+
+    .listing-mobile-contact-bar .mobile-bar-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 600;
+        color: #495057;
+        transition: background-color 0.2s ease, color 0.2s ease;
+        border-right: 1px solid #f1f3f5;
+        padding: 4px 0;
+    }
+
+    .listing-mobile-contact-bar .mobile-bar-item:last-child {
+        border-right: none;
+    }
+
+    .listing-mobile-contact-bar .mobile-bar-item i {
+        font-size: 17px;
+        margin-bottom: 2px;
+    }
+
+    .listing-mobile-contact-bar .mobile-bar-item--call i {
+        color: #2dbe6c;
+    }
+
+    .listing-mobile-contact-bar .mobile-bar-item--whatsapp i {
+        color: #25d366;
+    }
+
+    .listing-mobile-contact-bar .mobile-bar-item--appointment i {
+        color: #1e293b;
+    }
+
+    .listing-mobile-contact-bar .mobile-bar-item:active,
+    .listing-mobile-contact-bar .mobile-bar-item:hover {
+        background-color: #f8fafc;
+        color: #111827;
+    }
+
+    /* Mobil çubuk sayfada varken alt içerik ve scroll-top ayarı */
+    body.has-mobile-contact-bar {
+        padding-bottom: 64px;
+    }
+
+    body.has-mobile-contact-bar .scroll-top {
+        bottom: 80px !important;
+    }
+}

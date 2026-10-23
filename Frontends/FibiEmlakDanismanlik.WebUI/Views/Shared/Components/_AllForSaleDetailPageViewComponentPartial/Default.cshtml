@@ -48,59 +48,35 @@
                 @await Component.InvokeAsync("_PropertyDetailActionsViewComponentPartial", new FibiEmlakDanismanlik.WebUI.Models.CompareActionButtonVm
                 {
                     ListingId = Model.ListingId,
-                                UsageTypeId = Model.UsageTypeId,
-                                ListingType = Model.ListingType
-                                })
+                    UsageTypeId = Model.UsageTypeId,
+                    ListingType = Model.ListingType
+                })
             </div>
         </div>
         <div class="row clearfix">
             <div class="col-lg-8 col-md-12 col-sm-12 content-side">
                 <div class="property-details-content">
-                    @using System.Linq
                     @{
-                        var imgs = new List<string?> {
-                                        Model.PropImgUrl1, Model.PropImgUrl2, Model.PropImgUrl3, Model.PropImgUrl4,
-                                        Model.PropImgUrl5, Model.PropImgUrl6, Model.PropImgUrl7, Model.PropImgUrl8,
-                                        Model.PropImgUrl9, Model.PropImgUrl10,
-                                        Model.PropImgUrl11, Model.PropImgUrl12, Model.PropImgUrl13, Model.PropImgUrl14, Model.PropImgUrl15,
-                                        Model.PropImgUrl16, Model.PropImgUrl17, Model.PropImgUrl18, Model.PropImgUrl19, Model.PropImgUrl20,
-                                        Model.PropImgUrl21, Model.PropImgUrl22, Model.PropImgUrl23, Model.PropImgUrl24, Model.PropImgUrl25,
-                                        Model.PropImgUrl26, Model.PropImgUrl27, Model.PropImgUrl28, Model.PropImgUrl29, Model.PropImgUrl30
-                                        }
-                        .Where(x => !string.IsNullOrWhiteSpace(x) && x != "string")
-                        .Distinct()
-                        .ToList();
-
-                        string NormalizeImgUrl(string raw)
+                        var rawImgs = new[]
                         {
-                            raw = raw.Trim();
+                            Model.PropImgUrl1, Model.PropImgUrl2, Model.PropImgUrl3, Model.PropImgUrl4,
+                            Model.PropImgUrl5, Model.PropImgUrl6, Model.PropImgUrl7, Model.PropImgUrl8,
+                            Model.PropImgUrl9, Model.PropImgUrl10,
+                            Model.PropImgUrl11, Model.PropImgUrl12, Model.PropImgUrl13, Model.PropImgUrl14, Model.PropImgUrl15,
+                            Model.PropImgUrl16, Model.PropImgUrl17, Model.PropImgUrl18, Model.PropImgUrl19, Model.PropImgUrl20,
+                            Model.PropImgUrl21, Model.PropImgUrl22, Model.PropImgUrl23, Model.PropImgUrl24, Model.PropImgUrl25,
+                            Model.PropImgUrl26, Model.PropImgUrl27, Model.PropImgUrl28, Model.PropImgUrl29, Model.PropImgUrl30
+                        };
 
-                            // zaten full url ise dokunma
-                            if (raw.StartsWith("http://") || raw.StartsWith("https://"))
-                                return raw;
-
-                            // "/uploads/a.jpg" gibi ise "~" ile absolute yap
-                            if (raw.StartsWith("/"))
-                                return Url.Content("~" + raw);
-
-                            // "uploads/a.jpg" gibi ise kökten başlat
-                            return Url.Content("~/" + raw);
-                        }
+                        var galleryVm = FibiEmlakDanismanlik.WebUI.Models.ListingGalleryVm.Create(
+                            rawImgs,
+                            Model.PropertyName,
+                            raw => raw.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || raw.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                                ? raw
+                                : (raw.StartsWith('/') ? Url.Content("~" + raw) : Url.Content("~/" + raw))
+                        );
                     }
-
-                    <div class="carousel-inner">
-                        <div class="single-item-carousel owl-carousel owl-theme owl-dots-none">
-                            @foreach (var url in imgs)
-                            {
-                                var fixedUrl = NormalizeImgUrl(url!);
-                                <figure class="image-box">
-                                    <a class="lightbox-image" href="@fixedUrl" data-fancybox="property-gallery">
-                                        <img src="@fixedUrl" alt="@Model.PropertyName" loading="lazy">
-                                    </a>
-                                </figure>
-                            }
-                        </div>
-                    </div>
+                    <partial name="_ListingGallery" model="galleryVm" />
                     <div class="discription-box content-widget">
                         <div class="title-box">
                             <h4>İlan Açıklaması</h4>
@@ -265,6 +241,13 @@
                                     <li><i class="fas fa-envelope"></i><a href="mailto:@Model.Mail">@Model.Mail</a></li>
 
                                 </ul>
+                                <partial name="_AgentContactButtons" model="new FibiEmlakDanismanlik.WebUI.Models.AgentContactVm
+                                {
+                                    AgentName = Model.AgentName,
+                                    PhoneNumber = Model.AgentPhoneNumber,
+                                    ListingTitle = Model.PropertyName,
+                                    ListingAbsoluteUrl = SeoUrl.Absolute(Context, canonicalPath)
+                                }" />
                             </div>
                         </div>
                         
