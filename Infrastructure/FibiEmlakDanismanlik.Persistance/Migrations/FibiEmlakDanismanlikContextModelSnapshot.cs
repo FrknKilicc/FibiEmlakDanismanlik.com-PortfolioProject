@@ -1744,6 +1744,124 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("ListingAccessGrants");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingAlert", b =>
+                {
+                    b.Property<int>("ListingAlertId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ListingAlertId"));
+
+                    b.Property<int?>("AssignedAgentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ClosedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DistrictId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("KvkkApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ListingTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("MaxPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("MinPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("RoomCounts")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("SourceListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SourceListingTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("ListingAlertId");
+
+                    b.HasIndex("AssignedAgentId");
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("DistrictId");
+
+                    b.HasIndex("Status", "ListingTypeId", "CityId");
+
+                    b.ToTable("ListingAlerts");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingAlertMatch", b =>
+                {
+                    b.Property<int>("ListingAlertMatchId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ListingAlertMatchId"));
+
+                    b.Property<int?>("AgentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ListingAlertId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ListingTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("ListingAlertMatchId");
+
+                    b.HasIndex("ListingTypeId", "ListingId");
+
+                    b.HasIndex("ListingAlertId", "ListingTypeId", "ListingId")
+                        .IsUnique();
+
+                    b.ToTable("ListingAlertMatches");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingGeoPoint", b =>
                 {
                     b.Property<int>("ListingGeoPointId")
@@ -3293,6 +3411,36 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingAlert", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Agent", null)
+                        .WithMany()
+                        .HasForeignKey("AssignedAgentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", null)
+                        .WithMany()
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.District", null)
+                        .WithMany()
+                        .HasForeignKey("DistrictId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingAlertMatch", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.ListingAlert", "ListingAlert")
+                        .WithMany("Matches")
+                        .HasForeignKey("ListingAlertId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ListingAlert");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingNearbyPlace", b =>
                 {
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.NearbyCategory", "NearbyCategory")
@@ -3515,6 +3663,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.District", b =>
                 {
                     b.Navigation("Neighborhoods");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingAlert", b =>
+                {
+                    b.Navigation("Matches");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.NearbyCategory", b =>

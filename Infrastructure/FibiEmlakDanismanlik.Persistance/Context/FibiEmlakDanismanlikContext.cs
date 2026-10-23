@@ -130,6 +130,8 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<ListingImage> ListingImages { get; set; }
         public DbSet<LeadActivity> LeadActivities { get; set; }
+        public DbSet<ListingAlert> ListingAlerts { get; set; }
+        public DbSet<ListingAlertMatch> ListingAlertMatches { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -760,6 +762,73 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                       .HasMaxLength(300);
 
                 entity.HasIndex(x => new { x.ListingTypeId, x.ListingId, x.SortOrder });
+            });
+
+            // ListingAlert: Benzer ilan çıktığında haber ver talepleri
+            modelBuilder.Entity<ListingAlert>(entity =>
+            {
+                entity.Property(x => x.FullName)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.Property(x => x.PhoneNumber)
+                      .IsRequired()
+                      .HasMaxLength(20);
+
+                entity.Property(x => x.Email)
+                      .HasMaxLength(150);
+
+                entity.Property(x => x.MinPrice)
+                      .HasPrecision(18, 2);
+
+                entity.Property(x => x.MaxPrice)
+                      .HasPrecision(18, 2);
+
+                entity.Property(x => x.RoomCounts)
+                      .HasMaxLength(100);
+
+                entity.Property(x => x.Note)
+                      .HasMaxLength(1000);
+
+                entity.Property(x => x.Status)
+                      .HasConversion<int>()
+                      .HasDefaultValue(ListingAlertStatus.Active)
+                      .ValueGeneratedNever();
+
+                entity.HasOne<City>()
+                      .WithMany()
+                      .HasForeignKey(x => x.CityId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<District>()
+                      .WithMany()
+                      .HasForeignKey(x => x.DistrictId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<Agent>()
+                      .WithMany()
+                      .HasForeignKey(x => x.AssignedAgentId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasIndex(x => new { x.Status, x.ListingTypeId, x.CityId });
+                entity.HasIndex(x => x.AssignedAgentId);
+            });
+
+            // ListingAlertMatch: İlan bildirim ve eşleşme kayıtları
+            modelBuilder.Entity<ListingAlertMatch>(entity =>
+            {
+                entity.Property(x => x.Status)
+                      .HasConversion<int>();
+
+                entity.HasOne(x => x.ListingAlert)
+                      .WithMany(x => x.Matches)
+                      .HasForeignKey(x => x.ListingAlertId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(x => new { x.ListingAlertId, x.ListingTypeId, x.ListingId })
+                      .IsUnique();
+
+                entity.HasIndex(x => new { x.ListingTypeId, x.ListingId });
             });
 
             // İlanların il/ilçe ilişkileri ve indeksleri

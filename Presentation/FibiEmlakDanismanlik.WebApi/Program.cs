@@ -33,6 +33,8 @@ using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories;
 using FibiEmlakDanismanlik.Application.Interfaces.LeadInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.LeadRepositories;
+using FibiEmlakDanismanlik.Application.Interfaces.ListingAlertInterfaces;
+using FibiEmlakDanismanlik.Persistence.Repositories.ListingAlertRepositories;
 using FibiEmlakDanismanlik.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -192,6 +194,7 @@ builder.Services.AddScoped(typeof(IAuditLogRepository), typeof(AuditLogRepositor
 builder.Services.AddScoped(typeof(IListingImageRepository), typeof(ListingImageRepository));
 builder.Services.AddScoped(typeof(IAdminListingRepository), typeof(AdminListingRepository));
 builder.Services.AddScoped(typeof(ILeadRepository), typeof(LeadRepository));
+builder.Services.AddScoped(typeof(IListingAlertRepository), typeof(ListingAlertRepository));
 //Configure IRepositories
 
 //MediaTR tried
@@ -232,6 +235,15 @@ builder.Services.AddRateLimiter(options =>
             {
                 PermitLimit = CustomerContactConstants.RateLimitPermitCount,
                 Window = TimeSpan.FromMinutes(CustomerContactConstants.RateLimitWindowMinutes),
+                QueueLimit = 0
+            }));
+    options.AddPolicy(ListingAlertConstants.RateLimitPolicy, httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = ListingAlertConstants.RateLimitPermitCount,
+                Window = TimeSpan.FromMinutes(ListingAlertConstants.RateLimitWindowMinutes),
                 QueueLimit = 0
             }));
     options.AddPolicy(AuthConstants.AuthRateLimitPolicy, httpContext =>
