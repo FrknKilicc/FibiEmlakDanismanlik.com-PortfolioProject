@@ -41,11 +41,11 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers
 
             await _repository.CreateAsync(new Agent
             {
-                AgentDescription = request.AgentDescription,
-                AgentImgUrl = request.AgentImgUrl,
+                AgentDescription = request.AgentDescription ?? string.Empty,
+                AgentImgUrl = request.AgentImgUrl ?? string.Empty,
                 AgentName = request.AgentName,
                 AgentPhoneNumber = request.AgentPhoneNumber,
-                AgentTitle = request.AgentTitle,
+                AgentTitle = request.AgentTitle ?? string.Empty,
                 Mail = mail,
                 Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 Role = request.Role,

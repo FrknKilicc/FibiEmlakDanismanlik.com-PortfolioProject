@@ -11,9 +11,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.AgentCommands
     public class CreateAgentCommand:IRequest
     {
         public string AgentName { get; set; }
-        public string AgentTitle { get; set; }
-        public string AgentDescription { get; set; }
-        public string AgentImgUrl { get; set; }
+        public string? AgentTitle { get; set; }
+        public string? AgentDescription { get; set; }
+        public string? AgentImgUrl { get; set; }
         public string Mail { get; set; }
         public string AgentPhoneNumber { get; set; }
         public string Password { get; set; }

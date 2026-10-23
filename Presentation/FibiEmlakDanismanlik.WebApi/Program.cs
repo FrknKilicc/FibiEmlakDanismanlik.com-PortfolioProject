@@ -25,6 +25,9 @@ using FibiEmlakDanismanlik.Application.Interfaces.PopularPlaceInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.PopularPlaceRepositories;
 using FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.FibiServiceRepositories;
+using FibiEmlakDanismanlik.Application.Interfaces.AuditLogInterfaces;
+using FibiEmlakDanismanlik.Persistence.Repositories.AuditLogRepositories;
+using FibiEmlakDanismanlik.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +47,8 @@ using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<FibiEmlakDanismanlikContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<AuditSaveChangesInterceptor>();
+builder.Services.AddDbContext<FibiEmlakDanismanlikContext>((sp, options) => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")).AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
 // Allow Frontend Request
 builder.Services.AddCors(options =>
@@ -177,6 +181,7 @@ builder.Services.AddScoped(typeof(IBestDealRepository), typeof(BestDealRepositor
 builder.Services.AddScoped(typeof(IPopularPlaceRepository), typeof(PopularPlaceRepository));
 builder.Services.AddScoped(typeof(IMarketStatRepository), typeof(MarketStatRepository));
 builder.Services.AddScoped(typeof(IMarketDataSyncRepository), typeof(MarketDataSyncRepository));
+builder.Services.AddScoped(typeof(IAuditLogRepository), typeof(AuditLogRepository));
 //Configure IRepositories
 
 //MediaTR tried

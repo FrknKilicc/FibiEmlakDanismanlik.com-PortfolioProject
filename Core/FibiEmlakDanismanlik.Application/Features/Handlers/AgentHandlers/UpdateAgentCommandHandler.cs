@@ -46,9 +46,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers
                 throw new DuplicateAgentMailException(mail);
 
             target.AgentName = request.AgentName;
-            target.AgentDescription = request.AgentDescription;
-            target.AgentTitle = request.AgentTitle;
-            target.AgentImgUrl = request.AgentImgUrl;
+            target.AgentDescription = request.AgentDescription ?? string.Empty;
+            target.AgentTitle = request.AgentTitle ?? string.Empty;
+            target.AgentImgUrl = request.AgentImgUrl ?? string.Empty;
             target.AgentPhoneNumber = request.AgentPhoneNumber;
             target.Mail = mail;
 
