@@ -383,6 +383,53 @@ price-range alanı */
     vertical-align: middle;
 }
 
+/* İlan kartı görsel rozetleri: tema her rozeti ayrı sabit konuma koyuyor (left:70px, left:170px, sağ üst);
+   burada sol üstte tek satırda, içerik genişliğine göre yan yana dizilir */
+.image-box .listing-badges {
+    position: absolute;
+    left: 20px;
+    right: 15px;
+    top: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 6px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.image-box .listing-badges > * {
+    pointer-events: auto;
+}
+
+/* Tema kuralları daha özgül (ör. .feature-block-one .inner-box .image-box .category), bu yüzden !important */
+.image-box .listing-badges > .batch,
+.image-box .listing-badges > .category,
+.image-box .listing-badges > .buy-btn,
+.image-box .listing-badges > .listing-status-badge {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    margin: 0;
+    flex: 0 0 auto;
+}
+
+/* Yer imi görselin üst kenarından sarkar; yazılı rozetler ona hizalı biraz aşağıda */
+.image-box .listing-badges > .category,
+.image-box .listing-badges > .buy-btn,
+.image-box .listing-badges > .listing-status-badge {
+    margin-top: 10px;
+}
+
+.image-box .listing-badges > .batch {
+    margin-right: 2px;
+}
+
+.image-box .listing-badges > .buy-btn a {
+    display: block;
+}
+
 
 /* Form spam tuzağı (honeypot): ziyaretçiye görünmez */
 .fibi-hp {

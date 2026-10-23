@@ -159,16 +159,18 @@
                                         <img src="@propImgUrl" alt="@propName" width="370" height="278" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/Realshed/assets/images/background/Section1.jpeg';">
                                     </a>
                                 </figure>
-                                @if (item.BestDeals == true)
-                                {
-                                    <div class="batch"><i class="icon-11"></i></div>
-                                    <span class="category">En İyi Fiyat</span>
-                                }
-                                else
-                                {
-                                    var listingType = !string.IsNullOrWhiteSpace(item.ListingType) ? item.ListingType : "İlan";
-                                    <span class="category">@listingType</span>
-                                }
+                                <div class="listing-badges">
+                                    @if (item.BestDeals == true)
+                                    {
+                                        <div class="batch"><i class="icon-11"></i></div>
+                                        <span class="category">En İyi Fiyat</span>
+                                    }
+                                    else
+                                    {
+                                        var listingType = !string.IsNullOrWhiteSpace(item.ListingType) ? item.ListingType : "İlan";
+                                        <span class="category">@listingType</span>
+                                    }
+                                </div>
                             </div>
                             <div class="lower-content">
                                 <div class="author-info clearfix">
