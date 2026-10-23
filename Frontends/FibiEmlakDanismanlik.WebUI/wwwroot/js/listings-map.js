@@ -500,7 +500,7 @@
                 this.onerror = null;
                 this.src = fallbackSrc;
             };
-            img.src = item.imageUrl || fallbackSrc;
+            img.src = sizedImageUrl(item.imageUrl, 400) || fallbackSrc;
             imgWrap.appendChild(img);
             popup.appendChild(imgWrap);
 
@@ -625,7 +625,7 @@
                 this.onerror = null;
                 this.src = fallbackSrc;
             };
-            img.src = item.imageUrl || fallbackSrc;
+            img.src = sizedImageUrl(item.imageUrl, 400) || fallbackSrc;
             imgWrap.appendChild(img);
             card.appendChild(imgWrap);
 
@@ -797,5 +797,14 @@
             var lastPart = slug ? (slug + "-" + id) : String(id);
             return "/" + prefix + "/" + cat + "/" + lastPart;
         }
+    }
+
+    function sizedImageUrl(url, width) {
+        if (!url || typeof url !== "string") {
+            return url;
+        }
+        return url.replace(/-(1600|800|400)\.webp(\?.*)?$/i, function (match, size, query) {
+            return "-" + width + ".webp" + (query || "");
+        });
     }
 })();
