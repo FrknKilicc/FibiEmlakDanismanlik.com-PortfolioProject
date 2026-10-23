@@ -128,6 +128,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<ListingAccessGrant> ListingAccessGrants { get; set; }
         public DbSet<LoginAuditLog> LoginAuditLogs { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<ListingImage> ListingImages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -684,6 +685,30 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                       .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasIndex(x => new { x.IsContacted, x.CreatedDate });
+            });
+
+            // ListingImage: İlan görselleri
+            modelBuilder.Entity<ListingImage>(entity =>
+            {
+                entity.HasKey(x => x.ListingImageId);
+
+                entity.Property(x => x.Url)
+                      .IsRequired()
+                      .HasMaxLength(1024);
+
+                entity.Property(x => x.MediumUrl)
+                      .HasMaxLength(1024);
+
+                entity.Property(x => x.ThumbUrl)
+                      .HasMaxLength(1024);
+
+                entity.Property(x => x.AltText)
+                      .HasMaxLength(300);
+
+                entity.Property(x => x.StoragePath)
+                      .HasMaxLength(300);
+
+                entity.HasIndex(x => new { x.ListingTypeId, x.ListingId, x.SortOrder });
             });
 
             // İlanların il/ilçe ilişkileri ve indeksleri

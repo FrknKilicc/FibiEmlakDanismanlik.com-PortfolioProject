@@ -1710,6 +1710,63 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("ListingGeoPoints");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingImage", b =>
+                {
+                    b.Property<int>("ListingImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ListingImageId"));
+
+                    b.Property<string>("AltText")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCover")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ListingTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MediumUrl")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StoragePath")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("ThumbUrl")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<int?>("Width")
+                        .HasColumnType("int");
+
+                    b.HasKey("ListingImageId");
+
+                    b.HasIndex("ListingTypeId", "ListingId", "SortOrder");
+
+                    b.ToTable("ListingImages");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingImageSelection", b =>
                 {
                     b.Property<int>("Id")
