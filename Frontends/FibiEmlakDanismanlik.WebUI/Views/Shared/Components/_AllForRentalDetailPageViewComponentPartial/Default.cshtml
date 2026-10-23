@@ -39,6 +39,39 @@
         Model.City,
         Model.District,
         Model.Neighborhood);
+
+    var alertMinPrice = Model.Rent > 0 ? Math.Round((Model.Rent * 0.8m) / 1000m) * 1000m : (decimal?)null;
+    var alertMaxPrice = Model.Rent > 0 ? Math.Round((Model.Rent * 1.2m) / 1000m) * 1000m : (decimal?)null;
+    var alertListingTypeId = Model.ListingTypeId ?? 8;
+    var alertRoomCounts = new List<string>();
+    if (FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm.IsHousing(alertListingTypeId) && !string.IsNullOrWhiteSpace(Model.NumberOfRoom))
+    {
+        var rawRoom = Model.NumberOfRoom.Trim();
+        if (FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm.RoomOptions.Contains(rawRoom))
+        {
+            alertRoomCounts.Add(rawRoom);
+        }
+        else
+        {
+            var roomMatch = System.Text.RegularExpressions.Regex.Match(rawRoom, @"^(\d+)");
+            if (roomMatch.Success && int.TryParse(roomMatch.Groups[1].Value, out var roomNum) && roomNum >= 5)
+            {
+                alertRoomCounts.Add("5+1 ve üzeri");
+            }
+        }
+    }
+
+    var listingAlertModel = new FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm
+    {
+        ListingTypeId = alertListingTypeId,
+        CityName = Model.City,
+        DistrictName = Model.District,
+        MinPrice = alertMinPrice,
+        MaxPrice = alertMaxPrice,
+        RoomCounts = alertRoomCounts,
+        SourceListingTypeId = alertListingTypeId,
+        SourceListingId = Model.ListingId
+    };
 }
 @* System.Text.Json varsayılan encoder'ı HTML özel karakterlerini (<, >, &) kaçırdığından Html.Raw kullanımı güvenlidir. *@
 <script type="application/ld+json">@Html.Raw(breadcrumbJson)</script>
@@ -277,6 +310,7 @@
                         </div>
 
                     </div>
+                    <partial name="_ListingAlertWidget" model="listingAlertModel" />
                 </div>
             </div>
         </div>
