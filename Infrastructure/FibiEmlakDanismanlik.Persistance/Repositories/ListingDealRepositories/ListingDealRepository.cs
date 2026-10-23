@@ -302,6 +302,12 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingDealRepositories
                                d.Status == DealStatus.DepositReceived);
         }
 
+        public async Task<bool> AnyForListingAsync(int listingTypeId, int listingId)
+        {
+            return await _context.ListingDeals.AsNoTracking()
+                .AnyAsync(d => d.ListingTypeId == listingTypeId && d.ListingId == listingId);
+        }
+
         public async Task<AgentRole?> GetActiveAgentRoleAsync(int agentId)
         {
             return await _context.Agents.AsNoTracking()

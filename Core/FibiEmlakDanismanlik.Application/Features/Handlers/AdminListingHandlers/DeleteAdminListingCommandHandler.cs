@@ -4,7 +4,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using FibiEmlakDanismanlik.Application.Features.Commands.AdminListingCommands;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.ListingDealInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces;
+using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.AdminListingHandlers
@@ -16,13 +19,16 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AdminListingHandler
     {
         private readonly IAdminListingRepository _adminListingRepository;
         private readonly IFileStorage _fileStorage;
+        private readonly IListingDealRepository _listingDealRepository;
 
         public DeleteAdminListingCommandHandler(
             IAdminListingRepository adminListingRepository,
-            IFileStorage fileStorage)
+            IFileStorage fileStorage,
+            IListingDealRepository listingDealRepository)
         {
             _adminListingRepository = adminListingRepository;
             _fileStorage = fileStorage;
+            _listingDealRepository = listingDealRepository;
         }
 
         public async Task<bool> Handle(DeleteAdminListingCommand request, CancellationToken cancellationToken)
@@ -31,6 +37,15 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AdminListingHandler
             if (!agentId.HasValue)
             {
                 throw new KeyNotFoundException("Silinmek istenen ilan bulunamadı.");
+            }
+
+            var hasDeals = await _listingDealRepository.AnyForListingAsync(request.ListingTypeId, request.ListingId);
+            if (hasDeals)
+            {
+                throw new ValidationException(new[]
+                {
+                    new ValidationFailure("ListingId", "Bu ilana bağlı işlem/hak ediş kaydı var; ilan kalıcı silinemez. Pasife alabilirsiniz.")
+                });
             }
 
             var storagePaths = await _adminListingRepository.DeleteListingAsync(request.ListingTypeId, request.ListingId);

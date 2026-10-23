@@ -46,6 +46,11 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.ListingDealInterfaces
         Task<bool> HasOpenDealAsync(int listingTypeId, int listingId);
 
         /// <summary>
+        /// Belirtilen ilana ait herhangi bir işlem kaydı bulunup bulunmadığını kontrol eder.
+        /// </summary>
+        Task<bool> AnyForListingAsync(int listingTypeId, int listingId);
+
+        /// <summary>
         /// Danışmanın aktif olup olmadığını kontrol eder ve aktifse rolünü döner, aktif değilse veya yoksa null döner.
         /// </summary>
         Task<AgentRole?> GetActiveAgentRoleAsync(int agentId);
