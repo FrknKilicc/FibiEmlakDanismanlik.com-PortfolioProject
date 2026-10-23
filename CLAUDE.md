@@ -1,4 +1,4 @@
-﻿# Fibi Emlak Danışmanlık — CLAUDE.md
+# Fibi Emlak Danışmanlık — CLAUDE.md
 
 Bu dosya Claude Code'un projeyi tanıması için repo root'ta bulunur.
 Her oturumda otomatik okunur, context kaybı olmaz.
