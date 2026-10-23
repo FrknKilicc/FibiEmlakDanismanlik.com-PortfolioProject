@@ -198,8 +198,8 @@ Footer (`_FooterLayoutViewComponentPartial`) `AboutUs/1`, `Contact` (ilk kayıt)
 - [ ] `AboutUsController`'da liste/aktif kayıt ucu yok; footer ve Hakkımızda sayfası `AboutUs/1`'e sabit bağlı. "Aktif/ilk kaydı getir" ucu eklenip ikisi de ona geçmeli
 - [ ] Veri: `SocialMedias` tablosunda bozuk kayıtlar var (Google Plus → `blog-1.html`, Twitter → `/UIlayout/Index`); footer bunları gizliyor ama düzeltilmeli/pasife alınmalı. Google+ kapandı, kaydı silinebilir
 - [ ] Veri: `Contacts.EMail1` = `info@fibiEmlak.com` (footer küçük harfe çeviriyor); eski footer'da elle yazılı `(0212) 510 01 14` vardı, DB'de `05442603193` — doğru ofis telefonu teyit edilmeli
-- [ ] İletişim sayfası (`_GetContactInfoViewComponentPartial`) telefon linkleri sabit ve yanlış: `tel:+23055873407` / `tel:+23055873408` (tema kalıntısı); footer'daki gibi DB numarasından üretilmeli
-- [ ] Footer kozmetik: blog küçük görselleri eşit 90x90 değil (tema CSS'i `width/height`'ı eziyor), "Devamını Oku" linki yeşil yerine gri görünüyor
+- [x] (2026-10-20, `feature/antigravity-seo-and-fixes`) İletişim sayfası (`_GetContactInfoViewComponentPartial`) telefon linkleri sabit ve yanlış: `tel:+23055873407` / `tel:+23055873408` (tema kalıntısı); footer'daki gibi DB numarasından üretilmeli
+- [x] (2026-10-20, `feature/antigravity-seo-and-fixes`) Footer kozmetik: blog küçük görselleri eşit 90x90 değil (tema CSS'i `width/height`'ı eziyor), "Devamını Oku" linki yeşil yerine gri görünüyor
 - [ ] Footer "Kullanım Koşulları" ve "Gizlilik Politikası" linkleri `#`; sayfalar yazılınca bağlanmalı (KVKK aydınlatma metni ile birlikte)
 - [ ] İstenirse "Sayfalar" sütunu admin'den yönetilebilir menü olur (`FooterLink` tablosu: başlık, URL, sıra, aktif + CRUD + migration)
 
@@ -208,14 +208,14 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [ ] `bak20261019` yedek şeması, yeni veri doğrulandıktan sonra silinsin (`DROP` işlemleri onayla)
 - [x] (2026-10-19, `feature/antigravity-todo-batch1`) Kullanılmayan eski partial'lar silinsin: `_ForSaleDetailPropertyDetails_*`, `_ForRentalDetailPropertyDetails_*`, `_AmenitiesListViewComponentPartial` (detay sayfası artık `_ListingSpecs` kullanıyor; başka yerde kullanılmadığı doğrulanmalı)
 - [x] (2026-10-19, `feature/antigravity-todo-batch1`) Benzer ilanlar çok katı (aynı il + fiyat ±%30 + m² ±%30); gerçekçi veride çoğu ilanda boş dönüyor. Sonuç yoksa kademeli gevşetme (önce fiyat, sonra il) eklenmeli
-- [ ] Detay sayfası danışman kutusundaki ofis adresi sabit metin; `Contacts` tablosundan gelmeli
+- [x] (2026-10-20, `feature/antigravity-seo-and-fixes`) Detay sayfası danışman kutusundaki ofis adresi sabit metin; `Contacts` tablosundan gelmeli
 - [ ] Yakın yerler ilan koordinatı yaklaşık (mahalle merkezi) olduğu için yaklaşık mesafeler; admin kesin pin girince `nearby-from-osm.ps1 -OnlyMissing` (o ilanın kayıtları silinerek) yeniden çalıştırılmalı; ileride sync sağlayıcısına dönüştürülebilir
 - [ ] Demo görseller repo içinde (~9 MB, `wwwroot/images/listings`); gerçek fotoğraflar geldiğinde klasör ve CREDITS kaldırılmalı, yükleme deposu (blob) kararı verilmeli
 
 ### Gözlemler ve öneriler (2026-10-19, kullanıcı gün içinde soracak; sırayla birlikte yapılacak)
 
 **Git ve süreç**
-- [ ] Push + dev'e birleştirme: önce `feature/antigravity-fibi-services-phase2`, sonra `feature/antigravity-listings-map` (harita branch'i Faz 2'den açıldı, sync altyapısını kullanıyor). Footer, dil ve iç sayfa düzeltmeleri de bu branch'lerde; kullanıcı onayıyla
+- [x] (2026-10-20) Push + dev'e birleştirme: önce `feature/antigravity-fibi-services-phase2`, sonra `feature/antigravity-listings-map` (harita branch'i Faz 2'den açıldı, sync altyapısını kullanıyor). Footer, dil ve iç sayfa düzeltmeleri de bu branch'lerde; kullanıcı onayıyla
 - [ ] Test projesi yok: `ListingSpecsBuilder`, `KfeBulletinParser`, `IbbSeismicCsvParser`, `MarketIndexApplier`, `TurkishTextHelper` için xUnit testleri; headless Chrome kontrol betikleri (şu an oturum scratchpad'inde: harita, detay, taşma taraması) `tools/ui-tests` altına alınıp duman testi olarak çalıştırılabilir hale getirilsin
 - [ ] Yeni veriyle doğrulanmamış sayfalar: ana sayfa (vitrin, popüler yerler, son ilanlar), satılık/kiralık liste filtreleri (yeni değer biçimleri: bina yaşı "0/1-5/6-10/11-15/16-20/21 ve üzeri", ısıtma, tapu "Kat Mülkiyetli/Müstakil Tapulu", kullanım durumu), karşılaştırma (Compare) sayfası, arama önerileri
 - [ ] Antigravity satır sonlarını LF yapıyor ve BOM'u siliyor (her turda elle geri ekleniyor); `tools/agy-delegate.ps1` iş bitince değişen dosyalarda BOM'u HEAD'deki duruma göre otomatik geri yüklesin
@@ -238,11 +238,44 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [ ] Galeri: küçük resim şeridi, fotoğraf sayısı rozeti, tam ekran (fancybox zaten yüklü)
 - [ ] SEO: ilan detayına schema.org `RealEstateListing`/`Offer` yapılandırılmış verisi, Open Graph görseli, `sitemap.xml` ve `robots.txt`
 - [ ] Görseller: WebP + duyarlı boyutlar (srcset), liste kartlarında küçük boy; şu an 1024px JPEG her yerde
-- [ ] Spam koruması: iletişim ve randevu formlarına rate limit (FİBİ lead formundaki gibi) ve isteğe bağlı captcha
+- [x] (2026-10-20, `feature/antigravity-seo-and-fixes`) Spam koruması: iletişim ve randevu formlarına rate limit (FİBİ lead formundaki gibi) ve isteğe bağlı captcha
 - [ ] "Benzer ilan çıkınca haber ver" talep formu (lead olarak `FibiServiceLeads` benzeri tabloya)
 - [ ] Liste sayfalarında harita/liste görünüm geçişi aynı sayfada (şu an ayrı Haritada İlanlar sayfası var)
 - [ ] Harita sayfasında fiyat aralığı ve oda filtresi; "bu alanda ara" (bbox) ile API tarafı filtreleme
 - [ ] İzleme: yapılandırılmış log (Serilog) ve sync sağlayıcıları için hata bildirimi (Nominatim/TCMB/İBB başarısız olursa)
+
+### SEO ve form güvenliği (2026-10-20, branch `feature/antigravity-seo-and-fixes`)
+İlan detay adresi `/satilik|kiralik/{konut|arsa|isyeri}/{ilce-ilan-adi}-{id}`; tek kaynak `Models/ListingUrl.cs` (`DetailPath`, `Slugify`), harita için aynı kural `wwwroot/js/listings-map.js` içinde (değişirse ikisi birlikte güncellenmeli). Eski `/AllFor*DetailPage/Index/{id}` adresleri ve yanlış slug 301 ile asıl adrese gider; ilan yoksa 404, API hatası 500. Canonical ve JSON-LD mutlak adresleri `Seo:SiteBaseUrl` ayarından (boşsa istekten). Form koruması `Services/FormSpamGuard.cs` (IP başına sınır `FormSpam:*`, honeypot `Website` alanı, isteğe bağlı Turnstile `Captcha:*`), formlarda `<partial name="_FormSpamFields" />`.
+- [x] SEO dostu ilan adresleri + 301, canonical etiketi, detayda BreadcrumbList (JSON-LD), blog detayında başlık/açıklama, görsel alt metinleri, Türkçe 404/hata sayfası (`noindex`), olmayan ilanda API 404
+- [x] İletişim ve randevu formlarına IP başına sınır + honeypot + isteğe bağlı captcha; iletişim formu artık POST'ta API'ye gönderiyor; randevu dönüşü yalnızca aynı host'a
+- [ ] Canlıya çıkarken: `Seo:SiteBaseUrl` canlı alan adıyla ayarlanmalı; Google Search Console kaydı ve sitemap gönderimi
+- [ ] `sitemap.xml` (yukarıdaki SEO maddesi) ilan adreslerini `ListingUrl.DetailPath` ile üretmeli
+- [ ] Open Graph ile birlikte Twitter Card etiketleri
+- [ ] Blog adresleri de SEO dostu olsun (`/blog/{slug}-{id}`, eski `/Blog/Detail/{id}` 301); geçersiz blog id'sinde 404 dönmeli (şu an ViewComponent `View(null)` dönüyor)
+- [ ] Liste sayfası adresleri okunabilir olabilir (`/AllForSalePage` → `/satilik`); il/ilçe açılış sayfaları (`/satilik/istanbul/kadikoy`) SEO için değerlendirilmeli
+- [ ] Captcha'yı açmak için Cloudflare Turnstile anahtarı: `Captcha:TurnstileSiteKey`, `Captcha:ScriptUrl`, `Captcha:VerifyUrl` appsettings'e, `Captcha:TurnstileSecretKey` User Secrets'a; dördü de doluysa formlarda kendiliğinden açılır
+- [ ] WebUI'de `UseForwardedHeaders` yok: canlıda reverse proxy arkasında `RemoteIpAddress` proxy IP'si olur ve form sınırı tüm ziyaretçileri tek kişi sayar; WebUI'ye de ForwardedHeaders + `KnownProxies` eklenmeli
+- [ ] `FormSpamGuard` sayaçları bellek içi; WebUI birden fazla örnekle çalışırsa paylaşılmaz (gerekirse dağıtık önbellek)
+- [ ] API CORS (`AllowLocalhost`) yalnızca sabit localhost portlarına izin veriyor; harita sayfası API'yi tarayıcıdan çağırdığı için canlı alan adı ayardan okunmalı
+- [ ] API'deki diğer GetById handler'ları da kayıt yoksa null kontrolsüz olabilir (ör. blog detayı); G9 kapsamında taranmalı
+- [ ] Veri: `Contacts.PhoneNumber2` = `PhoneNumber1` (iletişim sayfasında aynı numara iki kez), `EMail2` kişisel Gmail (`fibiinfo@gmail.com`)
+- [ ] Kozmetik: uzun ilan adlarında detay sayfası üst başlığı iki satıra iniyor; 404 sayfasında mobilde "404" yazısı sabit header'a çok yakın
+- [ ] Veri: `Contacts.EMail1` iletişim sayfasında olduğu gibi `info@fibiEmlak.com` (büyük harfli) görünüyor; link küçük harfe çevriliyor ama kayıt düzeltilmeli
+- [ ] Ana sayfadaki bülten aboneliği formu tema kalıntısı (`UILayout/Index.cshtml`, `action="contact.html"`): çalışmıyor; ya gerçek bir abonelik ucuna (KVKK onayı + spam koruması ile) bağlanmalı ya kaldırılmalı
+- [ ] Blog detayında yazar adı linki tema kalıntısı (`href="blog-details.html"`); yazarın yazılarına filtreli blog listesine gitmeli ya da link kaldırılmalı
+- [ ] İletişim sayfasındaki "harita" aslında harici bir stok fotoğraf (pexels hotlink); ofis konumu gerçek harita (Leaflet, ilan detayındaki gibi) ile gösterilmeli
+- [ ] Bu branch dev'e birleştirilmedi; aşağıdaki testlerden sonra kullanıcı onayıyla birleştirilip push edilecek
+
+**Elle test listesi (bu branch için, kullanıcı 2026-10-21'de yapacak)**
+- [ ] Eski ilan linki (`/AllForSaleDetailPage/Index/{id}?listingTypeId=..`) yeni adrese 301 ile gidiyor; tarayıcı adres çubuğunda okunabilir adres görünüyor
+- [ ] Satılık ve kiralık her ilan türünde (konut, arsa, işyeri) detay açılıyor; olmayan id Türkçe 404 sayfası veriyor
+- [ ] Ana sayfa vitrini, sıcak fırsatlar, liste sayfaları, benzer ilanlar, danışman sayfası ve harita popup'larındaki ilan linkleri doğru ilana gidiyor
+- [ ] Sayfa kaynağında `<link rel="canonical">` ve ilan detayında `application/ld+json` var; filtreli liste sayfasında canonical filtresiz
+- [ ] İletişim formu: gönderim başarılı mesajı, kayıt `customerContacts` tablosunda; 5 gönderimden sonra (10 dk) "çok fazla deneme" uyarısı
+- [ ] İlan detayında randevu formu: gönderim sonrası aynı ilana dönüyor, toastr mesajı çıkıyor
+- [ ] İletişim sayfası telefon/e-posta linkleri telefonda tıklanınca arama/e-posta açıyor
+- [ ] Footer'da "Devamını Oku" yeşil, blog küçük görselleri kare; blog detayında sekme başlığı yazının adı
+- [ ] VS ile çalıştırırken (WebUI 5146, API 7015) harita sayfası ilanları gösteriyor
 
 ### Haritada İlanlar (2026-10-19, branch `feature/antigravity-listings-map`)
 `ListingsMap` sayfası `GET api/Map/listings` ucundan satılık + kiralık tüm aktif ilanları tek haritada gösterir. Koordinatı olmayan ilanlara `listing-geocode` sağlayıcısı (sync altyapısı, 6 saatte bir) OSM Nominatim ile mahalle > ilçe > il düzeyinde yaklaşık konum yazar (`ListingGeoPoints.Source = nominatim`, `Precision = neighborhood|district|city`); haritada kesikli çerçeveyle gösterilir.

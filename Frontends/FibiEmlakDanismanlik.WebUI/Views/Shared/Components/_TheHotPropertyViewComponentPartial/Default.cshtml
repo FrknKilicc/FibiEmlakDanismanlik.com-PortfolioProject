@@ -57,9 +57,7 @@
                     <div class="deals-carousel owl-carousel owl-theme dots-style-one owl-nav-none">
                         @foreach (var item in panel.Items)
                         {
-                            var detailUrl = isRent
-                                ? Url.Action("Index", "AllForRentalDetailPage", new { id = item.ListingId, listingTypeId = item.ListingTypeId })
-                                : Url.Action("Index", "AllForSaleDetailPage", new { id = item.ListingId, listingTypeId = item.ListingTypeId });
+                            var detailUrl = ListingUrl.DetailPath(isRent, item.ListingId, item.ListingTypeId, null, item.PropertyName, item.District);
 
                             var locParts = new List<string>();
                             if (!string.IsNullOrWhiteSpace(item.District))

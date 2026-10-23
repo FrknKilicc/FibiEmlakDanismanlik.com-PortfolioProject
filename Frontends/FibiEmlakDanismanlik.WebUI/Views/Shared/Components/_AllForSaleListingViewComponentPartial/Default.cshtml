@@ -210,11 +210,12 @@
                             <div class="row clearfix">
                                 @foreach(var item in Model.Items)
                                 {
+                                    var detailUrl = ListingUrl.DetailPath(false, item.ListingId, item.ListingTypeId, item.ListingType, item.PropertyName, item.District);
                                     <div class="col-lg-6 col-md-6 col-sm-12 feature-block">
                                         <div class="feature-block-one">
                                             <div class="inner-box">
                                                 <div class="image-box">
-                                                    <figure class="image"><img src="@item.PropImgUrl1" alt="image"></figure>
+                                                    <figure class="image"><img src="@item.PropImgUrl1" alt="@item.PropertyName"></figure>
                                                     @if (item.BestDeals == true)
                                                     {
                                                         <div class="batch"><i class="icon-11"></i></div>
@@ -228,7 +229,7 @@
                                                 <div class="lower-content">
                                                     <div class="author-info clearfix">
                                                         <div class="author pull-left">
-                                                            <figure class="author-thumb"><img src="@item.AgentImgUrl" alt=""></figure>
+                                                            <figure class="author-thumb"><img src="@item.AgentImgUrl" alt="@item.AgentName"></figure>
                                                             <h6>@item.AgentName</h6>
                                                         </div>
                                                         <div class="buy-btn pull-right">
@@ -237,7 +238,7 @@
                                                     </div>
                                                 <div class="title-text">
                                                     <h4>
-                                                        <a asp-action="Index" asp-controller="AllForSaleDetailPage" asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId" title="@item.PropertyName">
+                                                        <a href="@detailUrl" title="@item.PropertyName">
                                                             @(string.IsNullOrWhiteSpace(item.PropertyName) ? "İlan Başlığı" : item.PropertyName)
                                                         </a>
                                                     </h4>
@@ -290,7 +291,7 @@
                                                             <li title="@h.Text"><i class="@h.Icon"></i>@h.Text</li>
                                                         }
                                                     </ul>
-                                                    <div class="btn-box"><a asp-route-id="@item.ListingId" asp-route-listingTypeId="@item.ListingTypeId" asp-controller="AllForSaleDetailPage" asp-action="Index" class="theme-btn btn-two">İlan Detayı</a></div>
+                                                    <div class="btn-box"><a href="@detailUrl" class="theme-btn btn-two">İlan Detayı</a></div>
                                                 </div>
                                             </div>
                                         </div>

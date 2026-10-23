@@ -1,4 +1,4 @@
-﻿ @model ResultAllForSaleListinForPageDto
+﻿@model ResultAllForSaleListinForPageDto
 
 <section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
     <div class="auto-container">
@@ -13,6 +13,15 @@
     </div>
 </section>
 <!--End Page Title-->
+@{
+    var canonicalPath = ListingUrl.DetailPath(false, Model.ListingId, Model.ListingTypeId, Model.ListingType, Model.PropertyName, Model.District);
+    var breadcrumbJson = SeoUrl.BreadcrumbJsonLd(Context,
+        ("Anasayfa", Url.Action("Index", "UILayout") ?? "/"),
+        ("Satılık İlanlar", Url.Action("Index", "AllForSalePage") ?? "/"),
+        (Model.PropertyName ?? "İlan", canonicalPath));
+}
+@* System.Text.Json varsayılan encoder'ı HTML özel karakterlerini (<, >, &) kaçırdığından Html.Raw kullanımı güvenlidir. *@
+<script type="application/ld+json">@Html.Raw(breadcrumbJson)</script>
 <!-- property-details -->
 <section class="property-details property-details-one">
     <div class="auto-container">
@@ -21,7 +30,7 @@
                 <h3>@Model.PropertyName@if (string.Equals(Model.PropertyStatus?.Trim(), "Opsiyonlu", StringComparison.OrdinalIgnoreCase)) { <span class="listing-status-badge listing-status-badge--inline" title="Bu ilan için opsiyon verildi">Opsiyonlu</span> }</h3>
                 <div class="author-info clearfix">
                     <div class="author-box pull-left">
-                        <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt=""></figure>
+                        <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt="@Model.AgentName"></figure>
                         <h6>@Model.AgentName</h6>
                     </div>
                 </div>
@@ -132,7 +141,7 @@
                                         <div class="acc-content @(isFirst ? "current" : "")">
                                             <div class="content-box">
                                                 <figure class="image-box">
-                                                    <img src="@item.Url" alt="">
+                                                    <img src="@item.Url" alt="@Model.PropertyName">
                                                 </figure>
                                             </div>
                                         </div>
@@ -224,6 +233,7 @@
                                             </label>
                                         </div>
                                     </div>
+                                    <partial name="_FormSpamFields" />
                                     <div class="col-lg-12 col-md-12 col-sm-12 column">
                                         <div class="form-group message-btn">
                                             <button type="submit" class="theme-btn btn-one">Gönder</button>
@@ -239,7 +249,7 @@
                 <div class="property-sidebar default-sidebar">
                     <div class="author-widget sidebar-widget">
                         <div class="author-box">
-                            <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt=""></figure>
+                            <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt="@Model.AgentName"></figure>
                             <div class="inner">
                                 <h4>@Model.AgentName</h4>
                                 @if (!string.IsNullOrWhiteSpace(Model.AgentTitle))
@@ -247,9 +257,10 @@
                                     <p class="agent-title">@Model.AgentTitle</p>
                                 }
                                 <ul class="info clearfix">
-                                    <li>
-                                        <i class="fas fa-map-marker-alt"></i> Telsiz, 85/2. Sk.3A,34020 Zeytinburnu/İstanbul
-                                    </li>
+                                    @if (ViewBag.OfficeAddress is string officeAddress && !string.IsNullOrWhiteSpace(officeAddress))
+                                    {
+                                        <li><i class="fas fa-map-marker-alt"></i> @officeAddress</li>
+                                    }
                                     <li><i class="fas fa-phone"></i><a href="tel:@Model.AgentPhoneNumber">@Model.AgentPhoneNumber</a></li>
                                     <li><i class="fas fa-envelope"></i><a href="mailto:@Model.Mail">@Model.Mail</a></li>
 
@@ -263,4 +274,3 @@
         </div>
 @await Component.InvokeAsync("_SimilarForSalePropertiesViewComponentPartial", new { id = Model.ListingId })    </div>
 </section>
-

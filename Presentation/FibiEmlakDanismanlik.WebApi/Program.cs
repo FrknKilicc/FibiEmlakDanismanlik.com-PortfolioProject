@@ -148,6 +148,15 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromMinutes(FibiServiceConstants.LeadRateLimitWindowMinutes),
                 QueueLimit = 0
             }));
+    options.AddPolicy(CustomerContactConstants.RateLimitPolicy, httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = CustomerContactConstants.RateLimitPermitCount,
+                Window = TimeSpan.FromMinutes(CustomerContactConstants.RateLimitWindowMinutes),
+                QueueLimit = 0
+            }));
 });
 
 var app = builder.Build();

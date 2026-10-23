@@ -725,15 +725,77 @@
             return parts.join(", ");
         }
 
-        function getDetailUrl(item) {
-            const id = encodeURIComponent(item.listingId || "");
-            let url = item.usageTypeId === 2
-                ? `/AllForRentalDetailPage/Index/${id}`
-                : `/AllForSaleDetailPage/Index/${id}`;
-            if (item.listingTypeId != null && item.listingTypeId !== "") {
-                url += `?listingTypeId=${encodeURIComponent(item.listingTypeId)}`;
+        function slugify(text, maxLength) {
+            if (maxLength === undefined) {
+                maxLength = 80;
             }
-            return url;
+            if (!text || !text.trim()) {
+                return "";
+            }
+
+            var cleaned = text.replace(/['’]/g, "");
+
+            var trMap = {
+                'ç': 'c', 'Ç': 'c',
+                'ğ': 'g', 'Ğ': 'g',
+                'ı': 'i', 'I': 'i', 'İ': 'i', 'i': 'i',
+                'ö': 'o', 'Ö': 'o',
+                'ş': 's', 'Ş': 's',
+                'ü': 'u', 'Ü': 'u'
+            };
+
+            var mapped = "";
+            for (var i = 0; i < cleaned.length; i++) {
+                var ch = cleaned[i];
+                mapped += trMap[ch] !== undefined ? trMap[ch] : ch;
+            }
+
+            var lower = mapped.toLowerCase();
+            var slug = lower.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+            if (slug.length > maxLength) {
+                var truncated = slug.slice(0, maxLength);
+                var lastDash = truncated.lastIndexOf("-");
+                if (lastDash > 0) {
+                    truncated = truncated.slice(0, lastDash);
+                }
+                slug = truncated.replace(/-+$/, "");
+            }
+
+            return slug;
+        }
+
+        function categorySlug(listingTypeId) {
+            var id = Number(listingTypeId);
+            if (id === 1 || id === 7) return "arsa";
+            if (id === 2 || id === 8) return "konut";
+            if (id === 3 || id === 9) return "isyeri";
+            return "ilan";
+        }
+
+        function getDetailUrl(item) {
+            var prefix = item.usageTypeId === 2 ? "kiralik" : "satilik";
+            var ad = (item.title || "").trim();
+            var suffixes = [" - Satılık", " - Kiralık", " - Satilik", " - Kiralik"];
+            var removed;
+            do {
+                removed = false;
+                for (var i = 0; i < suffixes.length; i++) {
+                    var s = suffixes[i];
+                    if (ad.toLowerCase().endsWith(s.toLowerCase())) {
+                        ad = ad.slice(0, ad.length - s.length).trim();
+                        removed = true;
+                        break;
+                    }
+                }
+            } while (removed);
+
+            var rawSlugText = ((item.district || "") + " " + ad).trim();
+            var slug = slugify(rawSlugText);
+            var id = item.listingId;
+            var cat = categorySlug(Number(item.listingTypeId));
+            var lastPart = slug ? (slug + "-" + id) : String(id);
+            return "/" + prefix + "/" + cat + "/" + lastPart;
         }
     }
 })();

@@ -9,6 +9,7 @@ namespace FibiEmlakDanismanlik.WebUI.Models
         public const string DefaultDescription = "Fibi Yapı Emlak & Danışmanlık: satılık ve kiralık konut, arsa ve işyeri ilanları, emlak danışmanlığı, bölge ve risk analizleri.";
         public const string TitleItemKey = "PageTitle";
         public const string DescriptionItemKey = "PageDescription";
+        public const string CanonicalItemKey = "CanonicalPath";
         public const int DescriptionMaxLength = 155;
 
         /// <summary>
@@ -45,5 +46,7 @@ namespace FibiEmlakDanismanlik.WebUI.Models
     {
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public string CanonicalUrl { get; set; } = string.Empty;
+        public string Robots { get; set; } = string.Empty;
     }
 }

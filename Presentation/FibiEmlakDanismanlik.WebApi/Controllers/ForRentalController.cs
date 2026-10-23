@@ -48,6 +48,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         public async Task<IActionResult> GetUnifiedForRentalPropertyById(int id, [FromQuery] int? listingTypeId)
         {
             var value = await mediator.Send(new GetForRentalPropertyByIdQuery(id, listingTypeId));
+            if (value == null) return NotFound();
             return Ok(value);
         }
         [HttpGet("GetSimilarForRentalProperties/{id}")]

@@ -382,3 +382,14 @@ price-range alanı */
     margin-left: 10px;
     vertical-align: middle;
 }
+
+
+/* Form spam tuzağı (honeypot): ziyaretçiye görünmez */
+.fibi-hp {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}

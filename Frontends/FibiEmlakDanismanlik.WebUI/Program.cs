@@ -1,10 +1,14 @@
+ï»¿using FibiEmlakDanismanlik.WebUI.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<FormSpamGuard>();
 
-// IConfiguration aracýlýðýyla AppSettings.json'daki yapýlandýrmayý yükleme
+// IConfiguration aracÄ±lÄ±ÄŸÄ±yla AppSettings.json'daki yapÄ±landÄ±rmayÄ± yÃ¼kleme
 
 
 var app = builder.Build();
@@ -17,6 +21,9 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// 404 vb. durumlar TÃ¼rkÃ§e sayfayla, durum kodu korunarak gÃ¶sterilir
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

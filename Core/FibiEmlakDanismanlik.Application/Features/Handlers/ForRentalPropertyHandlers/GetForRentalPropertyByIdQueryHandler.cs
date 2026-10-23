@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForRentalPropertyHandlers
 {
-    public class GetForRentalPropertyByIdQueryHandler : IRequestHandler<GetForRentalPropertyByIdQuery, GetForRentalPropertyDetailResult>
+    public class GetForRentalPropertyByIdQueryHandler : IRequestHandler<GetForRentalPropertyByIdQuery, GetForRentalPropertyDetailResult?>
     {
         private readonly IPropertyRepository _repository;
 
@@ -20,9 +20,12 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForRentalPropertyHa
             _repository = repository;
         }
 
-        public async Task<GetForRentalPropertyDetailResult> Handle(GetForRentalPropertyByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GetForRentalPropertyDetailResult?> Handle(GetForRentalPropertyByIdQuery request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetUnifiedForRentalPropertyById(request.Id, request.ListingTypeId);
+
+            // İlan bulunamadı, controller 404 döner
+            if (value == null) return null;
 
             var result = new GetForRentalPropertyDetailResult
             {

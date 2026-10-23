@@ -4,7 +4,7 @@
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
 
-@await Component.InvokeAsync("_AllForRentalDetailPageViewComponentPartial", new { id = Model.ListingId, listingTypeId = Model.ListingTypeId })
+@await Component.InvokeAsync("_AllForRentalDetailPageViewComponentPartial", new { value = Model })
 
 @section Styles {
 
