@@ -129,6 +129,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<LoginAuditLog> LoginAuditLogs { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<ListingImage> ListingImages { get; set; }
+        public DbSet<LeadActivity> LeadActivities { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -662,6 +663,23 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 );
             });
 
+            // CustomerContact: İletişim ve randevu talepleri
+            modelBuilder.Entity<CustomerContact>(entity =>
+            {
+                entity.Property(x => x.LeadStatus)
+                      .HasConversion<int>()
+                      .HasDefaultValue(LeadStatus.New)
+                      .ValueGeneratedNever();
+
+                entity.HasOne<Agent>()
+                      .WithMany()
+                      .HasForeignKey(x => x.AssignedAgentId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasIndex(x => x.LeadStatus);
+                entity.HasIndex(x => x.AssignedAgentId);
+            });
+
             // FibiServiceLead: Danışmanlık talepleri
             modelBuilder.Entity<FibiServiceLead>(entity =>
             {
@@ -679,12 +697,45 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.Property(x => x.CustomerNote)
                       .HasMaxLength(FibiServiceConstants.CustomerNoteMaxLength);
 
+                entity.Property(x => x.LeadStatus)
+                      .HasConversion<int>()
+                      .HasDefaultValue(LeadStatus.New)
+                      .ValueGeneratedNever();
+
                 entity.HasOne(x => x.Neighborhood)
                       .WithMany()
                       .HasForeignKey(x => x.NeighborhoodId)
                       .OnDelete(DeleteBehavior.Restrict);
 
+                entity.HasOne<Agent>()
+                      .WithMany()
+                      .HasForeignKey(x => x.AssignedAgentId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
                 entity.HasIndex(x => new { x.IsContacted, x.CreatedDate });
+                entity.HasIndex(x => x.LeadStatus);
+                entity.HasIndex(x => x.AssignedAgentId);
+            });
+
+            // LeadActivity: Talep hareket ve işlem geçmişi
+            modelBuilder.Entity<LeadActivity>(entity =>
+            {
+                entity.Property(x => x.Source)
+                      .HasConversion<int>();
+
+                entity.Property(x => x.Type)
+                      .HasConversion<int>();
+
+                entity.Property(x => x.OldStatus)
+                      .HasConversion<int>();
+
+                entity.Property(x => x.NewStatus)
+                      .HasConversion<int>();
+
+                entity.Property(x => x.Text)
+                      .HasMaxLength(2000);
+
+                entity.HasIndex(x => new { x.Source, x.LeadId, x.CreatedAtUtc });
             });
 
             // ListingImage: İlan görselleri

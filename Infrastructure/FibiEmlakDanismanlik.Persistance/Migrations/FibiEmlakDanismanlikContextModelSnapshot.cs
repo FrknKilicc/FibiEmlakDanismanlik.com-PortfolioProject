@@ -601,6 +601,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<DateTime?>("AppointmentDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("AssignedAgentId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -619,13 +622,24 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("LeadStatus")
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
                     b.Property<int?>("PropertyListingId")
                         .HasColumnType("int");
 
                     b.Property<int?>("PropertyListingTypeEnum")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("StatusUpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("CustomerContactId");
+
+                    b.HasIndex("AssignedAgentId");
+
+                    b.HasIndex("LeadStatus");
 
                     b.ToTable("customerContacts");
                 });
@@ -759,6 +773,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FibiServiceLeadId"));
 
+                    b.Property<int?>("AssignedAgentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CalculationSummaryJson")
                         .HasColumnType("nvarchar(max)");
 
@@ -784,6 +801,10 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<DateTime>("KvkkApprovedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("LeadStatus")
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
                     b.Property<int?>("NeighborhoodId")
                         .HasColumnType("int");
 
@@ -795,7 +816,14 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<int>("SourceModule")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("StatusUpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("FibiServiceLeadId");
+
+                    b.HasIndex("AssignedAgentId");
+
+                    b.HasIndex("LeadStatus");
 
                     b.HasIndex("NeighborhoodId");
 
@@ -1635,6 +1663,49 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.HasKey("LandCategoryId");
 
                     b.ToTable("LandCategories");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.LeadActivity", b =>
+                {
+                    b.Property<int>("LeadActivityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeadActivityId"));
+
+                    b.Property<int?>("AgentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AssignedAgentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LeadId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NewStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OldStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("LeadActivityId");
+
+                    b.HasIndex("Source", "LeadId", "CreatedAtUtc");
+
+                    b.ToTable("LeadActivities");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingAccessGrant", b =>
@@ -2980,6 +3051,14 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Navigation("City");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.CustomerContact", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Agent", null)
+                        .WithMany()
+                        .HasForeignKey("AssignedAgentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.District", b =>
                 {
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", "City")
@@ -3017,6 +3096,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.FibiServiceLead", b =>
                 {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Agent", null)
+                        .WithMany()
+                        .HasForeignKey("AssignedAgentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Neighborhood", "Neighborhood")
                         .WithMany()
                         .HasForeignKey("NeighborhoodId")
