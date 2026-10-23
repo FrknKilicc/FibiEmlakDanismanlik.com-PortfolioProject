@@ -102,3 +102,13 @@
   z-index: 1;
 }
 
+/* İşlemler ve Hak Ediş Stilleri */
+.deal-summary .card-body {
+  padding: 0.75rem;
+}
+
+details > summary {
+  cursor: pointer;
+}
+
+

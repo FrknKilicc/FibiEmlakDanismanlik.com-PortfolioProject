@@ -238,6 +238,15 @@ public sealed class ApiClient
                 return ApiResult<T>.Ok(default, statusCode);
             }
 
+            if (typeof(T) == typeof(string))
+            {
+                var mediaType = response.Content.Headers.ContentType?.MediaType;
+                if (mediaType == null || !mediaType.Contains("json", StringComparison.OrdinalIgnoreCase))
+                {
+                    return ApiResult<T>.Ok((T)(object)rawContent, statusCode);
+                }
+            }
+
             try
             {
                 var data = JsonSerializer.Deserialize<T>(rawContent, JsonOptions);

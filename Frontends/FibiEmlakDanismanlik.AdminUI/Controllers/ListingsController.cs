@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using FibiEmlakDanismanlik.AdminUI.Infrastructure;
+using FibiEmlakDanismanlik.AdminUI.Models.Deals;
 using FibiEmlakDanismanlik.AdminUI.Models.Leads;
 using FibiEmlakDanismanlik.AdminUI.Models.ListingAlerts;
 using FibiEmlakDanismanlik.AdminUI.Models.Listings;
@@ -195,18 +196,30 @@ public sealed class ListingsController : Controller
         var leadsTask = _apiClient.GetAsync<List<LeadRowDto>>($"AdminLeads/listing/{listingTypeId}/{listingId}");
         var alertsTask = _apiClient.GetAsync<ListingAlertsForListingDto>($"AdminListingAlerts/listing/{listingTypeId}/{listingId}");
         Task<ApiResult<List<ListingAccessGrantDto>>>? grantsTask = null;
+        Task<ApiResult<List<DealRowDto>>>? dealsTask = null;
         if (_currentAdmin.IsManagerOrAbove)
         {
             grantsTask = _apiClient.GetAsync<List<ListingAccessGrantDto>>($"AdminListings/{listingTypeId}/{listingId}/grants");
+            dealsTask = _apiClient.GetAsync<List<DealRowDto>>($"AdminDeals/listing/{listingTypeId}/{listingId}");
         }
 
         if (grantsTask != null)
         {
-            await Task.WhenAll(detailTask, lookupsTask, photosTask, grantsTask, leadsTask, alertsTask);
+            var tasks = new List<Task> { detailTask, lookupsTask, photosTask, grantsTask, leadsTask, alertsTask };
+            if (dealsTask != null)
+            {
+                tasks.Add(dealsTask);
+            }
+            await Task.WhenAll(tasks);
         }
         else
         {
-            await Task.WhenAll(detailTask, lookupsTask, photosTask, leadsTask, alertsTask);
+            var tasks = new List<Task> { detailTask, lookupsTask, photosTask, leadsTask, alertsTask };
+            if (dealsTask != null)
+            {
+                tasks.Add(dealsTask);
+            }
+            await Task.WhenAll(tasks);
         }
 
         var detailResult = await detailTask;
@@ -232,6 +245,7 @@ public sealed class ListingsController : Controller
         }
 
         var grantsResult = grantsTask != null ? await grantsTask : null;
+        var dealsResult = dealsTask != null ? await dealsTask : null;
 
         var viewModel = new ListingFormViewModel
         {
@@ -242,6 +256,7 @@ public sealed class ListingsController : Controller
             Grants = grantsResult?.Data ?? new List<ListingAccessGrantDto>(),
             Leads = (leadsResult.Success && leadsResult.Data != null) ? leadsResult.Data : new List<LeadRowDto>(),
             Alerts = (alertsResult.Success && alertsResult.Data != null) ? alertsResult.Data : new ListingAlertsForListingDto(),
+            Deals = dealsResult?.Data ?? new List<DealRowDto>(),
             CurrentStatus = detailResult.Data.Listing.PropertyStatus,
             BestDeals = detailResult.Data.Listing.BestDeals ?? detailResult.Data.BestDeals ?? false,
             Latitude = detailResult.Data.Listing.Latitude ?? detailResult.Data.Latitude,

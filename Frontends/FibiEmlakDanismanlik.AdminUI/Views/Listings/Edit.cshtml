@@ -1066,6 +1066,10 @@
             {
                 <partial name="_ListingLeadsCard" model="Model.Leads" />
                 <partial name="_ListingAlertsCard" model="new ListingAlertsCardModel { Data = Model.Alerts, ListingTypeId = Model.Form.ListingTypeId, ListingId = Model.Form.ListingId ?? 0 }" />
+                @if (CurrentAdmin.IsManagerOrAbove)
+                {
+                    <partial name="_ListingDealsCard" model="new FibiEmlakDanismanlik.AdminUI.Models.Deals.ListingDealsCardModel { Deals = Model.Deals, ListingTypeId = Model.Form.ListingTypeId, ListingId = Model.Form.ListingId ?? 0, ListingStatus = Model.CurrentStatus }" />
+                }
             }
 
             <!-- 3. Vitrin Kartı (Sahip/Yönetici) -->

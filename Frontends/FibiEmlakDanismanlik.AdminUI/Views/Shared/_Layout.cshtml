@@ -9,6 +9,7 @@
     bool isKiralik = isListings && string.Equals(currentTur, "kiralik", StringComparison.OrdinalIgnoreCase);
     bool isLeads = string.Equals(currentController, "Leads", StringComparison.OrdinalIgnoreCase);
     bool isListingAlerts = string.Equals(currentController, "ListingAlerts", StringComparison.OrdinalIgnoreCase);
+    bool isDeals = string.Equals(currentController, "Deals", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
 <html lang="tr">
@@ -135,10 +136,9 @@
       @if (CurrentAdmin.IsManagerOrAbove)
       {
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#">
+          <a class="nav-link @(isDeals ? "" : "collapsed")" href="/islemler">
             <i class="bi bi-cash-stack"></i>
             <span>İşlemler ve Hak Ediş</span>
-            <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
           </a>
         </li>
 

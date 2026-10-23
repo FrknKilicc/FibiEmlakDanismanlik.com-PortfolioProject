@@ -19,6 +19,7 @@ public sealed class ListingFormViewModel
     public List<ListingAccessGrantDto> Grants { get; set; } = new();
     public List<LeadRowDto> Leads { get; set; } = new();
     public ListingAlertsForListingDto Alerts { get; set; } = new();
+    public List<FibiEmlakDanismanlik.AdminUI.Models.Deals.DealRowDto> Deals { get; set; } = new();
     public string? CurrentStatus { get; set; }
     public bool BestDeals { get; set; }
     public decimal? Latitude { get; set; }
