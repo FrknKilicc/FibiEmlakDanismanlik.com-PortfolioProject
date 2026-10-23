@@ -1,7 +1,9 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPropertyListingCommands;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPropertyListingCommands;
 using FibiEmlakDanismanlik.Application.Features.Commands.RentalHousingPropertyListingCommands;
 using FibiEmlakDanismanlik.Application.Features.Queries.ForRentalHousingListingQueries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
@@ -19,6 +21,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             _mediator = mediator;
         }
 
+        [Authorize(Policy = AuthConstants.PolicyStaff)]
         [HttpPost]
 
         public async Task<IActionResult> CreateForRentalHousingListing(CreateRentalHousingPropertyListingCommand command)

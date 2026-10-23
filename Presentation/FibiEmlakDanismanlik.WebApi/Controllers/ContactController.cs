@@ -1,4 +1,5 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.ContactCommands;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Commands.ContactCommands;
 using FibiEmlakDanismanlik.Application.Features.Queries.ContactQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -32,21 +33,21 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _mediator.Send(new GetContactByIdQuery(id));
             return Ok(value);
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateContact(CreateContactCommand command)
         {
             await _mediator.Send(command);
             return Ok("İletişim Bilgisi Başarıyla Eklendi");
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateContact(UpdateContactCommand command)
         {
             await _mediator.Send(command);
             return Ok("İletişim Bilgisi Başarıyla Güncellendi");
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveContact(int id)
         {

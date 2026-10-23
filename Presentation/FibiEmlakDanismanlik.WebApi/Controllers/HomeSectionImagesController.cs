@@ -1,3 +1,4 @@
+using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Exceptions;
 using FibiEmlakDanismanlik.Application.Features.Commands.HomeSectionImageCommands;
 using FibiEmlakDanismanlik.Application.Features.Queries.HomeSectionImageQueries;
@@ -39,7 +40,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok(value);
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateHomeSectionImage([FromBody] CreateHomeSectionImageCommand command)
         {
@@ -58,7 +59,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateHomeSectionImage([FromBody] UpdateHomeSectionImageCommand command)
         {
@@ -81,7 +82,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveHomeSectionImage(int id)
         {

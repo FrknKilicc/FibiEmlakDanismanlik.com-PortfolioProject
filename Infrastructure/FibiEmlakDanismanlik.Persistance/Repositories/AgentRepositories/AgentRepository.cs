@@ -55,5 +55,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AgentRepositories
                 .Take(take)
                 .ToListAsync();
         }
+
+        public async Task<AgentAuthState?> GetAuthStateAsync(int agentId)
+        {
+            return await _context.Agents
+                .AsNoTracking()
+                .Where(x => x.AgentId == agentId)
+                .Select(x => new AgentAuthState(x.IsActive, x.SecurityStamp, x.Role))
+                .FirstOrDefaultAsync();
+        }
     }
 }

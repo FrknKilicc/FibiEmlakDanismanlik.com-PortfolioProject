@@ -1,3 +1,4 @@
+using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Exceptions;
 using FibiEmlakDanismanlik.Application.Features.Commands.AgentCommands;
 using FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers;
@@ -42,7 +43,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             }
             return Ok(value);
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateAgent(CreateAgentCommand command)
         {
@@ -56,7 +57,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
                 return Conflict(ex.Message);
             }
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateAgent(UpdateAgentCommand command)
         {
@@ -70,7 +71,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
                 return Conflict(ex.Message);
             }
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveAgent(int id)
         {

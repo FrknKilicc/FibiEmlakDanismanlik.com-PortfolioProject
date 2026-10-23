@@ -1,3 +1,4 @@
+using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Commands.TestimonialsCommands;
 using FibiEmlakDanismanlik.Application.Features.Queries.TestimonialsQueries;
 using MediatR;
@@ -38,7 +39,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok(value);
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateTestimonial([FromBody] CreateTestimonialCommand command)
         {
@@ -53,7 +54,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateTestimonial([FromBody] UpdateTestimonialCommand command)
         {
@@ -72,7 +73,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveTestimonial(int id)
         {

@@ -16,5 +16,9 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.AgentInterfaces
         /// Yalnızca sitede görünen aktif danışmanları sayfalanmış olarak döndürür.
         /// </summary>
         Task<List<Agent>> GetPagedAsync(int skip, int take);
+        /// <summary>
+        /// Danışmanın geçerli oturum ve yetki durumunu döndürür.
+        /// </summary>
+        Task<AgentAuthState?> GetAuthStateAsync(int agentId);
     }
 }

@@ -1,4 +1,5 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.AboutUsCommands;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Commands.AboutUsCommands;
 using FibiEmlakDanismanlik.Application.Features.Queries.AboutUsQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -38,14 +39,14 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             }
             return Ok(value);
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateAboutUs(CreateAboutUsCommand command)
         {
             await _mediator.Send(command);
             return Ok("Hakkımızda Bilgisi Başarıyla Eklendi");
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateAboutUs(UpdateAboutUsCommand command)
         {
@@ -53,7 +54,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok("Hakkımızda Bilgisi Başarıyla Güncellendi");
 
         }
-        [Authorize]
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveAboutUs(int id)
         {

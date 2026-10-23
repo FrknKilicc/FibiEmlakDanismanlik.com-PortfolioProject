@@ -32,10 +32,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.RateLimiting;
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Infrastructure;
 using FibiEmlakDanismanlik.WebApi.ExceptionHandlers;
+using FibiEmlakDanismanlik.WebApi.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,8 +102,57 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(JwtTokenGenerator.GetSigningKey(builder.Configuration)),
             ClockSkew = TimeSpan.FromMinutes(1)
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var nameIdClaim = context.Principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!int.TryParse(nameIdClaim, out var agentId))
+                {
+                    context.Fail("Oturum geçersiz.");
+                    return;
+                }
+
+                var cache = context.HttpContext.RequestServices.GetRequiredService<IMemoryCache>();
+                var repository = context.HttpContext.RequestServices.GetRequiredService<IAgentRepository>();
+
+                var cacheKey = AuthConstants.AuthStateCacheKey(agentId);
+                var authState = await cache.GetOrCreateAsync(cacheKey, async entry =>
+                {
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(AuthConstants.AuthStateCacheSeconds);
+                    return await repository.GetAuthStateAsync(agentId);
+                });
+
+                var tokenSecurityStamp = context.Principal?.FindFirst(AuthConstants.SecurityStampClaimType)?.Value;
+                var tokenRole = context.Principal?.FindFirst(ClaimTypes.Role)?.Value;
+
+                if (authState == null || !authState.IsActive || tokenSecurityStamp != authState.SecurityStamp || tokenRole != authState.Role.ToString())
+                {
+                    context.Fail("Oturum geçersiz.");
+                }
+            }
+        };
     });
 
+builder.Services.AddAuthorization(options =>
+{
+    var staffPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .RequireRole(AuthConstants.RoleOwner, AuthConstants.RoleManager, AuthConstants.RoleConsultant)
+        .Build();
+
+    options.AddPolicy(AuthConstants.PolicyStaff, staffPolicy);
+    options.AddPolicy(AuthConstants.PolicyManagerOrAbove, policy =>
+        policy.RequireAuthenticatedUser().RequireRole(AuthConstants.RoleOwner, AuthConstants.RoleManager));
+    options.AddPolicy(AuthConstants.PolicyOwnerOnly, policy =>
+        policy.RequireAuthenticatedUser().RequireRole(AuthConstants.RoleOwner));
+
+    options.DefaultPolicy = staffPolicy;
+});
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddMemoryCache();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 //Configure IRepositories 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
