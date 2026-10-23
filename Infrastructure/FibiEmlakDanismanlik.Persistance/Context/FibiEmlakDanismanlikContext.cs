@@ -132,6 +132,8 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<LeadActivity> LeadActivities { get; set; }
         public DbSet<ListingAlert> ListingAlerts { get; set; }
         public DbSet<ListingAlertMatch> ListingAlertMatches { get; set; }
+        public DbSet<ListingDeal> ListingDeals { get; set; }
+        public DbSet<DealShare> DealShares { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -829,6 +831,113 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                       .IsUnique();
 
                 entity.HasIndex(x => new { x.ListingTypeId, x.ListingId });
+            });
+
+            // ListingDeal: İlan satış ve kiralama işlem kayıtları
+            modelBuilder.Entity<ListingDeal>(entity =>
+            {
+                entity.Property(x => x.AgreedPrice)
+                      .HasPrecision(18, 2);
+
+                entity.Property(x => x.DepositAmount)
+                      .HasPrecision(18, 2);
+
+                entity.Property(x => x.BuyerCommissionRate)
+                      .HasPrecision(5, 2);
+
+                entity.Property(x => x.SellerCommissionRate)
+                      .HasPrecision(5, 2);
+
+                entity.Property(x => x.BuyerCommissionAmount)
+                      .HasPrecision(18, 2);
+
+                entity.Property(x => x.SellerCommissionAmount)
+                      .HasPrecision(18, 2);
+
+                entity.Property(x => x.DepositRefundAmount)
+                      .HasPrecision(18, 2);
+
+                entity.Property(x => x.DealType)
+                      .HasConversion<int>();
+
+                entity.Property(x => x.Status)
+                      .HasConversion<int>()
+                      .HasDefaultValue(DealStatus.DepositReceived)
+                      .ValueGeneratedNever();
+
+                entity.Property(x => x.DepositOutcome)
+                      .HasConversion<int>();
+
+                entity.Property(x => x.DepositDate)
+                      .HasColumnType("date");
+
+                entity.Property(x => x.DepositRefundDate)
+                      .HasColumnType("date");
+
+                entity.Property(x => x.CompletedDate)
+                      .HasColumnType("date");
+
+                entity.Property(x => x.CancelledDate)
+                      .HasColumnType("date");
+
+                entity.Property(x => x.CustomerName)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.Property(x => x.CustomerPhone)
+                      .HasMaxLength(20);
+
+                entity.Property(x => x.Notes)
+                      .HasMaxLength(2000);
+
+                entity.HasOne<Agent>()
+                      .WithMany()
+                      .HasForeignKey(x => x.CreatedByAgentId)
+                      .OnDelete(DeleteBehavior.SetNull);
+
+                entity.Ignore(x => x.TotalCommission);
+
+                entity.HasIndex(x => new { x.ListingTypeId, x.ListingId });
+                entity.HasIndex(x => new { x.Status, x.CompletedDate });
+            });
+
+            // DealShare: İşlemden personele düşen prim / hak ediş payları
+            modelBuilder.Entity<DealShare>(entity =>
+            {
+                entity.Property(x => x.SharePercent)
+                      .HasPrecision(5, 2);
+
+                entity.Property(x => x.Amount)
+                      .HasPrecision(18, 2);
+
+                entity.Property(x => x.RoleAtDeal)
+                      .HasConversion<int>();
+
+                entity.Property(x => x.PaymentStatus)
+                      .HasConversion<int>()
+                      .HasDefaultValue(DealSharePaymentStatus.Pending)
+                      .ValueGeneratedNever();
+
+                entity.Property(x => x.PaidDate)
+                      .HasColumnType("date");
+
+                entity.Property(x => x.Note)
+                      .HasMaxLength(500);
+
+                entity.HasOne(x => x.ListingDeal)
+                      .WithMany(x => x.Shares)
+                      .HasForeignKey(x => x.ListingDealId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne<Agent>()
+                      .WithMany()
+                      .HasForeignKey(x => x.AgentId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => new { x.ListingDealId, x.AgentId })
+                      .IsUnique();
+
+                entity.HasIndex(x => new { x.AgentId, x.PaymentStatus });
             });
 
             // İlanların il/ilçe ilişkileri ve indeksleri

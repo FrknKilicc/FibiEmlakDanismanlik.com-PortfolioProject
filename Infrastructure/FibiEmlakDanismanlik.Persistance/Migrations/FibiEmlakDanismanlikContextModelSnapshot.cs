@@ -644,6 +644,55 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("customerContacts");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.DealShare", b =>
+                {
+                    b.Property<int>("DealShareId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DealShareId"));
+
+                    b.Property<int>("AgentId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ListingDealId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("PaidDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<int>("RoleAtDeal")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("SharePercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.HasKey("DealShareId");
+
+                    b.HasIndex("AgentId", "PaymentStatus");
+
+                    b.HasIndex("ListingDealId", "AgentId")
+                        .IsUnique();
+
+                    b.ToTable("DealShares");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.District", b =>
                 {
                     b.Property<int>("DistrictId")
@@ -1860,6 +1909,103 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("ListingAlertMatches");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingDeal", b =>
+                {
+                    b.Property<int>("ListingDealId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ListingDealId"));
+
+                    b.Property<decimal>("AgreedPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("BuyerCommissionAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("BuyerCommissionRate")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime?>("CancelledDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("CompletedDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatedByAgentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("CustomerPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("DealType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("DepositAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("DepositDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("DepositOutcome")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("DepositRefundAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("DepositRefundDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("ListingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ListingTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<decimal?>("SellerCommissionAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("SellerCommissionRate")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ListingDealId");
+
+                    b.HasIndex("CreatedByAgentId");
+
+                    b.HasIndex("ListingTypeId", "ListingId");
+
+                    b.HasIndex("Status", "CompletedDate");
+
+                    b.ToTable("ListingDeals");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingGeoPoint", b =>
@@ -3177,6 +3323,23 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.DealShare", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Agent", null)
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.ListingDeal", "ListingDeal")
+                        .WithMany("Shares")
+                        .HasForeignKey("ListingDealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ListingDeal");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.District", b =>
                 {
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.City", "City")
@@ -3441,6 +3604,14 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Navigation("ListingAlert");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingDeal", b =>
+                {
+                    b.HasOne("FibiEmlakDanismanlik.Domain.Entities.Agent", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedByAgentId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingNearbyPlace", b =>
                 {
                     b.HasOne("FibiEmlakDanismanlik.Domain.Entities.NearbyCategory", "NearbyCategory")
@@ -3668,6 +3839,11 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingAlert", b =>
                 {
                     b.Navigation("Matches");
+                });
+
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.ListingDeal", b =>
+                {
+                    b.Navigation("Shares");
                 });
 
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.NearbyCategory", b =>
