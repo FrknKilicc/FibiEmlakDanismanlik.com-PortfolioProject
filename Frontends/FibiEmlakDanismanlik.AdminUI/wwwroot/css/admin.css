@@ -1,0 +1,29 @@
+/* Fibi Yönetim Özel Stilleri */
+:root {
+  --fibi-accent: #2dbe6c;
+}
+
+/* Menü Yakında Rozeti */
+.badge-soon {
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 0.25em 0.55em;
+  border-radius: 0.25rem;
+  background-color: #6c757d;
+  color: #fff;
+  text-transform: lowercase;
+  letter-spacing: 0.3px;
+}
+
+/* Profil Açılır Menüsü Çıkış Butonu */
+.header .profile .dropdown-item button.logout-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}

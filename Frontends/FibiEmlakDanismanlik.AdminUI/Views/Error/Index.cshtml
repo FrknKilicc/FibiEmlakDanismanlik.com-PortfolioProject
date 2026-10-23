@@ -1,0 +1,38 @@
+@model int
+@{
+    Layout = "_AuthLayout";
+    var statusCode = Model;
+    string title;
+    string heading;
+    string message;
+
+    if (statusCode == 404)
+    {
+        title = "Sayfa Bulunamadı (404)";
+        heading = "404";
+        message = "Aradığınız sayfa bulunamadı.";
+    }
+    else if (statusCode == 403)
+    {
+        title = "Yetkisiz Erişim (403)";
+        heading = "403";
+        message = "Bu sayfaya erişim yetkiniz yok.";
+    }
+    else
+    {
+        title = statusCode > 0 ? $"Hata ({statusCode})" : "Hata";
+        heading = statusCode > 0 ? statusCode.ToString() : "Hata";
+        message = "Bir hata oluştu.";
+    }
+
+    ViewData["Title"] = title;
+}
+
+<div class="text-center w-100">
+    <h1 class="display-1 fw-bold text-primary mb-2">@heading</h1>
+    <h2 class="fs-4 text-secondary mb-4">@message</h2>
+    <a class="btn btn-primary px-4 py-2 mb-3" href="/">Ana Sayfaya Dön</a>
+    <div class="my-3">
+        <img src="~/assets/img/not-found.svg" class="img-fluid py-2" style="max-height: 280px;" alt="Durum Görseli">
+    </div>
+</div>

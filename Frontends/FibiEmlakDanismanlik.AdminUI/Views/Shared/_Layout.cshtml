@@ -1,49 +1,203 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FibiEmlakDanismanlik.AdminUI</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/FibiEmlakDanismanlik.AdminUI.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FibiEmlakDanismanlik.AdminUI</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.CurrentAdmin CurrentAdmin
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    bool isDashboard = string.Equals(currentController, "Dashboard", StringComparison.OrdinalIgnoreCase);
+}
+<!DOCTYPE html>
+<html lang="tr">
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - FibiEmlakDanismanlik.AdminUI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>@ViewData["Title"] | Fibi Yönetim</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Favicons -->
+  <link href="~/assets/img/favicon.ico" rel="icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="~/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="~/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="~/assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="~/assets/css/style.css" rel="stylesheet">
+  <link href="~/css/admin.css" rel="stylesheet" asp-append-version="true">
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="/" class="logo d-flex align-items-center">
+        <img src="~/assets/img/logo.png" alt="Fibi Logo">
+        <span class="d-none d-lg-block">Fibi Yönetim</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn" title="Menüyü Daralt/Genişlet"></i>
+    </div><!-- End Logo -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-4 text-secondary"></i>
+            <span class="d-none d-md-block dropdown-toggle ps-2">@CurrentAdmin.Name</span>
+          </a><!-- End Profile Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>@CurrentAdmin.Name</h6>
+              <span>@CurrentAdmin.RoleDisplayName</span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <form action="/cikis" method="post" class="w-100 m-0 p-0">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="dropdown-item d-flex align-items-center text-danger py-2 border-0 bg-transparent">
+                  <i class="bi bi-box-arrow-right me-2"></i>
+                  <span>Çıkış Yap</span>
+                </button>
+              </form>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link @(isDashboard ? "" : "collapsed")" href="/">
+          <i class="bi bi-grid"></i>
+          <span>Kontrol Paneli</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <li class="nav-heading">İlanlar</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#">
+          <i class="bi bi-house-door"></i>
+          <span>Satılık İlanlar</span>
+          <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#">
+          <i class="bi bi-key"></i>
+          <span>Kiralık İlanlar</span>
+          <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#">
+          <i class="bi bi-chat-square-text"></i>
+          <span>Talepler</span>
+          <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
+        </a>
+      </li>
+
+      @if (CurrentAdmin.IsManagerOrAbove)
+      {
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#">
+            <i class="bi bi-cash-stack"></i>
+            <span>İşlemler ve Hak Ediş</span>
+            <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#">
+            <i class="bi bi-bar-chart-line"></i>
+            <span>Raporlar</span>
+            <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
+          </a>
+        </li>
+
+        <li class="nav-heading">Yönetim</li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#">
+            <i class="bi bi-people"></i>
+            <span>Kullanıcılar</span>
+            <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>İçerik</span>
+            <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#">
+            <i class="bi bi-shield-check"></i>
+            <span>Denetim Kaydı</span>
+            <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
+          </a>
+        </li>
+      }
+
+    </ul>
+
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+    @RenderBody()
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; @DateTime.UtcNow.Year <strong><span>Fibi Yapı Emlak & Danışmanlık</span></strong>. Tüm Hakları Saklıdır
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="~/assets/js/main.js"></script>
+
+  @await RenderSectionAsync("Scripts", required: false)
+
 </body>
+
 </html>
