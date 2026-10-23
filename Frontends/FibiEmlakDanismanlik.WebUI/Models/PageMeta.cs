@@ -10,6 +10,9 @@ namespace FibiEmlakDanismanlik.WebUI.Models
         public const string TitleItemKey = "PageTitle";
         public const string DescriptionItemKey = "PageDescription";
         public const string CanonicalItemKey = "CanonicalPath";
+        public const string ImageItemKey = "PageImage";
+        public const string OgTypeItemKey = "PageOgType";
+        public const string DefaultImagePath = "/images/page-title/page-title-bg.jpg";
         public const int DescriptionMaxLength = 155;
 
         /// <summary>
@@ -48,5 +51,8 @@ namespace FibiEmlakDanismanlik.WebUI.Models
         public string Description { get; set; } = string.Empty;
         public string CanonicalUrl { get; set; } = string.Empty;
         public string Robots { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
+        public string OgType { get; set; } = string.Empty;
+        public string SiteName { get; set; } = string.Empty;
     }
 }

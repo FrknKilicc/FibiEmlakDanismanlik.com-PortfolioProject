@@ -30,5 +30,35 @@ namespace FibiEmlakDanismanlik.WebUI.Models
                 return (phoneNumber, $"tel:{digits}");
             }
         }
+
+        /// <summary>
+        /// Yalnızca Türkiye cep telefonları (5XX) için WhatsApp uyumlu "905XXXXXXXXX" formatında numara döndürür;
+        /// sabit hat veya geçersiz numaralar için null döner.
+        /// </summary>
+        public static string? WhatsAppNumber(string? phoneNumber)
+        {
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                return null;
+            }
+
+            var digits = new string(phoneNumber.Where(char.IsDigit).ToArray());
+
+            if (digits.Length == 11 && digits.StartsWith('0'))
+            {
+                digits = digits[1..];
+            }
+            else if (digits.Length == 12 && digits.StartsWith("90"))
+            {
+                digits = digits[2..];
+            }
+
+            if (digits.Length == 10 && digits.StartsWith('5'))
+            {
+                return $"90{digits}";
+            }
+
+            return null;
+        }
     }
 }

@@ -1,0 +1,133 @@
+@model FibiEmlakDanismanlik.WebUI.Models.Footer.FooterViewModel
+@{
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+}
+
+<!-- Başlık Bandı -->
+<section class="page-title centred" style="background-image: url(/images/page-title/page-title-bg.jpg);">
+    <div class="auto-container">
+        <div class="content-box clearfix">
+            <h1>Gizlilik Politikası</h1>
+            <ul class="bread-crumb clearfix">
+                <li><a href="@Url.Action("Index","UILayout")">Anasayfa</a></li>
+                <li>Gizlilik Politikası</li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- Başlık Bandı Sonu -->
+
+<!-- İçerik Alanı -->
+<section class="sidebar-page-container blog-details sec-pad-2">
+    <div class="auto-container">
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 content-side">
+                <div class="legal-content">
+                    <h3>1. Veri Sorumlusu</h3>
+                    <p>6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, kişisel verileriniz veri sorumlusu sıfatıyla Fibi Yapı Emlak & Danışmanlık tarafından aşağıda açıklanan kapsam ve ilkeler çerçevesinde işlenmektedir. İletişim bilgilerimiz:</p>
+                    @if (Model.Contact != null)
+                    {
+                        var email = Model.Contact.EMail1?.ToLowerInvariant() ?? "";
+                        <div class="contact-info-box">
+                            @if (!string.IsNullOrWhiteSpace(Model.Contact.OfficeAddress))
+                            {
+                                <p><strong>Adres:</strong> @Model.Contact.OfficeAddress</p>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Model.PhoneDisplay) && !string.IsNullOrWhiteSpace(Model.PhoneHref))
+                            {
+                                <p><strong>Telefon:</strong> <a href="@Model.PhoneHref">@Model.PhoneDisplay</a></p>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(email))
+                            {
+                                <p><strong>E-posta:</strong> <a href="mailto:@email">@email</a></p>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p>Sorularınız veya başvurularınız için lütfen <a href="@Url.Action("Index", "Contact")">İletişim sayfamız</a> üzerinden bize ulaşın.</p>
+                    }
+
+                    <h3>2. Toplanan Kişisel Veriler</h3>
+                    <p>Sitemizde yalnızca kullanıcılarımızın bizzat ilgili formlar aracılığıyla paylaştığı ve hizmetlerimizin sunulabilmesi için gerekli olan veriler toplanmaktadır:</p>
+                    <ul>
+                        <li><strong>İletişim Formu:</strong> Ad, soyad, e-posta adresi, telefon numarası ve mesajınız.</li>
+                        <li><strong>İlan Detayı Randevu Formu:</strong> Ad, soyad, e-posta adresi, telefon numarası, talep edilen randevu tarihi ve saati ile ilgilendiğiniz ilan bilgisi.</li>
+                        <li><strong>FİBİ Hizmetleri Talep Formları:</strong> Ad, soyad, telefon numarası, isteğe bağlı e-posta adresi, seçilen mahalle/bölge bilgisi, hesaplama ve analiz özeti ile ek notunuz.</li>
+                        <li><strong>Onay Zamanı:</strong> Form gönderiminde verilen aydınlatma ve KVKK onayının zaman bilgisi (tarih ve saat).</li>
+                        <li><strong>Güvenlik Verisi (IP Adresi):</strong> Form gönderimleri esnasında kötü niyetli girişimleri, spam iletileri ve güvenlik tehditlerini önlemek amacıyla IP adresi yalnızca kısa süreliğine sunucu belleğinde geçici olarak tutulur; kalıcı veri tabanına kaydedilmez ve profilleme amacıyla işlenmez.</li>
+                    </ul>
+
+                    <h3>3. Kişisel Verilerin İşlenme Amaçları</h3>
+                    <p>Toplanan kişisel verileriniz aşağıdaki amaçlarla işlenmektedir:</p>
+                    <ul>
+                        <li>İlettiğiniz bilgi, teklif ve danışmanlık taleplerine gayrimenkul danışmanlarımızca dönüş sağlanması,</li>
+                        <li>İlgilendiğiniz gayrimenkuller için yer gösterme ve görüşme randevularının organize edilmesi,</li>
+                        <li>FİBİ hizmetleri (mahalle analizi, deprem risk analizi, finansman ve değerleme araçları) kapsamındaki taleplerinizin karşılanması,</li>
+                        <li>Web sitesi formlarının kötüye kullanımının, bot aktivitelerinin ve spam mesajların önlenmesi,</li>
+                        <li>Yürürlükteki mevzuattan kaynaklanan hukuki yükümlülüklerin yerine getirilmesi.</li>
+                    </ul>
+
+                    <h3>4. Kişisel Veri İşlemenin Hukuki Sebepleri</h3>
+                    <p>Kişisel verileriniz, KVKK'nın 5. maddesinde belirtilen aşağıdaki hukuki sebeplere dayalı olarak işlenmektedir:</p>
+                    <ul>
+                        <li>İlgili kişinin açık rızasının bulunması,</li>
+                        <li>Bir sözleşmenin kurulması veya ifasıyla doğrudan doğruya ilgili olması (danışmanlık veya randevu taleplerinin yanıtlanması),</li>
+                        <li>Veri sorumlusunun hukuki yükümlülüğünü yerine getirebilmesi için zorunlu olması,</li>
+                        <li>İlgili kişinin temel hak ve özgürlüklerine zarar vermemek kaydıyla, veri sorumlusunun meşru menfaatleri için veri işlenmesinin zorunlu olması (bilgi güvenliği ve kötüye kullanımın engellenmesi).</li>
+                    </ul>
+
+                    <h3>5. Kişisel Verilerin Aktarımı</h3>
+                    <p>Toplanan kişisel verileriniz hiçbir koşulda ticari amaçla satılmaz, kiralanmaz veya pazarlama amaçlı üçüncü şahıslara aktarılmaz. Verileriniz yalnızca:</p>
+                    <ul>
+                        <li>Mevzuat gereği adli veya idari makamlarca usulüne uygun talep edilmesi hâlinde yetkili resmî kurumlarla,</li>
+                        <li>Sitenin barındırma (hosting) ve teknik altyapısını yürüten hizmet sağlayıcılar ile altyapının gerektirdiği teknik sınırlar dâhilinde paylaşılabilir.</li>
+                    </ul>
+
+                    <h3>6. Üçüncü Taraf Hizmetleri</h3>
+                    <p>Web sitemizde kullanıcı deneyimini zenginleştirmek ve güvenliği sağlamak amacıyla sınırlı üçüncü taraf harici servisler kullanılmaktadır:</p>
+                    <ul>
+                        <li><strong>Harita Gösterimi:</strong> İlanların bölge haritaları OpenStreetMap sunucularından yüklenmektedir.</li>
+                        <li><strong>Yazı Tipleri (Fonts):</strong> Sitenin tipografi dosyaları Google Fonts üzerinden dinamik olarak çağrılmaktadır. Bu hizmetler yüklenirken tarayıcınızın IP adresi teknik zorunluluk olarak ilgili üçüncü taraf sunucuları tarafından görülebilir.</li>
+                        <li><strong>Form Güvenliği:</strong> Form gönderimlerinde bot trafiğini ve otomatik spam saldırılarını engellemek amacıyla isteğe bağlı olarak Cloudflare Turnstile doğrulama hizmeti kullanılabilir.</li>
+                    </ul>
+
+                    <h3>7. Çerezler ve Yerel Depolama (Local Storage)</h3>
+                    <p>Sitemiz ziyaretçilerin gizliliğine azami özen göstermektedir:</p>
+                    <ul>
+                        <li>Sitemizde reklam, yeniden hedefleme veya üçüncü taraf takip (izleme) çerezleri kullanılmamaktadır.</li>
+                        <li>İlanları birbiriyle kıyaslamanızı sağlayan ilan karşılaştırma listesi, yalnızca tarayıcınızın yerel depolama alanında (Local Storage) tutulur; sunucularımıza kaydedilmez. Tarayıcı geçmişinizi veya verilerinizi temizleyerek bu listeyi dilediğiniz zaman silebilirsiniz.</li>
+                    </ul>
+
+                    <h3>8. Saklama Süresi</h3>
+                    <p>Kişisel verileriniz, işleme amacının gerektirdiği süre boyunca ve Türk Borçlar Kanunu, Ticaret Kanunu ile ilgili yasal düzenlemelerde öngörülen zamanaşımı süreleri saklı kalmak kaydıyla muhafaza edilir. Süre bitiminde veya işleme şartları ortadan kalktığında verileriniz silinir, yok edilir veya anonimleştirilir.</p>
+
+                    <h3>9. KVKK Kapsamındaki Haklarınız ve Başvuru</h3>
+                    <p>KVKK'nın 11. maddesi uyarınca veri sahibi olarak aşağıdaki haklara sahipsiniz:</p>
+                    <ul>
+                        <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme,</li>
+                        <li>Kişisel verileriniz işlenmişse buna ilişkin bilgi talep etme,</li>
+                        <li>Kişisel verilerin işlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme,</li>
+                        <li>Yurt içinde veya yurt dışında kişisel verilerin aktarıldığı üçüncü kişileri bilme,</li>
+                        <li>Kişisel verilerin eksik veya yanlış işlenmiş olması hâlinde bunların düzeltilmesini isteme,</li>
+                        <li>KVKK ve ilgili kanun hükümlerine uygun işlenmiş olmasına rağmen işlenme sebeplerinin kalkması hâlinde verilerin silinmesini veya yok edilmesini talep etme,</li>
+                        <li>Düzeltme, silme ve yok edilme işlemlerinin verilerin aktarıldığı üçüncü kişilere bildirilmesini isteme,</li>
+                        <li>İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle aleyhinize bir sonucun ortaya çıkmasına itiraz etme,</li>
+                        <li>Kişisel verilerin kanuna aykırı işlenmesi sebebiyle zarara uğramanız hâlinde zararın giderilmesini talep etme.</li>
+                    </ul>
+                    <p>Haklarınıza ilişkin taleplerinizi, kimliğinizi doğrulayan bilgilerle birlikte yazılı olarak ofis adresimize ya da sistemimizde kayıtlı e-posta adresinizden yukarıdaki e-posta adresimize iletebilirsiniz. Başvurular en geç 30 gün içinde ücretsiz olarak sonuçlandırılır.</p>
+
+                    <h3>10. Değişiklikler</h3>
+                    <p>İşbu Gizlilik Politikası, yasal mevzuattaki düzenlemeler veya hizmet süreçlerimize bağlı olarak güncellenebilir. Güncel metin her zaman bu sayfada yayımlanmaktadır. Ayrıntılı aydınlatma metnimiz ayrıca yayımlanacaktır.</p>
+
+                    <div class="legal-date">Son güncelleme: 23 Ekim 2026</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- İçerik Alanı Sonu -->
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/legal-pages.css" asp-append-version="true" />
+}
