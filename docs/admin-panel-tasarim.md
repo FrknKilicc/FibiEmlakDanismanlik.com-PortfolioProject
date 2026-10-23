@@ -95,6 +95,7 @@ Geçiş, sırayla:
 Yükleme hattı:
 - Tek bir arayüz arkasında: `IFileStorage` (yerelde WebApi `wwwroot/uploads/listings/{yıl}/{ay}`, ileride blob).
 - Her görsel için 3 boy üretilir: 1600, 800 ve 400 piksel, WebP. Liste kartları küçük boyu kullanır; detay sayfası `srcset` ile duyarlı boyut seçer (TODO: WebP + srcset).
+- Barındırma: VPS (karar 2026-10-23). Dosyalar sunucu diskinde, `IFileStorage` arkasında; `yonetim.` alt alan adı reverse proxy (IIS/nginx) ile AdminUI'ye yönlenir.
 - Görsel kütüphanesi: SkiaSharp (MIT). ImageSharp'ın lisansı ticari kullanımda koşullu.
 
 ---
@@ -106,12 +107,12 @@ Yükleme hattı:
 |---|---|
 | `ListingId`, `ListingTypeId` | İlgili ilan |
 | `DealType` | Satış / Kiralama |
-| `Status` | Kapora Alındı → Tamamlandı / İptal (kapora iade edildi / yandı) |
+| `Status` | Kapora Alındı → Tamamlandı / İptal |
+| `DepositOutcome` | İptalde: Kapora alındı, geri verilmedi (varsayılan) / Kapora iade edildi; iade tarihi ve tutarı |
 | `AgreedPrice` | Anlaşılan satış bedeli veya aylık kira |
 | `DepositAmount`, `DepositDate` | Kapora |
 | `BuyerCommissionAmount`, `SellerCommissionAmount` | Komisyon kimden alındıysa o taraf dolar: yalnızca alıcı, yalnızca satıcı ya da ikisi. Satışta isteğe bağlı oran (%) girilince tutar hesaplanır, elle düzeltilebilir |
 | (kiralama) | Komisyon genellikle kiracıdan, bir kira bedeli; **tutar** olarak girilir (varsayılan = aylık kira), oran yok |
-| `VatIncluded` | Komisyona KDV dahil mi |
 | `CompletedDate`, `Notes` | |
 | `CustomerName`, `CustomerPhone` | KVKK kapsamında |
 
@@ -128,8 +129,9 @@ Tamamlanınca ilan durumu "Satıldı / Kiralandı" olur ve sitede yayından kalk
 | `Amount` | Hesaplanan prim |
 | `PaymentStatus`, `PaidDate` | Bekliyor / Ödendi |
 
-- Varsayılan prim oranları ayarlardan gelir (rol bazlı) ve danışman bazında ezilebilir: `Agents.DefaultSharePercent`.
-- Her işlemde oranlar ayrıca elle değiştirilebilir.
+- Bir işleme birden fazla çalışan eklenebilir (Danışman, Yönetici, Sahip).
+- Varsayılan prim oranı yok: her işlemde her kişi için oran (%) veya tutar elle girilir.
+- KDV hiç hesaba katılmaz; tüm tutarlar girildiği gibi.
 - Şirket payı = toplam komisyon − dağıtılan primler.
 - Raporlar: aylık/yıllık ciro (komisyon), danışman performansı, ödenecek primler.
 

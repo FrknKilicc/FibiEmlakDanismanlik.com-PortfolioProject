@@ -1,4 +1,4 @@
-# Fibi Emlak Danışmanlık — CLAUDE.md
+﻿# Fibi Emlak Danışmanlık — CLAUDE.md
 
 Bu dosya Claude Code'un projeyi tanıması için repo root'ta bulunur.
 Her oturumda otomatik okunur, context kaybı olmaz.
@@ -298,7 +298,7 @@ Ayrı proje `Frontends/FibiEmlakDanismanlik.AdminUI`, adres `yonetim.fibiemlak.c
 - [ ] Faz 3 — AdminUI iskeleti: NiceAdmin ayıklama + Türkçe, giriş + 2FA + captcha, cookie oturumu (JWT sunucuda), güvenlik başlıkları, noindex
 - [ ] Faz 4 — İlan yönetimi: satılık/kiralık ayrımlı liste ve sayılar, ekle/düzenle, fotoğraflar, vitrin (BestDeals), harita pini, durum, erişim izinleri
 - [ ] Faz 5 — Talepler: durum akışı, atama, `LeadActivities`, ilan bazlı müşteri durumu, haber bekleyenler (`ListingAlerts`)
-- [ ] Faz 6 — **Hak ediş**: ilan satılınca/kiralanınca kapora ve alıcı/satıcı komisyon oranları (`ListingDeals`); komisyondan Yönetici ve Danışman'a farklı oranlarda prim (`DealShares`, rol bazlı varsayılan + danışman/işlem bazında değiştirilebilir), ödeme durumu; şirket payı = komisyon − primler
+- [ ] Faz 6 — **Hak ediş**: ilan satılınca/kiralanınca kapora ve alıcı/satıcı komisyon oranları (`ListingDeals`); komisyondan Yönetici ve Danışman'a farklı oranlarda prim (`DealShares`; bir işleme birden fazla çalışan, varsayılan oran yok, her işlemde elle), ödeme durumu; KDV hesaba katılmaz; kapora iptalde varsayılan olarak geri verilmez, iade edildiyse ayrıca işaretlenir; kiralıkta komisyon kiracıdan bir kira bedeli (tutar); Danışman hiçbir tutarı görmez; şirket payı = komisyon − primler
 - [ ] Faz 7 — Kontrol paneli grafik ve raporları (Chart.js, animasyonlu sayaçlar, mobil uyumlu, CSV/Excel dışa aktarım)
 - [ ] Faz 8 — Kullanıcı yönetimi, içerik ekranları, ayarlar
 
