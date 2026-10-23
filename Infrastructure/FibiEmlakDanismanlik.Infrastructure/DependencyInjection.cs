@@ -39,6 +39,7 @@ namespace FibiEmlakDanismanlik.Infrastructure
 
             services.AddHttpClient("turnstile", c => c.Timeout = TimeSpan.FromSeconds(10));
             services.AddScoped<ICaptchaVerifier, TurnstileCaptchaVerifier>();
+            services.AddScoped<ITwoFactorService, TwoFactorService>();
 
             return services;
         }

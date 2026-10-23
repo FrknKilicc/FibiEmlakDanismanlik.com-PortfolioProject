@@ -29,6 +29,11 @@ public static class AuthConstants
     public const int ChallengeTokenMinutes = 10;
     public const int MinPasswordLength = 12;
 
+    // İki adımlı doğrulama (TOTP) ve kurtarma kodları sabitleri
+    public const string TotpIssuer = "Fibi Emlak Yönetim";
+    public const int RecoveryCodeCount = 10;
+    public const string TwoFactorProtectorPurpose = "FibiEmlak.TwoFactor.v1";
+
     // Challenge token doğrulaması için audience ve claim tipi
     public const string ChallengeAudience = "FibiEmlakDanismanlik.Challenge";
     public const string ChallengePurposeClaimType = "purpose";

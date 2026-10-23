@@ -39,5 +39,35 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
                 return Unauthorized("Oturum süresi doldu, yeniden giriş yapın.");
             return Ok(result);
         }
+
+        [AllowAnonymous]
+        [HttpPost("2fa/setup")]
+        public async Task<IActionResult> BeginTwoFactorSetup(BeginTwoFactorSetupCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result == null)
+                return Unauthorized("Doğrulama başarısız veya oturum süresi doldu.");
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("2fa/enable")]
+        public async Task<IActionResult> EnableTwoFactor(EnableTwoFactorCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result == null)
+                return Unauthorized("Doğrulama başarısız veya oturum süresi doldu.");
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("2fa/verify")]
+        public async Task<IActionResult> VerifyTwoFactor(VerifyTwoFactorCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result == null)
+                return Unauthorized("Doğrulama başarısız veya oturum süresi doldu.");
+            return Ok(result);
+        }
     }
 }

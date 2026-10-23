@@ -2,6 +2,7 @@ using FibiEmlakDanismanlik.Application.Interfaces.AgentInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,6 +64,47 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AgentRepositories
                 .Where(x => x.AgentId == agentId)
                 .Select(x => new AgentAuthState(x.IsActive, x.SecurityStamp, x.Role))
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<AgentRecoveryCode>> GetUnusedRecoveryCodesAsync(int agentId)
+        {
+            return await _context.AgentRecoveryCodes
+                .Where(x => x.AgentId == agentId && x.UsedAtUtc == null)
+                .ToListAsync();
+        }
+
+        public async Task ReplaceRecoveryCodesAsync(int agentId, IEnumerable<string> codeHashes)
+        {
+            var existingCodes = await _context.AgentRecoveryCodes
+                .Where(x => x.AgentId == agentId)
+                .ToListAsync();
+
+            if (existingCodes.Count > 0)
+            {
+                _context.AgentRecoveryCodes.RemoveRange(existingCodes);
+            }
+
+            var now = DateTime.UtcNow;
+            var newCodes = codeHashes.Select(hash => new AgentRecoveryCode
+            {
+                AgentId = agentId,
+                CodeHash = hash,
+                CreatedAtUtc = now,
+                UsedAtUtc = null
+            });
+
+            await _context.AgentRecoveryCodes.AddRangeAsync(newCodes);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task MarkRecoveryCodeUsedAsync(int agentRecoveryCodeId)
+        {
+            var code = await _context.AgentRecoveryCodes.FindAsync(agentRecoveryCodeId);
+            if (code != null)
+            {
+                code.UsedAtUtc = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

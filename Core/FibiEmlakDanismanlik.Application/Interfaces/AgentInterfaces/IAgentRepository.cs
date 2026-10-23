@@ -20,5 +20,20 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.AgentInterfaces
         /// Danışmanın geçerli oturum ve yetki durumunu döndürür.
         /// </summary>
         Task<AgentAuthState?> GetAuthStateAsync(int agentId);
+
+        /// <summary>
+        /// Danışmanın henüz kullanılmamış iki adımlı kurtarma kodlarını döndürür.
+        /// </summary>
+        Task<List<AgentRecoveryCode>> GetUnusedRecoveryCodesAsync(int agentId);
+
+        /// <summary>
+        /// Danışmanın mevcut tüm kurtarma kodlarını siler ve verilen yeni kod hash'lerini ekler.
+        /// </summary>
+        Task ReplaceRecoveryCodesAsync(int agentId, IEnumerable<string> codeHashes);
+
+        /// <summary>
+        /// Belirtilen kurtarma kodunu kullanıldı olarak işaretler.
+        /// </summary>
+        Task MarkRecoveryCodeUsedAsync(int agentRecoveryCodeId);
     }
 }

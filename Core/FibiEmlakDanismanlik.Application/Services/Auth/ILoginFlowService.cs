@@ -12,7 +12,7 @@ public interface ILoginFlowService
     /// <summary>
     /// Kimlik doğrulandıktan sonra akıştaki sıradaki adımı (şifre değişikliği, 2FA veya başarılı token) belirler ve tamamlar.
     /// </summary>
-    Task<GetLoginResult> CompleteAsync(Agent agent);
+    Task<GetLoginResult> CompleteAsync(Agent agent, bool twoFactorSatisfied = false);
 
     /// <summary>
     /// Başarısız giriş denemesini kaydeder; azami deneme sayısına ulaşılırsa hesabı kilitler.

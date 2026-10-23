@@ -35,7 +35,7 @@ public class LoginFlowService : ILoginFlowService
     /// <summary>
     /// Kimlik doğrulandıktan sonra sonraki adımı belirler ve akışı tamamlar.
     /// </summary>
-    public async Task<GetLoginResult> CompleteAsync(Agent agent)
+    public async Task<GetLoginResult> CompleteAsync(Agent agent, bool twoFactorSatisfied = false)
     {
         // 1. Şifre değiştirme zorunluluğu varsa challenge token üretilir
         if (agent.MustChangePassword)
@@ -52,34 +52,37 @@ public class LoginFlowService : ILoginFlowService
             };
         }
 
-        // 2. İki adımlı doğrulama (2FA) etkinleştirilmişse challenge token üretilir
-        if (agent.TwoFactorEnabled)
+        if (!twoFactorSatisfied)
         {
-            var challenge = ChallengeTokenHelper.Create(agent, AuthConstants.PurposeTwoFactor, _configuration);
-            return new GetLoginResult
+            // 2. İki adımlı doğrulama (2FA) etkinleştirilmişse challenge token üretilir
+            if (agent.TwoFactorEnabled)
             {
-                Status = AuthConstants.LoginStatusTwoFactorRequired,
-                ChallengeToken = challenge,
-                Token = null,
-                ExpireDate = null,
-                AgentName = agent.AgentName,
-                Role = agent.Role.ToString()
-            };
-        }
+                var challenge = ChallengeTokenHelper.Create(agent, AuthConstants.PurposeTwoFactor, _configuration);
+                return new GetLoginResult
+                {
+                    Status = AuthConstants.LoginStatusTwoFactorRequired,
+                    ChallengeToken = challenge,
+                    Token = null,
+                    ExpireDate = null,
+                    AgentName = agent.AgentName,
+                    Role = agent.Role.ToString()
+                };
+            }
 
-        // 3. Sahip veya Yönetici rollerinde 2FA kurulumu zorunludur
-        if (agent.Role == AgentRole.Owner || agent.Role == AgentRole.Manager)
-        {
-            var challenge = ChallengeTokenHelper.Create(agent, AuthConstants.PurposeTwoFactorSetup, _configuration);
-            return new GetLoginResult
+            // 3. Sahip veya Yönetici rollerinde 2FA kurulumu zorunludur
+            if (agent.Role == AgentRole.Owner || agent.Role == AgentRole.Manager)
             {
-                Status = AuthConstants.LoginStatusTwoFactorSetupRequired,
-                ChallengeToken = challenge,
-                Token = null,
-                ExpireDate = null,
-                AgentName = agent.AgentName,
-                Role = agent.Role.ToString()
-            };
+                var challenge = ChallengeTokenHelper.Create(agent, AuthConstants.PurposeTwoFactorSetup, _configuration);
+                return new GetLoginResult
+                {
+                    Status = AuthConstants.LoginStatusTwoFactorSetupRequired,
+                    ChallengeToken = challenge,
+                    Token = null,
+                    ExpireDate = null,
+                    AgentName = agent.AgentName,
+                    Role = agent.Role.ToString()
+                };
+            }
         }
 
         // 4. Tüm aşamalar tamamlandı: durum güncellenir, başarılı denetim kaydı yazılır ve JWT üretilir

@@ -39,6 +39,7 @@ using FibiEmlakDanismanlik.Infrastructure;
 using FibiEmlakDanismanlik.WebApi.ExceptionHandlers;
 using FibiEmlakDanismanlik.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -153,6 +154,13 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+// Data Protection anahtarları kalıcı dosya sisteminde saklanır; anahtarlar kaybolursa kayıtlı 2FA anahtarları çözülemez, sunucuda yedeklenmelidir.
+var dataProtection = builder.Services.AddDataProtection()
+    .SetApplicationName("FibiEmlakDanismanlik.WebApi")
+    .PersistKeysToFileSystem(new DirectoryInfo(builder.Configuration["DataProtection:KeysPath"] ?? Path.Combine(builder.Environment.ContentRootPath, "App_Data", "dp-keys")));
+if (OperatingSystem.IsWindows())
+    dataProtection.ProtectKeysWithDpapi(protectToLocalMachine: true);
 
 //Configure IRepositories 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
