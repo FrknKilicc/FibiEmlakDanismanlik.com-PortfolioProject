@@ -3,6 +3,10 @@
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
     var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
     bool isDashboard = string.Equals(currentController, "Dashboard", StringComparison.OrdinalIgnoreCase);
+    var currentTur = Context.Request.Query["tur"].ToString();
+    bool isListings = string.Equals(currentController, "Listings", StringComparison.OrdinalIgnoreCase);
+    bool isSatilik = isListings && string.Equals(currentTur, "satilik", StringComparison.OrdinalIgnoreCase);
+    bool isKiralik = isListings && string.Equals(currentTur, "kiralik", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
 <html lang="tr">
@@ -98,18 +102,16 @@
       <li class="nav-heading">İlanlar</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link @(isSatilik ? "" : "collapsed")" href="/ilanlar?tur=satilik">
           <i class="bi bi-house-door"></i>
           <span>Satılık İlanlar</span>
-          <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
         </a>
       </li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#">
+        <a class="nav-link @(isKiralik ? "" : "collapsed")" href="/ilanlar?tur=kiralik">
           <i class="bi bi-key"></i>
           <span>Kiralık İlanlar</span>
-          <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
         </a>
       </li>
 

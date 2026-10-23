@@ -1,0 +1,490 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.Listings.ListingIndexViewModel
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.CurrentAdmin CurrentAdmin
+@{
+    var pageTitle = "İlanlar";
+    if (string.Equals(Model.Tur, "satilik", StringComparison.OrdinalIgnoreCase))
+    {
+        pageTitle = "Satılık İlanlar";
+    }
+    else if (string.Equals(Model.Tur, "kiralik", StringComparison.OrdinalIgnoreCase))
+    {
+        pageTitle = "Kiralık İlanlar";
+    }
+    ViewData["Title"] = pageTitle;
+
+    var totalItems = Model.Response.Total;
+    var currentPage = Model.Sayfa;
+    var pageSize = Model.Response.PageSize > 0 ? Model.Response.PageSize : 20;
+    var totalPages = Model.TotalPages;
+    var startItem = totalItems == 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+    var endItem = Math.Min(currentPage * pageSize, totalItems);
+
+    // En fazla 7 sayfa numarası hesaplama
+    int startPage = 1;
+    int endPage = totalPages;
+    if (totalPages > 7)
+    {
+        startPage = Math.Max(1, currentPage - 3);
+        endPage = Math.Min(totalPages, startPage + 6);
+        if (endPage - startPage < 6)
+        {
+            startPage = Math.Max(1, endPage - 6);
+        }
+    }
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1>@pageTitle</h1>
+        <nav>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item active">@pageTitle</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Yeni İlan Açılır Menüsü (Bootstrap Dropdown) -->
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle shadow-sm" type="button" id="dropdownYeniIlan" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-plus-lg me-1"></i> Yeni İlan Ekle
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="dropdownYeniIlan">
+            <li><h6 class="dropdown-header text-uppercase fw-bold text-primary">Satılık</h6></li>
+            <li><a class="dropdown-item" href="/ilanlar/yeni?tur=2"><i class="bi bi-house me-2 text-muted"></i>Satılık Konut</a></li>
+            <li><a class="dropdown-item" href="/ilanlar/yeni?tur=1"><i class="bi bi-bounding-box me-2 text-muted"></i>Satılık Arsa</a></li>
+            <li><a class="dropdown-item" href="/ilanlar/yeni?tur=3"><i class="bi bi-building me-2 text-muted"></i>Satılık İşyeri</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header text-uppercase fw-bold text-success">Kiralık</h6></li>
+            <li><a class="dropdown-item" href="/ilanlar/yeni?tur=8"><i class="bi bi-house me-2 text-muted"></i>Kiralık Konut</a></li>
+            <li><a class="dropdown-item" href="/ilanlar/yeni?tur=7"><i class="bi bi-bounding-box me-2 text-muted"></i>Kiralık Arsa</a></li>
+            <li><a class="dropdown-item" href="/ilanlar/yeni?tur=9"><i class="bi bi-building me-2 text-muted"></i>Kiralık İşyeri</a></li>
+        </ul>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<!-- Özet Kartları (NiceAdmin info-card) -->
+<section class="section dashboard pb-0">
+    <div class="row g-3 mb-4">
+        <!-- Toplam İlan Kartı -->
+        <div class="col-xxl-3 col-md-6">
+            <a href="/ilanlar" class="text-decoration-none text-dark d-block h-100">
+                <div class="card info-card sales-card h-100 hover-card">
+                    <div class="card-body">
+                        <h5 class="card-title p-0 pt-3 pb-2">Toplam İlan</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-collection"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>@Model.Response.Summary.Total</h6>
+                                <span class="text-muted small pt-1">Tüm portföy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Satılık İlan Kartı -->
+        <div class="col-xxl-3 col-md-6">
+            <a href="/ilanlar?tur=satilik" class="text-decoration-none text-dark d-block h-100">
+                <div class="card info-card revenue-card h-100 hover-card">
+                    <div class="card-body">
+                        <h5 class="card-title p-0 pt-3 pb-2">Satılık İlanlar</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-house-door"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>@Model.Response.Summary.SaleTotal</h6>
+                                <span class="text-muted small pt-1 d-block">
+                                    Konut: @Model.Response.Summary.ByCategorySale.Housing &bull;
+                                    Arsa: @Model.Response.Summary.ByCategorySale.Land &bull;
+                                    İşyeri: @Model.Response.Summary.ByCategorySale.Commercial
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Kiralık İlan Kartı -->
+        <div class="col-xxl-3 col-md-6">
+            <a href="/ilanlar?tur=kiralik" class="text-decoration-none text-dark d-block h-100">
+                <div class="card info-card customers-card h-100 hover-card">
+                    <div class="card-body">
+                        <h5 class="card-title p-0 pt-3 pb-2">Kiralık İlanlar</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="bi bi-key"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>@Model.Response.Summary.RentTotal</h6>
+                                <span class="text-muted small pt-1 d-block">
+                                    Konut: @Model.Response.Summary.ByCategoryRent.Housing &bull;
+                                    Arsa: @Model.Response.Summary.ByCategoryRent.Land &bull;
+                                    İşyeri: @Model.Response.Summary.ByCategoryRent.Commercial
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Vitrin Kartı -->
+        <div class="col-xxl-3 col-md-6">
+            <a href="/ilanlar" class="text-decoration-none text-dark d-block h-100">
+                <div class="card info-card h-100 hover-card">
+                    <div class="card-body">
+                        <h5 class="card-title p-0 pt-3 pb-2">Vitrin (Fırsat)</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center text-warning bg-warning-subtle">
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <div class="ps-3">
+                                <h6>@(Model.Response.Summary.BestDealsSale + Model.Response.Summary.BestDealsRent)</h6>
+                                <span class="text-muted small pt-1 d-block">
+                                    Satılık: @Model.Response.Summary.BestDealsSale/5 &bull; Kiralık: @Model.Response.Summary.BestDealsRent/5
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Sekmeler / Düğmeler (Tümü / Satılık / Kiralık) -->
+<div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+    <div class="btn-group" role="group" aria-label="İlan Türü">
+        <a href="/ilanlar" class="btn btn-sm @(string.IsNullOrEmpty(Model.Tur) ? "btn-primary" : "btn-outline-primary")">
+            Tümü (@Model.Response.Summary.Total)
+        </a>
+        <a href="/ilanlar?tur=satilik" class="btn btn-sm @(string.Equals(Model.Tur, "satilik", StringComparison.OrdinalIgnoreCase) ? "btn-primary" : "btn-outline-primary")">
+            Satılık (@Model.Response.Summary.SaleTotal)
+        </a>
+        <a href="/ilanlar?tur=kiralik" class="btn btn-sm @(string.Equals(Model.Tur, "kiralik", StringComparison.OrdinalIgnoreCase) ? "btn-primary" : "btn-outline-primary")">
+            Kiralık (@Model.Response.Summary.RentTotal)
+        </a>
+    </div>
+</div>
+
+<!-- Filtreleme Formu (GET) -->
+<div class="card mb-4 shadow-sm border-0">
+    <div class="card-body pt-3">
+        <form method="get" action="/ilanlar" class="row g-2 align-items-end">
+            @if (!string.IsNullOrWhiteSpace(Model.Tur))
+            {
+                <input type="hidden" name="tur" value="@Model.Tur" />
+            }
+
+            <div class="col-lg-3 col-md-6 col-sm-12">
+                <label for="filterAra" class="form-label small fw-semibold text-muted mb-1">Arama</label>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control form-control-sm" id="filterAra" name="ara" value="@Model.Ara" placeholder="İlan no, başlık, ilçe..." />
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label for="filterKategori" class="form-label small fw-semibold text-muted mb-1">Kategori</label>
+                <select class="form-select form-select-sm" id="filterKategori" name="kategori">
+                    <option value="">Tüm Kategoriler</option>
+                    <option value="konut" selected="@(string.Equals(Model.Kategori, "konut", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">Konut</option>
+                    <option value="arsa" selected="@(string.Equals(Model.Kategori, "arsa", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">Arsa</option>
+                    <option value="isyeri" selected="@(string.Equals(Model.Kategori, "isyeri", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">İşyeri</option>
+                </select>
+            </div>
+
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label for="filterDurum" class="form-label small fw-semibold text-muted mb-1">Durum</label>
+                <select class="form-select form-select-sm" id="filterDurum" name="durum">
+                    <option value="">Tüm Durumlar</option>
+                    @if (Model.Lookups.Statuses != null && Model.Lookups.Statuses.Any())
+                    {
+                        foreach (var st in Model.Lookups.Statuses)
+                        {
+                            <option value="@st" selected="@(string.Equals(Model.Durum, st, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@st</option>
+                        }
+                    }
+                    else
+                    {
+                        var defaultStatuses = new[] { "Aktif", "Opsiyonlu", "Pasif", "Satıldı", "Kiralandı" };
+                        foreach (var st in defaultStatuses)
+                        {
+                            <option value="@st" selected="@(string.Equals(Model.Durum, st, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@st</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            @if (CurrentAdmin.IsManagerOrAbove && Model.Lookups.Agents != null && Model.Lookups.Agents.Any())
+            {
+                <div class="col-lg-2 col-md-4 col-sm-6">
+                    <label for="filterDanisman" class="form-label small fw-semibold text-muted mb-1">Danışman</label>
+                    <select class="form-select form-select-sm" id="filterDanisman" name="danisman">
+                        <option value="">Tüm Danışmanlar</option>
+                        @foreach (var ag in Model.Lookups.Agents)
+                        {
+                            <option value="@ag.AgentId" selected="@(Model.DanismanId == ag.AgentId ? "selected" : null)">@ag.AgentName</option>
+                        }
+                    </select>
+                </div>
+            }
+
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <label for="filterSirala" class="form-label small fw-semibold text-muted mb-1">Sıralama</label>
+                <select class="form-select form-select-sm" id="filterSirala" name="sirala">
+                    <option value="newest" selected="@(string.Equals(Model.Sirala, "newest", StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(Model.Sirala) ? "selected" : null)">En Yeni</option>
+                    <option value="oldest" selected="@(string.Equals(Model.Sirala, "oldest", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">En Eski</option>
+                    <option value="price_asc" selected="@(string.Equals(Model.Sirala, "price_asc", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">Fiyata Göre Artan</option>
+                    <option value="price_desc" selected="@(string.Equals(Model.Sirala, "price_desc", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">Fiyata Göre Azalan</option>
+                </select>
+            </div>
+
+            <div class="col-auto d-flex gap-2 ms-auto mt-2">
+                <button type="submit" class="btn btn-sm btn-primary px-3">
+                    <i class="bi bi-funnel me-1"></i> Filtrele
+                </button>
+                <a href="@(string.IsNullOrWhiteSpace(Model.Tur) ? "/ilanlar" : $"/ilanlar?tur={Model.Tur}")" class="btn btn-sm btn-outline-secondary px-3">
+                    <i class="bi bi-x-circle me-1"></i> Temizle
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.Response.Items == null || !Model.Response.Items.Any())
+{
+    <!-- Sonuç Bulunamadı Kutusu -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+            <h5 class="fw-semibold text-secondary">Bu filtrelerle ilan bulunamadı.</h5>
+            <p class="text-muted small mb-3">Arama kriterlerinizi değiştirerek veya filtreleri temizleyerek tekrar deneyebilirsiniz.</p>
+            <a href="@(string.IsNullOrWhiteSpace(Model.Tur) ? "/ilanlar" : $"/ilanlar?tur={Model.Tur}")" class="btn btn-sm btn-outline-primary px-4">
+                Filtreleri Temizle
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <!-- Masaüstü Tablo Görünümü (d-none d-md-block) -->
+    <div class="card border-0 shadow-sm d-none d-md-block mb-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-muted small text-uppercase">
+                        <tr>
+                            <th scope="col" style="width: 76px;" class="ps-3">Görsel</th>
+                            <th scope="col">İlan</th>
+                            <th scope="col">Kategori</th>
+                            <th scope="col">Konum</th>
+                            <th scope="col">Fiyat</th>
+                            <th scope="col">Durum</th>
+                            <th scope="col" class="text-center" title="Vitrin">Vitrin</th>
+                            <th scope="col">Danışman</th>
+                            <th scope="col">Tarih</th>
+                            <th scope="col" class="text-center" title="Fotoğraf Sayısı"><i class="bi bi-camera"></i></th>
+                            <th scope="col" class="text-end pe-3">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Response.Items)
+                        {
+                            <tr>
+                                <td class="ps-3">
+                                    @if (!string.IsNullOrWhiteSpace(item.CoverThumbUrl))
+                                    {
+                                        <img src="@item.CoverThumbUrl" alt="@item.Title" class="admin-listing-thumb-table" loading="lazy" />
+                                    }
+                                    else
+                                    {
+                                        <div class="admin-listing-thumb-table bg-light border d-flex align-items-center justify-content-center text-secondary">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="fw-semibold text-dark">
+                                        <a href="@Model.EditUrl(item)" class="text-dark text-decoration-none">@item.Title</a>
+                                    </div>
+                                    <small class="text-muted">#@item.ListingId</small>
+                                </td>
+                                <td>
+                                    <div>@item.CategoryDisplay</div>
+                                    <span class="badge @(item.IsRent ? "bg-info-subtle text-info border border-info-subtle" : "bg-primary-subtle text-primary border border-primary-subtle")">
+                                        @(item.IsRent ? "Kiralık" : "Satılık")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="fw-medium">@item.District</div>
+                                    <small class="text-muted">@item.City</small>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-nowrap">@Model.PriceText(item)</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-@Model.StatusBadgeClass(item.Status)">@item.Status</span>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.BestDeals)
+                                    {
+                                        <i class="bi bi-star-fill text-warning fs-5" title="Vitrin İlanı"></i>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted opacity-25">&bull;</span>
+                                    }
+                                </td>
+                                <td>
+                                    <small class="text-muted d-block">@item.AgentName</small>
+                                </td>
+                                <td>
+                                    <small class="text-muted text-nowrap">@item.CreatedDate.ToString("dd.MM.yyyy")</small>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-secondary border">
+                                        <i class="bi bi-camera me-1"></i>@item.ImageCount
+                                    </span>
+                                </td>
+                                <td class="text-end pe-3">
+                                    @if (item.CanEdit)
+                                    {
+                                        <a href="@Model.EditUrl(item)" class="btn btn-primary btn-sm text-nowrap">
+                                            <i class="bi bi-pencil me-1"></i> Düzenle
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Model.EditUrl(item)" class="btn btn-outline-secondary btn-sm text-nowrap">
+                                            <i class="bi bi-eye me-1"></i> Görüntüle
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobil Kart Görünümü (d-md-none) -->
+    <div class="d-md-none mb-4">
+        @foreach (var item in Model.Response.Items)
+        {
+            <div class="card mb-3 shadow-sm border-0">
+                <div class="card-body p-3">
+                    <div class="d-flex gap-3">
+                        <div class="flex-shrink-0">
+                            @if (!string.IsNullOrWhiteSpace(item.CoverThumbUrl))
+                            {
+                                <img src="@item.CoverThumbUrl" alt="@item.Title" class="admin-listing-thumb-mobile" loading="lazy" />
+                            }
+                            else
+                            {
+                                <div class="admin-listing-thumb-mobile bg-light border d-flex align-items-center justify-content-center text-secondary">
+                                    <i class="bi bi-image fs-4"></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="flex-grow-1 min-w-0">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h6 class="mb-0 text-truncate fw-semibold">
+                                    <a href="@Model.EditUrl(item)" class="text-dark text-decoration-none">@item.Title</a>
+                                </h6>
+                                @if (item.BestDeals)
+                                {
+                                    <i class="bi bi-star-fill text-warning ms-1" title="Vitrin"></i>
+                                }
+                            </div>
+                            <div class="small text-muted mb-1">
+                                <span>#@item.ListingId</span> &bull; <span>@item.District, @item.City</span>
+                            </div>
+                            <div class="fw-bold text-primary mb-2">
+                                @Model.PriceText(item)
+                            </div>
+                            <div class="d-flex flex-wrap align-items-center gap-1 mb-2">
+                                <span class="badge @(item.IsRent ? "bg-info-subtle text-info border border-info-subtle" : "bg-primary-subtle text-primary border border-primary-subtle")">
+                                    @(item.IsRent ? "Kiralık" : "Satılık")
+                                </span>
+                                <span class="badge bg-light text-dark border">@item.CategoryDisplay</span>
+                                <span class="badge bg-@Model.StatusBadgeClass(item.Status)">@item.Status</span>
+                                <span class="badge bg-light text-secondary border">
+                                    <i class="bi bi-camera me-1"></i>@item.ImageCount
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center pt-2 border-top mt-2">
+                                <span class="small text-muted">
+                                    <i class="bi bi-person me-1"></i>@item.AgentName
+                                </span>
+                                @if (item.CanEdit)
+                                {
+                                    <a href="@Model.EditUrl(item)" class="btn btn-primary btn-sm px-3">
+                                        <i class="bi bi-pencil me-1"></i> Düzenle
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Model.EditUrl(item)" class="btn btn-outline-secondary btn-sm px-3">
+                                        <i class="bi bi-eye me-1"></i> Görüntüle
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Sayfalama ve Bilgi Çubuğu -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 mb-4">
+        <div class="text-muted small">
+            @totalItems ilandan @startItem–@endItem arası gösteriliyor
+        </div>
+
+        @if (totalPages > 1)
+        {
+            <nav aria-label="İlan sayfalaması">
+                <ul class="pagination pagination-sm mb-0">
+                    <!-- Önceki Butonu -->
+                    <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="@(currentPage > 1 ? Model.PageUrl(currentPage - 1) : "#")" tabindex="@(currentPage <= 1 ? "-1" : "0")" aria-label="Önceki">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    @for (int p = startPage; p <= endPage; p++)
+                    {
+                        <li class="page-item @(p == currentPage ? "active" : "")">
+                            <a class="page-link" href="@Model.PageUrl(p)">@p</a>
+                        </li>
+                    }
+
+                    <!-- Sonraki Butonu -->
+                    <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@(currentPage < totalPages ? Model.PageUrl(currentPage + 1) : "#")" tabindex="@(currentPage >= totalPages ? "-1" : "0")" aria-label="Sonraki">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </div>
+}
