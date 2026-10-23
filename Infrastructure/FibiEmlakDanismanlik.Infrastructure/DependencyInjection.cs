@@ -8,6 +8,9 @@ using System;
 
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Infrastructure.Security;
+using FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces;
+using FibiEmlakDanismanlik.Infrastructure.Imaging;
+using FibiEmlakDanismanlik.Infrastructure.Storage;
 namespace FibiEmlakDanismanlik.Infrastructure
 {
     /// <summary>Altyapı katmanı servis kayıtları.</summary>
@@ -40,6 +43,9 @@ namespace FibiEmlakDanismanlik.Infrastructure
             services.AddHttpClient("turnstile", c => c.Timeout = TimeSpan.FromSeconds(10));
             services.AddScoped<ICaptchaVerifier, TurnstileCaptchaVerifier>();
             services.AddScoped<ITwoFactorService, TwoFactorService>();
+
+            services.AddSingleton<IImageProcessor, SkiaImageProcessor>();
+            services.AddSingleton<IFileStorage, LocalFileStorage>();
 
             return services;
         }

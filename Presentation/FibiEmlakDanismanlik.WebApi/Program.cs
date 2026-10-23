@@ -46,6 +46,7 @@ using FibiEmlakDanismanlik.WebApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -252,6 +253,28 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+var uploadsRoot = app.Configuration["FileStorage:RootPath"];
+if (string.IsNullOrWhiteSpace(uploadsRoot))
+{
+    uploadsRoot = Path.Combine(app.Environment.ContentRootPath, "uploads");
+}
+if (!Directory.Exists(uploadsRoot))
+{
+    Directory.CreateDirectory(uploadsRoot);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsRoot),
+    RequestPath = ListingImageConstants.UploadsRequestPath,
+    ServeUnknownFileTypes = false,
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=31536000,immutable";
+        ctx.Context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    }
+});
 
 app.UseCors("AllowLocalhost");
 

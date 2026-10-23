@@ -1,0 +1,59 @@
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Exceptions;
+using FibiEmlakDanismanlik.Application.Features.Commands.ListingImageCommands;
+using FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces;
+using MediatR;
+
+namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandlers
+{
+    /// <summary>
+    /// Bir ilana ait görsellerin sırasını ve kapak fotoğrafını güncelleyen komut işleyicisi.
+    /// </summary>
+    public class ReorderListingImagesCommandHandler : IRequestHandler<ReorderListingImagesCommand>
+    {
+        private readonly IListingImageRepository _listingImageRepository;
+
+        public ReorderListingImagesCommandHandler(IListingImageRepository listingImageRepository)
+        {
+            _listingImageRepository = listingImageRepository;
+        }
+
+        public async Task Handle(ReorderListingImagesCommand request, CancellationToken cancellationToken)
+        {
+            if (!ListingImageConstants.IsKnownListingType(request.ListingTypeId) ||
+                !await _listingImageRepository.ListingExistsAsync(request.ListingTypeId, request.ListingId))
+            {
+                throw new ImageValidationException("İlan bulunamadı.");
+            }
+
+            if (request.OrderedImageIds == null || request.OrderedImageIds.Count == 0)
+            {
+                throw new ImageValidationException("Sıralanacak fotoğraf listesi boş olamaz.");
+            }
+
+            var existingImages = await _listingImageRepository.GetByListingAsync(request.ListingTypeId, request.ListingId);
+            var existingIds = existingImages.Select(x => x.ListingImageId).ToHashSet();
+
+            if (request.OrderedImageIds.Any(id => !existingIds.Contains(id)))
+            {
+                throw new ImageValidationException("Sıralamadaki fotoğrafların tümü bu ilana ait olmalıdır.");
+            }
+
+            if (!existingIds.Contains(request.CoverImageId))
+            {
+                throw new ImageValidationException("Kapak fotoğrafı bu ilana ait olmalıdır.");
+            }
+
+            await _listingImageRepository.SaveOrderAsync(
+                request.ListingTypeId,
+                request.ListingId,
+                request.OrderedImageIds,
+                request.CoverImageId);
+
+            await _listingImageRepository.SyncLegacyColumnsAsync(request.ListingTypeId, request.ListingId);
+        }
+    }
+}
