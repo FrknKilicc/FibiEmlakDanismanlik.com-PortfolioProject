@@ -319,3 +319,174 @@
         bottom: 80px !important;
     }
 }
+
+/* --------------------------------------------------------------------------
+   4. Kredi Taksit Hesaplayıcı (Sidebar Widget)
+   -------------------------------------------------------------------------- */
+.loan-calculator.sidebar-widget {
+    background: #ffffff;
+    border: 1px solid #eef0f3;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.loan-calculator .widget-title {
+    position: relative;
+    margin-bottom: 22px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eef0f3;
+}
+
+.loan-calculator .widget-title h5 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.loan-calculator .form-group {
+    margin-bottom: 18px;
+}
+
+.loan-calculator .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 6px;
+}
+
+.loan-calculator select.loan-select {
+    display: block;
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 15px;
+    color: #222;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.loan-calculator select.loan-select:focus {
+    border-color: #2dbe6c;
+    outline: none;
+}
+
+.loan-calculator select.loan-select option:disabled {
+    color: #b5b5b5;
+}
+
+.loan-calculator .down-payment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.loan-calculator .down-payment-header label {
+    margin-bottom: 0;
+}
+
+.loan-calculator .down-payment-badge {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2dbe6c;
+    background: rgba(45, 190, 108, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.loan-calculator input[type="range"].loan-range {
+    width: 100%;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    outline: none;
+    accent-color: #2dbe6c;
+    cursor: pointer;
+    margin: 6px 0;
+}
+
+.loan-calculator .range-limits {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+.loan-calculator .loan-results-box {
+    background: #f8fafc;
+    border: 1px solid #eef0f3;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 22px;
+    margin-bottom: 16px;
+}
+
+.loan-calculator .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px dashed #e2e8f0;
+    font-size: 13px;
+}
+
+.loan-calculator .result-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.loan-calculator .result-item:first-child {
+    padding-top: 0;
+}
+
+.loan-calculator .result-item .result-label {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.loan-calculator .result-item .result-value {
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.loan-calculator .result-item.highlight {
+    background: #ffffff;
+    margin: 8px -10px;
+    padding: 12px 10px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+.loan-calculator .result-item.highlight .result-label {
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.loan-calculator .result-item.highlight .result-value {
+    color: #2dbe6c;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.loan-calculator .loan-disclaimer {
+    font-size: 11px;
+    line-height: 1.5;
+    color: #94a3b8;
+    margin: 0;
+    padding-top: 4px;
+}
+
+.loan-calculator .loan-disclaimer i {
+    color: #2dbe6c;
+    margin-right: 4px;
+}

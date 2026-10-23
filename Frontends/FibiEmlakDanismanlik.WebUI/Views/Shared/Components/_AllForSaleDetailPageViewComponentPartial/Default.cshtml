@@ -252,6 +252,7 @@
                         </div>
                         
                     </div>
+                    @await Component.InvokeAsync("_LoanCalculatorViewComponentPartial", new { price = Model.Price, listingType = Model.ListingType })
                 </div>
             </div>
         </div>
