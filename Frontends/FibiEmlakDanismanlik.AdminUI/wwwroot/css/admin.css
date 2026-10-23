@@ -112,3 +112,10 @@ details > summary {
 }
 
 
+
+/* Kontrol Paneli Grafik ve Sayaç Stilleri */
+.chart-box {
+  position: relative;
+  height: 280px;
+  width: 100%;
+}
