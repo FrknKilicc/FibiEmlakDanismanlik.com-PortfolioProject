@@ -265,7 +265,7 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [ ] Ana sayfadaki bülten aboneliği formu tema kalıntısı (`UILayout/Index.cshtml`, `action="contact.html"`): çalışmıyor; ya gerçek bir abonelik ucuna (KVKK onayı + spam koruması ile) bağlanmalı ya kaldırılmalı
 - [ ] Blog detayında yazar adı linki tema kalıntısı (`href="blog-details.html"`); yazarın yazılarına filtreli blog listesine gitmeli ya da link kaldırılmalı
 - [ ] İletişim sayfasındaki "harita" aslında harici bir stok fotoğraf (pexels hotlink); ofis konumu gerçek harita (Leaflet, ilan detayındaki gibi) ile gösterilmeli
-- [ ] Bu branch dev'e birleştirilmedi; aşağıdaki testlerden sonra kullanıcı onayıyla birleştirilip push edilecek
+- [x] (2026-10-23) Bu branch dev'e birleştirildi ve push edildi (aşağıdaki elle test listesi ayrıca yapılmadı; otomatik duman testiyle doğrulandı)
 
 **Elle test listesi (bu branch için, kullanıcı 2026-10-21'de yapacak)**
 - [ ] Eski ilan linki (`/AllForSaleDetailPage/Index/{id}?listingTypeId=..`) yeni adrese 301 ile gidiyor; tarayıcı adres çubuğunda okunabilir adres görünüyor
@@ -292,7 +292,7 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 
 ### Yönetim Paneli (karar 2026-10-23, tasarım `docs/admin-panel-tasarim.md`)
 Ayrı proje `Frontends/FibiEmlakDanismanlik.AdminUI`, adres `yonetim.fibiemlak.com`, tema NiceAdmin (ücretsiz sürüm; footer kredi linki kalır, Quill kullanılmaz, TinyMCE 6.x'te kalınır, ECharts/ApexCharts/Boxicons/Remixicon atılır). Roller: Sahip (1-2 kişi, her şey + Yönetici/Danışman yönetimi), Yönetici (Sahip yönetimi hariç her şey, Danışman ekler/çıkarır), Danışman (kendi ilanları + izin verilen ilanlar; kazanç ve üye yönetimi yok). Yetki API'de zorlanır.
-- [ ] Faz 0: `todo-batch2` tarayıcı testi, bekleyen branch zincirinin dev'e birleştirilmesi (onayla)
+- [x] (2026-10-23) Faz 0: `todo-batch2` tarayıcı testi (sayfalar, 127 sitemap adresi, OG/JSON-LD, galeri, mobil çubuk, kredi hesabı) ve seo-and-fixes → seo-urls-cleanup → listing-badges → todo-batch2 zincirinin dev'e birleştirilip push edilmesi
 - [ ] Faz 1 — API güvenlik ve roller: `Agents.Role`, `SecurityStamp`, `CanViewAllListings`, `ListingAccessGrants`; politikalar; giriş sertleştirme (deneme sınırı, kilit, `LoginAuditLogs`); `AuditLogs`; TOTP 2FA; Turnstile doğrulama; son Sahip korunur
 - [ ] Faz 2 — Fotoğraf yapısı (T5): `ListingImages` + backfill, okuma yardımcısı her yerde (detay, kartlar, vitrin, benzer, harita, karşılaştırma, OG/JSON-LD, danışman), çift yazma, yükleme ucu (`IFileStorage`, SkiaSharp, 3 boy WebP, EXIF silme); eski kolonlar en son onayla kaldırılır
 - [ ] Faz 3 — AdminUI iskeleti: NiceAdmin ayıklama + Türkçe, giriş + 2FA + captcha, cookie oturumu (JWT sunucuda), güvenlik başlıkları, noindex
