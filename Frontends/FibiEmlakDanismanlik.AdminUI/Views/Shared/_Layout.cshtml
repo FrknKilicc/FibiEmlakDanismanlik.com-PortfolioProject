@@ -8,6 +8,7 @@
     bool isSatilik = isListings && string.Equals(currentTur, "satilik", StringComparison.OrdinalIgnoreCase);
     bool isKiralik = isListings && string.Equals(currentTur, "kiralik", StringComparison.OrdinalIgnoreCase);
     bool isLeads = string.Equals(currentController, "Leads", StringComparison.OrdinalIgnoreCase);
+    bool isListingAlerts = string.Equals(currentController, "ListingAlerts", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
 <html lang="tr">
@@ -121,6 +122,13 @@
         <a class="nav-link @(isLeads ? "" : "collapsed")" href="/talepler">
           <i class="bi bi-chat-square-text"></i>
           <span>Talepler</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link @(isListingAlerts ? "" : "collapsed")" href="/haber-bekleyenler">
+          <i class="bi bi-bell"></i>
+          <span>Haber Bekleyenler</span>
         </a>
       </li>
 

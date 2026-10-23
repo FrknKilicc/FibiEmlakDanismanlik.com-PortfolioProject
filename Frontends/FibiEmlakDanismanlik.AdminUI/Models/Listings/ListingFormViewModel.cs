@@ -1,4 +1,5 @@
 using FibiEmlakDanismanlik.AdminUI.Models.Leads;
+using FibiEmlakDanismanlik.AdminUI.Models.ListingAlerts;
 
 namespace FibiEmlakDanismanlik.AdminUI.Models.Listings;
 
@@ -17,6 +18,7 @@ public sealed class ListingFormViewModel
     public List<ListingImageDto> Images { get; set; } = new();
     public List<ListingAccessGrantDto> Grants { get; set; } = new();
     public List<LeadRowDto> Leads { get; set; } = new();
+    public ListingAlertsForListingDto Alerts { get; set; } = new();
     public string? CurrentStatus { get; set; }
     public bool BestDeals { get; set; }
     public decimal? Latitude { get; set; }
