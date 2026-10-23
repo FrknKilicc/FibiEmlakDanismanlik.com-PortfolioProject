@@ -33,7 +33,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForRentalPropertyViewCompone
             }
 
 
-            public async Task<IViewComponentResult> InvokeAsync()
+            public async Task<IViewComponentResult> InvokeAsync(ListingLocationVm? location)
             {
                 var client = _httpClientFactory.CreateClient();
                 var apiUrl = _configuration["Url:ApiUrl"];
@@ -64,6 +64,15 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForRentalPropertyViewCompone
                 string? city = TryStr("city");
                 string? district = TryStr("district");
                 string? neighborhood = TryStr("neighborhood");
+
+                if (location != null && cityId == null)
+                {
+                    cityId = location.CityId;
+                    city = location.City;
+                    districtId = location.DistrictId;
+                    district = location.District;
+                }
+                ViewBag.Heading = location?.Heading;
 
                 decimal? minPrice = TryDecimal("minPrice");
                 decimal? maxPrice = TryDecimal("maxPrice");
@@ -217,7 +226,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForRentalPropertyViewCompone
                     SortBy = sortBy,
                     SortDir = sortDir,
                     Page = page,
-                    PageSize = pageSize,
+                    PageSize = pageSize
 
 
 

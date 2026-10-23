@@ -414,7 +414,7 @@
      */
     function buildListingsUrl(location) {
         if (!location) {
-            return '/AllForSalePage';
+            return '/satilik';
         }
         var params = new URLSearchParams();
         if (location.cityId != null) params.set('cityId', String(location.cityId));
@@ -423,7 +423,7 @@
         if (location.districtName) params.set('district', String(location.districtName));
 
         var qs = params.toString();
-        return '/AllForSalePage' + (qs ? ('?' + qs) : '');
+        return '/satilik' + (qs ? ('?' + qs) : '');
     }
 
     /**

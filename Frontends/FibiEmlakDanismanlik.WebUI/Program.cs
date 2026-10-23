@@ -1,4 +1,5 @@
-﻿using FibiEmlakDanismanlik.WebUI.Services;
+﻿using FibiEmlakDanismanlik.WebUI.Models;
+using FibiEmlakDanismanlik.WebUI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<FormSpamGuard>();
+builder.Services.AddSingleton<ListingLocationResolver>();
+// İlan detay adresindeki kategori segmenti; il/ilçe açılış sayfalarıyla çakışmayı önler
+builder.Services.Configure<RouteOptions>(o => o.ConstraintMap["listingcategory"] = typeof(ListingCategoryRouteConstraint));
 
 // IConfiguration aracılığıyla AppSettings.json'daki yapılandırmayı yükleme
 

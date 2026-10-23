@@ -59,8 +59,8 @@
                                 foreach (var item in Model.LatestBlogs)
                                 {
                                     <div class="post">
-                                        <figure class="post-thumb"><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId"><img src="@item.BlogImgUrl" alt="@item.BlogTitle" width="90" height="90" loading="lazy" style="object-fit:cover;" onerror="this.onerror=null;this.src='/Realshed/assets/images/FibiLogo-footer.png';"></a></figure>
-                                        <h5><a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">@item.BlogTitle</a></h5>
+                                        <figure class="post-thumb"><a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)"><img src="@item.BlogImgUrl" alt="@item.BlogTitle" width="90" height="90" loading="lazy" style="object-fit:cover;" onerror="this.onerror=null;this.src='/Realshed/assets/images/FibiLogo-footer.png';"></a></figure>
+                                        <h5><a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)">@item.BlogTitle</a></h5>
                                         <p>@item.CreatedDate.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))</p>
                                     </div>
                                 }

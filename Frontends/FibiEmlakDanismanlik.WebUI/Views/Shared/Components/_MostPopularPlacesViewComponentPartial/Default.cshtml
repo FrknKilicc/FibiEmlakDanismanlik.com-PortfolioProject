@@ -64,9 +64,7 @@
                             <ul class="place-list clearfix popular-places-panel" data-usagetype="1">
                                 @foreach (var item in forSaleItems)
                                 {
-                                    var itemUrl = isSaleDistrict
-                                        ? Url.Action("Index", "AllForSalePage", new { cityId = item.CityId, city = item.City, districtId = item.DistrictId, district = item.District })
-                                        : Url.Action("Index", "AllForSalePage", new { cityId = item.CityId, city = item.City });
+                                    var itemUrl = ListingUrl.ListPath(false, item.City, isSaleDistrict ? item.District : null);
                                     <li>
                                         <a href="@itemUrl">
                                             @if (isSaleDistrict)
@@ -94,9 +92,7 @@
                             <ul class="place-list clearfix popular-places-panel" data-usagetype="2" style="display:none;">
                                 @foreach (var item in forRentItems)
                                 {
-                                    var itemUrl = isRentDistrict
-                                        ? Url.Action("Index", "AllForRentalPage", new { cityId = item.CityId, city = item.City, districtId = item.DistrictId, district = item.District })
-                                        : Url.Action("Index", "AllForRentalPage", new { cityId = item.CityId, city = item.City });
+                                    var itemUrl = ListingUrl.ListPath(true, item.City, isRentDistrict ? item.District : null);
                                     <li>
                                         <a href="@itemUrl">
                                             @if (isRentDistrict)

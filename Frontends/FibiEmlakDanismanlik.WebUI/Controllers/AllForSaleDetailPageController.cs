@@ -69,7 +69,7 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
             return RedirectPermanent(CanonicalPath(dto));
         }
 
-        [HttpGet("satilik/{category}/{slugAndId}")]
+        [HttpGet("satilik/{category:listingcategory}/{slugAndId}")]
         public async Task<IActionResult> Detail(string category, string slugAndId)
         {
             if (!ListingUrl.TryParseId(slugAndId, out var id))
