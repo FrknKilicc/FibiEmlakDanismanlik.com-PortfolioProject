@@ -21,6 +21,11 @@ namespace FibiEmlakDanismanlik.Application.Interfaces
         bool VerifyCode(string secret, string code);
 
         /// <summary>
+        /// Kodu doğrular ve aynı hesap için daha önce kabul edilmiş (aynı veya daha eski) zaman adımındaki bir kodu reddeder (tekrar kullanım koruması).
+        /// </summary>
+        bool VerifyCodeOnce(int agentId, string secret, string code);
+
+        /// <summary>
         /// TOTP gizli anahtarını Data Protection ile şifreler.
         /// </summary>
         string Protect(string secret);
