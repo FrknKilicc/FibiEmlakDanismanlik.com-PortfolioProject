@@ -22,6 +22,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ServiceHandlers
         public async Task Handle(RemoveServiceCommand request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.Id);
+            if (value == null)
+            {
+                throw new KeyNotFoundException("Hizmet bulunamadı.");
+            }
             await _repository.RemoveAsync(value);
         }
     }

@@ -24,6 +24,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSaleLandListingH
         public async Task<GetForSalesLandListingByIdResult> Handle(GetForSaleLandListingByIdQuery request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.Id);
+            if (value == null)
+            {
+                throw new KeyNotFoundException("İlan bulunamadı.");
+            }
             return new GetForSalesLandListingByIdResult
             {
                 AddressDesc = value.AddressDesc,

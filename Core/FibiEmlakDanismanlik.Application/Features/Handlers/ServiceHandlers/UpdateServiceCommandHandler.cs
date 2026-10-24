@@ -22,6 +22,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ServiceHandlers
         public async Task Handle(UpdateServiceCommand request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.ServiceId);
+            if (value == null)
+            {
+                throw new KeyNotFoundException("Hizmet bulunamadı.");
+            }
 
             value.ServiceDesc = request.ServiceDesc;
             value.ServiceImgUrl = request.ServiceImgUrl;

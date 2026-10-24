@@ -23,6 +23,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ServiceHandlers
         public async Task<GetServiceByIdResult> Handle(GetServiceByIdQuery request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.Id);
+            if (value == null)
+            {
+                throw new KeyNotFoundException("Hizmet bulunamadı.");
+            }
             return new GetServiceByIdResult
             {
                 ServiceDesc = value.ServiceDesc,
