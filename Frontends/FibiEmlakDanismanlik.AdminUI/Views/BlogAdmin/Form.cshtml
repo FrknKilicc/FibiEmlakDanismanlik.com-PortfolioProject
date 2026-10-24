@@ -12,6 +12,7 @@
     var errDate = Model.GetFieldError("CreatedDate");
     var errAuthor = Model.GetFieldError("AuthorId");
     var errCategory = Model.GetFieldError("BlogCategoryId");
+    var errTags = Model.GetFieldError("Tags") ?? Model.GetFieldError("TagsText");
 
     var imgUrl = Model.Form.BlogImgUrl?.Trim();
 }
@@ -195,6 +196,37 @@
                         }
                     </div>
 
+                    <div class="mb-3">
+                        <label for="TagsText" class="form-label small fw-semibold">
+                            Etiketler
+                        </label>
+                        <input type="text"
+                               class="form-control @(errTags != null ? "is-invalid" : "")"
+                               id="TagsText"
+                               name="TagsText"
+                               value="@Model.Form.TagsText"
+                               placeholder="Örn: Emlak, Yatırım, Konut" />
+                        <div class="form-text">
+                            Virgülle ayırın, en fazla 10 etiket.
+                        </div>
+                        @if (errTags != null)
+                        {
+                            <div class="invalid-feedback d-block">@errTags</div>
+                        }
+                        @if (Model.AllTags != null && Model.AllTags.Any())
+                        {
+                            <div class="d-flex flex-wrap gap-1 mt-2 align-items-center">
+                                <span class="small text-muted me-1">Mevcut etiketler:</span>
+                                @foreach (var tag in Model.AllTags)
+                                {
+                                    <button type="button" class="btn btn-light btn-sm border py-0 px-2 small text-secondary" data-tag="@tag">
+                                        + @tag
+                                    </button>
+                                }
+                            </div>
+                        }
+                    </div>
+
                     <div class="form-check form-switch pt-2 border-top mb-1">
                         <input type="checkbox"
                                class="form-check-input"
@@ -297,4 +329,5 @@
 
 @section Scripts {
     <script src="~/js/image-upload.js" asp-append-version="true"></script>
+    <script src="~/js/blog-tags.js" asp-append-version="true"></script>
 }

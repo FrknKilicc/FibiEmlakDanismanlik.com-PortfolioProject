@@ -19,6 +19,7 @@ namespace FibiEmlakDanismanlik.AdminUI.Controllers;
 public sealed class BlogAdminController : Controller
 {
     private const int PageSize = 20;
+    private static readonly CultureInfo TrCulture = new("tr-TR");
     private readonly ApiClient _apiClient;
     private readonly CurrentAdmin _currentAdmin;
 
@@ -64,7 +65,6 @@ public sealed class BlogAdminController : Controller
         }
 
         var blogs = blogsResult.Data ?? new List<BlogDto>();
-        var trCulture = new CultureInfo("tr-TR");
 
         // Arama filtresi: başlıkta tr-TR büyük-küçük harf duyarsız
         if (!string.IsNullOrWhiteSpace(ara))
@@ -72,7 +72,7 @@ public sealed class BlogAdminController : Controller
             var search = ara.Trim();
             blogs = blogs.Where(b =>
                 !string.IsNullOrEmpty(b.BlogTitle) &&
-                trCulture.CompareInfo.IndexOf(b.BlogTitle, search, CompareOptions.IgnoreCase) >= 0
+                TrCulture.CompareInfo.IndexOf(b.BlogTitle, search, CompareOptions.IgnoreCase) >= 0
             ).ToList();
         }
 
@@ -130,7 +130,7 @@ public sealed class BlogAdminController : Controller
             return Redirect("/yetkisiz");
         }
 
-        var (categories, authors, authRedirect) = await LoadCategoriesAndAuthorsAsync();
+        var (categories, authors, tags, authRedirect) = await LoadFormDataAsync();
         if (authRedirect == StatusCodes.Status401Unauthorized) return Redirect("/giris");
         if (authRedirect == StatusCodes.Status403Forbidden) return Redirect("/yetkisiz");
 
@@ -146,6 +146,7 @@ public sealed class BlogAdminController : Controller
             },
             Categories = categories,
             Authors = authors,
+            AllTags = tags,
             IsNew = true
         };
 
@@ -164,7 +165,7 @@ public sealed class BlogAdminController : Controller
             return Redirect("/yetkisiz");
         }
 
-        var (categories, authors, authRedirect) = await LoadCategoriesAndAuthorsAsync();
+        var (categories, authors, tags, authRedirect) = await LoadFormDataAsync();
         if (authRedirect == StatusCodes.Status401Unauthorized) return Redirect("/giris");
         if (authRedirect == StatusCodes.Status403Forbidden) return Redirect("/yetkisiz");
 
@@ -183,6 +184,7 @@ public sealed class BlogAdminController : Controller
                 Form = form,
                 Categories = categories,
                 Authors = authors,
+                AllTags = tags,
                 IsNew = true,
                 FieldErrors = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
                 {
@@ -201,7 +203,8 @@ public sealed class BlogAdminController : Controller
             createdDate = createdDate,
             topNews = form.TopNews,
             authorId = form.AuthorId,
-            blogCategoryId = form.BlogCategoryId
+            blogCategoryId = form.BlogCategoryId,
+            tags = ParseTags(form.TagsText)
         };
 
         var postResult = await _apiClient.PostAsync<string>("Blog", payload);
@@ -226,6 +229,7 @@ public sealed class BlogAdminController : Controller
             Form = form,
             Categories = categories,
             Authors = authors,
+            AllTags = tags,
             IsNew = true,
             FieldErrors = postResult.Errors != null
                 ? new Dictionary<string, string[]>(postResult.Errors, StringComparer.OrdinalIgnoreCase)
@@ -250,23 +254,27 @@ public sealed class BlogAdminController : Controller
         var blogTask = _apiClient.GetAsync<BlogDto>($"Blog/{id}");
         var categoriesTask = _apiClient.GetAsync<List<BlogCategoryDto>>("Blog/categories");
         var authorsTask = _apiClient.GetAsync<List<AuthorDto>>("Author");
+        var tagsTask = _apiClient.GetAsync<List<string>>("Blog/tags");
 
-        await Task.WhenAll(blogTask, categoriesTask, authorsTask);
+        await Task.WhenAll(blogTask, categoriesTask, authorsTask, tagsTask);
 
         var blogResult = await blogTask;
         var categoriesResult = await categoriesTask;
         var authorsResult = await authorsTask;
+        var tagsResult = await tagsTask;
 
         if (blogResult.StatusCode == StatusCodes.Status401Unauthorized ||
             categoriesResult.StatusCode == StatusCodes.Status401Unauthorized ||
-            authorsResult.StatusCode == StatusCodes.Status401Unauthorized)
+            authorsResult.StatusCode == StatusCodes.Status401Unauthorized ||
+            tagsResult.StatusCode == StatusCodes.Status401Unauthorized)
         {
             return Redirect("/giris");
         }
 
         if (blogResult.StatusCode == StatusCodes.Status403Forbidden ||
             categoriesResult.StatusCode == StatusCodes.Status403Forbidden ||
-            authorsResult.StatusCode == StatusCodes.Status403Forbidden)
+            authorsResult.StatusCode == StatusCodes.Status403Forbidden ||
+            tagsResult.StatusCode == StatusCodes.Status403Forbidden)
         {
             return Redirect("/yetkisiz");
         }
@@ -286,14 +294,18 @@ public sealed class BlogAdminController : Controller
             CreatedDate = existing.CreatedDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
             TopNews = existing.TopNews,
             AuthorId = existing.AuthorId,
-            BlogCategoryId = existing.BlogCategoryId
+            BlogCategoryId = existing.BlogCategoryId,
+            TagsText = existing.Tags != null && existing.Tags.Any() ? string.Join(", ", existing.Tags) : string.Empty
         };
+
+        var allTags = tagsResult.Success && tagsResult.Data != null ? tagsResult.Data : new List<string>();
 
         var vm = new BlogFormViewModel
         {
             Form = form,
             Categories = categoriesResult.Data ?? new List<BlogCategoryDto>(),
             Authors = authorsResult.Data ?? new List<AuthorDto>(),
+            AllTags = allTags,
             IsNew = false
         };
 
@@ -312,7 +324,7 @@ public sealed class BlogAdminController : Controller
             return Redirect("/yetkisiz");
         }
 
-        var (categories, authors, authRedirect) = await LoadCategoriesAndAuthorsAsync();
+        var (categories, authors, tags, authRedirect) = await LoadFormDataAsync();
         if (authRedirect == StatusCodes.Status401Unauthorized) return Redirect("/giris");
         if (authRedirect == StatusCodes.Status403Forbidden) return Redirect("/yetkisiz");
 
@@ -333,6 +345,7 @@ public sealed class BlogAdminController : Controller
                 Form = form,
                 Categories = categories,
                 Authors = authors,
+                AllTags = tags,
                 IsNew = false,
                 FieldErrors = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
                 {
@@ -352,7 +365,8 @@ public sealed class BlogAdminController : Controller
             createdDate = createdDate,
             topNews = form.TopNews,
             authorId = form.AuthorId,
-            blogCategoryId = form.BlogCategoryId
+            blogCategoryId = form.BlogCategoryId,
+            tags = ParseTags(form.TagsText)
         };
 
         var putResult = await _apiClient.PutAsync<string>("Blog", payload);
@@ -381,6 +395,7 @@ public sealed class BlogAdminController : Controller
             Form = form,
             Categories = categories,
             Authors = authors,
+            AllTags = tags,
             IsNew = false,
             FieldErrors = putResult.Errors != null
                 ? new Dictionary<string, string[]>(putResult.Errors, StringComparer.OrdinalIgnoreCase)
@@ -430,31 +445,53 @@ public sealed class BlogAdminController : Controller
         return Redirect($"/icerik/blog/{id}");
     }
 
-    private async Task<(List<BlogCategoryDto> Categories, List<AuthorDto> Authors, int? AuthRedirectStatusCode)> LoadCategoriesAndAuthorsAsync()
+    private static List<string> ParseTags(string? tagsText)
+    {
+        if (string.IsNullOrWhiteSpace(tagsText))
+        {
+            return new List<string>();
+        }
+
+        return tagsText
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(t => t.Trim())
+            .Where(t => !string.IsNullOrEmpty(t))
+            .Distinct(StringComparer.Create(TrCulture, true))
+            .ToList();
+    }
+
+    private async Task<(List<BlogCategoryDto> Categories, List<AuthorDto> Authors, List<string> Tags, int? AuthRedirectStatusCode)> LoadFormDataAsync()
     {
         var categoriesTask = _apiClient.GetAsync<List<BlogCategoryDto>>("Blog/categories");
         var authorsTask = _apiClient.GetAsync<List<AuthorDto>>("Author");
+        var tagsTask = _apiClient.GetAsync<List<string>>("Blog/tags");
 
-        await Task.WhenAll(categoriesTask, authorsTask);
+        await Task.WhenAll(categoriesTask, authorsTask, tagsTask);
 
         var categoriesResult = await categoriesTask;
         var authorsResult = await authorsTask;
+        var tagsResult = await tagsTask;
 
         if (categoriesResult.StatusCode == StatusCodes.Status401Unauthorized ||
-            authorsResult.StatusCode == StatusCodes.Status401Unauthorized)
+            authorsResult.StatusCode == StatusCodes.Status401Unauthorized ||
+            tagsResult.StatusCode == StatusCodes.Status401Unauthorized)
         {
-            return (new List<BlogCategoryDto>(), new List<AuthorDto>(), StatusCodes.Status401Unauthorized);
+            return (new List<BlogCategoryDto>(), new List<AuthorDto>(), new List<string>(), StatusCodes.Status401Unauthorized);
         }
 
         if (categoriesResult.StatusCode == StatusCodes.Status403Forbidden ||
-            authorsResult.StatusCode == StatusCodes.Status403Forbidden)
+            authorsResult.StatusCode == StatusCodes.Status403Forbidden ||
+            tagsResult.StatusCode == StatusCodes.Status403Forbidden)
         {
-            return (new List<BlogCategoryDto>(), new List<AuthorDto>(), StatusCodes.Status403Forbidden);
+            return (new List<BlogCategoryDto>(), new List<AuthorDto>(), new List<string>(), StatusCodes.Status403Forbidden);
         }
+
+        var tags = tagsResult.Success && tagsResult.Data != null ? tagsResult.Data : new List<string>();
 
         return (
             categoriesResult.Data ?? new List<BlogCategoryDto>(),
             authorsResult.Data ?? new List<AuthorDto>(),
+            tags,
             null
         );
     }
