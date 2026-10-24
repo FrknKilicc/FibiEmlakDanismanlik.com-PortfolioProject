@@ -229,7 +229,7 @@
                                 <div class="col-6 col-sm-4 col-md-3 col-lg-2 photo-item" data-image-id="@img.ListingImageId" draggable="@(Model.CanEdit ? "true" : "false")">
                                     <div class="card h-100 border shadow-none photo-card position-relative overflow-hidden">
                                         <div class="photo-thumb-wrapper ratio ratio-4x3 bg-body-secondary">
-                                            <img src="@(string.IsNullOrWhiteSpace(img.ThumbUrl) ? img.Url : img.ThumbUrl)" class="object-fit-cover w-100 h-100" alt="Fotoğraf @img.ListingImageId" loading="lazy" />
+                                            <img src="@SiteImageUrl.Preview(string.IsNullOrWhiteSpace(img.ThumbUrl) ? img.Url : img.ThumbUrl)" class="object-fit-cover w-100 h-100" alt="Fotoğraf @img.ListingImageId" loading="lazy" />
                                         </div>
                                         <span class="badge bg-primary position-absolute top-0 start-0 m-2 cover-badge @(img.IsCover ? "" : "d-none")">
                                             <i class="bi bi-star-fill me-1"></i> Kapak
