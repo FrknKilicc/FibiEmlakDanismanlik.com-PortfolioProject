@@ -11,6 +11,8 @@
     bool isListingAlerts = string.Equals(currentController, "ListingAlerts", StringComparison.OrdinalIgnoreCase);
     bool isDeals = string.Equals(currentController, "Deals", StringComparison.OrdinalIgnoreCase);
     bool isReports = string.Equals(currentController, "Reports", StringComparison.OrdinalIgnoreCase);
+    bool isUsers = string.Equals(currentController, "Users", StringComparison.OrdinalIgnoreCase);
+    bool isAudit = string.Equals(currentController, "AuditLog", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
 <html lang="tr">
@@ -153,10 +155,9 @@
         <li class="nav-heading">Yönetim</li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#">
+          <a class="nav-link @(isUsers ? "" : "collapsed")" href="/kullanicilar">
             <i class="bi bi-people"></i>
             <span>Kullanıcılar</span>
-            <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
           </a>
         </li>
 
@@ -169,10 +170,9 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#">
+          <a class="nav-link @(isAudit ? "" : "collapsed")" href="/denetim-kaydi">
             <i class="bi bi-shield-check"></i>
             <span>Denetim Kaydı</span>
-            <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
           </a>
         </li>
       }

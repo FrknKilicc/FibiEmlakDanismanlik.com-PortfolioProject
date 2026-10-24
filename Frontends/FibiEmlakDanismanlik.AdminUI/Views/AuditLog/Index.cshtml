@@ -1,0 +1,209 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.Users.AuditLogViewModel
+@using FibiEmlakDanismanlik.AdminUI.Models.Users
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Denetim Kaydı";
+
+    var totalItems = Model.Data?.TotalCount ?? 0;
+    var currentPage = Model.Sayfa;
+    var pageSize = Model.Data?.PageSize > 0 ? Model.Data.PageSize : 50;
+    var totalPages = Model.TotalPages;
+    var startItem = totalItems == 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+    var endItem = Math.Min(currentPage * pageSize, totalItems);
+
+    int startPage = 1;
+    int endPage = totalPages;
+    if (totalPages > 7)
+    {
+        startPage = Math.Max(1, currentPage - 3);
+        endPage = Math.Min(totalPages, startPage + 6);
+        if (endPage - startPage < 6)
+        {
+            startPage = Math.Max(1, endPage - 6);
+        }
+    }
+
+    string BuildPageUrl(int p)
+    {
+        var q = new Dictionary<string, string?>();
+        if (!string.IsNullOrWhiteSpace(Model.Tablo)) q["tablo"] = Model.Tablo;
+        if (Model.Kullanici.HasValue) q["kullanici"] = Model.Kullanici.Value.ToString(CultureInfo.InvariantCulture);
+        q["sayfa"] = p.ToString(CultureInfo.InvariantCulture);
+        return Microsoft.AspNetCore.WebUtilities.QueryHelpers.AddQueryString("/denetim-kaydi", q);
+    }
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1>Denetim Kaydı</h1>
+        <nav>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item active">Denetim Kaydı</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<!-- Filtre Formu (GET) -->
+<div class="card mb-4 shadow-sm border-0">
+    <div class="card-body pt-3">
+        <form method="get" action="/denetim-kaydi" class="row g-2 align-items-end">
+            <div class="col-xl-3 col-md-4 col-12">
+                <label for="filterTablo" class="form-label small fw-semibold text-muted mb-1">Tablo</label>
+                <input type="text" class="form-control form-control-sm" id="filterTablo" name="tablo" value="@Model.Tablo" placeholder="Örn: Listing, Agent..." />
+            </div>
+
+            <div class="col-xl-3 col-md-4 col-12">
+                <label for="filterKullanici" class="form-label small fw-semibold text-muted mb-1">Kullanıcı</label>
+                <select class="form-select form-select-sm" id="filterKullanici" name="kullanici">
+                    <option value="">Tüm Kullanıcılar</option>
+                    @foreach (var ag in Model.Agents)
+                    {
+                        <option value="@ag.AgentId" selected="@(Model.Kullanici == ag.AgentId ? "selected" : null)">@ag.AgentName</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-auto d-flex gap-2 ms-auto mt-2">
+                <button type="submit" class="btn btn-sm btn-primary px-3">
+                    <i class="bi bi-funnel me-1"></i> Filtrele
+                </button>
+                <a href="/denetim-kaydi" class="btn btn-sm btn-outline-secondary px-3">
+                    <i class="bi bi-x-circle me-1"></i> Temizle
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.Data?.Items == null || !Model.Data.Items.Any())
+{
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-shield-check fs-1 text-muted d-block mb-3"></i>
+            <h5 class="fw-semibold text-secondary">Kayıt bulunamadı.</h5>
+            <p class="text-muted small mb-0">Seçilen filtrelere uygun denetim kaydı bulunamadı.</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-muted small text-uppercase">
+                        <tr>
+                            <th scope="col" class="ps-3">Zaman</th>
+                            <th scope="col">Kullanıcı</th>
+                            <th scope="col">İşlem</th>
+                            <th scope="col">Tablo</th>
+                            <th scope="col">Kayıt</th>
+                            <th scope="col">IP Adresi</th>
+                            <th scope="col" class="pe-3">Değişiklikler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Data.Items)
+                        {
+                            <tr>
+                                <td class="ps-3 text-nowrap small text-muted">
+                                    @UserLabels.ToTurkeyTime(item.CreatedAtUtc)
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.AgentName))
+                                    {
+                                        <span class="small fw-semibold text-dark">@item.AgentName</span>
+                                    }
+                                    else if (item.AgentId.HasValue)
+                                    {
+                                        <span class="small text-muted">Kullanıcı #@item.AgentId</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="small text-muted fst-italic">Sistem</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge bg-@UserLabels.ActionBadge(item.Action)">
+                                        @UserLabels.ActionName(item.Action)
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="small fw-medium text-dark">@item.EntityName</span>
+                                </td>
+                                <td>
+                                    <span class="small text-muted">@item.EntityKey</span>
+                                </td>
+                                <td>
+                                    <span class="small text-muted">@(item.IpAddress ?? "—")</span>
+                                </td>
+                                <td class="pe-3">
+                                    @if (!string.IsNullOrWhiteSpace(item.ChangesJson))
+                                    {
+                                        <details>
+                                            <summary class="text-primary small fw-medium">Göster</summary>
+                                            <pre class="small mb-0 audit-json mt-1 p-2 bg-light rounded border">@item.ChangesJson</pre>
+                                        </details>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sayfalama ve Bilgi Çubuğu -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 mb-3">
+        <div class="text-muted small">
+            @totalItems kayıttan @startItem–@endItem arası gösteriliyor
+        </div>
+
+        @if (totalPages > 1)
+        {
+            <nav aria-label="Denetim kaydı sayfalaması">
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="@(currentPage > 1 ? BuildPageUrl(currentPage - 1) : "#")" tabindex="@(currentPage <= 1 ? "-1" : "0")" aria-label="Önceki">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    @for (int p = startPage; p <= endPage; p++)
+                    {
+                        <li class="page-item @(p == currentPage ? "active" : "")">
+                            <a class="page-link" href="@BuildPageUrl(p)">@p</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@(currentPage < totalPages ? BuildPageUrl(currentPage + 1) : "#")" tabindex="@(currentPage >= totalPages ? "-1" : "0")" aria-label="Sonraki">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    </div>
+}
+
+<div class="small text-muted mt-2">
+    <i class="bi bi-info-circle me-1"></i>Kayıtlar otomatik tutulur, değiştirilemez.
+</div>

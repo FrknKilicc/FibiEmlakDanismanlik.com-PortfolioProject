@@ -119,3 +119,6 @@ details > summary {
   height: 280px;
   width: 100%;
 }
+
+
+.audit-json{white-space:pre-wrap;word-break:break-all;max-height:240px;overflow:auto}
