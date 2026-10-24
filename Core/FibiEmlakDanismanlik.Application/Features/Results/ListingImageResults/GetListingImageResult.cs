@@ -49,5 +49,15 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.ListingImageResults
         /// Görselin sıralama düzeni.
         /// </summary>
         public int SortOrder { get; set; }
+
+        /// <summary>
+        /// Görsel türü (0: Fotoğraf, 1: Kat Planı, 2: Kroki, 3: İmar Planı).
+        /// </summary>
+        public int Kind { get; set; }
+
+        /// <summary>
+        /// Plan veya görsel başlığı.
+        /// </summary>
+        public string? Caption { get; set; }
     }
 }

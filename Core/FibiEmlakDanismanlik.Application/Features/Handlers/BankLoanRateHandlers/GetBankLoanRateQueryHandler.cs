@@ -10,7 +10,7 @@ using MediatR;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.BankLoanRateHandlers
 {
-    /// <summary>Aktif banka kredi faiz oranlarını listeleyen sorgu işleyicisi.</summary>
+    /// <summary>Banka kredi faiz oranlarını listeleyen sorgu işleyicisi.</summary>
     public class GetBankLoanRateQueryHandler : IRequestHandler<GetBankLoanRateQuery, List<GetBankLoanRateResult>>
     {
         private readonly IRepository<BankLoanRate> _repository;
@@ -23,19 +23,27 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BankLoanRateHandler
         public async Task<List<GetBankLoanRateResult>> Handle(GetBankLoanRateQuery request, CancellationToken cancellationToken)
         {
             var values = await _repository.GetAllAsync();
-            return values
-                .Where(x => x.IsActive)
+            var query = values.AsEnumerable();
+
+            if (!request.IncludeInactive)
+            {
+                query = query.Where(x => x.IsActive);
+            }
+
+            return query
                 .OrderBy(x => x.HousingLoanMonthlyRate)
                 .Select(x => new GetBankLoanRateResult
                 {
                     BankLoanRateId = x.BankLoanRateId,
                     BankName = x.BankName,
                     LogoUrl = x.LogoUrl,
+                    ProviderKey = x.ProviderKey,
                     DataSource = x.DataSource,
                     HousingLoanMonthlyRate = x.HousingLoanMonthlyRate,
                     CommercialLoanMonthlyRate = x.CommercialLoanMonthlyRate,
                     MaxTermMonths = x.MaxTermMonths,
                     AllocationFeeRate = x.AllocationFeeRate,
+                    IsActive = x.IsActive,
                     UpdatedDate = x.UpdatedDate
                 })
                 .ToList();

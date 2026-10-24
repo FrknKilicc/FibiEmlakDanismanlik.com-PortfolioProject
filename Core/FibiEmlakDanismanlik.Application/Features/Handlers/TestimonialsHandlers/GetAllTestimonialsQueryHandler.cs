@@ -3,10 +3,9 @@ using FibiEmlakDanismanlik.Application.Features.Results.TestimonialsResults;
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.TestimonialsHandlers
@@ -23,15 +22,26 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.TestimonialsHandler
         public async Task<List<GetTestimonialsResult>> Handle(GetTestimonailsQuery request, CancellationToken cancellationToken)
         {
             var value = await repository.GetAllAsync();
+            var query = value.AsEnumerable();
 
-            return value.Select(x => new GetTestimonialsResult
+            if (!request.IncludeInactive)
             {
-                Id = x.Id,
-                Name = x.Name,
-                LogoUrl = x.LogoUrl,
-                Testimonail = x.Testimonail,
-                Title = x.Title,
-            }).ToList();
+                query = query.Where(x => x.IsActive);
+            }
+
+            return query
+                .OrderBy(x => x.DisplayOrder)
+                .ThenBy(x => x.Id)
+                .Select(x => new GetTestimonialsResult
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    LogoUrl = x.LogoUrl,
+                    Testimonail = x.Testimonail,
+                    Title = x.Title,
+                    IsActive = x.IsActive,
+                    DisplayOrder = x.DisplayOrder
+                }).ToList();
         }
     }
 }

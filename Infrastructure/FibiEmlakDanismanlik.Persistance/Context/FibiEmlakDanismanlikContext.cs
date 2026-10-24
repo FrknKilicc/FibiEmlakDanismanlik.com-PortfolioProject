@@ -764,6 +764,9 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 entity.Property(x => x.StoragePath)
                       .HasMaxLength(300);
 
+                entity.Property(x => x.Kind).HasConversion<int>();
+                entity.Property(x => x.Caption).HasMaxLength(100);
+
                 entity.HasIndex(x => new { x.ListingTypeId, x.ListingId, x.SortOrder });
             });
 

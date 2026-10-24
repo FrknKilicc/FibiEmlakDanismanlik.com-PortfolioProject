@@ -3,10 +3,9 @@ using FibiEmlakDanismanlik.Application.Features.Results.OurPartnersResults;
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.OurPartnersHandlers
@@ -23,12 +22,24 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.OurPartnersHandlers
         public async Task<List<GetOurPartnersResult>> Handle(GetOurPartnersQuery request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetAllAsync();
-            return value.Select(x => new GetOurPartnersResult
+            var query = value.AsEnumerable();
+
+            if (!request.IncludeInactive)
             {
-                Id = x.Id,
-                PartnerLogoUrl = x.PartnerLogoUrl,
-                PartnerName = x.PartnerName,
-            }).ToList();
+                query = query.Where(x => x.IsActive);
+            }
+
+            return query
+                .OrderBy(x => x.DisplayOrder)
+                .ThenBy(x => x.Id)
+                .Select(x => new GetOurPartnersResult
+                {
+                    Id = x.Id,
+                    PartnerLogoUrl = x.PartnerLogoUrl,
+                    PartnerName = x.PartnerName,
+                    IsActive = x.IsActive,
+                    DisplayOrder = x.DisplayOrder
+                }).ToList();
         }
     }
 }

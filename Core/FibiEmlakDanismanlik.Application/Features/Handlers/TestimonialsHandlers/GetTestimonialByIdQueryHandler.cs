@@ -31,7 +31,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.TestimonialsHandler
                 Title = entity.Title,
                 Name = entity.Name,
                 LogoUrl = entity.LogoUrl,
-                Testimonail = entity.Testimonail
+                Testimonail = entity.Testimonail,
+                IsActive = entity.IsActive,
+                DisplayOrder = entity.DisplayOrder
             };
         }
     }

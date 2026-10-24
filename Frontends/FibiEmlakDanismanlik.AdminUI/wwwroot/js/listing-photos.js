@@ -1,10 +1,11 @@
 /**
  * Fibi Emlak - İlan Fotoğrafları Yönetim Betiği (Vanilla JS)
- * Fotoğraf yükleme (XHR ile ilerleme çubuğu), silme, kapak yapma ve sürükle-bırak sıralama
+ * Fotoğraf yükleme (XHR ile ilerleme çubuğu), silme, kapak yapma, tür güncelleme ve sürükle-bırak sıralama
  */
 document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('photosCard');
     if (!container) return;
+    const photosCard = container;
 
     const typeId = container.dataset.listingTypeId;
     const listingId = container.dataset.listingId;
@@ -23,21 +24,34 @@ document.addEventListener('DOMContentLoaded', function () {
     let initialOrderIds = getOrderedIds();
     let isUploading = false;
 
+    function resolveUrl(url) {
+        if (!url) return '';
+        const origin = (photosCard && photosCard.dataset && photosCard.dataset.siteOrigin)
+            ? photosCard.dataset.siteOrigin.replace(/\/+$/, '')
+            : '';
+        if (origin && url.startsWith('/') && !url.startsWith('//')) {
+            return origin + url;
+        }
+        return url;
+    }
+
     function getAntiForgeryToken() {
         const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
         return tokenInput ? tokenInput.value : '';
     }
 
     function showAlert(message, type = 'danger') {
-        if (!alertArea) return;
-        const icon = type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill';
-        alertArea.innerHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
-                <i class="bi bi-${icon} flex-shrink-0 me-2 fs-5"></i>
-                <div class="flex-grow-1">${escapeHtml(message)}</div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
-            </div>
-        `;
+        if (alertArea) {
+            const icon = type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill';
+            alertArea.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
+                    <i class="bi bi-${icon} flex-shrink-0 me-2 fs-5"></i>
+                    <div class="flex-grow-1">${escapeHtml(message)}</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+                </div>
+            `;
+        }
+        if (window.fibiToast) window.fibiToast(message, type === 'danger' ? 'error' : (type === 'success' ? 'success' : 'info'));
     }
 
     function clearAlert() {
@@ -83,6 +97,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function loadPhotos() {
+        return fetch(`/ilanlar/${typeId}/${listingId}/fotograflar`)
+            .then(res => res.json())
+            .then(result => {
+                if (result && result.ok && result.data) {
+                    renderPhotos(result.data);
+                }
+            })
+            .catch(() => {
+                showAlert('Fotoğraflar sunucudan yüklenirken bir hata oluştu.', 'danger');
+            });
+    }
+
     function renderPhotos(photos) {
         if (!grid) return;
         grid.innerHTML = '';
@@ -98,29 +125,55 @@ document.addEventListener('DOMContentLoaded', function () {
 
         photos.forEach(img => {
             const col = document.createElement('div');
-            col.className = 'col-6 col-sm-4 col-md-3 col-lg-2 photo-item';
+            col.className = 'col-6 col-md-4 col-xl-3 photo-item';
             col.dataset.imageId = img.listingImageId;
+            col.dataset.currentKind = img.kind || 0;
+            col.dataset.currentCaption = img.caption || '';
             col.draggable = canEdit;
 
-            const thumb = img.thumbUrl || img.url || '';
+            const kind = parseInt(img.kind, 10) || 0;
+            const isPhoto = (kind === 0);
+            const kindText = kind === 1 ? 'Kat Planı' : (kind === 2 ? 'Kroki' : (kind === 3 ? 'İmar Planı' : 'Kat Planı'));
+            const thumb = resolveUrl(img.thumbUrl || img.url || '');
+            const imgClass = isPhoto ? 'object-fit-cover w-100 h-100' : 'object-fit-contain bg-light w-100 h-100';
+
             col.innerHTML = `
                 <div class="card h-100 border shadow-none photo-card position-relative overflow-hidden">
                     <div class="photo-thumb-wrapper ratio ratio-4x3 bg-light">
-                        <img src="${escapeHtml(thumb)}" class="object-fit-cover w-100 h-100" alt="Fotoğraf ${img.listingImageId}" loading="lazy" />
+                        <img src="${escapeHtml(thumb)}" class="${imgClass}" alt="Görsel ${img.listingImageId}" loading="lazy" />
                     </div>
+                    ${isPhoto ? `
                     <span class="badge bg-primary position-absolute top-0 start-0 m-2 cover-badge ${img.isCover ? '' : 'd-none'}">
                         <i class="bi bi-star-fill me-1"></i> Kapak
                     </span>
-                    ${canEdit ? `
-                    <div class="card-footer p-1 bg-white border-top-0 d-flex justify-content-between gap-1">
-                        <button type="button" class="btn btn-sm btn-outline-secondary flex-grow-1 p-1 set-cover-btn ${img.isCover ? 'd-none' : ''}" data-action="set-cover" title="Kapak yap">
-                            <i class="bi bi-star"></i> Kapak
-                        </button>
-                        <button type="button" class="btn btn-sm btn-outline-danger p-1 px-2 delete-photo-btn" data-action="delete" title="Fotoğrafı sil">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                    ` : `
+                    <span class="badge bg-info text-dark position-absolute top-0 start-0 m-2">
+                        <i class="bi bi-rulers me-1"></i>${kindText}
+                    </span>
+                    `}
+                    <div class="card-footer p-1 bg-white border-top-0">
+                        ${canEdit ? `
+                        <div class="d-flex justify-content-between gap-1 mb-1">
+                            ${isPhoto ? `
+                            <button type="button" class="btn btn-sm btn-outline-secondary flex-grow-1 p-1 set-cover-btn ${img.isCover ? 'd-none' : ''}" data-action="set-cover" title="Kapak yap">
+                                <i class="bi bi-star"></i> Kapak
+                            </button>
+                            ` : ''}
+                            <button type="button" class="btn btn-sm btn-outline-danger p-1 px-2 delete-photo-btn ${!isPhoto ? 'w-100' : ''}" data-action="delete" title="Fotoğrafı sil">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        ` : ''}
+                        <select class="form-select form-select-sm kind-select" data-action="kind" ${canEdit ? '' : 'disabled'}>
+                            <option value="0" ${kind === 0 ? 'selected' : ''}>Fotoğraf</option>
+                            <option value="1" ${kind === 1 ? 'selected' : ''}>Kat Planı</option>
+                            <option value="2" ${kind === 2 ? 'selected' : ''}>Kroki</option>
+                            <option value="3" ${kind === 3 ? 'selected' : ''}>İmar Planı</option>
+                        </select>
+                        ${!isPhoto ? `
+                        <input type="text" class="form-control form-control-sm mt-1 caption-input" maxlength="100" placeholder="Başlık (ör. Zemin kat)" value="${escapeHtml(img.caption || '')}" ${canEdit ? '' : 'disabled'}>
+                        ` : ''}
                     </div>
-                    ` : ''}
                 </div>
             `;
             grid.appendChild(col);
@@ -252,20 +305,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(({ ok, data }) => {
             if (ok && data && data.ok) {
                 showAlert('Kapak fotoğrafı başarıyla belirlendi.', 'success');
-                // DOM üzerindeki rozet ve butonları güncelle
-                const items = grid.querySelectorAll('.photo-item');
-                items.forEach(item => {
-                    const id = parseInt(item.dataset.imageId, 10);
-                    const coverBadge = item.querySelector('.cover-badge');
-                    const setCoverBtn = item.querySelector('.set-cover-btn');
-                    if (id === imageId) {
-                        if (coverBadge) coverBadge.classList.remove('d-none');
-                        if (setCoverBtn) setCoverBtn.classList.add('d-none');
-                    } else {
-                        if (coverBadge) coverBadge.classList.add('d-none');
-                        if (setCoverBtn) setCoverBtn.classList.remove('d-none');
-                    }
-                });
+                loadPhotos();
             } else {
                 showAlert((data && data.message) ? data.message : 'Kapak fotoğrafı güncellenemedi.', 'danger');
             }
@@ -293,16 +333,73 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(({ ok, data }) => {
             if (ok && data && data.ok) {
                 showAlert('Fotoğraf silindi.', 'success');
-                itemElement.remove();
-                updateCountBadge();
-                initialOrderIds = getOrderedIds();
-                if (saveOrderBtn) saveOrderBtn.classList.add('d-none');
+                loadPhotos();
             } else {
                 showAlert((data && data.message) ? data.message : 'Fotoğraf silinemedi.', 'danger');
             }
         })
         .catch(() => {
             showAlert('Sunucu ile iletişim kurulurken hata oluştu.', 'danger');
+        });
+    }
+
+    function handleKindOrCaptionChange(e) {
+        const target = e.target;
+        if (!target.classList.contains('kind-select') && !target.classList.contains('caption-input')) {
+            return;
+        }
+
+        const item = target.closest('.photo-item');
+        if (!item) return;
+
+        const imageId = parseInt(item.dataset.imageId, 10);
+        if (!imageId) return;
+
+        const kindSelect = item.querySelector('.kind-select');
+        const captionInput = item.querySelector('.caption-input');
+
+        const newKind = kindSelect ? parseInt(kindSelect.value, 10) : 0;
+        const newCaption = captionInput ? captionInput.value : '';
+
+        const previousKind = parseInt(item.dataset.currentKind, 10) || 0;
+        const previousCaption = item.dataset.currentCaption || '';
+
+        if (target.classList.contains('caption-input') && newCaption === previousCaption) {
+            return;
+        }
+        if (target.classList.contains('kind-select') && newKind === previousKind) {
+            return;
+        }
+
+        clearAlert();
+        const token = getAntiForgeryToken();
+
+        fetch(`/ilanlar/fotograf/${imageId}/tur`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify({
+                kind: newKind,
+                caption: newCaption
+            })
+        })
+        .then(res => res.json().then(data => ({ status: res.status, ok: res.ok, data })))
+        .then(({ ok, data }) => {
+            if (ok && data && data.ok) {
+                showAlert('Görsel türü güncellendi.', 'success');
+                loadPhotos();
+            } else {
+                showAlert((data && data.message) ? data.message : 'Görsel türü güncellenemedi.', 'danger');
+                if (kindSelect) kindSelect.value = previousKind;
+                if (captionInput) captionInput.value = previousCaption;
+            }
+        })
+        .catch(() => {
+            showAlert('Sunucu ile iletişim kurulurken hata oluştu.', 'danger');
+            if (kindSelect) kindSelect.value = previousKind;
+            if (captionInput) captionInput.value = previousCaption;
         });
     }
 
@@ -326,6 +423,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function handleDragStart(e) {
+        // Form elemanlarından sürükleme başlamasını engelle
+        if (e.target.closest('select, input, button')) {
+            e.preventDefault();
+            return;
+        }
         draggedItem = this;
         this.classList.add('is-dragging');
         e.dataTransfer.effectAllowed = 'move';
@@ -396,6 +498,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (canEdit && grid) {
+        grid.addEventListener('change', handleKindOrCaptionChange);
+
         grid.addEventListener('click', function (e) {
             const btn = e.target.closest('button');
             if (!btn) return;
@@ -474,8 +578,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // İlk yüklemede sürükle-bırak olaylarını bağla
-    if (canEdit) {
+    // İlk yüklemede fotoğrafları getir ve sürükle-bırak olaylarını bağla
+    if (typeId && listingId) {
+        loadPhotos();
+    } else if (canEdit) {
         initDragAndDrop();
     }
 });

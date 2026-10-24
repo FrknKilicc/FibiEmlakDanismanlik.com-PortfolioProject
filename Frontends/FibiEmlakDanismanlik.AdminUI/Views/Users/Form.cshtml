@@ -104,7 +104,8 @@
                                id="AgentTitle"
                                name="AgentTitle"
                                value="@Model.Form.AgentTitle"
-                               placeholder="Örn: Gayrimenkul Danışmanı" />
+                               placeholder="Örn: Gayrimenkul Danışmanı"
+                               data-help="Web sitesinde danışman kartında ve ilan detayında gösterilecek mesleki unvan." />
                         @if (errTitle != null)
                         {
                             <div class="invalid-feedback d-block">@errTitle</div>
@@ -159,7 +160,7 @@
                         </label>
                         @if (Model.IsSelf)
                         {
-                            <select class="form-select @(errRole != null ? "is-invalid" : "")" id="Role" disabled>
+                            <select class="form-select @(errRole != null ? "is-invalid" : "")" id="Role" disabled data-help="Sahip tam yetkilidir; Yönetici personel ve ilan yönetir; Danışman yalnızca kendi ve izinli ilanları görür.">
                                 <option value="@Model.Form.Role">@UserLabels.RoleName(Model.Existing?.Role)</option>
                             </select>
                             <input type="hidden" name="Role" value="@Model.Form.Role" />
@@ -167,7 +168,7 @@
                         }
                         else if (Model.IsOwner)
                         {
-                            <select class="form-select @(errRole != null ? "is-invalid" : "")" id="Role" name="Role">
+                            <select class="form-select @(errRole != null ? "is-invalid" : "")" id="Role" name="Role" data-help="Sahip tam yetkilidir; Yönetici personel ve ilan yönetir; Danışman yalnızca kendi ve izinli ilanları görür.">
                                 <option value="1" selected="@(Model.Form.Role == 1 ? "selected" : null)">Sahip</option>
                                 <option value="2" selected="@(Model.Form.Role == 2 ? "selected" : null)">Yönetici</option>
                                 <option value="3" selected="@(Model.Form.Role == 3 ? "selected" : null)">Danışman</option>
@@ -175,7 +176,7 @@
                         }
                         else
                         {
-                            <select class="form-select @(errRole != null ? "is-invalid" : "")" id="Role" name="Role">
+                            <select class="form-select @(errRole != null ? "is-invalid" : "")" id="Role" name="Role" data-help="Sahip tam yetkilidir; Yönetici personel ve ilan yönetir; Danışman yalnızca kendi ve izinli ilanları görür.">
                                 <option value="3" selected="selected">Danışman</option>
                             </select>
                             <div class="form-text">Yöneticiler yalnızca Danışman rolünde kullanıcı ekleyebilir ve düzenleyebilir.</div>
@@ -189,7 +190,7 @@
                     <div class="form-check form-switch mb-3">
                         <input type="checkbox"
                                class="form-check-input"
-                               id="CanViewAllListings"
+                               id="CanViewAllListings" data-help="Danışmanın kendi portföyü dışındaki şirket ilanlarını salt okunur olarak incelemesine izin verir."
                                name="CanViewAllListings"
                                value="true"
                                @(Model.Form.CanViewAllListings ? "checked" : "") />
@@ -203,7 +204,7 @@
                     <div class="form-check form-switch mb-3">
                         <input type="checkbox"
                                class="form-check-input"
-                               id="ShowOnWebsite"
+                               id="ShowOnWebsite" data-help="İşaretlendiğinde çalışan sitedeki Danışmanlar sayfasında ve ilan detay kartlarında listelenir."
                                name="ShowOnWebsite"
                                value="true"
                                @(Model.Form.ShowOnWebsite ? "checked" : "") />
@@ -221,7 +222,7 @@
                             {
                                 <input type="checkbox"
                                        class="form-check-input"
-                                       id="IsActive"
+                                       id="IsActive" data-help="Pasife alınan kullanıcının tüm açık oturumları kapatılır ve sisteme giriş yapması engellenir."
                                        disabled
                                        @(Model.Form.IsActive ? "checked" : "") />
                                 <input type="hidden" name="IsActive" value="@(Model.Form.IsActive ? "true" : "false")" />
@@ -234,7 +235,7 @@
                             {
                                 <input type="checkbox"
                                        class="form-check-input"
-                                       id="IsActive"
+                                       id="IsActive" data-help="Pasife alınan kullanıcının tüm açık oturumları kapatılır ve sisteme giriş yapması engellenir."
                                        name="IsActive"
                                        value="true"
                                        @(Model.Form.IsActive ? "checked" : "") />
@@ -270,7 +271,7 @@
                                    id="Password"
                                    name="Password"
                                    autocomplete="new-password"
-                                   minlength="12"
+                                   minlength="12" data-help="Kullanıcı ilk girişte şifresini değiştirmek ve iki adımlı doğrulamayı kurmak zorundadır."
                                    required />
                             @if (errPassword != null)
                             {
@@ -290,7 +291,7 @@
                                    id="Password"
                                    name="Password"
                                    autocomplete="new-password"
-                                   minlength="12" />
+                                   minlength="12" data-help="Doldurulursa kullanıcının şifresi sıfırlanır, oturumları kapatılır ve ilk girişte yeni şifre istenir." />
                             @if (errPassword != null)
                             {
                                 <div class="invalid-feedback d-block">@errPassword</div>
@@ -332,7 +333,7 @@
                         <div class="form-check mb-3">
                             <input type="checkbox"
                                    class="form-check-input"
-                                   id="ResetTwoFactor"
+                                   id="ResetTwoFactor" data-help="Kullanıcının 2FA anahtarını sıfırlar; sonraki girişte yeniden doğrulama kurulumu istenir."
                                    name="ResetTwoFactor"
                                    value="true"
                                    @(Model.Form.ResetTwoFactor ? "checked" : "") />
@@ -348,7 +349,7 @@
                             <div class="form-check mb-2">
                                 <input type="checkbox"
                                        class="form-check-input"
-                                       id="Unlock"
+                                       id="Unlock" data-help="Çok sayıda hatalı giriş denemesi nedeniyle kilitlenen hesabın kilidini açar."
                                        name="Unlock"
                                        value="true"
                                        @(Model.Form.Unlock ? "checked" : "") />
@@ -373,7 +374,7 @@
                     <div class="mb-3">
                         <label for="AgentDescription" class="form-label small fw-semibold">Danışman Açıklaması / Biyografi</label>
                         <textarea class="form-control @(errDesc != null ? "is-invalid" : "")"
-                                  id="AgentDescription"
+                                  id="AgentDescription" data-help="Sitedeki Danışmanlar sayfasında ve danışman profilinde ziyaretçilere gösterilen tanıtım yazısıdır."
                                   name="AgentDescription"
                                   rows="4"
                                   placeholder="Danışmanın uzmanlık alanları, deneyimi veya biyografisi...">@Model.Form.AgentDescription</textarea>
@@ -387,7 +388,7 @@
                         <label for="AgentImgUrl" class="form-label small fw-semibold">Profil Fotoğrafı URL</label>
                         <input type="text"
                                class="form-control @(errImg != null ? "is-invalid" : "")"
-                               id="AgentImgUrl"
+                               id="AgentImgUrl" data-help="Site içi yol (/...) veya https adresi girilebilir ya da Bilgisayardan yükle ile eklenebilir."
                                name="AgentImgUrl"
                                value="@Model.Form.AgentImgUrl"
                                placeholder="https://... veya /uploads/..." />

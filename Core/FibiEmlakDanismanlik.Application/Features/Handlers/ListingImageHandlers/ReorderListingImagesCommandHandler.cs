@@ -6,6 +6,7 @@ using FibiEmlakDanismanlik.Application.Exceptions;
 using FibiEmlakDanismanlik.Application.Features.Commands.ListingImageCommands;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces;
+using FibiEmlakDanismanlik.Domain.Enums;
 using MediatR;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandlers
@@ -58,11 +59,19 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
                 throw new ImageValidationException("Kapak fotoğrafı bu ilana ait olmalıdır.");
             }
 
+            var coverImage = existingImages.FirstOrDefault(x => x.ListingImageId == request.CoverImageId);
+            if (coverImage != null && coverImage.Kind != ListingImageKind.Photo)
+            {
+                throw new ImageValidationException("Kapak olarak yalnızca fotoğraf seçilebilir; kat planı, kroki veya imar planı kapak olamaz.");
+            }
+
             await _listingImageRepository.SaveOrderAsync(
                 request.ListingTypeId,
                 request.ListingId,
                 request.OrderedImageIds,
                 request.CoverImageId);
+
+            await _listingImageRepository.NormalizeAsync(request.ListingTypeId, request.ListingId);
 
             await _listingImageRepository.SyncLegacyColumnsAsync(request.ListingTypeId, request.ListingId);
         }

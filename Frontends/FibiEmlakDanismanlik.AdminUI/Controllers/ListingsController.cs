@@ -151,10 +151,10 @@ public sealed class ListingsController : Controller
     [HttpGet("/ilanlar/yeni")]
     public async Task<IActionResult> Create(int tur)
     {
-        // Tür 1, 2, 3, 7, 8, 9 değilse /ilanlar sayfasına yönlendir
+        // Tür 1, 2, 3, 7, 8, 9 değilse tür seçim sayfasını göster
         if (tur is not (1 or 2 or 3 or 7 or 8 or 9))
         {
-            return Redirect("/ilanlar");
+            return View("New");
         }
 
         var lookupsResult = await _apiClient.GetAsync<AdminListingLookupsDto>("AdminListings/lookups");
@@ -440,6 +440,21 @@ public sealed class ListingsController : Controller
         }
 
         return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Fotoğraf silinemedi.", data = (object?)null });
+    }
+
+    /// <summary>
+    /// Fotoğrafın türünü ve başlığını günceller.
+    /// </summary>
+    [HttpPut("/ilanlar/fotograf/{imageId:int}/tur")]
+    public async Task<IActionResult> UpdatePhotoKind(int imageId, [FromBody] UpdatePhotoKindInputModel body)
+    {
+        var result = await _apiClient.PutAsync<object>($"ListingImages/{imageId}/kind", new { kind = body?.Kind ?? 0, caption = body?.Caption ?? string.Empty });
+        if (result.Success)
+        {
+            return Ok(new { ok = true, message = "Görsel türü güncellendi.", data = (object?)null });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Görsel türü güncellenemedi.", data = (object?)null });
     }
 
     /// <summary>

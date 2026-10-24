@@ -22,8 +22,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthHandlers
     /// </summary>
     public class EnableTwoFactorCommandHandler : IRequestHandler<EnableTwoFactorCommand, GetEnableTwoFactorResult?>
     {
-        private const string RecoveryCodeAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-
         private readonly IRepository<Agent> _agentRepository;
         private readonly IAgentRepository _agentCustomRepository;
         private readonly ILoginFlowService _loginFlowService;
@@ -93,18 +91,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthHandlers
             agent.TwoFactorEnabled = true;
             agent.SecurityStamp = Guid.NewGuid().ToString("N");
 
-            // Kurtarma kodlarını üret (ABCDEFGHJKLMNPQRSTUVWXYZ23456789 alfabesi, XXXX-XXXX formatı)
-            var recoveryCodes = new List<string>(AuthConstants.RecoveryCodeCount);
-            for (int i = 0; i < AuthConstants.RecoveryCodeCount; i++)
-            {
-                var chars = new char[8];
-                for (int j = 0; j < 8; j++)
-                {
-                    chars[j] = RecoveryCodeAlphabet[RandomNumberGenerator.GetInt32(RecoveryCodeAlphabet.Length)];
-                }
-                var code = $"{new string(chars, 0, 4)}-{new string(chars, 4, 4)}";
-                recoveryCodes.Add(code);
-            }
+            // Kurtarma kodlarını üret
+            var recoveryCodes = RecoveryCodeGenerator.Generate(AuthConstants.RecoveryCodeCount);
 
             // Kurtarma kodlarının BCrypt hash'lerini veritabanına kaydet
             var codeHashes = recoveryCodes.Select(c => BCrypt.Net.BCrypt.HashPassword(c)).ToList();

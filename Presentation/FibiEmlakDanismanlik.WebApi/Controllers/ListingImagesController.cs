@@ -109,5 +109,36 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize(Policy = AuthConstants.PolicyStaff)]
+        [HttpPut("{listingImageId:int}/kind")]
+        public async Task<IActionResult> UpdateListingImageKind(int listingImageId, [FromBody] UpdateListingImageKindCommand command)
+        {
+            if (command == null)
+            {
+                command = new UpdateListingImageKindCommand();
+            }
+
+            command.ListingImageId = listingImageId;
+
+            try
+            {
+                var updated = await _mediator.Send(command);
+                if (!updated)
+                {
+                    return NotFound("Görsel bulunamadı.");
+                }
+
+                return Ok("Görsel türü güncellendi.");
+            }
+            catch (ListingAccessDeniedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
+            }
+            catch (ImageValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

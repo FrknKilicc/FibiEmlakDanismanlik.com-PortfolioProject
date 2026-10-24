@@ -12,7 +12,7 @@
     bool isDeals = string.Equals(currentController, "Deals", StringComparison.OrdinalIgnoreCase);
     bool isReports = string.Equals(currentController, "Reports", StringComparison.OrdinalIgnoreCase);
     bool isUsers = string.Equals(currentController, "Users", StringComparison.OrdinalIgnoreCase);
-    bool isContent = string.Equals(currentController, "Content", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogAdmin", StringComparison.OrdinalIgnoreCase);
+    bool isContent = string.Equals(currentController, "Content", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogAdmin", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "SiteContent", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogAuthors", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogCategories", StringComparison.OrdinalIgnoreCase);
     bool isAudit = string.Equals(currentController, "AuditLog", StringComparison.OrdinalIgnoreCase);
     bool isSettings = string.Equals(currentController, "Settings", StringComparison.OrdinalIgnoreCase);
 }
@@ -25,6 +25,8 @@
 
   <title>@ViewData["Title"] | Fibi Yönetim</title>
   <meta name="robots" content="noindex, nofollow">
+
+  <partial name="_ThemeHead" />
 
   <!-- Favicons -->
   <link href="~/assets/img/favicon.ico" rel="icon">
@@ -44,6 +46,7 @@
   <link href="~/assets/css/style.css" rel="stylesheet">
   <link href="~/css/admin.css" rel="stylesheet" asp-append-version="true">
   @await RenderSectionAsync("Styles", required: false)
+  <link href="~/css/theme.css" rel="stylesheet" asp-append-version="true">
 </head>
 
 <body>
@@ -62,6 +65,35 @@
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
 
+        <li class="nav-item dropdown">
+          <button class="btn btn-link nav-link nav-icon border-0" id="themeToggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Tema seç" title="Tema">
+            <i class="bi bi-circle-half"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" aria-labelledby="themeToggle">
+            <li>
+              <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-theme-value="light">
+                <i class="bi bi-sun"></i>
+                <span>Açık</span>
+                <i class="bi bi-check2 ms-auto theme-check d-none"></i>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-theme-value="dark">
+                <i class="bi bi-moon-stars"></i>
+                <span>Koyu</span>
+                <i class="bi bi-check2 ms-auto theme-check d-none"></i>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-theme-value="auto">
+                <i class="bi bi-circle-half"></i>
+                <span>Sistem</span>
+                <i class="bi bi-check2 ms-auto theme-check d-none"></i>
+              </button>
+            </li>
+          </ul>
+        </li>
+
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
@@ -77,6 +109,8 @@
             <li>
               <hr class="dropdown-divider">
             </li>
+
+            <li><a class="dropdown-item d-flex align-items-center py-2" href="/hesabim"><i class="bi bi-person-gear me-2"></i><span>Hesabım</span></a></li><li><hr class="dropdown-divider"></li>
 
             <li>
               <form action="/cikis" method="post" class="w-100 m-0 p-0">
@@ -195,6 +229,28 @@
     @RenderBody()
   </main><!-- End #main -->
 
+  <!-- Sabit Bildirim Kabı (Toast Stack) -->
+  <div id="toastStack" class="toast-container position-fixed top-0 end-0 p-3 toast-stack-fixed" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- Ortak Silme Onayı Modal -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Silme onayı</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmModalText" class="mb-0"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+          <button type="button" class="btn btn-danger" id="confirmModalOk">Evet, sil</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     <div class="copyright">
@@ -216,8 +272,12 @@
 
   <!-- Template Main JS File -->
   <script src="~/assets/js/main.js"></script>
+  <script src="~/js/confirm-modal.js" asp-append-version="true"></script>
+  <script src="~/js/admin-ui.js" asp-append-version="true"></script>
 
   @await RenderSectionAsync("Scripts", required: false)
+
+  <script src="~/js/theme.js" asp-append-version="true"></script>
 
 </body>
 

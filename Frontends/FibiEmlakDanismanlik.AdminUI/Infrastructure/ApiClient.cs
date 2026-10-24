@@ -238,7 +238,7 @@ public sealed class ApiClient
                 return ApiResult<T>.Ok(default, statusCode);
             }
 
-            if (typeof(T) == typeof(string))
+            if (typeof(T) == typeof(string) || typeof(T) == typeof(object))
             {
                 var mediaType = response.Content.Headers.ContentType?.MediaType;
                 if (mediaType == null || !mediaType.Contains("json", StringComparison.OrdinalIgnoreCase))

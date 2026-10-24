@@ -6,5 +6,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.OurPartnersCommands
     {
         public string? PartnerName { get; set; }
         public string? PartnerLogoUrl { get; set; }
+        public bool IsActive { get; set; } = true;
+        public int DisplayOrder { get; set; }
     }
 }

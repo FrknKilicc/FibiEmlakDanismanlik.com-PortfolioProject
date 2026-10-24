@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using FibiEmlakDanismanlik.Domain.Enums;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
@@ -48,6 +49,16 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         /// Görselin kapak / vitrin görseli olup olmadığını belirtir.
         /// </summary>
         public bool IsCover { get; set; }
+
+        /// <summary>
+        /// Görselin türü (Fotoğraf, Kat Planı, Kroki, İmar Planı).
+        /// </summary>
+        public ListingImageKind Kind { get; set; } = ListingImageKind.Photo;
+
+        /// <summary>
+        /// Plan veya görsel başlığı (ör. "Zemin kat").
+        /// </summary>
+        public string? Caption { get; set; }
 
         /// <summary>
         /// Görsel için alternatif metin (erişilebilirlik ve SEO amaçlı).

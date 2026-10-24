@@ -123,5 +123,15 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AgentRepositories
                 .ThenBy(x => x.AgentName)
                 .ToListAsync();
         }
+
+        public async Task<List<LoginAuditLog>> GetRecentLoginsAsync(int agentId, int take)
+        {
+            return await _context.LoginAuditLogs
+                .AsNoTracking()
+                .Where(x => x.AgentId == agentId)
+                .OrderByDescending(x => x.CreatedAtUtc)
+                .Take(take)
+                .ToListAsync();
+        }
     }
 }

@@ -34,23 +34,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.OurPartnersHandlers
                 throw new ArgumentException("Partner adı ve logo adresi zorunludur.");
             }
 
-            if (partnerName.Length > 100)
-            {
-                throw new ArgumentException("Partner adı en fazla 100 karakter olabilir.");
-            }
-
-            if (partnerLogoUrl.Length > 500)
-            {
-                throw new ArgumentException("Logo adresi en fazla 500 karakter olabilir.");
-            }
-
-            if (!partnerLogoUrl.StartsWith("/") && !partnerLogoUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new ArgumentException("Logo adresi '/' ile başlayan bir yol ya da https adresi olmalıdır.");
-            }
-
             entity.PartnerName = partnerName;
             entity.PartnerLogoUrl = partnerLogoUrl;
+            entity.IsActive = request.IsActive;
+            entity.DisplayOrder = request.DisplayOrder;
 
             await _repository.UpdateAsync(entity);
         }

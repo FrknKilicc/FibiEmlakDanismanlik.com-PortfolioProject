@@ -11,6 +11,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.BankLoanRateResults
 
         public string? LogoUrl { get; set; }
 
+        public string? ProviderKey { get; set; }
+
         public string DataSource { get; set; } = null!;
 
         public decimal HousingLoanMonthlyRate { get; set; }
@@ -20,6 +22,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.BankLoanRateResults
         public int MaxTermMonths { get; set; }
 
         public decimal AllocationFeeRate { get; set; }
+
+        public bool IsActive { get; set; }
 
         public DateTime UpdatedDate { get; set; }
     }

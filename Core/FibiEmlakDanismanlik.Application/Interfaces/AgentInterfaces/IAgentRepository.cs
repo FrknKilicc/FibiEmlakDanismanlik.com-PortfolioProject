@@ -45,5 +45,10 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.AgentInterfaces
         /// Yönetim paneli için tüm personelleri (gizli ve pasifler dahil) rol ve ada göre sıralı olarak döndürür.
         /// </summary>
         Task<List<Agent>> GetAllForAdminAsync();
+
+        /// <summary>
+        /// Danışmanın son giriş denemelerini en yeni tarihten eskiye doğru döndürür.
+        /// </summary>
+        Task<List<LoginAuditLog>> GetRecentLoginsAsync(int agentId, int take);
     }
 }

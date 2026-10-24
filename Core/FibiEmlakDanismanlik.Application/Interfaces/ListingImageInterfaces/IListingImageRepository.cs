@@ -1,4 +1,5 @@
 using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Enums;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -24,6 +25,22 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces
         /// <param name="listingId">İlan kimliği.</param>
         /// <returns>SortOrder ile sıralanmış görsel listesi.</returns>
         Task<List<ListingImage>> GetByListingAsync(int listingTypeId, int listingId);
+
+        /// <summary>
+        /// Belirtilen ilana ait fotoğraf dışındaki plan ve krokileri SortOrder sırasına göre izlemesiz (AsNoTracking) olarak getirir.
+        /// </summary>
+        /// <param name="listingTypeId">İlan türü kimliği.</param>
+        /// <param name="listingId">İlan kimliği.</param>
+        /// <returns>Plan türündeki görsel listesi.</returns>
+        Task<List<ListingImage>> GetPlanImagesAsync(int listingTypeId, int listingId);
+
+        /// <summary>
+        /// Görselin türünü ve başlığını günceller.
+        /// </summary>
+        /// <param name="listingImageId">Görsel kimliği.</param>
+        /// <param name="kind">Görsel türü.</param>
+        /// <param name="caption">Görsel veya plan başlığı.</param>
+        Task UpdateKindAsync(int listingImageId, ListingImageKind kind, string? caption);
 
         /// <summary>
         /// Belirtilen görsel kimliğine sahip görseli değişiklik takibi açık (tracked) olarak getirir.

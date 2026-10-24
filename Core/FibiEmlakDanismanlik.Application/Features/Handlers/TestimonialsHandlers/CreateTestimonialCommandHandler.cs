@@ -27,24 +27,17 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.TestimonialsHandler
                 throw new ArgumentException("Ad ve yorum metni zorunludur.");
             }
 
-            var title = request.Title?.Trim();
-            if (string.IsNullOrWhiteSpace(title))
-            {
-                title = null;
-            }
-
-            var logoUrl = request.LogoUrl?.Trim();
-            if (string.IsNullOrWhiteSpace(logoUrl))
-            {
-                logoUrl = "icon-18";
-            }
+            var title = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim();
+            var logoUrl = string.IsNullOrWhiteSpace(request.LogoUrl) ? "icon-18" : request.LogoUrl.Trim();
 
             var entity = new Testimonials
             {
                 Name = name,
                 Testimonail = testimonial,
                 Title = title,
-                LogoUrl = logoUrl
+                LogoUrl = logoUrl,
+                IsActive = request.IsActive,
+                DisplayOrder = request.DisplayOrder
             };
 
             await _repository.CreateAsync(entity);
