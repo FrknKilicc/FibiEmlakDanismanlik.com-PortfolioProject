@@ -6,6 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
+// API'ye ulaşılamazsa istisna yerine 503 yanıtı döner; sayfalar boş içerikle açılır
+builder.Services.AddTransient<ApiUnavailableHandler>();
+builder.Services.ConfigureHttpClientDefaults(http => http.AddHttpMessageHandler<ApiUnavailableHandler>());
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<FormSpamGuard>();
 builder.Services.AddSingleton<ListingLocationResolver>();

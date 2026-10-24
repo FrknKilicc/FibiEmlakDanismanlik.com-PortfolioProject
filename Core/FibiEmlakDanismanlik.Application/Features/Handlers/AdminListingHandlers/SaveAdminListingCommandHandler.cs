@@ -87,11 +87,11 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AdminListingHandler
                 }
                 else
                 {
-                    // Owner veya Manager istekte AgentId belirtebilir; boşsa kendisi atanır
+                    // Owner veya Manager istekte AgentId belirtebilir (aktif herhangi bir çalışan); boşsa kendisi atanır
                     if (request.AgentId.HasValue && request.AgentId.Value > 0)
                     {
                         var targetAgent = await _adminListingRepository.GetAgentByIdAsync(request.AgentId.Value);
-                        if (targetAgent == null || !targetAgent.IsActive || targetAgent.Role != AgentRole.Consultant)
+                        if (targetAgent == null || !targetAgent.IsActive)
                         {
                             throw new ValidationException(new[]
                             {
@@ -130,11 +130,11 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AdminListingHandler
                 }
                 else
                 {
-                    // Owner veya Manager danışmanı değiştirebilir
+                    // Owner veya Manager danışmanı değiştirebilir (aktif herhangi bir çalışan)
                     if (request.AgentId.HasValue && request.AgentId.Value > 0)
                     {
                         var targetAgent = await _adminListingRepository.GetAgentByIdAsync(request.AgentId.Value);
-                        if (targetAgent == null || !targetAgent.IsActive || targetAgent.Role != AgentRole.Consultant)
+                        if (targetAgent == null || !targetAgent.IsActive)
                         {
                             throw new ValidationException(new[]
                             {

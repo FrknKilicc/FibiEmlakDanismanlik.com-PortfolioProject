@@ -24,10 +24,10 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.TestimonialsViewComponents
             {
                 var jsonDAta= await responseMessage.Content.ReadAsStringAsync();
                 var value = JsonConvert.DeserializeObject<List<ResultTestimonialDto>>(jsonDAta);
-                return View(value);
+                return View(value ?? new List<ResultTestimonialDto>());
 
             }
-            return View(null);
+            return View(new List<ResultTestimonialDto>());
         }
     }
 }
