@@ -70,7 +70,7 @@
         {
             <div class="text-center py-5">
                 <i class="bi bi-geo-alt display-4 text-muted d-block mb-3"></i>
-                <h6 class="text-dark fw-semibold">Henüz şehir görseli eklenmemiş</h6>
+                <h6 class="text-body fw-semibold">Henüz şehir görseli eklenmemiş</h6>
                 <p class="text-muted small mb-3">İletişim sayfasında yer alan şehir galerisi için görselleri buradan ekleyip düzenleyebilirsiniz.</p>
                 <a href="/icerik/sehir-galerisi/yeni" class="btn btn-primary btn-sm">
                     <i class="bi bi-plus-lg me-1"></i> İlk Şehir Görselini Ekle
@@ -88,8 +88,8 @@
                 <div class="mb-4">
                     <div class="d-flex align-items-center gap-2 mb-3 pb-1 border-bottom">
                         <i class="bi bi-pin-map-fill text-primary fs-5"></i>
-                        <h6 class="fw-bold text-dark mb-0 fs-6">@group.Key</h6>
-                        <span class="badge bg-light text-secondary border small">@group.Count() görsel</span>
+                        <h6 class="fw-bold text-body mb-0 fs-6">@group.Key</h6>
+                        <span class="badge bg-body-tertiary text-secondary border small">@group.Count() görsel</span>
                     </div>
 
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
@@ -109,7 +109,7 @@
                                         }
                                         else
                                         {
-                                            <div class="bg-light d-flex align-items-center justify-content-center text-muted" style="height: 160px;">
+                                            <div class="bg-body-tertiary d-flex align-items-center justify-content-center text-muted" style="height: 160px;">
                                                 <i class="bi bi-image me-1"></i> Görsel yok
                                             </div>
                                         }
@@ -138,8 +138,15 @@
 
                                     <div class="card-body p-3 d-flex flex-column justify-content-between">
                                         <div>
-                                            <h6 class="fw-bold text-dark mb-1 text-truncate" title="@item.Title">
-                                                @(string.IsNullOrWhiteSpace(item.Title) ? item.CityName : item.Title)
+                                            <h6 class="fw-bold text-body mb-1 text-truncate" title="@(string.IsNullOrWhiteSpace(item.Title) ? "Başlıksız görsel" : item.Title)">
+                                                @if (!string.IsNullOrWhiteSpace(item.Title))
+                                                {
+                                                    @item.Title
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-body-secondary fw-normal">Başlıksız görsel</span>
+                                                }
                                             </h6>
                                             @if (!string.IsNullOrWhiteSpace(item.Description))
                                             {

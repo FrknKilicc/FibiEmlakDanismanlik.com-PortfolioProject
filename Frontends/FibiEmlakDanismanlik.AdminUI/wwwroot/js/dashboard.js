@@ -144,8 +144,7 @@
         completedCounts.push(m.completedCount || 0);
       });
 
-      var chartMonthly;
-      createdCharts.push(chartMonthly = new Chart(monthlyCanvas, {
+      var chartMonthly = new Chart(monthlyCanvas, {
         type: 'line',
         data: {
           labels: monthlyLabels,
@@ -223,6 +222,7 @@
           }
         }
       });
+      createdCharts.push(chartMonthly);
     }
   }
 
@@ -265,8 +265,7 @@
     if (totalListingsCount === 0) {
       showEmptyMessage(listingsCanvas);
     } else {
-      var chartListings;
-      createdCharts.push(chartListings = new Chart(listingsCanvas, {
+      var chartListings = new Chart(listingsCanvas, {
         type: 'doughnut',
         data: {
           labels: ringLabels,
@@ -301,6 +300,7 @@
           cutout: '62%'
         }
       });
+      createdCharts.push(chartListings);
     }
   }
 
@@ -339,8 +339,7 @@
     if (!hasFunnelData) {
       showEmptyMessage(funnelCanvas);
     } else {
-      var chartFunnel;
-      createdCharts.push(chartFunnel = new Chart(funnelCanvas, {
+      var chartFunnel = new Chart(funnelCanvas, {
         type: 'bar',
         data: {
           labels: funnelLabels,
@@ -378,6 +377,7 @@
           }
         }
       });
+      createdCharts.push(chartFunnel);
     }
   }
 
@@ -447,8 +447,7 @@
         };
       }
 
-      var chartAgents;
-      createdCharts.push(chartAgents = new Chart(agentsCanvas, {
+      var chartAgents = new Chart(agentsCanvas, {
         type: 'bar',
         data: {
           labels: agentLabels,
@@ -475,8 +474,10 @@
           scales: agentScales
         }
       });
+      createdCharts.push(chartAgents);
     }
   }
+
   // --- 3. TEMA DEĞİŞİKLİĞİ DİNLEYİCİSİ (fibi:themechange) ---
   document.addEventListener('fibi:themechange', function () {
     applyChartDefaults();

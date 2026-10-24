@@ -1003,3 +1003,209 @@ a:hover {
   font-variant-numeric: tabular-nums;
 }
 
+/* ==============================================================
+   # Modern Geri Bildirim Katmanı (Toasts, Tooltips, Validation)
+   ============================================================== */
+
+/* Toast Konteyneri */
+.toast-stack-fixed {
+  z-index: 1090;
+  margin-top: 60px;
+}
+
+/* Zorunlu Alan Yıldızı */
+.req-star {
+  color: var(--bs-danger, #dc3545);
+  margin-left: 2px;
+  font-weight: 700;
+}
+
+[data-bs-theme="dark"] .req-star {
+  color: #ea868f;
+}
+
+/* Alan Açıklama İpucu (Tooltip Butonu) */
+.help-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0 4px;
+  margin-left: 4px;
+  color: var(--fibi-muted);
+  cursor: pointer;
+  line-height: 1;
+  vertical-align: middle;
+  border-radius: 4px;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.help-tip i {
+  font-size: 16px;
+}
+
+.help-tip:hover {
+  color: var(--fibi-primary);
+  transform: scale(1.1);
+}
+
+.help-tip:focus-visible {
+  outline: 2px solid var(--fibi-primary);
+  outline-offset: 2px;
+}
+
+/* Toast Stilleri */
+.fibi-toast {
+  background-color: var(--fibi-surface);
+  border: 1px solid var(--fibi-border);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), var(--fibi-shadow);
+  border-radius: 12px;
+  border-left: 5px solid var(--toast-accent, var(--fibi-primary));
+  position: relative;
+  overflow: hidden;
+  max-width: 380px;
+}
+
+[data-bs-theme="dark"] .fibi-toast {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), var(--fibi-shadow);
+}
+
+.fibi-toast-success {
+  --toast-accent: var(--bs-success, #198754);
+}
+.fibi-toast-error {
+  --toast-accent: var(--bs-danger, #dc3545);
+}
+.fibi-toast-warning {
+  --toast-accent: var(--bs-warning, #ffc107);
+}
+.fibi-toast-info {
+  --toast-accent: var(--bs-info, #0dcaf0);
+}
+
+[data-bs-theme="dark"] .fibi-toast-success {
+  --toast-accent: #75b798;
+}
+[data-bs-theme="dark"] .fibi-toast-error {
+  --toast-accent: #ea868f;
+}
+[data-bs-theme="dark"] .fibi-toast-warning {
+  --toast-accent: #ffda6a;
+}
+[data-bs-theme="dark"] .fibi-toast-info {
+  --toast-accent: #6edff6;
+}
+
+.fibi-toast-header {
+  background-color: transparent;
+  border-bottom: 1px solid var(--fibi-border);
+  color: var(--fibi-heading);
+  padding: 0.65rem 0.85rem;
+}
+
+.fibi-toast-icon {
+  font-size: 1.15rem;
+  color: var(--toast-accent);
+}
+
+.fibi-toast-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--fibi-heading);
+}
+
+.fibi-toast-body {
+  color: var(--fibi-text);
+  padding: 0.75rem 0.85rem;
+  font-size: 0.875rem;
+}
+
+.fibi-toast-list {
+  list-style: disc;
+}
+
+.fibi-toast-list li {
+  margin-top: 0.25rem;
+}
+
+.fibi-toast-item-btn {
+  color: var(--fibi-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-size: 0.85rem;
+}
+
+.fibi-toast-item-btn:hover {
+  opacity: 0.85;
+}
+
+/* Toast İlerleme Çizgisi */
+.fibi-toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background-color: var(--toast-accent);
+  animation: fibi-toast-progress linear forwards;
+}
+
+@keyframes fibi-toast-progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fibi-toast-progress {
+    display: none !important;
+    animation: none !important;
+  }
+}
+
+/* Geçersiz Alan Vurguları */
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid,
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--bs-danger, #dc3545) !important;
+  background-color: rgba(220, 53, 69, 0.04) !important;
+}
+
+.was-validated .form-control:invalid:focus,
+.was-validated .form-select:invalid:focus,
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+  border-color: var(--bs-danger, #dc3545) !important;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+}
+
+[data-bs-theme="dark"] .was-validated .form-control:invalid,
+[data-bs-theme="dark"] .was-validated .form-select:invalid,
+[data-bs-theme="dark"] .form-control.is-invalid,
+[data-bs-theme="dark"] .form-select.is-invalid {
+  border-color: #ea868f !important;
+  background-color: rgba(220, 53, 69, 0.12) !important;
+}
+
+[data-bs-theme="dark"] .was-validated .form-control:invalid:focus,
+[data-bs-theme="dark"] .was-validated .form-select:invalid:focus,
+[data-bs-theme="dark"] .form-control.is-invalid:focus,
+[data-bs-theme="dark"] .form-select.is-invalid:focus {
+  border-color: #ea868f !important;
+  box-shadow: 0 0 0 0.25rem rgba(234, 134, 143, 0.25) !important;
+}
+
+/* Invalid alanın etiketinde kırmızı renk */
+.field-invalid-label {
+  color: var(--bs-danger, #dc3545) !important;
+}
+
+[data-bs-theme="dark"] .field-invalid-label {
+  color: #ea868f !important;
+}
+

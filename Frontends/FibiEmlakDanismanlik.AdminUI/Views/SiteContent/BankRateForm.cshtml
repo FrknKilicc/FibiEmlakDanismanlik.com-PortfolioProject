@@ -114,10 +114,12 @@
                         </label>
                         <input type="text"
                                class="form-control @(errLogo != null ? "is-invalid" : "")"
-                               id="LogoUrl"
+                               id="LogoUrl" data-help="Site içi yol (/...) veya https adresi girilebilir ya da Bilgisayardan yükle ile eklenebilir."
                                name="LogoUrl"
                                value="@Model.Form.LogoUrl"
-                               placeholder="https://... veya /uploads/bank/..." />
+                               placeholder="https://... veya /uploads/bank/..."
+                               data-preview-img="bankLogoPreview"
+                               data-preview-placeholder="bankLogoPlaceholder" />
                         @if (errLogo != null)
                         {
                             <div class="invalid-feedback d-block">@errLogo</div>
@@ -166,7 +168,7 @@
                                        step="0.0001"
                                        min="0"
                                        class="form-control @(errHousing != null ? "is-invalid" : "")"
-                                       id="HousingLoanMonthlyRate"
+                                       id="HousingLoanMonthlyRate" data-help="İlan detayındaki konut kredisi hesaplama aracında baz alınan aylık faiz yüzdesidir."
                                        name="HousingLoanMonthlyRate"
                                        value="@Model.Form.HousingLoanMonthlyRate.ToString(CultureInfo.InvariantCulture)"
                                        placeholder="2.79"
@@ -189,7 +191,7 @@
                                        step="0.0001"
                                        min="0"
                                        class="form-control @(errCommercial != null ? "is-invalid" : "")"
-                                       id="CommercialLoanMonthlyRate"
+                                       id="CommercialLoanMonthlyRate" data-help="İşyeri ve ticari ilanların kredi hesaplama aracında baz alınan aylık faiz yüzdesidir."
                                        name="CommercialLoanMonthlyRate"
                                        value="@Model.Form.CommercialLoanMonthlyRate.ToString(CultureInfo.InvariantCulture)"
                                        placeholder="3.15"
@@ -212,7 +214,7 @@
                                        min="1"
                                        max="360"
                                        class="form-control @(errMaxTerm != null ? "is-invalid" : "")"
-                                       id="MaxTermMonths"
+                                       id="MaxTermMonths" data-help="Kredi hesaplama aracında seçilebilecek en uzun taksit vadesi (ay cinsinden)."
                                        name="MaxTermMonths"
                                        value="@Model.Form.MaxTermMonths"
                                        required />
@@ -235,7 +237,7 @@
                                        step="0.0001"
                                        min="0"
                                        class="form-control @(errFee != null ? "is-invalid" : "")"
-                                       id="AllocationFeeRate"
+                                       id="AllocationFeeRate" data-help="Kredi dosya masrafı hesaplama oranıdır (yasal üst sınır binde 5, yani %0.5'tir)."
                                        name="AllocationFeeRate"
                                        value="@Model.Form.AllocationFeeRate.ToString(CultureInfo.InvariantCulture)"
                                        placeholder="0.5"
@@ -263,7 +265,7 @@
                     <div class="form-check form-switch pt-2 mb-1">
                         <input type="checkbox"
                                class="form-check-input"
-                               id="IsActive"
+                               id="IsActive" data-help="Aktif edildiğinde banka ve faiz oranları sitedeki kredi hesaplama aracında listelenir."
                                name="IsActive"
                                value="true"
                                @(Model.Form.IsActive ? "checked" : "") />
@@ -331,26 +333,4 @@
 
 @section Scripts {
     <script src="~/js/image-upload.js" asp-append-version="true"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const logoInput = document.getElementById('LogoUrl');
-            const logoImg = document.getElementById('bankLogoPreview');
-            const placeholder = document.getElementById('bankLogoPlaceholder');
-
-            if (logoInput && logoImg && placeholder) {
-                logoInput.addEventListener('input', function () {
-                    const val = (logoInput.value || '').trim();
-                    if (val.length > 0) {
-                        logoImg.src = val;
-                        logoImg.classList.remove('d-none');
-                        placeholder.classList.add('d-none');
-                    } else {
-                        logoImg.src = '';
-                        logoImg.classList.add('d-none');
-                        placeholder.classList.remove('d-none');
-                    }
-                });
-            }
-        });
-    </script>
 }

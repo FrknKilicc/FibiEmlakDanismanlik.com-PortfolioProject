@@ -229,6 +229,9 @@
     @RenderBody()
   </main><!-- End #main -->
 
+  <!-- Sabit Bildirim Kabı (Toast Stack) -->
+  <div id="toastStack" class="toast-container position-fixed top-0 end-0 p-3 toast-stack-fixed" aria-live="polite" aria-atomic="false"></div>
+
   <!-- Ortak Silme Onayı Modal -->
   <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -270,6 +273,7 @@
   <!-- Template Main JS File -->
   <script src="~/assets/js/main.js"></script>
   <script src="~/js/confirm-modal.js" asp-append-version="true"></script>
+  <script src="~/js/admin-ui.js" asp-append-version="true"></script>
 
   @await RenderSectionAsync("Scripts", required: false)
 

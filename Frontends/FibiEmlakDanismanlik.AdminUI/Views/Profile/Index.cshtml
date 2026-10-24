@@ -167,7 +167,7 @@
                         <label for="AgentTitle" class="form-label small fw-semibold">Unvan</label>
                         <input type="text"
                                class="form-control @(errTitle != null ? "is-invalid" : "")"
-                               id="AgentTitle"
+                               id="AgentTitle" data-help="Web sitesinde danışman kartında ve ilan detayında gösterilecek mesleki unvan."
                                name="AgentTitle"
                                value="@Model.ProfileForm.AgentTitle"
                                placeholder="Örn: Kıdemli Gayrimenkul Danışmanı" />
@@ -185,7 +185,7 @@
                     <div class="col-12">
                         <label for="AgentDescription" class="form-label small fw-semibold">Hakkında</label>
                         <textarea class="form-control @(errDesc != null ? "is-invalid" : "")"
-                                  id="AgentDescription"
+                                  id="AgentDescription" data-help="Sitedeki Danışmanlar sayfasında ve danışman profilinde ziyaretçilere gösterilen tanıtım yazısıdır."
                                   name="AgentDescription"
                                   rows="4"
                                   placeholder="Uzmanlık alanları, deneyim veya biyografi...">@Model.ProfileForm.AgentDescription</textarea>
@@ -204,7 +204,7 @@
                         <label for="AgentImgUrl" class="form-label small fw-semibold">Profil Fotoğrafı URL</label>
                         <input type="text"
                                class="form-control @(errImg != null ? "is-invalid" : "")"
-                               id="AgentImgUrl"
+                               id="AgentImgUrl" data-help="Site içi yol (/...) veya https adresi girilebilir ya da Bilgisayardan yükle ile eklenebilir."
                                name="AgentImgUrl"
                                value="@Model.ProfileForm.AgentImgUrl"
                                placeholder="https://... veya /uploads/..." />
@@ -278,7 +278,7 @@
                         <label for="NewPassword" class="form-label small fw-semibold">Yeni Şifre</label>
                         <input type="password"
                                class="form-control @(errNewPw != null ? "is-invalid" : "")"
-                               id="NewPassword"
+                               id="NewPassword" data-help="En az 12 karakterden oluşmalı; büyük harf, küçük harf ve rakam içermelidir."
                                name="NewPassword"
                                autocomplete="new-password"
                                minlength="12"

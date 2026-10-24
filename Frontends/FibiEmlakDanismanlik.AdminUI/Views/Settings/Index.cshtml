@@ -75,7 +75,7 @@
                 <div class="col-md-4 col-12">
                     <label for="saleBuyerCommissionRate" class="form-label fw-semibold">Satış Alıcı Oranı (%)</label>
                     <div class="input-group">
-                        <input type="number" step="0.01" min="0" max="100" class="form-control @(Model.GetFieldError("SaleBuyerCommissionRate") != null ? "is-invalid" : "")" id="saleBuyerCommissionRate" name="SaleBuyerCommissionRate" value="@Model.Form.SaleBuyerCommissionRate.ToString(invCulture)" required />
+                        <input type="number" step="0.01" min="0" max="100" class="form-control @(Model.GetFieldError("SaleBuyerCommissionRate") != null ? "is-invalid" : "")" id="saleBuyerCommissionRate" data-help="Yeni satış işlemi oluşturulurken alıcı komisyonu için önerilen varsayılan yüzdedir; işlemde değiştirilebilir." name="SaleBuyerCommissionRate" value="@Model.Form.SaleBuyerCommissionRate.ToString(invCulture)" required />
                         <span class="input-group-text">%</span>
                     </div>
                     @if (Model.GetFieldError("SaleBuyerCommissionRate") != null)
@@ -87,7 +87,7 @@
                 <div class="col-md-4 col-12">
                     <label for="saleSellerCommissionRate" class="form-label fw-semibold">Satış Satıcı Oranı (%)</label>
                     <div class="input-group">
-                        <input type="number" step="0.01" min="0" max="100" class="form-control @(Model.GetFieldError("SaleSellerCommissionRate") != null ? "is-invalid" : "")" id="saleSellerCommissionRate" name="SaleSellerCommissionRate" value="@Model.Form.SaleSellerCommissionRate.ToString(invCulture)" required />
+                        <input type="number" step="0.01" min="0" max="100" class="form-control @(Model.GetFieldError("SaleSellerCommissionRate") != null ? "is-invalid" : "")" id="saleSellerCommissionRate" data-help="Yeni satış işlemi oluşturulurken satıcı komisyonu için önerilen varsayılan yüzdedir; işlemde değiştirilebilir." name="SaleSellerCommissionRate" value="@Model.Form.SaleSellerCommissionRate.ToString(invCulture)" required />
                         <span class="input-group-text">%</span>
                     </div>
                     @if (Model.GetFieldError("SaleSellerCommissionRate") != null)
@@ -99,7 +99,7 @@
                 <div class="col-md-4 col-12">
                     <label for="rentCommissionMonths" class="form-label fw-semibold">Kiralama Komisyonu (Kira Sayısı)</label>
                     <div class="input-group">
-                        <input type="number" step="0.01" min="0" max="12" class="form-control @(Model.GetFieldError("RentCommissionMonths") != null ? "is-invalid" : "")" id="rentCommissionMonths" name="RentCommissionMonths" value="@Model.Form.RentCommissionMonths.ToString(invCulture)" required />
+                        <input type="number" step="0.01" min="0" max="12" class="form-control @(Model.GetFieldError("RentCommissionMonths") != null ? "is-invalid" : "")" id="rentCommissionMonths" data-help="Yeni kiralama işleminde önerilen komisyon tutarının kaç aylık kira bedeline denk geleceğini belirler." name="RentCommissionMonths" value="@Model.Form.RentCommissionMonths.ToString(invCulture)" required />
                         <span class="input-group-text">ay</span>
                     </div>
                     @if (Model.GetFieldError("RentCommissionMonths") != null)
@@ -120,7 +120,7 @@
             <div class="row g-3">
                 <div class="col-md-6 col-12">
                     <label for="bestDealMaxPerUsageType" class="form-label fw-semibold">Vitrin Sınırı (Satılık ve Kiralık İçin Ayrı Ayrı)</label>
-                    <input type="number" step="1" min="1" max="20" class="form-control @(Model.GetFieldError("BestDealMaxPerUsageType") != null ? "is-invalid" : "")" id="bestDealMaxPerUsageType" name="BestDealMaxPerUsageType" value="@Model.Form.BestDealMaxPerUsageType.ToString(invCulture)" required />
+                    <input type="number" step="1" min="1" max="20" class="form-control @(Model.GetFieldError("BestDealMaxPerUsageType") != null ? "is-invalid" : "")" id="bestDealMaxPerUsageType" data-help="Ana sayfa vitrininde satılık ve kiralık için ayrı ayrı listelenebilecek en fazla ilan sayısını belirler." name="BestDealMaxPerUsageType" value="@Model.Form.BestDealMaxPerUsageType.ToString(invCulture)" required />
                     <div class="form-text">Sınırı düşürürseniz ana sayfada yalnızca en yeni işaretlenen ilanlar görünür.</div>
                     @if (Model.GetFieldError("BestDealMaxPerUsageType") != null)
                     {
@@ -130,7 +130,7 @@
 
                 <div class="col-md-6 col-12">
                     <label for="listingAlertMaxActivePerPhone" class="form-label fw-semibold">Haber Bekleyen Telefon Başına Aktif Kayıt Sınırı</label>
-                    <input type="number" step="1" min="1" max="50" class="form-control @(Model.GetFieldError("ListingAlertMaxActivePerPhone") != null ? "is-invalid" : "")" id="listingAlertMaxActivePerPhone" name="ListingAlertMaxActivePerPhone" value="@Model.Form.ListingAlertMaxActivePerPhone.ToString(invCulture)" required />
+                    <input type="number" step="1" min="1" max="50" class="form-control @(Model.GetFieldError("ListingAlertMaxActivePerPhone") != null ? "is-invalid" : "")" id="listingAlertMaxActivePerPhone" data-help="Aynı telefon numarasıyla açılabilecek maksimum aktif haber ver ilan alarmı kayıt sayısıdır." name="ListingAlertMaxActivePerPhone" value="@Model.Form.ListingAlertMaxActivePerPhone.ToString(invCulture)" required />
                     @if (Model.GetFieldError("ListingAlertMaxActivePerPhone") != null)
                     {
                         <div class="invalid-feedback d-block">@Model.GetFieldError("ListingAlertMaxActivePerPhone")</div>

@@ -104,7 +104,7 @@
                         </label>
                         <input type="text"
                                class="form-control @(errLogo != null ? "is-invalid" : "")"
-                               id="PartnerLogoUrl"
+                               id="PartnerLogoUrl" data-help="Site içi yol (/...) veya https adresi girilebilir ya da Bilgisayardan yükle ile eklenebilir."
                                name="PartnerLogoUrl"
                                value="@Model.Form.PartnerLogoUrl"
                                placeholder="https://... veya /uploads/partner/..."
@@ -150,7 +150,7 @@
                         </label>
                         <input type="number"
                                class="form-control @(errOrder != null ? "is-invalid" : "")"
-                               id="DisplayOrder"
+                               id="DisplayOrder" data-help="İş ortakları şeridinde logonun gösterim sırasıdır (küçük sayılar daha önce listelenir)."
                                name="DisplayOrder"
                                value="@Model.Form.DisplayOrder"
                                min="0" />
@@ -166,7 +166,7 @@
                     <div class="form-check form-switch pt-2 border-top mb-1">
                         <input type="checkbox"
                                class="form-check-input"
-                               id="IsActive"
+                               id="IsActive" data-help="İşaretlendiğinde iş ortağı logosu sitedeki iş ortakları alanında ziyaretçilere gösterilir."
                                name="IsActive"
                                value="true"
                                @(Model.Form.IsActive ? "checked" : "") />

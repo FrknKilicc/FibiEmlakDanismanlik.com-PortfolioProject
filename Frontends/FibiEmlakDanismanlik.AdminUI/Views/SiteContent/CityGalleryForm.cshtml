@@ -88,7 +88,7 @@
                             İl Seçimi <span class="text-danger">*</span>
                         </label>
                         <select class="form-select @(errCity != null ? "is-invalid" : "")"
-                                id="CityId"
+                                id="CityId" data-help="Görselin ait olduğu şehir; İletişim sayfasında seçilen ile göre galeride gösterilir."
                                 name="CityId"
                                 required>
                             <option value="">İl Seçiniz</option>
@@ -111,7 +111,7 @@
                         </label>
                         <input type="text"
                                class="form-control @(errImage != null ? "is-invalid" : "")"
-                               id="ImageUrl"
+                               id="ImageUrl" data-help="Site içi yol (/...) veya https adresi girilebilir ya da Bilgisayardan yükle ile eklenebilir."
                                name="ImageUrl"
                                value="@Model.Form.ImageUrl"
                                placeholder="https://... veya /uploads/city/..."
@@ -143,7 +143,7 @@
                         </label>
                         <input type="text"
                                class="form-control @(errTitle != null ? "is-invalid" : "")"
-                               id="Title"
+                               id="Title" data-help="Görselin temsil ettiği semt, ilçe veya bölge adı; galeri üzerinde başlık olarak gösterilir."
                                name="Title"
                                value="@Model.Form.Title"
                                placeholder="Örn: Kadıköy Sahil, Çankaya Parkı, Alsancak Kordon" />
@@ -158,7 +158,7 @@
                             Açıklama
                         </label>
                         <textarea class="form-control @(errDesc != null ? "is-invalid" : "")"
-                                  id="Description"
+                                  id="Description" data-help="Görsele veya bölgeye dair İletişim sayfası galerisinde görüntülenecek kısa tanıtım metni."
                                   name="Description"
                                   rows="3"
                                   placeholder="Görsel hakkında kısa açıklama...">@Model.Form.Description</textarea>
@@ -184,7 +184,7 @@
                         </label>
                         <input type="number"
                                class="form-control @(errOrder != null ? "is-invalid" : "")"
-                               id="DisplayOrder"
+                               id="DisplayOrder" data-help="Aynı il içindeki görseller arasında listelenme sırası (küçük sayılar önce listelenir)."
                                name="DisplayOrder"
                                value="@Model.Form.DisplayOrder"
                                min="0" />
@@ -200,7 +200,7 @@
                     <div class="form-check form-switch pt-2 border-top mb-1">
                         <input type="checkbox"
                                class="form-check-input"
-                               id="IsActive"
+                               id="IsActive" data-help="İşaretlendiğinde görsel İletişim sayfasındaki şehir galerisinde ziyaretçilere gösterilir."
                                name="IsActive"
                                value="true"
                                @(Model.Form.IsActive ? "checked" : "") />

@@ -93,7 +93,7 @@
                             </label>
                             <input type="text"
                                    class="form-control @(errImg != null ? "is-invalid" : "")"
-                                   id="aboutUsImgUrl"
+                                   id="aboutUsImgUrl" data-help="Site içi yol (/...) veya https adresi girilebilir ya da Bilgisayardan yükle ile yüklenebilir."
                                    name="AboutUsImgUrl"
                                    value="@Model.AboutUs?.AboutUsImgUrl"
                                    placeholder="https://... veya /uploads/..." />
@@ -121,7 +121,7 @@
                                 Açıklama
                             </label>
                             <textarea class="form-control @(errDesc != null ? "is-invalid" : "")"
-                                      id="aboutUsDesc"
+                                      id="aboutUsDesc" data-help="Hakkımızda sayfası metnidir; HTML biçimlendirme desteklenir. Değişiklikler en geç 5 dakikada yansır."
                                       name="AboutUsDesc"
                                       rows="14"
                                       placeholder="Şirketimiz hakkında ayrıntılı açıklama metni...">@Model.AboutUs?.AboutUsDesc</textarea>
@@ -242,7 +242,7 @@
                                 Ofis Adresi <span class="text-danger">*</span>
                             </label>
                             <textarea class="form-control @(errAddress != null ? "is-invalid" : "")"
-                                      id="officeAddress"
+                                      id="officeAddress" data-help="İletişim sayfasında ve site altbilgisinde gösterilecek şirket açık adresi (en geç 5 dakikada yansır)."
                                       name="OfficeAddress"
                                       rows="3"
                                       placeholder="Şirket merkez veya şube adresi..."
@@ -418,7 +418,7 @@
                                                    class="form-control @(errItemUrl != null ? "is-invalid" : "")"
                                                    name="Url"
                                                    value="@item.Url"
-                                                   placeholder="https://..."
+                                                   placeholder="https://..." data-help="Sosyal medya profilinin tam web adresi (https://... biçiminde)."
                                                    required />
                                             @if (errItemUrl != null)
                                             {
@@ -432,7 +432,7 @@
                                                    class="form-control @(errItemIcon != null ? "is-invalid" : "")"
                                                    name="Icon"
                                                    value="@item.Icon"
-                                                   placeholder="fab fa-instagram" />
+                                                   placeholder="fab fa-instagram" data-help="Font Awesome ikon sınıfıdır (örneğin fab fa-instagram, fab fa-facebook)." />
                                             @if (errItemIcon != null)
                                             {
                                                 <div class="invalid-feedback d-block">@errItemIcon</div>
@@ -444,7 +444,7 @@
                                             <input type="number"
                                                    class="form-control @(errItemOrder != null ? "is-invalid" : "")"
                                                    name="Order"
-                                                   value="@item.Order" />
+                                                   value="@item.Order" data-help="Sosyal medya ikonlarının sitede soldan sağa listelenme sırasıdır." />
                                             @if (errItemOrder != null)
                                             {
                                                 <div class="invalid-feedback d-block">@errItemOrder</div>
@@ -454,7 +454,7 @@
                                         <div class="form-check form-switch mb-0">
                                             <input type="checkbox"
                                                    class="form-check-input"
-                                                   id="isActive_@item.Id"
+                                                   id="isActive_@item.Id" data-help="İşaretlendiğinde sosyal medya bağlantısı sitede ziyaretçilere gösterilir."
                                                    name="IsActive"
                                                    value="true"
                                                    @(item.IsActive ? "checked" : "") />
@@ -511,7 +511,7 @@
                                     </label>
                                     <input type="url"
                                            class="form-control @(errNewUrl != null ? "is-invalid" : "")"
-                                           id="newSocialUrl"
+                                           id="newSocialUrl" data-help="Sosyal medya profilinin tam web adresi (https://... biçiminde)."
                                            name="Url"
                                            value="@Model.NewSocial?.Url"
                                            placeholder="https://instagram.com/fibiemlak"
@@ -531,7 +531,7 @@
                                            id="newSocialIcon"
                                            name="Icon"
                                            value="@Model.NewSocial?.Icon"
-                                           placeholder="fab fa-instagram" />
+                                           placeholder="fab fa-instagram" data-help="Font Awesome ikon sınıfıdır (örneğin fab fa-instagram, fab fa-facebook)." />
                                     @if (errNewIcon != null)
                                     {
                                         <div class="invalid-feedback d-block">@errNewIcon</div>
@@ -544,7 +544,7 @@
                                     </label>
                                     <input type="number"
                                            class="form-control @(errNewOrder != null ? "is-invalid" : "")"
-                                           id="newSocialOrder"
+                                           id="newSocialOrder" data-help="Sosyal medya ikonlarının sitede soldan sağa listelenme sırasıdır."
                                            name="Order"
                                            value="@(Model.NewSocial?.Order ?? 1)" />
                                     @if (errNewOrder != null)
@@ -556,7 +556,7 @@
                                 <div class="form-check form-switch mb-0">
                                     <input type="checkbox"
                                            class="form-check-input"
-                                           id="newSocialIsActive"
+                                           id="newSocialIsActive" data-help="İşaretlendiğinde sosyal medya bağlantısı sitede ziyaretçilere gösterilir."
                                            name="IsActive"
                                            value="true"
                                            @(Model.NewSocial == null || Model.NewSocial.IsActive ? "checked" : "") />
@@ -586,6 +586,14 @@
     var errNewQuestion = Model.GetFieldError("faq-new", "Question");
     var errNewAnswer = Model.GetFieldError("faq-new", "Answer");
 
+    Func<string?, string> cleanHtml = metin =>
+    {
+        if (string.IsNullOrWhiteSpace(metin)) return string.Empty;
+        var stripped = System.Text.RegularExpressions.Regex.Replace(metin ?? "", "<[^>]+>", " ");
+        var decoded = System.Net.WebUtility.HtmlDecode(stripped);
+        return System.Text.RegularExpressions.Regex.Replace(decoded, @"\s+", " ").Trim();
+    };
+
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body pt-3">
             <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
@@ -612,6 +620,8 @@
                         var formKey = $"faq-{item.FrequentlyAskedQuestionId}";
                         var collapseId = $"faqCollapse-{item.FrequentlyAskedQuestionId}";
                         var headingId = $"faqHeading-{item.FrequentlyAskedQuestionId}";
+                        var cleanQuestion = cleanHtml(item.Question);
+                        var cleanAnswer = cleanHtml(item.Answer);
 
                         <div class="accordion-item border rounded mb-2 overflow-hidden">
                             <div class="accordion-header d-flex align-items-center justify-content-between bg-body-tertiary p-1" id="@headingId">
@@ -622,7 +632,7 @@
                                         aria-expanded="false"
                                         aria-controls="@collapseId">
                                     <span class="fw-semibold text-body text-break me-2">
-                                        <i class="bi bi-question-diamond text-primary me-2"></i>@item.Question
+                                        <i class="bi bi-question-diamond text-primary me-2"></i>@cleanQuestion
                                     </span>
                                 </button>
                                 <div class="d-flex align-items-center gap-1 pe-2 flex-shrink-0">
@@ -635,7 +645,7 @@
                                     <form method="post"
                                           action="/icerik/sss/@item.FrequentlyAskedQuestionId/sil"
                                           class="d-inline"
-                                          data-confirm="@item.Question silinsin mi? Bu işlem geri alınamaz.">
+                                          data-confirm="@cleanQuestion silinsin mi? Bu işlem geri alınamaz.">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="btn btn-outline-danger btn-sm text-nowrap">
                                             <i class="bi bi-trash me-1"></i> Sil
@@ -648,7 +658,7 @@
                                  aria-labelledby="@headingId"
                                  data-bs-parent="#faqAccordion">
                                 <div class="accordion-body bg-body text-body border-top" style="white-space: pre-line;">
-                                    @item.Answer
+                                    @cleanAnswer
                                 </div>
                             </div>
                         </div>
@@ -691,7 +701,7 @@
                                         <div class="mb-3">
                                             <label class="form-label small fw-semibold">Cevap <span class="text-danger">*</span></label>
                                             <textarea class="form-control @(errItemA != null ? "is-invalid" : "")"
-                                                      name="Answer"
+                                                      name="Answer" data-help="Sorunun sitede açılır akordiyonda görünecek yanıtıdır; HTML biçimlendirme desteklenir."
                                                       rows="5"
                                                       required>@item.Answer</textarea>
                                             @if (errItemA != null)
@@ -749,7 +759,7 @@
                                     </label>
                                     <textarea class="form-control @(errNewAnswer != null ? "is-invalid" : "")"
                                               id="newFaqAnswer"
-                                              name="Answer"
+                                              name="Answer" data-help="Sorunun sitede açılır akordiyonda görünecek yanıtıdır; HTML biçimlendirme desteklenir."
                                               rows="5"
                                               placeholder="Sorunun ayrıntılı yanıtı..."
                                               required>@Model.NewFaq?.Answer</textarea>
@@ -888,7 +898,7 @@
                                             </label>
                                             <input type="text"
                                                    class="form-control @(errItemUrl != null ? "is-invalid" : "")"
-                                                   id="bannerUrl-@item.MainBannerId"
+                                                   id="bannerUrl-@item.MainBannerId" data-help="Site içi yol (/...) veya https adresi girilebilir ya da Bilgisayardan yükle ile eklenebilir."
                                                    name="MainBannerUrl"
                                                    value="@item.MainBannerUrl"
                                                    placeholder="https://... veya /uploads/..."
@@ -917,7 +927,7 @@
                                             </label>
                                             <input type="text"
                                                    class="form-control @(errItemDesc != null ? "is-invalid" : "")"
-                                                   id="bannerDesc-@item.MainBannerId"
+                                                   id="bannerDesc-@item.MainBannerId" data-help="Banner üzerinde gösterilecek başlık veya görsel açıklama metnidir."
                                                    name="MainBannerDesc"
                                                    value="@item.MainBannerDesc"
                                                    placeholder="Banner açıklaması..." />
@@ -959,7 +969,7 @@
                                     </label>
                                     <input type="text"
                                            class="form-control @(errNewBannerUrl != null ? "is-invalid" : "")"
-                                           id="bannerUrl-new"
+                                           id="bannerUrl-new" data-help="Site içi yol (/...) veya https adresi girilebilir ya da Bilgisayardan yükle ile eklenebilir."
                                            name="MainBannerUrl"
                                            value="@Model.NewBanner?.MainBannerUrl"
                                            placeholder="https://... veya /uploads/..."
@@ -991,7 +1001,7 @@
                                     </label>
                                     <input type="text"
                                            class="form-control @(errNewBannerDesc != null ? "is-invalid" : "")"
-                                           id="newBannerDesc"
+                                           id="newBannerDesc" data-help="Banner üzerinde gösterilecek başlık veya görsel açıklama metnidir."
                                            name="MainBannerDesc"
                                            value="@Model.NewBanner?.MainBannerDesc"
                                            placeholder="Banner başlığı veya kısa açıklama..." />
@@ -1015,24 +1025,18 @@
     </div>
 }
 
+@if (!string.IsNullOrWhiteSpace(Model.FormKey))
+{
+    var hedefId = Model.FormKey switch
+    {
+        "social-new" => "sosyal-medya-new-modal",
+        "faq-new" => "sss-new-modal",
+        "banner-new" => "banner-new-modal",
+        _ => $"{Model.FormKey}-modal"
+    };
+    <div data-open-modal="@hedefId" hidden></div>
+}
+
 @section Scripts {
     <script src="~/js/image-upload.js" asp-append-version="true"></script>
-    @if (!string.IsNullOrWhiteSpace(Model.FormKey))
-    {
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var formKey = '@Model.FormKey';
-                var modalMap = {
-                    'social-new': 'sosyal-medya-new-modal',
-                    'faq-new': 'sss-new-modal',
-                    'banner-new': 'banner-new-modal'
-                };
-                var targetId = modalMap[formKey] || (formKey + '-modal');
-                var modalEl = document.getElementById(targetId);
-                if (modalEl && window.bootstrap && window.bootstrap.Modal) {
-                    bootstrap.Modal.getOrCreateInstance(modalEl)?.show();
-                }
-            });
-        </script>
-    }
 }

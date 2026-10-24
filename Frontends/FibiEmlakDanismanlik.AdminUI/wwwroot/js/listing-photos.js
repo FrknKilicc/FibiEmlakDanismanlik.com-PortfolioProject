@@ -5,6 +5,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const container = document.getElementById('photosCard');
     if (!container) return;
+    const photosCard = container;
 
     const typeId = container.dataset.listingTypeId;
     const listingId = container.dataset.listingId;
@@ -23,21 +24,34 @@ document.addEventListener('DOMContentLoaded', function () {
     let initialOrderIds = getOrderedIds();
     let isUploading = false;
 
+    function resolveUrl(url) {
+        if (!url) return '';
+        const origin = (photosCard && photosCard.dataset && photosCard.dataset.siteOrigin)
+            ? photosCard.dataset.siteOrigin.replace(/\/+$/, '')
+            : '';
+        if (origin && url.startsWith('/') && !url.startsWith('//')) {
+            return origin + url;
+        }
+        return url;
+    }
+
     function getAntiForgeryToken() {
         const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
         return tokenInput ? tokenInput.value : '';
     }
 
     function showAlert(message, type = 'danger') {
-        if (!alertArea) return;
-        const icon = type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill';
-        alertArea.innerHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
-                <i class="bi bi-${icon} flex-shrink-0 me-2 fs-5"></i>
-                <div class="flex-grow-1">${escapeHtml(message)}</div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
-            </div>
-        `;
+        if (alertArea) {
+            const icon = type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill';
+            alertArea.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show d-flex align-items-center mb-3" role="alert">
+                    <i class="bi bi-${icon} flex-shrink-0 me-2 fs-5"></i>
+                    <div class="flex-grow-1">${escapeHtml(message)}</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+                </div>
+            `;
+        }
+        if (window.fibiToast) window.fibiToast(message, type === 'danger' ? 'error' : (type === 'success' ? 'success' : 'info'));
     }
 
     function clearAlert() {
@@ -111,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         photos.forEach(img => {
             const col = document.createElement('div');
-            col.className = 'col-6 col-sm-4 col-md-3 col-lg-2 photo-item';
+            col.className = 'col-6 col-md-4 col-xl-3 photo-item';
             col.dataset.imageId = img.listingImageId;
             col.dataset.currentKind = img.kind || 0;
             col.dataset.currentCaption = img.caption || '';
@@ -120,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const kind = parseInt(img.kind, 10) || 0;
             const isPhoto = (kind === 0);
             const kindText = kind === 1 ? 'Kat Planı' : (kind === 2 ? 'Kroki' : (kind === 3 ? 'İmar Planı' : 'Kat Planı'));
-            const thumb = img.thumbUrl || img.url || '';
+            const thumb = resolveUrl(img.thumbUrl || img.url || '');
             const imgClass = isPhoto ? 'object-fit-cover w-100 h-100' : 'object-fit-contain bg-light w-100 h-100';
 
             col.innerHTML = `

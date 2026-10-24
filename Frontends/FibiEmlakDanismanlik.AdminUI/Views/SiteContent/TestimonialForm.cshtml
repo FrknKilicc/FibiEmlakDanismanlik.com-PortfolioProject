@@ -102,7 +102,7 @@
                         </label>
                         <input type="text"
                                class="form-control @(errTitle != null ? "is-invalid" : "")"
-                               id="Title"
+                               id="Title" data-help="Müşterinin mesleği veya aldığı hizmet bilgisi; yorum kartında adın altında gösterilir."
                                name="Title"
                                value="@Model.Form.Title"
                                placeholder="Örn: Kadıköy'de ev aldı" />
@@ -123,11 +123,12 @@
                             <small class="text-muted"><span id="charCount">0</span> / 1000 karakter</small>
                         </div>
                         <textarea class="form-control @(errComment != null ? "is-invalid" : "")"
-                                  id="Testimonail"
+                                  id="Testimonail" data-help="Müşterinin şirketimiz ve danışmanlık hizmetimiz hakkında paylaştığı referans metni."
                                   name="Testimonail"
                                   rows="7"
                                   maxlength="1000"
                                   placeholder="Müşterinizin hizmetlerimiz hakkındaki görüş ve yorumunu yazınız..."
+                                  data-count-target="charCount"
                                   required>@Model.Form.Testimonail</textarea>
                         @if (errComment != null)
                         {
@@ -151,7 +152,7 @@
                         </label>
                         <input type="number"
                                class="form-control @(errOrder != null ? "is-invalid" : "")"
-                               id="DisplayOrder"
+                               id="DisplayOrder" data-help="Yorumun ana sayfa ve referanslar alanındaki gösterim sırası (küçük sayılar önce çıkar)."
                                name="DisplayOrder"
                                value="@Model.Form.DisplayOrder"
                                min="0" />
@@ -167,7 +168,7 @@
                     <div class="form-check form-switch pt-2 border-top mb-1">
                         <input type="checkbox"
                                class="form-check-input"
-                               id="IsActive"
+                               id="IsActive" data-help="İşaretlendiğinde müşteri yorumu sitede ilgili referans alanında ziyaretçilere gösterilir."
                                name="IsActive"
                                value="true"
                                @(Model.Form.IsActive ? "checked" : "") />
@@ -230,20 +231,4 @@
           class="d-none">
         @Html.AntiForgeryToken()
     </form>
-}
-
-@section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var textarea = document.getElementById('Testimonail');
-            var charCount = document.getElementById('charCount');
-            if (textarea && charCount) {
-                function updateCounter() {
-                    charCount.textContent = (textarea.value || '').length;
-                }
-                textarea.addEventListener('input', updateCounter);
-                updateCounter();
-            }
-        });
-    </script>
 }

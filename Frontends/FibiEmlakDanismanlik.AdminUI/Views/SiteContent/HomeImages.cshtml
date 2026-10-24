@@ -78,14 +78,14 @@
                         <!-- Kart Başlığı ve Durum Rozeti -->
                         <div class="d-flex justify-content-between align-items-start pb-2 border-bottom mb-3 gap-2">
                             <div>
-                                <h6 class="fw-bold text-dark mb-1">@slotDef.Title</h6>
-                                <span class="badge bg-light text-secondary border small">@slotDef.SectionKey #@slotDef.Slot</span>
+                                <h6 class="fw-bold text-body mb-1">@slotDef.Title</h6>
+                                <span class="badge bg-body-tertiary text-secondary border small">@slotDef.SectionKey #@slotDef.Slot</span>
                             </div>
                             <div>
                                 @if (hasRecord)
                                 {
                                     if (isActive)
-                                    {
+                                     {
                                         <span class="badge bg-success-subtle text-success border border-success-subtle">
                                             <i class="bi bi-check-circle me-1"></i>Yayında
                                         </span>
@@ -108,7 +108,7 @@
 
                         <!-- Önizleme Alanı -->
                         <div class="mb-3">
-                            <div class="p-2 bg-light rounded border text-center position-relative" style="min-height: 180px; display: flex; align-items: center; justify-content: center;">
+                            <div class="p-2 bg-body-tertiary rounded border text-center position-relative" style="min-height: 180px; display: flex; align-items: center; justify-content: center;">
                                 @if (!string.IsNullOrEmpty(previewUrl))
                                 {
                                     <img id="preview_@cardKey"
@@ -156,10 +156,12 @@
                                 </label>
                                 <input type="text"
                                        class="form-control form-control-sm @(errImage != null ? "is-invalid" : "")"
-                                       id="imageUrl_@cardKey"
+                                       id="imageUrl_@cardKey" data-help="Site içi yol (/...) veya https adresi girilebilir ya da Bilgisayardan yükle ile eklenebilir."
                                        name="ImageUrl"
                                        value="@existing?.ImageUrl"
                                        placeholder="https://... veya /uploads/home/..."
+                                       data-preview-img="preview_@cardKey"
+                                       data-preview-placeholder="placeholder_@cardKey"
                                        required />
                                 @if (errImage != null)
                                 {
@@ -179,7 +181,7 @@
                                 </label>
                                 <input type="text"
                                        class="form-control form-control-sm @(errAlt != null ? "is-invalid" : "")"
-                                       id="altText_@cardKey"
+                                       id="altText_@cardKey" data-help="Görselin SEO ve ekran okuyucular için açıklayıcı alternatif (alt) metnidir."
                                        name="AltText"
                                        value="@existing?.AltText"
                                        placeholder="Örn: Popüler Bölgeler Fibi Emlak" />
@@ -192,7 +194,7 @@
                             <div class="form-check form-switch pt-2 border-top mb-3">
                                 <input type="checkbox"
                                        class="form-check-input"
-                                       id="isActive_@cardKey"
+                                       id="isActive_@cardKey" data-help="İşaretlendiğinde bu görsel ana sayfadaki ilgili blokta tema görseli yerine gösterilir."
                                        name="IsActive"
                                        value="true"
                                        @(isActive ? "checked" : "") />
@@ -215,23 +217,4 @@
 
 @section Scripts {
     <script src="~/js/image-upload.js" asp-append-version="true"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Görsel inputları değiştiğinde placeholder'ı gizleyip img'yi göster
-            var imageInputs = document.querySelectorAll('input[name="ImageUrl"]');
-            imageInputs.forEach(function (input) {
-                var targetId = input.id;
-                var cardKey = targetId.replace('imageUrl_', '');
-                var previewImg = document.getElementById('preview_' + cardKey);
-                var placeholder = document.getElementById('placeholder_' + cardKey);
-
-                input.addEventListener('change', function () {
-                    if (input.value && input.value.trim() !== '') {
-                        if (placeholder) placeholder.classList.add('d-none');
-                        if (previewImg) previewImg.classList.remove('d-none');
-                    }
-                });
-            });
-        });
-    </script>
 }

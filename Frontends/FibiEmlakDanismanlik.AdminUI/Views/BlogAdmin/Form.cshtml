@@ -107,7 +107,7 @@
                             İçerik (HTML)
                         </label>
                         <textarea class="form-control font-monospace @(errDesc != null ? "is-invalid" : "")"
-                                  id="BlogDescription"
+                                  id="BlogDescription" data-help="Blog yazısının detay metnidir; HTML etiketleri desteklenir ve sitede güvenli biçimde render edilir."
                                   name="BlogDescription"
                                   rows="18"
                                   placeholder="<p>Blog içeriğini buraya yazınız...</p>">@Model.Form.BlogDescription</textarea>
@@ -138,7 +138,7 @@
                         </label>
                         <input type="date"
                                class="form-control @(errDate != null ? "is-invalid" : "")"
-                               id="CreatedDate"
+                               id="CreatedDate" data-help="Yazının sitede gösterilecek yayınlanma tarihidir; blog listesinde sıralamayı etkiler."
                                name="CreatedDate"
                                value="@Model.Form.CreatedDate"
                                required />
@@ -153,7 +153,7 @@
                             Yazar <span class="text-danger">*</span>
                         </label>
                         <select class="form-select @(errAuthor != null ? "is-invalid" : "")"
-                                id="AuthorId"
+                                id="AuthorId" data-help="Blog yazısının altında ve yazar detayında görünecek içerik üreticisi danışman."
                                 name="AuthorId"
                                 required>
                             @if (!Model.Authors.Any())
@@ -178,7 +178,7 @@
                             Kategori
                         </label>
                         <select class="form-select @(errCategory != null ? "is-invalid" : "")"
-                                id="BlogCategoryId"
+                                id="BlogCategoryId" data-help="Yazının sitede listeleneceği konu kategorisi; ziyaretçilerin filtrelemesini kolaylaştırır."
                                 name="BlogCategoryId">
                             <option value="" selected="@(!Model.Form.BlogCategoryId.HasValue ? "selected" : null)">
                                 Kategorisiz
@@ -202,7 +202,7 @@
                         </label>
                         <input type="text"
                                class="form-control @(errTags != null ? "is-invalid" : "")"
-                               id="TagsText"
+                               id="TagsText" data-help="Yazıyla ilgili anahtar kelimeler; virgülle ayırarak en fazla 10 adet girebilirsiniz."
                                name="TagsText"
                                value="@Model.Form.TagsText"
                                placeholder="Örn: Emlak, Yatırım, Konut" />
@@ -230,7 +230,7 @@
                     <div class="form-check form-switch pt-2 border-top mb-1">
                         <input type="checkbox"
                                class="form-check-input"
-                               id="TopNews"
+                               id="TopNews" data-help="İşaretlendiğinde blog yazısı ana sayfada ve blog vitrininde öne çıkarılan manşet alanında gösterilir."
                                name="TopNews"
                                value="true"
                                @(Model.Form.TopNews ? "checked" : "") />
@@ -258,7 +258,7 @@
                         </label>
                         <input type="text"
                                class="form-control @(errImg != null ? "is-invalid" : "")"
-                               id="BlogImgUrl"
+                               id="BlogImgUrl" data-help="Site içi yol (/...) veya https adresi girilebilir ya da Bilgisayardan yükle ile eklenebilir."
                                name="BlogImgUrl"
                                value="@Model.Form.BlogImgUrl"
                                placeholder="https://... veya /uploads/..."

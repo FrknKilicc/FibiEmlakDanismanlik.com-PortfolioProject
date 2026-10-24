@@ -72,7 +72,7 @@
         {
             <div class="text-center py-5">
                 <i class="bi bi-bank display-4 text-muted d-block mb-3"></i>
-                <h6 class="text-dark fw-semibold">Henüz kredi oranı eklenmemiş</h6>
+                <h6 class="text-body fw-semibold">Henüz kredi oranı eklenmemiş</h6>
                 <p class="text-muted small mb-3">İlan detay sayfasındaki kredi hesaplama aracında kullanılacak banka faiz oranlarını buradan ekleyebilirsiniz.</p>
                 <a href="/icerik/kredi-oranlari/yeni" class="btn btn-primary btn-sm">
                     <i class="bi bi-plus-lg me-1"></i> İlk Kredi Oranını Ekle
@@ -108,31 +108,31 @@
                                         {
                                             <img src="@logoPreview"
                                                  alt="@item.BankName"
-                                                 class="border rounded p-1 bg-white"
+                                                 class="border rounded p-1 bg-body"
                                                  style="width: 36px; height: 36px; object-fit: contain;" />
                                         }
                                         else
                                         {
-                                            <div class="bg-light border rounded d-flex align-items-center justify-content-center text-muted"
+                                            <div class="bg-body-tertiary border rounded d-flex align-items-center justify-content-center text-muted"
                                                  style="width: 36px; height: 36px;">
                                                 <i class="bi bi-bank fs-6"></i>
                                             </div>
                                         }
                                         <div>
-                                            <div class="fw-semibold text-dark">@item.BankName</div>
-                                            @if (!string.IsNullOrWhiteSpace(item.ProviderKey))
-                                            {
-                                                <div class="small text-muted">
-                                                    <i class="bi bi-robot me-1"></i>Otomatik güncelleme anahtarı: <code>@item.ProviderKey</code>
-                                                </div>
-                                            }
+                                            <div class="fw-semibold text-body">
+                                                @item.BankName
+                                                @if (!string.IsNullOrWhiteSpace(item.ProviderKey))
+                                                {
+                                                    <span class="badge rounded-pill bg-body-tertiary text-body-secondary border fw-normal ms-1" title="Otomatik güncelleme anahtarı"><i class="bi bi-arrow-repeat"></i> @item.ProviderKey</span>
+                                                }
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="text-end fw-semibold text-primary">
                                     %@item.HousingLoanMonthlyRate.ToString("0.00##", trCulture)
                                 </td>
-                                <td class="text-end fw-semibold text-dark">
+                                <td class="text-end fw-semibold text-body">
                                     %@item.CommercialLoanMonthlyRate.ToString("0.00##", trCulture)
                                 </td>
                                 <td class="text-center">
@@ -142,7 +142,7 @@
                                     %@item.AllocationFeeRate.ToString("0.00##", trCulture)
                                 </td>
                                 <td>
-                                    <span class="badge bg-light text-secondary border">
+                                    <span class="badge bg-body-tertiary text-secondary border">
                                         @(string.IsNullOrWhiteSpace(item.DataSource) ? "Manual" : item.DataSource)
                                     </span>
                                 </td>

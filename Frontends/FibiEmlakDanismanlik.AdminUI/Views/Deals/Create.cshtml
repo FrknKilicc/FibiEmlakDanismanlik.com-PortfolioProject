@@ -149,7 +149,7 @@
                         <input type="text"
                                inputmode="decimal"
                                class="form-control @(errAgreedPrice != null ? "is-invalid" : "")"
-                               id="AgreedPrice"
+                               id="AgreedPrice" data-help="Tarafların anlaştığı nihai işlem bedeli; komisyon oran girildiğinde hesaplama bu tutar üzerinden yapılır."
                                name="AgreedPrice"
                                value="@Model.Form.AgreedPrice"
                                placeholder="Örn: 1.500.000"
@@ -168,7 +168,7 @@
                             <input type="text"
                                    inputmode="decimal"
                                    class="form-control @(errDepositAmount != null ? "is-invalid" : "")"
-                                   id="DepositAmount"
+                                   id="DepositAmount" data-help="Alınan kapora tutarıdır. İşlem kaydedildiğinde ilanın durumu sitede Opsiyonlu olarak güncellenir."
                                    name="DepositAmount"
                                    value="@Model.Form.DepositAmount"
                                    placeholder="Örn: 50.000" />
@@ -184,7 +184,7 @@
                             </label>
                             <input type="date"
                                    class="form-control @(errDepositDate != null ? "is-invalid" : "")"
-                                   id="DepositDate"
+                                   id="DepositDate" data-help="Kaporanın tahsil edildiği veya sözleşmenin yapıldığı işlem tarihi."
                                    name="DepositDate"
                                    value="@Model.Form.DepositDate" />
                             @if (errDepositDate != null)
@@ -221,7 +221,7 @@
                                             <input type="text"
                                                    inputmode="decimal"
                                                    class="form-control form-control-sm @(errBuyerRate != null ? "is-invalid" : "")"
-                                                   id="BuyerCommissionRate"
+                                                   id="BuyerCommissionRate" data-help="Alıcıdan alınacak komisyon yüzdesidir; girilirse tutar anlaşılan satış bedeli üzerinden hesaplanır."
                                                    name="BuyerCommissionRate"
                                                    value="@Model.Form.BuyerCommissionRate"
                                                    placeholder="Örn: 2" />
@@ -235,7 +235,7 @@
                                             <input type="text"
                                                    inputmode="decimal"
                                                    class="form-control form-control-sm @(errBuyerAmount != null ? "is-invalid" : "")"
-                                                   id="BuyerCommissionAmount"
+                                                   id="BuyerCommissionAmount" data-help="Alıcı veya kiracıdan tahsil edilecek net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir."
                                                    name="BuyerCommissionAmount"
                                                    value="@Model.Form.BuyerCommissionAmount"
                                                    placeholder="Örn: 30.000" />
@@ -260,7 +260,7 @@
                                             <input type="text"
                                                    inputmode="decimal"
                                                    class="form-control form-control-sm @(errSellerRate != null ? "is-invalid" : "")"
-                                                   id="SellerCommissionRate"
+                                                   id="SellerCommissionRate" data-help="Satıcıdan alınacak komisyon yüzdesidir; girilirse tutar anlaşılan satış bedeli üzerinden hesaplanır."
                                                    name="SellerCommissionRate"
                                                    value="@Model.Form.SellerCommissionRate"
                                                    placeholder="Örn: 2" />
@@ -274,7 +274,7 @@
                                             <input type="text"
                                                    inputmode="decimal"
                                                    class="form-control form-control-sm @(errSellerAmount != null ? "is-invalid" : "")"
-                                                   id="SellerCommissionAmount"
+                                                   id="SellerCommissionAmount" data-help="Satıcı veya ev sahibinden alınacak net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir."
                                                    name="SellerCommissionAmount"
                                                    value="@Model.Form.SellerCommissionAmount"
                                                    placeholder="Örn: 30.000" />
@@ -305,7 +305,7 @@
                                     <input type="text"
                                            inputmode="decimal"
                                            class="form-control form-control-sm @(errBuyerAmount != null ? "is-invalid" : "")"
-                                           id="BuyerCommissionAmount"
+                                           id="BuyerCommissionAmount" data-help="Alıcı veya kiracıdan tahsil edilecek net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir."
                                            name="BuyerCommissionAmount"
                                            value="@Model.Form.BuyerCommissionAmount"
                                            placeholder="Örn: 15.000" />
@@ -325,7 +325,7 @@
                                     <input type="text"
                                            inputmode="decimal"
                                            class="form-control form-control-sm @(errSellerAmount != null ? "is-invalid" : "")"
-                                           id="SellerCommissionAmount"
+                                           id="SellerCommissionAmount" data-help="Satıcı veya ev sahibinden alınacak net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir."
                                            name="SellerCommissionAmount"
                                            value="@Model.Form.SellerCommissionAmount"
                                            placeholder="Örn: 15.000" />
@@ -356,7 +356,7 @@
                     <div class="mb-2">
                         <label for="Notes" class="form-label small fw-semibold text-muted">İşlem Notları</label>
                         <textarea class="form-control @(errNotes != null ? "is-invalid" : "")"
-                                  id="Notes"
+                                  id="Notes" data-help="Ödeme planı, tapu randevusu veya özel anlaşma şartlarına dair yalnızca panele özel notlar."
                                   name="Notes"
                                   rows="3"
                                   placeholder="İşleme özel açıklamalar, anlaşılan şartlar...">@Model.Form.Notes</textarea>

@@ -19,7 +19,7 @@
             <span class="input-group-text bg-transparent border-end-0 text-muted">
                 <i class="bi bi-search"></i>
             </span>
-            <input type="search" id="hubSearchInput" class="form-control border-start-0 ps-0" placeholder="İçeriklerde ara..." aria-label="İçeriklerde ara">
+            <input type="search" id="hubSearchInput" class="form-control border-start-0 ps-0" placeholder="İçeriklerde ara..." aria-label="İçeriklerde ara" data-filter-input="#contentHubGroups">
         </div>
     </div>
 </div>
@@ -42,10 +42,10 @@
     </div>
 }
 
-<div id="hubGroupsContainer">
+<div id="contentHubGroups">
     @foreach (var group in Model.Groups)
     {
-        <div class="content-hub-group mb-4" data-group>
+        <div class="content-hub-group mb-4" data-filter-group>
             <div class="d-flex flex-column mb-3">
                 <h5 class="fw-bold mb-1">@group.Title</h5>
                 @if (!string.IsNullOrWhiteSpace(group.Description))
@@ -56,7 +56,7 @@
             <div class="row g-3">
                 @foreach (var tile in group.Tiles)
                 {
-                    <div class="col-xl-3 col-lg-4 col-sm-6 content-hub-col" data-tile-key="@tile.Key" data-search-text="@(tile.Title + " " + tile.Description)">
+                    <div class="col-xl-3 col-lg-4 col-sm-6 content-hub-col" data-tile-key="@tile.Key" data-filter-item data-filter-text="@(tile.Title + " " + tile.Description)">
                         <div class="card h-100 content-hub-tile border">
                             <div class="card-body d-flex flex-column p-3">
                                 <div class="d-flex align-items-center justify-content-between mb-3">
@@ -99,55 +99,10 @@
             </div>
         </div>
     }
+
+    <div id="hubNoResults" class="alert alert-light text-center py-5 d-none border" data-filter-empty>
+        <i class="bi bi-search fs-1 text-muted d-block mb-2"></i>
+        <strong class="d-block mb-1">Sonuç yok</strong>
+        <p class="text-muted small mb-0">Aradığınız kriterlere uygun içerik bölümü bulunamadı.</p>
+    </div>
 </div>
-
-<div id="hubNoResults" class="alert alert-light text-center py-5 d-none border">
-    <i class="bi bi-search fs-1 text-muted d-block mb-2"></i>
-    <strong class="d-block mb-1">Sonuç yok</strong>
-    <p class="text-muted small mb-0">Aradığınız kriterlere uygun içerik bölümü bulunamadı.</p>
-</div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var searchInput = document.getElementById('hubSearchInput');
-        var groups = document.querySelectorAll('[data-group]');
-        var noResults = document.getElementById('hubNoResults');
-
-        if (searchInput) {
-            searchInput.addEventListener('input', function () {
-                var query = this.value.trim().toLocaleLowerCase('tr-TR');
-                var totalVisible = 0;
-
-                groups.forEach(function (group) {
-                    var groupVisible = 0;
-                    var cols = group.querySelectorAll('.content-hub-col');
-
-                    cols.forEach(function (col) {
-                        var text = (col.getAttribute('data-search-text') || '').toLocaleLowerCase('tr-TR');
-                        if (!query || text.indexOf(query) !== -1) {
-                            col.classList.remove('d-none');
-                            groupVisible++;
-                            totalVisible++;
-                        } else {
-                            col.classList.add('d-none');
-                        }
-                    });
-
-                    if (groupVisible === 0 && query) {
-                        group.classList.add('d-none');
-                    } else {
-                        group.classList.remove('d-none');
-                    }
-                });
-
-                if (noResults) {
-                    if (totalVisible === 0 && query) {
-                        noResults.classList.remove('d-none');
-                    } else {
-                        noResults.classList.add('d-none');
-                    }
-                }
-            });
-        }
-    });
-</script>
