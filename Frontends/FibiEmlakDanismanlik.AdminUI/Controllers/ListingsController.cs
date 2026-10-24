@@ -151,10 +151,10 @@ public sealed class ListingsController : Controller
     [HttpGet("/ilanlar/yeni")]
     public async Task<IActionResult> Create(int tur)
     {
-        // Tür 1, 2, 3, 7, 8, 9 değilse /ilanlar sayfasına yönlendir
+        // Tür 1, 2, 3, 7, 8, 9 değilse tür seçim sayfasını göster
         if (tur is not (1 or 2 or 3 or 7 or 8 or 9))
         {
-            return Redirect("/ilanlar");
+            return View("New");
         }
 
         var lookupsResult = await _apiClient.GetAsync<AdminListingLookupsDto>("AdminListings/lookups");

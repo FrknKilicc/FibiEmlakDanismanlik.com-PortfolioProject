@@ -1,0 +1,173 @@
+@{
+    ViewData["Title"] = "Yeni İlan";
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="mb-0">Yeni İlan</h1>
+        <nav class="mt-1">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item"><a href="/ilanlar">İlanlar</a></li>
+                <li class="breadcrumb-item active">Yeni İlan</li>
+            </ol>
+        </nav>
+    </div>
+    <div>
+        <a href="/ilanlar" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> İlan Listesine Dön
+        </a>
+    </div>
+</div>
+
+<!-- Adım Göstergesi: 1 Tür seç → 2 Bilgileri gir → 3 Fotoğraf ekle -->
+<div class="card mb-4 border-0 shadow-sm">
+    <div class="card-body py-2 px-3">
+        <div class="d-flex align-items-center justify-content-center flex-wrap gap-2 text-center small">
+            <div class="d-inline-flex align-items-center gap-2 fw-semibold text-primary">
+                <span class="section-num">1</span>
+                <span>Tür seç</span>
+            </div>
+            <i class="bi bi-arrow-right text-muted mx-1"></i>
+            <div class="d-inline-flex align-items-center gap-2 text-muted">
+                <span class="badge bg-secondary-subtle text-secondary rounded-circle p-1" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;">2</span>
+                <span>Bilgileri gir</span>
+            </div>
+            <i class="bi bi-arrow-right text-muted mx-1"></i>
+            <div class="d-inline-flex align-items-center gap-2 text-muted">
+                <span class="badge bg-secondary-subtle text-secondary rounded-circle p-1" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;">3</span>
+                <span>Fotoğraf ekle</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Satılık Grubu -->
+<div class="mb-5">
+    <div class="d-flex align-items-center gap-2 mb-3">
+        <h4 class="fw-bold mb-0 text-heading">
+            <i class="bi bi-tag-fill text-primary me-2"></i>Satılık
+        </h4>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Satılık İlanlar</span>
+    </div>
+    <div class="row g-4">
+        <!-- Satılık Konut (?tur=2) -->
+        <div class="col-md-4 col-12">
+            <div class="card listing-type-card h-100 p-3 position-relative">
+                <div class="card-body d-flex flex-column p-2">
+                    <div class="type-icon-circle">
+                        <i class="bi bi-house-door"></i>
+                    </div>
+                    <h5 class="card-title fw-bold p-0 mb-1">Konut</h5>
+                    <p class="text-muted small mb-4 flex-grow-1">Daire, villa, müstakil ev</p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                        <span class="text-primary small fw-semibold">İlan Oluştur</span>
+                        <i class="bi bi-arrow-right text-primary fs-5"></i>
+                    </div>
+                    <a href="/ilanlar/yeni?tur=2" class="stretched-link" aria-label="Satılık Konut İlanı Oluştur"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Satılık Arsa (?tur=1) -->
+        <div class="col-md-4 col-12">
+            <div class="card listing-type-card h-100 p-3 position-relative">
+                <div class="card-body d-flex flex-column p-2">
+                    <div class="type-icon-circle">
+                        <i class="bi bi-map"></i>
+                    </div>
+                    <h5 class="card-title fw-bold p-0 mb-1">Arsa</h5>
+                    <p class="text-muted small mb-4 flex-grow-1">İmarlı arsa, tarla, bağ-bahçe</p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                        <span class="text-primary small fw-semibold">İlan Oluştur</span>
+                        <i class="bi bi-arrow-right text-primary fs-5"></i>
+                    </div>
+                    <a href="/ilanlar/yeni?tur=1" class="stretched-link" aria-label="Satılık Arsa İlanı Oluştur"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Satılık İşyeri (?tur=3) -->
+        <div class="col-md-4 col-12">
+            <div class="card listing-type-card h-100 p-3 position-relative">
+                <div class="card-body d-flex flex-column p-2">
+                    <div class="type-icon-circle">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <h5 class="card-title fw-bold p-0 mb-1">İşyeri</h5>
+                    <p class="text-muted small mb-4 flex-grow-1">Dükkan, ofis, depo</p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                        <span class="text-primary small fw-semibold">İlan Oluştur</span>
+                        <i class="bi bi-arrow-right text-primary fs-5"></i>
+                    </div>
+                    <a href="/ilanlar/yeni?tur=3" class="stretched-link" aria-label="Satılık İşyeri İlanı Oluştur"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Kiralık Grubu -->
+<div class="mb-4">
+    <div class="d-flex align-items-center gap-2 mb-3">
+        <h4 class="fw-bold mb-0 text-heading">
+            <i class="bi bi-key-fill text-primary me-2"></i>Kiralık
+        </h4>
+        <span class="badge bg-success-subtle text-success border border-success-subtle">Kiralık İlanlar</span>
+    </div>
+    <div class="row g-4">
+        <!-- Kiralık Konut (?tur=8) -->
+        <div class="col-md-4 col-12">
+            <div class="card listing-type-card h-100 p-3 position-relative">
+                <div class="card-body d-flex flex-column p-2">
+                    <div class="type-icon-circle">
+                        <i class="bi bi-house-door"></i>
+                    </div>
+                    <h5 class="card-title fw-bold p-0 mb-1">Konut</h5>
+                    <p class="text-muted small mb-4 flex-grow-1">Daire, villa, müstakil ev</p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                        <span class="text-primary small fw-semibold">İlan Oluştur</span>
+                        <i class="bi bi-arrow-right text-primary fs-5"></i>
+                    </div>
+                    <a href="/ilanlar/yeni?tur=8" class="stretched-link" aria-label="Kiralık Konut İlanı Oluştur"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kiralık Arsa (?tur=7) -->
+        <div class="col-md-4 col-12">
+            <div class="card listing-type-card h-100 p-3 position-relative">
+                <div class="card-body d-flex flex-column p-2">
+                    <div class="type-icon-circle">
+                        <i class="bi bi-map"></i>
+                    </div>
+                    <h5 class="card-title fw-bold p-0 mb-1">Arsa</h5>
+                    <p class="text-muted small mb-4 flex-grow-1">İmarlı arsa, tarla, bağ-bahçe</p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                        <span class="text-primary small fw-semibold">İlan Oluştur</span>
+                        <i class="bi bi-arrow-right text-primary fs-5"></i>
+                    </div>
+                    <a href="/ilanlar/yeni?tur=7" class="stretched-link" aria-label="Kiralık Arsa İlanı Oluştur"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kiralık İşyeri (?tur=9) -->
+        <div class="col-md-4 col-12">
+            <div class="card listing-type-card h-100 p-3 position-relative">
+                <div class="card-body d-flex flex-column p-2">
+                    <div class="type-icon-circle">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <h5 class="card-title fw-bold p-0 mb-1">İşyeri</h5>
+                    <p class="text-muted small mb-4 flex-grow-1">Dükkan, ofis, depo</p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                        <span class="text-primary small fw-semibold">İlan Oluştur</span>
+                        <i class="bi bi-arrow-right text-primary fs-5"></i>
+                    </div>
+                    <a href="/ilanlar/yeni?tur=9" class="stretched-link" aria-label="Kiralık İşyeri İlanı Oluştur"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

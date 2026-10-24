@@ -40,12 +40,12 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.MeHandlers
                 throw new KeyNotFoundException("Kullanıcı hesabı bulunamadı.");
             }
 
-            // Yalnızca izin verilen 5 alan güncellenir; metinler kırpılır, boşluklar null yapılır
+            // Yalnızca izin verilen 5 alan güncellenir; metinler Trim edilir, boşlar boş dize olarak saklanır; kolonlar NOT NULL
             agent.AgentName = request.AgentName.Trim();
             agent.AgentPhoneNumber = request.AgentPhoneNumber.Trim();
-            agent.AgentTitle = string.IsNullOrWhiteSpace(request.AgentTitle) ? null : request.AgentTitle.Trim();
-            agent.AgentDescription = string.IsNullOrWhiteSpace(request.AgentDescription) ? null : request.AgentDescription.Trim();
-            agent.AgentImgUrl = string.IsNullOrWhiteSpace(request.AgentImgUrl) ? null : request.AgentImgUrl.Trim();
+            agent.AgentTitle = string.IsNullOrWhiteSpace(request.AgentTitle) ? string.Empty : request.AgentTitle.Trim();
+            agent.AgentDescription = string.IsNullOrWhiteSpace(request.AgentDescription) ? string.Empty : request.AgentDescription.Trim();
+            agent.AgentImgUrl = string.IsNullOrWhiteSpace(request.AgentImgUrl) ? string.Empty : request.AgentImgUrl.Trim();
 
             await _agentRepository.UpdateAsync(agent);
         }

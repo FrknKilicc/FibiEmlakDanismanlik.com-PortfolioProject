@@ -686,3 +686,320 @@ a:hover {
   color: var(--fibi-text);
   box-shadow: 0 0 0 0.25rem var(--fibi-primary-soft);
 }
+
+/* ==============================================================
+   # İlan Yönetimi - Tamamlanma Göstergesi (Completeness)
+   ============================================================== */
+.completeness {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.completeness svg {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  transform: rotate(-90deg);
+}
+
+.completeness circle:first-child,
+.completeness .completeness-bg {
+  stroke: var(--fibi-border);
+}
+
+.completeness .completeness-bar {
+  stroke: var(--fibi-primary);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.35s ease;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Bölüm Gezinme Çubuğu (Section Nav)
+   ============================================================== */
+.section-nav {
+  position: sticky;
+  top: 70px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.25rem;
+  background-color: var(--fibi-bg);
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.section-nav::-webkit-scrollbar {
+  height: 4px;
+}
+
+.section-nav::-webkit-scrollbar-thumb {
+  background: var(--fibi-border);
+  border-radius: 4px;
+}
+
+.section-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.85rem;
+  border-radius: 50rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  background-color: var(--fibi-surface);
+  color: var(--fibi-text);
+  border: 1px solid var(--fibi-border);
+  box-shadow: var(--fibi-shadow);
+  transition: all 0.15s ease-in-out;
+  flex-shrink: 0;
+}
+
+.section-chip:hover {
+  background-color: var(--fibi-surface-2);
+  border-color: var(--fibi-primary);
+  color: var(--fibi-primary);
+}
+
+.section-chip.active {
+  background-color: var(--fibi-primary-soft);
+  border-color: var(--fibi-primary);
+  color: var(--fibi-primary);
+  font-weight: 600;
+}
+
+.section-chip .section-state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-chip.done .section-state::before {
+  content: "\F26E";
+  font-family: "bootstrap-icons";
+  color: var(--bs-success, #198754);
+  font-size: 0.95rem;
+}
+
+[data-bs-theme="dark"] .section-chip.done .section-state::before {
+  color: #75b798;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Bölüm Kartı (Listing Section)
+   ============================================================== */
+.listing-section {
+  scroll-margin-top: 130px;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Bölüm Numarası Rozeti (Section Num)
+   ============================================================== */
+.section-num {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--fibi-primary-soft);
+  color: var(--fibi-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Tür Seçim Kartları (Listing Type Card)
+   ============================================================== */
+.listing-type-card {
+  background-color: var(--fibi-surface);
+  border: 1px solid var(--fibi-border);
+  border-radius: 0.75rem;
+  box-shadow: var(--fibi-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.listing-type-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--fibi-primary);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="dark"] .listing-type-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.listing-type-card:focus-within {
+  outline: 2px solid var(--fibi-primary);
+  outline-offset: 3px;
+  border-color: var(--fibi-primary);
+}
+
+.listing-type-card .type-icon-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--fibi-primary-soft);
+  color: var(--fibi-primary);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Önizleme Kartı (Listing Preview)
+   ============================================================== */
+.listing-preview {
+  background-color: var(--fibi-surface);
+  border: 1px solid var(--fibi-border);
+  border-radius: 0.75rem;
+}
+
+.listing-preview .preview-img,
+.listing-preview .preview-img-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.listing-preview .preview-img-placeholder {
+  background-color: var(--fibi-surface-2);
+  color: var(--fibi-muted);
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Değişiklik Göstergesi (Dirty Indicator)
+   ============================================================== */
+.dirty-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #d97706;
+}
+
+.dirty-indicator i {
+  font-size: 0.5rem;
+  color: #f59e0b;
+  line-height: 1;
+}
+
+[data-bs-theme="dark"] .dirty-indicator {
+  color: #fbbf24;
+}
+
+[data-bs-theme="dark"] .dirty-indicator i {
+  color: #f59e0b;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Wizard Adım Göstergesi (Wizard Steps)
+   ============================================================== */
+.wizard-steps {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0.25rem 0;
+  margin: 0 0 1rem 0;
+  gap: 0.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.wizard-steps::-webkit-scrollbar {
+  height: 4px;
+}
+
+.wizard-steps::-webkit-scrollbar-thumb {
+  background: var(--fibi-border);
+  border-radius: 4px;
+}
+
+.wizard-steps li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.5rem;
+  background-color: var(--fibi-surface);
+  border: 1px solid var(--fibi-border);
+  color: var(--fibi-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.wizard-steps li .wizard-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--fibi-surface-2);
+  color: var(--fibi-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.wizard-steps li.active {
+  background-color: var(--fibi-primary-soft);
+  border-color: var(--fibi-primary);
+  color: var(--fibi-primary);
+  font-weight: 600;
+}
+
+.wizard-steps li.active .wizard-step-num {
+  background-color: var(--fibi-primary);
+  color: #ffffff;
+}
+
+.wizard-steps li.done {
+  background-color: var(--fibi-surface);
+  border-color: var(--bs-success, #198754);
+  color: var(--fibi-text);
+}
+
+.wizard-steps li.done .wizard-step-num {
+  background-color: var(--bs-success, #198754);
+  color: #ffffff;
+}
+
+.wizard-steps li.done .wizard-step-num span {
+  display: none;
+}
+
+.wizard-steps li.done .wizard-step-num::before {
+  content: "\F26E";
+  font-family: "bootstrap-icons";
+}
+
+[data-bs-theme="dark"] .wizard-steps li.done {
+  border-color: #75b798;
+}
+
+[data-bs-theme="dark"] .wizard-steps li.done .wizard-step-num {
+  background-color: #75b798;
+  color: #0f1420;
+}
+
+/* Karakter sayacı stili */
+.char-counter {
+  color: var(--fibi-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
