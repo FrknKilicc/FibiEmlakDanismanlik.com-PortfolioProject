@@ -727,7 +727,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                             entity.AgentId = agentId;
                         }
 
-                        entity.PropertyNo = cmd.PropertyNo;
+                        // Panel formu ilan numarası göndermez; gönderilmediyse mevcut numara korunur
+                        if (cmd.PropertyNo.HasValue)
+                        {
+                            entity.PropertyNo = cmd.PropertyNo;
+                        }
                         entity.PropertyName = cmd.PropertyName ?? string.Empty;
                         entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
                         entity.City = cmd.City ?? string.Empty;
@@ -786,7 +790,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                             entity.AgentId = agentId;
                         }
 
-                        entity.PropertyNo = cmd.PropertyNo;
+                        // Panel formu ilan numarası göndermez; gönderilmediyse mevcut numara korunur
+                        if (cmd.PropertyNo.HasValue)
+                        {
+                            entity.PropertyNo = cmd.PropertyNo;
+                        }
                         entity.PropertyName = cmd.PropertyName ?? string.Empty;
                         entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
                         entity.City = cmd.City ?? string.Empty;
@@ -852,7 +860,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                             entity.AgentId = agentId;
                         }
 
-                        entity.PropertyNo = cmd.PropertyNo;
+                        // Panel formu ilan numarası göndermez; gönderilmediyse mevcut numara korunur
+                        if (cmd.PropertyNo.HasValue)
+                        {
+                            entity.PropertyNo = cmd.PropertyNo;
+                        }
                         entity.PropertyName = cmd.PropertyName ?? string.Empty;
                         entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
                         entity.City = cmd.City ?? string.Empty;
@@ -908,7 +920,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                             entity.AgentId = agentId;
                         }
 
-                        entity.PropertyNo = cmd.PropertyNo;
+                        // Panel formu ilan numarası göndermez; gönderilmediyse mevcut numara korunur
+                        if (cmd.PropertyNo.HasValue)
+                        {
+                            entity.PropertyNo = cmd.PropertyNo;
+                        }
                         entity.PropertyName = cmd.PropertyName ?? string.Empty;
                         entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
                         entity.City = cmd.City ?? string.Empty;
@@ -964,7 +980,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                             entity.AgentId = agentId;
                         }
 
-                        entity.PropertyNo = cmd.PropertyNo;
+                        // Panel formu ilan numarası göndermez; gönderilmediyse mevcut numara korunur
+                        if (cmd.PropertyNo.HasValue)
+                        {
+                            entity.PropertyNo = cmd.PropertyNo;
+                        }
                         entity.PropertyName = cmd.PropertyName ?? string.Empty;
                         entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
                         entity.City = cmd.City ?? string.Empty;
@@ -1027,7 +1047,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                             entity.AgentId = agentId;
                         }
 
-                        entity.PropertyNo = cmd.PropertyNo;
+                        // Panel formu ilan numarası göndermez; gönderilmediyse mevcut numara korunur
+                        if (cmd.PropertyNo.HasValue)
+                        {
+                            entity.PropertyNo = cmd.PropertyNo;
+                        }
                         entity.PropertyName = cmd.PropertyName ?? string.Empty;
                         entity.PropertyDescription = cmd.PropertyDescription ?? string.Empty;
                         entity.City = cmd.City ?? string.Empty;
