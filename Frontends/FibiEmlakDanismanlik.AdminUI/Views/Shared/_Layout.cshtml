@@ -14,6 +14,7 @@
     bool isUsers = string.Equals(currentController, "Users", StringComparison.OrdinalIgnoreCase);
     bool isContent = string.Equals(currentController, "Content", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogAdmin", StringComparison.OrdinalIgnoreCase);
     bool isAudit = string.Equals(currentController, "AuditLog", StringComparison.OrdinalIgnoreCase);
+    bool isSettings = string.Equals(currentController, "Settings", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
 <html lang="tr">
@@ -175,6 +176,15 @@
             <span>Denetim Kaydı</span>
           </a>
         </li>
+@if (CurrentAdmin.IsOwner)
+{
+  <li class="nav-item">
+    <a class="nav-link @(isSettings ? "" : "collapsed")" href="/ayarlar">
+      <i class="bi bi-gear"></i>
+      <span>Ayarlar</span>
+    </a>
+  </li>
+}
       }
 
     </ul>

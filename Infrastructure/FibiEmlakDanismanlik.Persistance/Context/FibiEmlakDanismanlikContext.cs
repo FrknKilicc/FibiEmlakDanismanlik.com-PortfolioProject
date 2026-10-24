@@ -134,6 +134,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<ListingAlertMatch> ListingAlertMatches { get; set; }
         public DbSet<ListingDeal> ListingDeals { get; set; }
         public DbSet<DealShare> DealShares { get; set; }
+        public DbSet<BusinessSetting> BusinessSettings { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -938,6 +939,25 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                       .IsUnique();
 
                 entity.HasIndex(x => new { x.AgentId, x.PaymentStatus });
+            });
+
+            modelBuilder.Entity<BusinessSetting>(entity =>
+            {
+                entity.Property(x => x.BusinessSettingId).ValueGeneratedNever();
+                entity.Property(x => x.SaleBuyerCommissionRate).HasPrecision(5, 2);
+                entity.Property(x => x.SaleSellerCommissionRate).HasPrecision(5, 2);
+                entity.Property(x => x.RentCommissionMonths).HasPrecision(4, 2);
+
+                // Tek satırlık iş kuralı ayarları, varsayılan değerlerle
+                entity.HasData(new BusinessSetting
+                {
+                    BusinessSettingId = 1,
+                    SaleBuyerCommissionRate = 2m,
+                    SaleSellerCommissionRate = 2m,
+                    RentCommissionMonths = 1m,
+                    BestDealMaxPerUsageType = 5,
+                    ListingAlertMaxActivePerPhone = 5
+                });
             });
 
             // İlanların il/ilçe ilişkileri ve indeksleri

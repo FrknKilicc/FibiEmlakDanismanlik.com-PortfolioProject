@@ -493,6 +493,51 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("BlogTags");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.BusinessSetting", b =>
+                {
+                    b.Property<int>("BusinessSettingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BestDealMaxPerUsageType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ListingAlertMaxActivePerPhone")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("RentCommissionMonths")
+                        .HasPrecision(4, 2)
+                        .HasColumnType("decimal(4,2)");
+
+                    b.Property<decimal>("SaleBuyerCommissionRate")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("SaleSellerCommissionRate")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime?>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByAgentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BusinessSettingId");
+
+                    b.ToTable("BusinessSettings");
+
+                    b.HasData(
+                        new
+                        {
+                            BusinessSettingId = 1,
+                            BestDealMaxPerUsageType = 5,
+                            ListingAlertMaxActivePerPhone = 5,
+                            RentCommissionMonths = 1m,
+                            SaleBuyerCommissionRate = 2m,
+                            SaleSellerCommissionRate = 2m
+                        });
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.City", b =>
                 {
                     b.Property<int>("CityId")
