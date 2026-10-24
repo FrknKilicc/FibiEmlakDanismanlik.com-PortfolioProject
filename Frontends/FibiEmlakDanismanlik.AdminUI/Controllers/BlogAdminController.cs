@@ -195,9 +195,9 @@ public sealed class BlogAdminController : Controller
 
         var payload = new
         {
-            blogTitle = form.BlogTitle,
-            blogDescription = form.BlogDescription,
-            blogImgUrl = form.BlogImgUrl,
+            blogTitle = form.BlogTitle ?? string.Empty,
+            blogDescription = form.BlogDescription ?? string.Empty,
+            blogImgUrl = form.BlogImgUrl ?? string.Empty,
             createdDate = createdDate,
             topNews = form.TopNews,
             authorId = form.AuthorId,
@@ -346,9 +346,9 @@ public sealed class BlogAdminController : Controller
         var payload = new
         {
             blogId = id,
-            blogTitle = form.BlogTitle,
-            blogDescription = form.BlogDescription,
-            blogImgUrl = form.BlogImgUrl,
+            blogTitle = form.BlogTitle ?? string.Empty,
+            blogDescription = form.BlogDescription ?? string.Empty,
+            blogImgUrl = form.BlogImgUrl ?? string.Empty,
             createdDate = createdDate,
             topNews = form.TopNews,
             authorId = form.AuthorId,

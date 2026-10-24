@@ -63,9 +63,9 @@ public sealed class ContentController : Controller
         var payload = new
         {
             aboutUsId = form.AboutUsId,
-            aboutUsTitle = form.AboutUsTitle,
-            aboutUsDesc = form.AboutUsDesc,
-            aboutUsImgUrl = form.AboutUsImgUrl
+            aboutUsTitle = form.AboutUsTitle ?? string.Empty,
+            aboutUsDesc = form.AboutUsDesc ?? string.Empty,
+            aboutUsImgUrl = form.AboutUsImgUrl ?? string.Empty
         };
 
         var result = await _apiClient.PutAsync<string>("AboutUs", payload);
@@ -130,11 +130,11 @@ public sealed class ContentController : Controller
         var payload = new
         {
             contactId = form.ContactId,
-            eMail1 = form.EMail1,
-            eMail2 = form.EMail2,
-            phoneNumber1 = form.PhoneNumber1,
-            phoneNumber2 = form.PhoneNumber2,
-            officeAddress = form.OfficeAddress
+            eMail1 = form.EMail1 ?? string.Empty,
+            eMail2 = form.EMail2 ?? string.Empty,
+            phoneNumber1 = form.PhoneNumber1 ?? string.Empty,
+            phoneNumber2 = form.PhoneNumber2 ?? string.Empty,
+            officeAddress = form.OfficeAddress ?? string.Empty
         };
 
         var result = await _apiClient.PutAsync<string>("Contact", payload);
@@ -198,8 +198,8 @@ public sealed class ContentController : Controller
 
         var payload = new
         {
-            name = form.Name,
-            url = form.Url,
+            name = form.Name ?? string.Empty,
+            url = form.Url ?? string.Empty,
             icon = form.Icon,
             order = form.Order,
             isActive = form.IsActive
@@ -258,8 +258,8 @@ public sealed class ContentController : Controller
         var payload = new
         {
             id = form.Id,
-            name = form.Name,
-            url = form.Url,
+            name = form.Name ?? string.Empty,
+            url = form.Url ?? string.Empty,
             icon = form.Icon,
             order = form.Order,
             isActive = form.IsActive
@@ -369,7 +369,7 @@ public sealed class ContentController : Controller
 
         var payload = new
         {
-            question = form.Question,
+            question = form.Question ?? string.Empty,
             answer = form.Answer
         };
 
@@ -426,7 +426,7 @@ public sealed class ContentController : Controller
         var payload = new
         {
             frequentlyAskedQuestionId = form.FrequentlyAskedQuestionId,
-            question = form.Question,
+            question = form.Question ?? string.Empty,
             answer = form.Answer
         };
 
@@ -534,7 +534,7 @@ public sealed class ContentController : Controller
 
         var payload = new
         {
-            mainBannerUrl = form.MainBannerUrl,
+            mainBannerUrl = form.MainBannerUrl ?? string.Empty,
             mainBannerDesc = form.MainBannerDesc
         };
 
@@ -591,7 +591,7 @@ public sealed class ContentController : Controller
         var payload = new
         {
             mainBannerId = form.MainBannerId,
-            mainBannerUrl = form.MainBannerUrl,
+            mainBannerUrl = form.MainBannerUrl ?? string.Empty,
             mainBannerDesc = form.MainBannerDesc
         };
 
