@@ -76,7 +76,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthHandlers
                 var secret = _twoFactorService.Unprotect(agent.TwoFactorSecretProtected);
                 if (!string.IsNullOrEmpty(secret))
                 {
-                    isVerified = _twoFactorService.VerifyCode(secret, request.Code);
+                    isVerified = _twoFactorService.VerifyCodeOnce(agent.AgentId, secret, request.Code);
                 }
             }
             else if (!string.IsNullOrWhiteSpace(request.RecoveryCode))

@@ -22,6 +22,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.MainBannerHandlers
         public async Task Handle(UpdateMainBannerCommand request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.MainBannerId);
+            if (value == null)
+            {
+                throw new KeyNotFoundException("Banner bulunamadı.");
+            }
             value.MainBannerDesc = request.MainBannerDesc;
             value.MainBannerUrl = request.MainBannerUrl;
             await _repository.UpdateAsync(value);

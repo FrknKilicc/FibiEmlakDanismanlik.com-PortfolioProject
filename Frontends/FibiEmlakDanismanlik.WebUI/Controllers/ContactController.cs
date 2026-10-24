@@ -33,6 +33,7 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CustomerContactForm(ResultCustomerContactDto dto)
         {
             if (_formSpamGuard.IsHoneypotFilled(HttpContext))
@@ -84,6 +85,7 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendAppointment(
             CreateCustomerContactCommand model,
             string date,

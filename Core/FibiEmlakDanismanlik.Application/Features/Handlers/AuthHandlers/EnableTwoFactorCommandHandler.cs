@@ -82,7 +82,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthHandlers
             }
 
             // Girilen 6 haneli TOTP kodunu doğrula
-            if (!_twoFactorService.VerifyCode(secret, request.Code))
+            if (!_twoFactorService.VerifyCodeOnce(agent.AgentId, secret, request.Code))
             {
                 await _loginFlowService.RegisterFailureAsync(agent);
                 await _loginFlowService.LogAsync(agent.Mail ?? string.Empty, agent.AgentId, succeeded: false, failureReason: AuthConstants.FailureInvalidCredentials);

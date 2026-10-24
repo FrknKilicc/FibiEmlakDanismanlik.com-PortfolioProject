@@ -1,6 +1,7 @@
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Interfaces;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.Caching.Memory;
 using OtpNet;
 using System;
 using System.Linq;
@@ -13,11 +14,14 @@ namespace FibiEmlakDanismanlik.Infrastructure.Security
     /// </summary>
     public class TwoFactorService : ITwoFactorService
     {
+        private static readonly object _lock = new();
         private readonly IDataProtector _protector;
+        private readonly IMemoryCache _memoryCache;
 
-        public TwoFactorService(IDataProtectionProvider dataProtectionProvider)
+        public TwoFactorService(IDataProtectionProvider dataProtectionProvider, IMemoryCache memoryCache)
         {
             _protector = dataProtectionProvider.CreateProtector(AuthConstants.TwoFactorProtectorPurpose);
+            _memoryCache = memoryCache;
         }
 
         /// <summary>
@@ -44,6 +48,36 @@ namespace FibiEmlakDanismanlik.Infrastructure.Security
         /// </summary>
         public bool VerifyCode(string secret, string code)
         {
+            return TryVerifyTotp(secret, code, out _);
+        }
+
+        /// <summary>
+        /// Kodu doğrular ve aynı hesap için daha önce kabul edilmiş (aynı veya daha eski) zaman adımındaki bir kodu reddeder (tekrar kullanım koruması).
+        /// Koruma sunucu belleğindedir (IMemoryCache) ve tek örnekli (tek sunucu) kurulum içindir.
+        /// </summary>
+        public bool VerifyCodeOnce(int agentId, string secret, string code)
+        {
+            if (!TryVerifyTotp(secret, code, out long timeStepMatched))
+                return false;
+
+            var cacheKey = $"totp-last-step:{agentId}";
+
+            lock (_lock)
+            {
+                if (_memoryCache.TryGetValue(cacheKey, out long lastStep) && timeStepMatched <= lastStep)
+                {
+                    return false;
+                }
+
+                _memoryCache.Set(cacheKey, timeStepMatched, TimeSpan.FromMinutes(5));
+                return true;
+            }
+        }
+
+        private static bool TryVerifyTotp(string secret, string code, out long timeStepMatched)
+        {
+            timeStepMatched = 0;
+
             if (string.IsNullOrWhiteSpace(secret) || string.IsNullOrWhiteSpace(code))
                 return false;
 
@@ -62,7 +96,7 @@ namespace FibiEmlakDanismanlik.Infrastructure.Security
             }
 
             var totp = new Totp(secretBytes, step: 30, mode: OtpHashMode.Sha1, totpSize: 6);
-            return totp.VerifyTotp(cleanCode, out _, new VerificationWindow(previous: 1, future: 1));
+            return totp.VerifyTotp(cleanCode, out timeStepMatched, new VerificationWindow(previous: 1, future: 1));
         }
 
         /// <summary>
