@@ -1209,3 +1209,58 @@ a:hover {
   color: #ea868f !important;
 }
 
+/* ==============================================================
+   # Form Alanları Görsel Düzeltmeleri ve Doğrulama
+   ============================================================== */
+
+/* Açık temada form alanları zemin rengi (etkin / devre dışı) */
+:root:not([data-bs-theme="dark"]) .form-control,
+:root:not([data-bs-theme="dark"]) .form-select {
+  background-color: var(--fibi-surface);
+}
+
+:root:not([data-bs-theme="dark"]) .form-control:disabled,
+:root:not([data-bs-theme="dark"]) .form-control[readonly],
+:root:not([data-bs-theme="dark"]) .form-select:disabled,
+:root:not([data-bs-theme="dark"]) .form-select[readonly] {
+  background-color: var(--fibi-surface-2);
+}
+
+/* Gönderim denemesinden sonra (.was-validated) yalnızca hatalı alanların işaretlenmesi */
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+  border-color: var(--bs-border-color);
+  background-image: none;
+  padding-right: .75rem;
+}
+
+.was-validated .form-select:valid {
+  padding-right: 2.25rem;
+  background-image: var(--bs-form-select-bg-img);
+}
+
+.was-validated .form-control:valid:focus,
+.was-validated .form-select:valid:focus {
+  border-color: var(--fibi-primary);
+  box-shadow: 0 0 0 .25rem var(--fibi-primary-soft);
+}
+
+.was-validated .form-check-input:valid {
+  border-color: var(--bs-border-color);
+  color: inherit;
+}
+
+.was-validated .form-check-input:valid:checked {
+  background-color: var(--fibi-primary);
+  border-color: var(--fibi-primary);
+}
+
+.was-validated .form-check-input:valid:focus {
+  border-color: var(--fibi-primary);
+  box-shadow: 0 0 0 .25rem var(--fibi-primary-soft);
+}
+
+.was-validated .form-check-input:valid ~ .form-check-label {
+  color: inherit;
+}
+
