@@ -323,7 +323,7 @@
                         {
                             <div class="col-md-6 col-12">
                                 <label for="housingCategoryId" class="form-label fw-semibold">Konut Kategorisi</label>
-                                <select class="form-select @(Model.GetFieldError("HousingCategoryId") != null ? "is-invalid" : "")" id="housingCategoryId" name="HousingCategoryId" data-help="Konutun tipi (daire, villa, müstakil vb.). Sitedeki kategori filtresinde kullanılır." disabled="@disabledAttr">
+                                <select class="form-select @(Model.GetFieldError("HousingCategoryId") != null ? "is-invalid" : "")" id="housingCategoryId" name="HousingCategoryId" required="@(Model.Form.ListingTypeId is 2 or 8 ? "required" : null)" data-help="Konutun tipi (daire, villa, müstakil vb.). Sitedeki kategori filtresinde kullanılır." disabled="@disabledAttr">
                                     <option value="">Seçiniz</option>
                                     @foreach (var cat in Model.Lookups.HousingCategories)
                                     {
@@ -340,7 +340,7 @@
                         {
                             <div class="col-md-6 col-12">
                                 <label for="landCategoryId" class="form-label fw-semibold">Arsa Kategorisi</label>
-                                <select class="form-select @(Model.GetFieldError("LandCategoryId") != null ? "is-invalid" : "")" id="landCategoryId" name="LandCategoryId" data-help="Arsanın imar/kullanım tipi. Sitedeki kategori filtresinde kullanılır." disabled="@disabledAttr">
+                                <select class="form-select @(Model.GetFieldError("LandCategoryId") != null ? "is-invalid" : "")" id="landCategoryId" name="LandCategoryId" required="@(Model.Form.ListingTypeId is 1 or 7 ? "required" : null)" data-help="Arsanın imar/kullanım tipi. Sitedeki kategori filtresinde kullanılır." disabled="@disabledAttr">
                                     <option value="">Seçiniz</option>
                                     @foreach (var cat in Model.Lookups.LandCategories)
                                     {
@@ -399,7 +399,7 @@
                                     Satış Fiyatı <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
-                                    <input type="text" inputmode="decimal" data-money="true" class="form-control @(Model.GetFieldError("Price") != null ? "is-invalid" : "")" id="priceInput" name="Price" value="@Model.Form.Price?.ToString(invCulture)" data-help="Satış fiyatı (TL). Binlik ayırıcı otomatik eklenir; kuruş yazmanız gerekmez." disabled="@disabledAttr" />
+                                    <input type="text" inputmode="decimal" data-money="true" class="form-control @(Model.GetFieldError("Price") != null ? "is-invalid" : "")" id="priceInput" name="Price" required="@(Model.Form.ListingTypeId is 1 or 2 or 3 ? "required" : null)" value="@Model.Form.Price?.ToString(invCulture)" data-help="Satış fiyatı (TL). Binlik ayırıcı otomatik eklenir; kuruş yazmanız gerekmez." disabled="@disabledAttr" />
                                     <span class="input-group-text">₺</span>
                                 </div>
                                 @if (Model.GetFieldError("Price") != null)
@@ -416,7 +416,7 @@
                                     Aylık Kira <span class="text-danger">*</span>
                                 </label>
                                 <div class="input-group">
-                                    <input type="text" inputmode="decimal" data-money="true" class="form-control @(Model.GetFieldError("Rent") != null ? "is-invalid" : "")" id="rentInput" name="Rent" value="@Model.Form.Rent?.ToString(invCulture)" data-help="Aylık kira bedeli (TL). Sitede &quot;/ ay&quot; olarak gösterilir." disabled="@disabledAttr" />
+                                    <input type="text" inputmode="decimal" data-money="true" class="form-control @(Model.GetFieldError("Rent") != null ? "is-invalid" : "")" id="rentInput" name="Rent" required="@(Model.Form.ListingTypeId is 7 or 8 or 9 ? "required" : null)" value="@Model.Form.Rent?.ToString(invCulture)" data-help="Aylık kira bedeli (TL). Sitede &quot;/ ay&quot; olarak gösterilir." disabled="@disabledAttr" />
                                     <span class="input-group-text">₺</span>
                                 </div>
                                 @if (Model.GetFieldError("Rent") != null)
@@ -492,7 +492,7 @@
                             <label for="citySelect" class="form-label fw-semibold">
                                 İl <span class="text-danger">*</span>
                             </label>
-                            <select id="citySelect" class="form-select @(Model.GetFieldError("City") != null ? "is-invalid" : "")" data-current-name="@Model.Form.City" data-current-id="@Model.Form.CityId" data-help="İl seçimi ilçe listesini yükler; haritadaki yaklaşık konumu belirler." disabled="@disabledAttr">
+                            <select id="citySelect" class="form-select @(Model.GetFieldError("City") != null ? "is-invalid" : "")" required data-current-name="@Model.Form.City" data-current-id="@Model.Form.CityId" data-help="İl seçimi ilçe listesini yükler; haritadaki yaklaşık konumu belirler." disabled="@disabledAttr">
                                 <option value="">Yükleniyor...</option>
                             </select>
                             @if (Model.GetFieldError("City") != null)
@@ -505,7 +505,7 @@
                             <label for="districtSelect" class="form-label fw-semibold">
                                 İlçe <span class="text-danger">*</span>
                             </label>
-                            <select id="districtSelect" class="form-select @(Model.GetFieldError("District") != null ? "is-invalid" : "")" data-current-name="@Model.Form.District" data-current-id="@Model.Form.DistrictId" data-help="Mahalle doğru seçilirse ilan haritada mahalle düzeyinde konumlanır ve mahalle filtresinde çıkar." disabled="@(disabledAttr != null ? "disabled" : "disabled")">
+                            <select id="districtSelect" class="form-select @(Model.GetFieldError("District") != null ? "is-invalid" : "")" required data-current-name="@Model.Form.District" data-current-id="@Model.Form.DistrictId" data-help="Mahalle doğru seçilirse ilan haritada mahalle düzeyinde konumlanır ve mahalle filtresinde çıkar." disabled="@(disabledAttr != null ? "disabled" : "disabled")">
                                 <option value="">Önce İl Seçiniz</option>
                             </select>
                             @if (Model.GetFieldError("District") != null)

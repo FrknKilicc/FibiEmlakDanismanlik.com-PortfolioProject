@@ -11,7 +11,10 @@
       var labelFor = document.querySelector('label[for="' + CSS.escape(el.id) + '"]');
       if (labelFor) return labelFor;
     }
-    var parent = el.closest('.form-group, .mb-3, .col, [class*="col-"], .form-floating, div');
+    var wrappingLabel = el.closest('label');
+    if (wrappingLabel) return wrappingLabel;
+
+    var parent = el.closest('.form-group, .mb-3, .form-floating, [class*="col-"], .col');
     if (parent) {
       var labelInParent = parent.querySelector('label');
       if (labelInParent) return labelInParent;
@@ -24,11 +27,18 @@
     var text = '';
     if (label) {
       var clone = label.cloneNode(true);
-      clone.querySelectorAll('.req-star, .help-tip, script, style').forEach(function (n) { n.remove(); });
-      text = (clone.textContent || '').trim().replace(/\s*\*$/, '').trim();
+      clone.querySelectorAll('.req-star, .help-tip, .text-danger, button, script, style, svg, i').forEach(function (n) {
+        n.remove();
+      });
+      text = (clone.textContent || '');
+      // Yıldız (*), "Açıklama" ve gereksiz boşlukları temizle
+      text = text.replace(/[*]/g, '')
+                 .replace(/\bAçıklama\b/gi, '')
+                 .replace(/\s+/g, ' ')
+                 .trim();
     }
     if (!text) {
-      text = field.getAttribute('placeholder') || field.getAttribute('name') || field.id || 'Zorunlu alan';
+      text = field.getAttribute('data-label') || field.getAttribute('placeholder') || field.getAttribute('name') || field.id || 'Zorunlu alan';
     }
     return text;
   }
@@ -313,10 +323,11 @@
      # Global Olay Dinleyicileri (Submit, Input, Bfcache, Tooltip Dışı Tıklama)
      ============================================================== */
 
-  // Form Doğrulama (Capture Aşamasında)
+  // Form Doğrulama (Capture Aşamasında - Diğer tüm dinleyicilerden önce yakalar)
   document.addEventListener('submit', function (e) {
     var form = e.target;
-    if (!form || !form.checkValidity || !form.closest('main')) return;
+    if (!form || !form.checkValidity) return;
+    if (!form.closest('main') && !form.closest('.modal')) return;
 
     if (!form.checkValidity()) {
       e.preventDefault();
@@ -352,10 +363,11 @@
     }
   }, true);
 
-  // Form Gönderilirken Çift Tıklamayı Engelleme ve Spinner (Normal Aşama)
+  // Form Gönderilirken Çift Tıklamayı Engelleme ve Spinner (Normal Aşama - Yalnızca geçerli gönderimde)
   document.addEventListener('submit', function (e) {
     var form = e.target;
-    if (!form || form.tagName !== 'FORM' || !form.closest('main')) return;
+    if (!form || form.tagName !== 'FORM') return;
+    if (!form.closest('main') && !form.closest('.modal')) return;
     var method = (form.getAttribute('method') || '').toLowerCase();
     if (method !== 'post') return;
 
@@ -431,6 +443,14 @@
      ============================================================== */
 
   document.addEventListener('DOMContentLoaded', function () {
+    // 0) Formların yerleşik tarayıcı balonlarını devre dışı bırakma (özel doğrulama akışı için)
+    var formsWithConstraints = document.querySelectorAll('main form, .modal form');
+    formsWithConstraints.forEach(function (form) {
+      if (form.querySelector('[required], [pattern], [min], [max], [maxlength]')) {
+        form.noValidate = true;
+      }
+    });
+
     // a) Modal açma (mevcut)
     var openModalEls = document.querySelectorAll('[data-open-modal]');
     openModalEls.forEach(function (el) {
@@ -614,7 +634,7 @@
     }
 
     // h) Zorunlu alanların net gösterimi (req-star & aria-required)
-    var requiredFields = document.querySelectorAll('main input[required], main select[required], main textarea[required]');
+    var requiredFields = document.querySelectorAll('main input[required], main select[required], main textarea[required], .modal input[required], .modal select[required], .modal textarea[required]');
     requiredFields.forEach(function (field) {
       field.setAttribute('aria-required', 'true');
       var label = findFieldLabel(field);
@@ -632,7 +652,7 @@
     });
 
     // i) Sunucudan doğrulama hatasıyla dönülmüşse bildir ve odakla
-    var serverInvalids = Array.from(document.querySelectorAll('main .is-invalid, main .invalid-feedback.d-block'));
+    var serverInvalids = Array.from(document.querySelectorAll('main .is-invalid, main .invalid-feedback.d-block, .modal .is-invalid, .modal .invalid-feedback.d-block'));
     if (serverInvalids.length > 0) {
       var invalidControls = [];
       serverInvalids.forEach(function (el) {
