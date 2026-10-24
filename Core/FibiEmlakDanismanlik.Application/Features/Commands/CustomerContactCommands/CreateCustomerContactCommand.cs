@@ -13,9 +13,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.CustomerContactComm
     {
        
         public string CustomerContactName { get; set; }
-        public string CustomerContactMail { get; set; }
+        public string? CustomerContactMail { get; set; }
         public string CustomerContactPhone { get; set; }
-        public string CustomerContactMessage { get; set; }
+        public string? CustomerContactMessage { get; set; }
         public PropertyListingType? PropertyListingTypeEnum { get; set; }
 
         public DateTime? AppointmentDateTime { get; set; }
