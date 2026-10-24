@@ -1264,3 +1264,16 @@ a:hover {
   color: inherit;
 }
 
+/* ==============================================================
+   # Koyu Tema Logo Rozeti
+   ============================================================== */
+[data-bs-theme="dark"] .header .logo img,
+[data-bs-theme="dark"] .logo img {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 3px 6px;
+  box-shadow: 0 0 0 1px var(--fibi-border);
+  box-sizing: content-box;
+}
+
+
