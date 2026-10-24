@@ -281,6 +281,9 @@
                 <h5 class="card-title p-0 m-0">
                     <i class="bi bi-share me-2 text-primary"></i>Sosyal Medya Hesapları
                 </h5>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#sosyal-medya-new-modal">
+                    <i class="bi bi-plus-lg me-1"></i>Yeni Ekle
+                </button>
             </div>
 
             <div class="alert alert-info py-2 px-3 small d-flex align-items-center mb-3">
@@ -290,58 +293,55 @@
 
             @if (Model.SocialMedia == null || !Model.SocialMedia.Any())
             {
-                <div class="text-center py-4 text-muted">
+                <div class="text-center py-4 text-body-secondary">
                     <i class="bi bi-share fs-2 d-block mb-2"></i>
                     Henüz kayıtlı sosyal medya hesabı bulunmuyor.
                 </div>
             }
             else
             {
-                <div class="table-responsive mb-4">
+                <div class="table-responsive mb-3">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light text-muted small text-uppercase">
+                        <thead class="text-body-secondary small text-uppercase border-bottom">
                             <tr>
                                 <th scope="col" style="width: 70px;">Sıra</th>
+                                <th scope="col" style="width: 60px;">İkon</th>
                                 <th scope="col">Ad</th>
                                 <th scope="col">Adres</th>
-                                <th scope="col">İkon</th>
-                                <th scope="col">Durum</th>
-                                <th scope="col" class="text-end" style="min-width: 170px;">İşlemler</th>
+                                <th scope="col" style="width: 90px;">Durum</th>
+                                <th scope="col" class="text-end" style="width: 170px;">İşlemler</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model.SocialMedia)
                             {
                                 var formKey = $"social-{item.Id}";
-                                bool isThisOpen = Model.IsForm(formKey);
-                                var errItemName = Model.GetFieldError(formKey, "Name");
-                                var errItemUrl = Model.GetFieldError(formKey, "Url");
-                                var errItemIcon = Model.GetFieldError(formKey, "Icon");
-                                var errItemOrder = Model.GetFieldError(formKey, "Order");
 
                                 <tr>
                                     <td class="fw-semibold">@item.Order</td>
-                                    <td class="fw-semibold text-dark">@item.Name</td>
-                                    <td>
-                                        @if (!string.IsNullOrWhiteSpace(item.Url))
-                                        {
-                                            <a href="@item.Url" target="_blank" rel="noopener noreferrer" class="text-break text-decoration-none">
-                                                @item.Url <i class="bi bi-box-arrow-up-right small ms-1"></i>
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">—</span>
-                                        }
-                                    </td>
                                     <td>
                                         @if (!string.IsNullOrWhiteSpace(item.Icon))
                                         {
-                                            <span class="text-nowrap"><i class="@item.Icon me-1"></i> <code>@item.Icon</code></span>
+                                            <i class="@item.Icon fs-5 text-primary" title="@item.Icon"></i>
                                         }
                                         else
                                         {
-                                            <span class="text-muted">—</span>
+                                            <span class="text-body-secondary">—</span>
+                                        }
+                                    </td>
+                                    <td class="fw-semibold text-body">@item.Name</td>
+                                    <td style="max-width: 280px;">
+                                        @if (!string.IsNullOrWhiteSpace(item.Url))
+                                        {
+                                            <div class="text-truncate">
+                                                <a href="@item.Url" target="_blank" rel="noopener noreferrer" class="text-decoration-none" title="@item.Url">
+                                                    @item.Url <i class="bi bi-box-arrow-up-right small ms-1"></i>
+                                                </a>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-body-secondary">—</span>
                                         }
                                     </td>
                                     <td>
@@ -355,187 +355,204 @@
                                         }
                                     </td>
                                     <td class="text-end">
-                                        <!-- Düzenle Detayı -->
-                                        <details class="d-inline-block text-start mb-1" @(isThisOpen ? "open" : "")>
-                                            <summary class="btn btn-outline-primary btn-sm">
-                                                <i class="bi bi-pencil me-1"></i> Düzenle
-                                             </summary>
-                                            <div class="card card-body p-3 shadow-sm border mt-2" style="min-width: 280px; max-width: 100%;">
-                                                <h6 class="fw-semibold mb-2 text-primary border-bottom pb-1">Hesabı Düzenle</h6>
-                                                <form method="post" action="/icerik/sosyal-medya/@item.Id">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="Id" value="@item.Id" />
-
-                                                    <div class="mb-2">
-                                                        <label class="form-label small fw-semibold">Ad</label>
-                                                        <input type="text"
-                                                               class="form-control form-control-sm @(errItemName != null ? "is-invalid" : "")"
-                                                               name="Name"
-                                                               value="@item.Name"
-                                                               required />
-                                                        @if (errItemName != null)
-                                                        {
-                                                            <div class="invalid-feedback d-block">@errItemName</div>
-                                                        }
-                                                    </div>
-
-                                                    <div class="mb-2">
-                                                        <label class="form-label small fw-semibold">Adres (URL)</label>
-                                                        <input type="url"
-                                                               class="form-control form-control-sm @(errItemUrl != null ? "is-invalid" : "")"
-                                                               name="Url"
-                                                               value="@item.Url"
-                                                               placeholder="https://..."
-                                                               required />
-                                                        @if (errItemUrl != null)
-                                                        {
-                                                            <div class="invalid-feedback d-block">@errItemUrl</div>
-                                                        }
-                                                    </div>
-
-                                                    <div class="mb-2">
-                                                        <label class="form-label small fw-semibold">İkon Sınıfı</label>
-                                                        <input type="text"
-                                                               class="form-control form-control-sm @(errItemIcon != null ? "is-invalid" : "")"
-                                                               name="Icon"
-                                                               value="@item.Icon"
-                                                               placeholder="fab fa-instagram" />
-                                                        @if (errItemIcon != null)
-                                                        {
-                                                            <div class="invalid-feedback d-block">@errItemIcon</div>
-                                                        }
-                                                    </div>
-
-                                                    <div class="mb-2">
-                                                        <label class="form-label small fw-semibold">Sıra</label>
-                                                        <input type="number"
-                                                               class="form-control form-control-sm @(errItemOrder != null ? "is-invalid" : "")"
-                                                               name="Order"
-                                                               value="@item.Order" />
-                                                        @if (errItemOrder != null)
-                                                        {
-                                                            <div class="invalid-feedback d-block">@errItemOrder</div>
-                                                        }
-                                                    </div>
-
-                                                    <div class="form-check form-switch mb-3">
-                                                        <input type="checkbox"
-                                                               class="form-check-input"
-                                                               id="isActive_@item.Id"
-                                                               name="IsActive"
-                                                               value="true"
-                                                               @(item.IsActive ? "checked" : "") />
-                                                        <input type="hidden" name="IsActive" value="false" />
-                                                        <label class="form-check-label small" for="isActive_@item.Id">Aktif</label>
-                                                    </div>
-
-                                                    <button type="submit" class="btn btn-primary btn-sm w-100">
-                                                        <i class="bi bi-check-lg me-1"></i> Güncelle
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </details>
-
-                                        <!-- Sil Onay Detayı -->
-                                        <details class="d-inline-block text-start ms-1 mb-1">
-                                            <summary class="btn btn-outline-danger btn-sm">
+                                        <button type="button"
+                                                class="btn btn-outline-primary btn-sm me-1"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#@(formKey)-modal">
+                                            <i class="bi bi-pencil me-1"></i> Düzenle
+                                        </button>
+                                        <form method="post"
+                                              action="/icerik/sosyal-medya/@item.Id/sil"
+                                              class="d-inline"
+                                              data-confirm="@item.Name silinsin mi? Bu işlem geri alınamaz.">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
                                                 <i class="bi bi-trash me-1"></i> Sil
-                                            </summary>
-                                            <div class="card card-body p-2 shadow-sm border mt-2 bg-light" style="min-width: 200px;">
-                                                <div class="small text-danger fw-semibold mb-2">Silmek istediğinize emin misiniz?</div>
-                                                <form method="post" action="/icerik/sosyal-medya/@item.Id/sil">
-                                                    @Html.AntiForgeryToken()
-                                                    <button type="submit" class="btn btn-danger btn-sm w-100">
-                                                        Evet, Sil
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </details>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
+
+                @foreach (var item in Model.SocialMedia)
+                {
+                    var formKey = $"social-{item.Id}";
+                    var errItemName = Model.GetFieldError(formKey, "Name");
+                    var errItemUrl = Model.GetFieldError(formKey, "Url");
+                    var errItemIcon = Model.GetFieldError(formKey, "Icon");
+                    var errItemOrder = Model.GetFieldError(formKey, "Order");
+
+                    <!-- Sosyal Medya Düzenle Modal -->
+                    <div class="modal fade" id="@(formKey)-modal" tabindex="-1" aria-labelledby="@(formKey)-modalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="post" action="/icerik/sosyal-medya/@item.Id">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="Id" value="@item.Id" />
+                                    <div class="modal-header">
+                                        <h5 class="modal-title fs-6 fw-bold text-body" id="@(formKey)-modalLabel">
+                                            <i class="bi bi-pencil-square me-2 text-primary"></i>Sosyal Medya Hesabını Düzenle
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                                    </div>
+                                    <div class="modal-body text-start">
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold">Ad <span class="text-danger">*</span></label>
+                                            <input type="text"
+                                                   class="form-control @(errItemName != null ? "is-invalid" : "")"
+                                                   name="Name"
+                                                   value="@item.Name"
+                                                   required />
+                                            @if (errItemName != null)
+                                            {
+                                                <div class="invalid-feedback d-block">@errItemName</div>
+                                            }
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold">Adres (URL) <span class="text-danger">*</span></label>
+                                            <input type="url"
+                                                   class="form-control @(errItemUrl != null ? "is-invalid" : "")"
+                                                   name="Url"
+                                                   value="@item.Url"
+                                                   placeholder="https://..."
+                                                   required />
+                                            @if (errItemUrl != null)
+                                            {
+                                                <div class="invalid-feedback d-block">@errItemUrl</div>
+                                            }
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold">İkon Sınıfı</label>
+                                            <input type="text"
+                                                   class="form-control @(errItemIcon != null ? "is-invalid" : "")"
+                                                   name="Icon"
+                                                   value="@item.Icon"
+                                                   placeholder="fab fa-instagram" />
+                                            @if (errItemIcon != null)
+                                            {
+                                                <div class="invalid-feedback d-block">@errItemIcon</div>
+                                            }
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold">Sıra</label>
+                                            <input type="number"
+                                                   class="form-control @(errItemOrder != null ? "is-invalid" : "")"
+                                                   name="Order"
+                                                   value="@item.Order" />
+                                            @if (errItemOrder != null)
+                                            {
+                                                <div class="invalid-feedback d-block">@errItemOrder</div>
+                                            }
+                                        </div>
+
+                                        <div class="form-check form-switch mb-0">
+                                            <input type="checkbox"
+                                                   class="form-check-input"
+                                                   id="isActive_@item.Id"
+                                                   name="IsActive"
+                                                   value="true"
+                                                   @(item.IsActive ? "checked" : "") />
+                                            <input type="hidden" name="IsActive" value="false" />
+                                            <label class="form-check-label small" for="isActive_@item.Id">Aktif</label>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-check-lg me-1"></i> Kaydet
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
             }
 
-            <!-- Yeni Sosyal Medya Hesabı Formu -->
-            <div class="card bg-light border-0 shadow-sm mt-3">
-                <div class="card-body p-3">
-                    <h6 class="fw-bold text-dark mb-3">
-                        <i class="bi bi-plus-circle me-1 text-primary"></i> Yeni Sosyal Medya Hesabı Ekle
-                    </h6>
-
-                    <form method="post" action="/icerik/sosyal-medya">
-                        @Html.AntiForgeryToken()
-
-                        <div class="row g-3">
-                            <div class="col-md-3 col-12">
-                                <label for="newSocialName" class="form-label small fw-semibold">
-                                    Hesap Adı <span class="text-danger">*</span>
-                                </label>
-                                <input type="text"
-                                       class="form-control form-control-sm @(errNewName != null ? "is-invalid" : "")"
-                                       id="newSocialName"
-                                       name="Name"
-                                       value="@Model.NewSocial?.Name"
-                                       placeholder="Örn: Instagram"
-                                       required />
-                                @if (errNewName != null)
-                                {
-                                    <div class="invalid-feedback d-block">@errNewName</div>
-                                }
+            <!-- Yeni Sosyal Medya Hesabı Modalı -->
+            <div class="modal fade" id="sosyal-medya-new-modal" tabindex="-1" aria-labelledby="sosyal-medya-new-modalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" action="/icerik/sosyal-medya">
+                            @Html.AntiForgeryToken()
+                            <div class="modal-header">
+                                <h5 class="modal-title fs-6 fw-bold text-body" id="sosyal-medya-new-modalLabel">
+                                    <i class="bi bi-plus-circle me-2 text-primary"></i>Yeni Sosyal Medya Hesabı Ekle
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
                             </div>
+                            <div class="modal-body text-start">
+                                <div class="mb-3">
+                                    <label for="newSocialName" class="form-label small fw-semibold">
+                                        Hesap Adı <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           class="form-control @(errNewName != null ? "is-invalid" : "")"
+                                           id="newSocialName"
+                                           name="Name"
+                                           value="@Model.NewSocial?.Name"
+                                           placeholder="Örn: Instagram"
+                                           required />
+                                    @if (errNewName != null)
+                                    {
+                                        <div class="invalid-feedback d-block">@errNewName</div>
+                                    }
+                                </div>
 
-                            <div class="col-md-4 col-12">
-                                <label for="newSocialUrl" class="form-label small fw-semibold">
-                                    Adres (URL) <span class="text-danger">*</span>
-                                </label>
-                                <input type="url"
-                                       class="form-control form-control-sm @(errNewUrl != null ? "is-invalid" : "")"
-                                       id="newSocialUrl"
-                                       name="Url"
-                                       value="@Model.NewSocial?.Url"
-                                       placeholder="https://instagram.com/fibiemlak"
-                                       required />
-                                @if (errNewUrl != null)
-                                {
-                                    <div class="invalid-feedback d-block">@errNewUrl</div>
-                                }
-                            </div>
+                                <div class="mb-3">
+                                    <label for="newSocialUrl" class="form-label small fw-semibold">
+                                        Adres (URL) <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="url"
+                                           class="form-control @(errNewUrl != null ? "is-invalid" : "")"
+                                           id="newSocialUrl"
+                                           name="Url"
+                                           value="@Model.NewSocial?.Url"
+                                           placeholder="https://instagram.com/fibiemlak"
+                                           required />
+                                    @if (errNewUrl != null)
+                                    {
+                                        <div class="invalid-feedback d-block">@errNewUrl</div>
+                                    }
+                                </div>
 
-                            <div class="col-md-3 col-sm-6 col-12">
-                                <label for="newSocialIcon" class="form-label small fw-semibold">
-                                    İkon Sınıfı
-                                </label>
-                                <input type="text"
-                                       class="form-control form-control-sm @(errNewIcon != null ? "is-invalid" : "")"
-                                       id="newSocialIcon"
-                                       name="Icon"
-                                       value="@Model.NewSocial?.Icon"
-                                       placeholder="fab fa-instagram" />
-                                @if (errNewIcon != null)
-                                {
-                                    <div class="invalid-feedback d-block">@errNewIcon</div>
-                                }
-                            </div>
+                                <div class="mb-3">
+                                    <label for="newSocialIcon" class="form-label small fw-semibold">
+                                        İkon Sınıfı
+                                    </label>
+                                    <input type="text"
+                                           class="form-control @(errNewIcon != null ? "is-invalid" : "")"
+                                           id="newSocialIcon"
+                                           name="Icon"
+                                           value="@Model.NewSocial?.Icon"
+                                           placeholder="fab fa-instagram" />
+                                    @if (errNewIcon != null)
+                                    {
+                                        <div class="invalid-feedback d-block">@errNewIcon</div>
+                                    }
+                                </div>
 
-                            <div class="col-md-2 col-sm-6 col-12">
-                                <label for="newSocialOrder" class="form-label small fw-semibold">
-                                    Sıra
-                                </label>
-                                <input type="number"
-                                       class="form-control form-control-sm @(errNewOrder != null ? "is-invalid" : "")"
-                                       id="newSocialOrder"
-                                       name="Order"
-                                       value="@(Model.NewSocial?.Order ?? 1)" />
-                                @if (errNewOrder != null)
-                                {
-                                    <div class="invalid-feedback d-block">@errNewOrder</div>
-                                }
-                            </div>
+                                <div class="mb-3">
+                                    <label for="newSocialOrder" class="form-label small fw-semibold">
+                                        Sıra
+                                    </label>
+                                    <input type="number"
+                                           class="form-control @(errNewOrder != null ? "is-invalid" : "")"
+                                           id="newSocialOrder"
+                                           name="Order"
+                                           value="@(Model.NewSocial?.Order ?? 1)" />
+                                    @if (errNewOrder != null)
+                                    {
+                                        <div class="invalid-feedback d-block">@errNewOrder</div>
+                                    }
+                                </div>
 
-                            <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2 pt-2">
                                 <div class="form-check form-switch mb-0">
                                     <input type="checkbox"
                                            class="form-check-input"
@@ -546,13 +563,15 @@
                                     <input type="hidden" name="IsActive" value="false" />
                                     <label class="form-check-label small fw-semibold" for="newSocialIsActive">Aktif</label>
                                 </div>
-
-                                <button type="submit" class="btn btn-primary btn-sm px-3">
-                                    <i class="bi bi-plus-lg me-1"></i> Hesap Ekle
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-lg me-1"></i> Kaydet
                                 </button>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -569,151 +588,185 @@
 
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body pt-3">
-            <h5 class="card-title p-0 pb-2 border-bottom mb-3">
-                <i class="bi bi-question-circle me-2 text-primary"></i>Sıkça Sorulan Sorular
-            </h5>
+            <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                <h5 class="card-title p-0 m-0">
+                    <i class="bi bi-question-circle me-2 text-primary"></i>Sıkça Sorulan Sorular
+                </h5>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#sss-new-modal">
+                    <i class="bi bi-plus-lg me-1"></i>Yeni Ekle
+                </button>
+            </div>
 
             @if (Model.Faqs == null || !Model.Faqs.Any())
             {
-                <div class="text-center py-4 text-muted">
+                <div class="text-center py-4 text-body-secondary">
                     <i class="bi bi-question-circle fs-2 d-block mb-2"></i>
                     Henüz kayıtlı soru bulunmuyor.
                 </div>
             }
             else
             {
-                <div class="d-flex flex-column gap-3 mb-4">
+                <div class="accordion mb-3" id="faqAccordion">
                     @foreach (var item in Model.Faqs)
                     {
                         var formKey = $"faq-{item.FrequentlyAskedQuestionId}";
-                        bool isThisOpen = Model.IsForm(formKey);
-                        var errItemQ = Model.GetFieldError(formKey, "Question");
-                        var errItemA = Model.GetFieldError(formKey, "Answer");
+                        var collapseId = $"faqCollapse-{item.FrequentlyAskedQuestionId}";
+                        var headingId = $"faqHeading-{item.FrequentlyAskedQuestionId}";
 
-                        <div class="card border shadow-none mb-0">
-                            <div class="card-body p-3">
-                                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
-                                    <h6 class="fw-bold text-dark mb-0 flex-grow-1">
-                                        <i class="bi bi-question-diamond text-primary me-1"></i> @item.Question
-                                    </h6>
-                                    <div class="d-flex gap-1">
-                                        <details class="d-inline-block" @(isThisOpen ? "open" : "")>
-                                            <summary class="btn btn-outline-primary btn-sm">
-                                                <i class="bi bi-pencil me-1"></i> Düzenle
-                                            </summary>
-                                            <div class="card card-body p-3 shadow-sm border mt-2 text-start" style="min-width: 280px; max-width: 100%;">
-                                                <h6 class="fw-semibold mb-2 text-primary border-bottom pb-1">Soruyu Düzenle</h6>
-                                                <form method="post" action="/icerik/sss/@item.FrequentlyAskedQuestionId">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="FrequentlyAskedQuestionId" value="@item.FrequentlyAskedQuestionId" />
-
-                                                    <div class="mb-2">
-                                                        <label class="form-label small fw-semibold">Soru <span class="text-danger">*</span></label>
-                                                        <input type="text"
-                                                               class="form-control form-control-sm @(errItemQ != null ? "is-invalid" : "")"
-                                                               name="Question"
-                                                               value="@item.Question"
-                                                               required />
-                                                        @if (errItemQ != null)
-                                                        {
-                                                            <div class="invalid-feedback d-block">@errItemQ</div>
-                                                        }
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label small fw-semibold">Cevap <span class="text-danger">*</span></label>
-                                                        <textarea class="form-control form-control-sm @(errItemA != null ? "is-invalid" : "")"
-                                                                  name="Answer"
-                                                                  rows="4"
-                                                                  required>@item.Answer</textarea>
-                                                        @if (errItemA != null)
-                                                        {
-                                                            <div class="invalid-feedback d-block">@errItemA</div>
-                                                        }
-                                                    </div>
-
-                                                    <button type="submit" class="btn btn-primary btn-sm w-100">
-                                                        <i class="bi bi-check-lg me-1"></i> Güncelle
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </details>
-
-                                        <details class="d-inline-block">
-                                            <summary class="btn btn-outline-danger btn-sm">
-                                                <i class="bi bi-trash me-1"></i> Sil
-                                            </summary>
-                                            <div class="card card-body p-2 shadow-sm border mt-2 bg-light text-start" style="min-width: 200px;">
-                                                <div class="small text-danger fw-semibold mb-2">Bu soruyu silmek istediğinize emin misiniz?</div>
-                                                <form method="post" action="/icerik/sss/@item.FrequentlyAskedQuestionId/sil">
-                                                    @Html.AntiForgeryToken()
-                                                    <button type="submit" class="btn btn-danger btn-sm w-100">
-                                                        Evet, Sil
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </details>
-                                    </div>
+                        <div class="accordion-item border rounded mb-2 overflow-hidden">
+                            <div class="accordion-header d-flex align-items-center justify-content-between bg-body-tertiary p-1" id="@headingId">
+                                <button class="accordion-button collapsed shadow-none bg-transparent py-2 text-body flex-grow-1 w-auto"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#@collapseId"
+                                        aria-expanded="false"
+                                        aria-controls="@collapseId">
+                                    <span class="fw-semibold text-body text-break me-2">
+                                        <i class="bi bi-question-diamond text-primary me-2"></i>@item.Question
+                                    </span>
+                                </button>
+                                <div class="d-flex align-items-center gap-1 pe-2 flex-shrink-0">
+                                    <button type="button"
+                                            class="btn btn-outline-primary btn-sm text-nowrap"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#@(formKey)-modal">
+                                        <i class="bi bi-pencil me-1"></i> Düzenle
+                                    </button>
+                                    <form method="post"
+                                          action="/icerik/sss/@item.FrequentlyAskedQuestionId/sil"
+                                          class="d-inline"
+                                          data-confirm="@item.Question silinsin mi? Bu işlem geri alınamaz.">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-outline-danger btn-sm text-nowrap">
+                                            <i class="bi bi-trash me-1"></i> Sil
+                                        </button>
+                                    </form>
                                 </div>
-
-                                <div class="text-secondary small text-break" style="white-space: pre-line;">
+                            </div>
+                            <div id="@collapseId"
+                                 class="accordion-collapse collapse"
+                                 aria-labelledby="@headingId"
+                                 data-bs-parent="#faqAccordion">
+                                <div class="accordion-body bg-body text-body border-top" style="white-space: pre-line;">
                                     @item.Answer
                                 </div>
                             </div>
                         </div>
                     }
                 </div>
+
+                @foreach (var item in Model.Faqs)
+                {
+                    var formKey = $"faq-{item.FrequentlyAskedQuestionId}";
+                    var errItemQ = Model.GetFieldError(formKey, "Question");
+                    var errItemA = Model.GetFieldError(formKey, "Answer");
+
+                    <!-- SSS Düzenle Modal -->
+                    <div class="modal fade" id="@(formKey)-modal" tabindex="-1" aria-labelledby="@(formKey)-modalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="post" action="/icerik/sss/@item.FrequentlyAskedQuestionId">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="FrequentlyAskedQuestionId" value="@item.FrequentlyAskedQuestionId" />
+                                    <div class="modal-header">
+                                        <h5 class="modal-title fs-6 fw-bold text-body" id="@(formKey)-modalLabel">
+                                            <i class="bi bi-pencil-square me-2 text-primary"></i>Soruyu Düzenle
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                                    </div>
+                                    <div class="modal-body text-start">
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold">Soru <span class="text-danger">*</span></label>
+                                            <input type="text"
+                                                   class="form-control @(errItemQ != null ? "is-invalid" : "")"
+                                                   name="Question"
+                                                   value="@item.Question"
+                                                   required />
+                                            @if (errItemQ != null)
+                                            {
+                                                <div class="invalid-feedback d-block">@errItemQ</div>
+                                            }
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold">Cevap <span class="text-danger">*</span></label>
+                                            <textarea class="form-control @(errItemA != null ? "is-invalid" : "")"
+                                                      name="Answer"
+                                                      rows="5"
+                                                      required>@item.Answer</textarea>
+                                            @if (errItemA != null)
+                                            {
+                                                <div class="invalid-feedback d-block">@errItemA</div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-check-lg me-1"></i> Kaydet
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
             }
 
-            <!-- Yeni Soru Formu -->
-            <div class="card bg-light border-0 shadow-sm mt-3">
-                <div class="card-body p-3">
-                    <h6 class="fw-bold text-dark mb-3">
-                        <i class="bi bi-plus-circle me-1 text-primary"></i> Yeni Soru Ekle
-                    </h6>
+            <!-- Yeni Soru Ekle Modalı -->
+            <div class="modal fade" id="sss-new-modal" tabindex="-1" aria-labelledby="sss-new-modalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form method="post" action="/icerik/sss">
+                            @Html.AntiForgeryToken()
+                            <div class="modal-header">
+                                <h5 class="modal-title fs-6 fw-bold text-body" id="sss-new-modalLabel">
+                                    <i class="bi bi-plus-circle me-2 text-primary"></i>Yeni Soru Ekle
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                            </div>
+                            <div class="modal-body text-start">
+                                <div class="mb-3">
+                                    <label for="newFaqQuestion" class="form-label small fw-semibold">
+                                        Soru <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           class="form-control @(errNewQuestion != null ? "is-invalid" : "")"
+                                           id="newFaqQuestion"
+                                           name="Question"
+                                           value="@Model.NewFaq?.Question"
+                                           placeholder="Örn: Evimi satmak için hangi belgeler gereklidir?"
+                                           required />
+                                    @if (errNewQuestion != null)
+                                    {
+                                        <div class="invalid-feedback d-block">@errNewQuestion</div>
+                                    }
+                                </div>
 
-                    <form method="post" action="/icerik/sss">
-                        @Html.AntiForgeryToken()
-
-                        <div class="mb-3">
-                            <label for="newFaqQuestion" class="form-label small fw-semibold">
-                                Soru <span class="text-danger">*</span>
-                            </label>
-                            <input type="text"
-                                   class="form-control @(errNewQuestion != null ? "is-invalid" : "")"
-                                   id="newFaqQuestion"
-                                   name="Question"
-                                   value="@Model.NewFaq?.Question"
-                                   placeholder="Örn: Evimi satmak için hangi belgeler gereklidir?"
-                                   required />
-                            @if (errNewQuestion != null)
-                            {
-                                <div class="invalid-feedback d-block">@errNewQuestion</div>
-                            }
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="newFaqAnswer" class="form-label small fw-semibold">
-                                Cevap <span class="text-danger">*</span>
-                            </label>
-                            <textarea class="form-control @(errNewAnswer != null ? "is-invalid" : "")"
-                                      id="newFaqAnswer"
-                                      name="Answer"
-                                      rows="4"
-                                      placeholder="Sorunun ayrıntılı yanıtı..."
-                                      required>@Model.NewFaq?.Answer</textarea>
-                            @if (errNewAnswer != null)
-                            {
-                                <div class="invalid-feedback d-block">@errNewAnswer</div>
-                            }
-                        </div>
-
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-primary btn-sm px-4">
-                                <i class="bi bi-plus-lg me-1"></i> Soru Ekle
-                            </button>
-                        </div>
-                    </form>
+                                <div class="mb-3">
+                                    <label for="newFaqAnswer" class="form-label small fw-semibold">
+                                        Cevap <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea class="form-control @(errNewAnswer != null ? "is-invalid" : "")"
+                                              id="newFaqAnswer"
+                                              name="Answer"
+                                              rows="5"
+                                              placeholder="Sorunun ayrıntılı yanıtı..."
+                                              required>@Model.NewFaq?.Answer</textarea>
+                                    @if (errNewAnswer != null)
+                                    {
+                                        <div class="invalid-feedback d-block">@errNewAnswer</div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-lg me-1"></i> Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -730,9 +783,14 @@
 
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body pt-3">
-            <h5 class="card-title p-0 pb-2 border-bottom mb-3">
-                <i class="bi bi-image me-2 text-primary"></i>Ana Sayfa Banner Görselleri
-            </h5>
+            <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                <h5 class="card-title p-0 m-0">
+                    <i class="bi bi-image me-2 text-primary"></i>Ana Sayfa Banner Görselleri
+                </h5>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#banner-new-modal">
+                    <i class="bi bi-plus-lg me-1"></i>Yeni Ekle
+                </button>
+            </div>
 
             <div class="alert alert-info py-2 px-3 small d-flex align-items-center mb-3">
                 <i class="bi bi-info-circle-fill me-2 fs-6"></i>
@@ -741,180 +799,216 @@
 
             @if (Model.Banners == null || !Model.Banners.Any())
             {
-                <div class="text-center py-4 text-muted">
+                <div class="text-center py-4 text-body-secondary">
                     <i class="bi bi-image fs-2 d-block mb-2"></i>
                     Henüz kayıtlı banner bulunmuyor.
                 </div>
             }
             else
             {
-                <div class="row g-3 mb-4">
+                <div class="row g-3 mb-3">
                     @foreach (var item in Model.Banners)
                     {
                         var formKey = $"banner-{item.MainBannerId}";
-                        bool isThisOpen = Model.IsForm(formKey);
-                        var errItemUrl = Model.GetFieldError(formKey, "MainBannerUrl");
-                        var errItemDesc = Model.GetFieldError(formKey, "MainBannerDesc");
-
                         var bannerPreview = SiteImageUrl.Preview(item.MainBannerUrl);
+                        var bannerTitle = !string.IsNullOrWhiteSpace(item.MainBannerDesc) ? item.MainBannerDesc : "Banner";
 
                         <div class="col-lg-6 col-12">
-                            <div class="card border shadow-none h-100">
+                            <div class="card border shadow-none h-100 bg-body">
                                 <div class="card-body p-3 d-flex flex-column justify-content-between">
                                     <div>
-                                        <div class="mb-2 text-center bg-light p-2 rounded">
-                                            <img id="bannerPreview-@item.MainBannerId"
-                                                 src="@(bannerPreview ?? "")"
+                                        <div class="mb-2 text-center bg-body-tertiary p-2 rounded">
+                                            <img src="@(bannerPreview ?? "")"
                                                  alt="Banner Önizleme"
                                                  class="img-fluid rounded @(string.IsNullOrEmpty(bannerPreview) ? "d-none" : "")"
                                                  style="max-height: 140px; width: 100%; object-fit: cover;" />
                                         </div>
 
                                         <div class="mb-2">
-                                            <span class="small text-muted fw-semibold d-block">Görsel Adresi:</span>
-                                            <span class="small text-dark text-break font-monospace">@(item.MainBannerUrl ?? "—")</span>
+                                            <span class="small text-body-secondary fw-semibold d-block">Görsel Adresi:</span>
+                                            <span class="small text-body text-break font-monospace">@(item.MainBannerUrl ?? "—")</span>
                                         </div>
 
                                         @if (!string.IsNullOrWhiteSpace(item.MainBannerDesc))
                                         {
                                             <div class="mb-2">
-                                                <span class="small text-muted fw-semibold d-block">Açıklama:</span>
-                                                <span class="small text-secondary text-break">@item.MainBannerDesc</span>
+                                                <span class="small text-body-secondary fw-semibold d-block">Açıklama:</span>
+                                                <span class="small text-body text-break">@item.MainBannerDesc</span>
                                             </div>
                                         }
                                     </div>
 
                                     <div class="pt-2 border-top mt-2 d-flex flex-wrap justify-content-end gap-2">
-                                        <details class="d-inline-block text-start" @(isThisOpen ? "open" : "")>
-                                            <summary class="btn btn-outline-primary btn-sm">
-                                                <i class="bi bi-pencil me-1"></i> Düzenle
-                                            </summary>
-                                            <div class="card card-body p-3 shadow-sm border mt-2" style="min-width: 280px; max-width: 100%;">
-                                                <h6 class="fw-semibold mb-2 text-primary border-bottom pb-1">Bannerı Düzenle</h6>
-                                                <form method="post" action="/icerik/banner/@item.MainBannerId">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="MainBannerId" value="@item.MainBannerId" />
-
-                                                    <div class="mb-2">
-                                                        <label class="form-label small fw-semibold" for="bannerUrl-@item.MainBannerId">Görsel Adresi (URL / Yol) <span class="text-danger">*</span></label>
-                                                        <input type="text"
-                                                               class="form-control form-control-sm @(errItemUrl != null ? "is-invalid" : "")"
-                                                               id="bannerUrl-@item.MainBannerId"
-                                                               name="MainBannerUrl"
-                                                               value="@item.MainBannerUrl"
-                                                               placeholder="https://... veya /uploads/..."
-                                                               required />
-                                                        @if (errItemUrl != null)
-                                                        {
-                                                            <div class="invalid-feedback d-block">@errItemUrl</div>
-                                                        }
-                                                        <div class="mt-2" data-image-upload data-target="bannerUrl-@item.MainBannerId" data-folder="banner" data-preview="bannerPreview-@item.MainBannerId"></div>
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label small fw-semibold">Açıklama</label>
-                                                        <input type="text"
-                                                               class="form-control form-control-sm @(errItemDesc != null ? "is-invalid" : "")"
-                                                               name="MainBannerDesc"
-                                                               value="@item.MainBannerDesc"
-                                                               placeholder="Banner açıklaması..." />
-                                                        @if (errItemDesc != null)
-                                                        {
-                                                            <div class="invalid-feedback d-block">@errItemDesc</div>
-                                                        }
-                                                    </div>
-
-                                                    <button type="submit" class="btn btn-primary btn-sm w-100">
-                                                        <i class="bi bi-check-lg me-1"></i> Güncelle
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </details>
-
-                                        <details class="d-inline-block text-start">
-                                            <summary class="btn btn-outline-danger btn-sm">
+                                        <button type="button"
+                                                class="btn btn-outline-primary btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#@(formKey)-modal">
+                                            <i class="bi bi-pencil me-1"></i> Düzenle
+                                        </button>
+                                        <form method="post"
+                                              action="/icerik/banner/@item.MainBannerId/sil"
+                                              class="d-inline"
+                                              data-confirm="@bannerTitle silinsin mi? Bu işlem geri alınamaz.">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
                                                 <i class="bi bi-trash me-1"></i> Sil
-                                            </summary>
-                                            <div class="card card-body p-2 shadow-sm border mt-2 bg-light" style="min-width: 200px;">
-                                                <div class="small text-danger fw-semibold mb-2">Bu bannerı silmek istediğinize emin misiniz?</div>
-                                                <form method="post" action="/icerik/banner/@item.MainBannerId/sil">
-                                                    @Html.AntiForgeryToken()
-                                                    <button type="submit" class="btn btn-danger btn-sm w-100">
-                                                        Evet, Sil
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </details>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     }
                 </div>
-            }
 
-            <!-- Yeni Banner Formu -->
-            <div class="card bg-light border-0 shadow-sm mt-3">
-                <div class="card-body p-3">
-                    <h6 class="fw-bold text-dark mb-3">
-                        <i class="bi bi-plus-circle me-1 text-primary"></i> Yeni Banner Ekle
-                    </h6>
+                @foreach (var item in Model.Banners)
+                {
+                    var formKey = $"banner-{item.MainBannerId}";
+                    var errItemUrl = Model.GetFieldError(formKey, "MainBannerUrl");
+                    var errItemDesc = Model.GetFieldError(formKey, "MainBannerDesc");
+                    var bannerPreview = SiteImageUrl.Preview(item.MainBannerUrl);
 
-                    <form method="post" action="/icerik/banner">
-                        @Html.AntiForgeryToken()
+                    <!-- Banner Düzenle Modal -->
+                    <div class="modal fade" id="@(formKey)-modal" tabindex="-1" aria-labelledby="@(formKey)-modalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <form method="post" action="/icerik/banner/@item.MainBannerId">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="MainBannerId" value="@item.MainBannerId" />
+                                    <div class="modal-header">
+                                        <h5 class="modal-title fs-6 fw-bold text-body" id="@(formKey)-modalLabel">
+                                            <i class="bi bi-pencil-square me-2 text-primary"></i>Bannerı Düzenle
+                                        </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                                    </div>
+                                    <div class="modal-body text-start">
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold" for="bannerUrl-@item.MainBannerId">
+                                                Görsel Adresi (URL / Yol) <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text"
+                                                   class="form-control @(errItemUrl != null ? "is-invalid" : "")"
+                                                   id="bannerUrl-@item.MainBannerId"
+                                                   name="MainBannerUrl"
+                                                   value="@item.MainBannerUrl"
+                                                   placeholder="https://... veya /uploads/..."
+                                                   required />
+                                            @if (errItemUrl != null)
+                                            {
+                                                <div class="invalid-feedback d-block">@errItemUrl</div>
+                                            }
+                                            <div class="mt-2"
+                                                 data-image-upload
+                                                 data-target="bannerUrl-@item.MainBannerId"
+                                                 data-folder="banner"
+                                                 data-preview="bannerPreview-@item.MainBannerId"></div>
+                                            <div class="mt-2 text-center bg-body-tertiary p-2 rounded">
+                                                <img id="bannerPreview-@item.MainBannerId"
+                                                     src="@(bannerPreview ?? "")"
+                                                     alt="Banner Önizleme"
+                                                     class="img-fluid rounded @(string.IsNullOrEmpty(bannerPreview) ? "d-none" : "")"
+                                                     style="max-height: 180px; width: 100%; object-fit: cover;" />
+                                            </div>
+                                        </div>
 
-                        <div class="row g-3">
-                            <div class="col-md-6 col-12">
-                                <label for="bannerUrl-new" class="form-label small fw-semibold">
-                                    Görsel Adresi (URL / Yol) <span class="text-danger">*</span>
-                                </label>
-                                <input type="text"
-                                       class="form-control form-control-sm @(errNewBannerUrl != null ? "is-invalid" : "")"
-                                       id="bannerUrl-new"
-                                       name="MainBannerUrl"
-                                       value="@Model.NewBanner?.MainBannerUrl"
-                                       placeholder="https://... veya /uploads/..."
-                                       required />
-                                @if (errNewBannerUrl != null)
-                                {
-                                    <div class="invalid-feedback d-block">@errNewBannerUrl</div>
-                                }
-                                <div class="mt-2" data-image-upload data-target="bannerUrl-new" data-folder="banner" data-preview="bannerPreview-new"></div>
-                                @{
-                                    var newBannerPreview = SiteImageUrl.Preview(Model.NewBanner?.MainBannerUrl);
-                                }
-                                <div class="mt-2 text-center bg-light p-2 rounded">
-                                    <img id="bannerPreview-new"
-                                         src="@(newBannerPreview ?? "")"
-                                         alt="Banner Önizleme"
-                                         class="img-fluid rounded @(string.IsNullOrEmpty(newBannerPreview) ? "d-none" : "")"
-                                         style="max-height: 120px; width: 100%; object-fit: cover;" />
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 col-12">
-                                <label for="newBannerDesc" class="form-label small fw-semibold">
-                                    Açıklama
-                                </label>
-                                <input type="text"
-                                       class="form-control form-control-sm @(errNewBannerDesc != null ? "is-invalid" : "")"
-                                       id="newBannerDesc"
-                                       name="MainBannerDesc"
-                                       value="@Model.NewBanner?.MainBannerDesc"
-                                       placeholder="Banner başlığı veya kısa açıklama..." />
-                                @if (errNewBannerDesc != null)
-                                {
-                                    <div class="invalid-feedback d-block">@errNewBannerDesc</div>
-                                }
-                            </div>
-
-                            <div class="col-12 d-flex justify-content-end pt-1">
-                                <button type="submit" class="btn btn-primary btn-sm px-4">
-                                    <i class="bi bi-plus-lg me-1"></i> Banner Ekle
-                                </button>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-semibold" for="bannerDesc-@item.MainBannerId">
+                                                Açıklama
+                                            </label>
+                                            <input type="text"
+                                                   class="form-control @(errItemDesc != null ? "is-invalid" : "")"
+                                                   id="bannerDesc-@item.MainBannerId"
+                                                   name="MainBannerDesc"
+                                                   value="@item.MainBannerDesc"
+                                                   placeholder="Banner açıklaması..." />
+                                            @if (errItemDesc != null)
+                                            {
+                                                <div class="invalid-feedback d-block">@errItemDesc</div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-check-lg me-1"></i> Kaydet
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                    </form>
+                    </div>
+                }
+            }
+
+            <!-- Yeni Banner Ekle Modalı -->
+            <div class="modal fade" id="banner-new-modal" tabindex="-1" aria-labelledby="banner-new-modalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <form method="post" action="/icerik/banner">
+                            @Html.AntiForgeryToken()
+                            <div class="modal-header">
+                                <h5 class="modal-title fs-6 fw-bold text-body" id="banner-new-modalLabel">
+                                    <i class="bi bi-plus-circle me-2 text-primary"></i>Yeni Banner Ekle
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                            </div>
+                            <div class="modal-body text-start">
+                                <div class="mb-3">
+                                    <label for="bannerUrl-new" class="form-label small fw-semibold">
+                                        Görsel Adresi (URL / Yol) <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           class="form-control @(errNewBannerUrl != null ? "is-invalid" : "")"
+                                           id="bannerUrl-new"
+                                           name="MainBannerUrl"
+                                           value="@Model.NewBanner?.MainBannerUrl"
+                                           placeholder="https://... veya /uploads/..."
+                                           required />
+                                    @if (errNewBannerUrl != null)
+                                    {
+                                        <div class="invalid-feedback d-block">@errNewBannerUrl</div>
+                                    }
+                                    <div class="mt-2"
+                                         data-image-upload
+                                         data-target="bannerUrl-new"
+                                         data-folder="banner"
+                                         data-preview="bannerPreview-new"></div>
+                                    @{
+                                        var newBannerPreview = SiteImageUrl.Preview(Model.NewBanner?.MainBannerUrl);
+                                    }
+                                    <div class="mt-2 text-center bg-body-tertiary p-2 rounded">
+                                        <img id="bannerPreview-new"
+                                             src="@(newBannerPreview ?? "")"
+                                             alt="Banner Önizleme"
+                                             class="img-fluid rounded @(string.IsNullOrEmpty(newBannerPreview) ? "d-none" : "")"
+                                             style="max-height: 180px; width: 100%; object-fit: cover;" />
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="newBannerDesc" class="form-label small fw-semibold">
+                                        Açıklama
+                                    </label>
+                                    <input type="text"
+                                           class="form-control @(errNewBannerDesc != null ? "is-invalid" : "")"
+                                           id="newBannerDesc"
+                                           name="MainBannerDesc"
+                                           value="@Model.NewBanner?.MainBannerDesc"
+                                           placeholder="Banner başlığı veya kısa açıklama..." />
+                                    @if (errNewBannerDesc != null)
+                                    {
+                                        <div class="invalid-feedback d-block">@errNewBannerDesc</div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Vazgeç</button>
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-lg me-1"></i> Kaydet
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -923,4 +1017,22 @@
 
 @section Scripts {
     <script src="~/js/image-upload.js" asp-append-version="true"></script>
+    @if (!string.IsNullOrWhiteSpace(Model.FormKey))
+    {
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var formKey = '@Model.FormKey';
+                var modalMap = {
+                    'social-new': 'sosyal-medya-new-modal',
+                    'faq-new': 'sss-new-modal',
+                    'banner-new': 'banner-new-modal'
+                };
+                var targetId = modalMap[formKey] || (formKey + '-modal');
+                var modalEl = document.getElementById(targetId);
+                if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+                    bootstrap.Modal.getOrCreateInstance(modalEl)?.show();
+                }
+            });
+        </script>
+    }
 }

@@ -12,7 +12,7 @@
     bool isDeals = string.Equals(currentController, "Deals", StringComparison.OrdinalIgnoreCase);
     bool isReports = string.Equals(currentController, "Reports", StringComparison.OrdinalIgnoreCase);
     bool isUsers = string.Equals(currentController, "Users", StringComparison.OrdinalIgnoreCase);
-    bool isContent = string.Equals(currentController, "Content", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogAdmin", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "SiteContent", StringComparison.OrdinalIgnoreCase);
+    bool isContent = string.Equals(currentController, "Content", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogAdmin", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "SiteContent", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogAuthors", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogCategories", StringComparison.OrdinalIgnoreCase);
     bool isAudit = string.Equals(currentController, "AuditLog", StringComparison.OrdinalIgnoreCase);
     bool isSettings = string.Equals(currentController, "Settings", StringComparison.OrdinalIgnoreCase);
 }
@@ -25,6 +25,8 @@
 
   <title>@ViewData["Title"] | Fibi Yönetim</title>
   <meta name="robots" content="noindex, nofollow">
+
+  <partial name="_ThemeHead" />
 
   <!-- Favicons -->
   <link href="~/assets/img/favicon.ico" rel="icon">
@@ -44,6 +46,7 @@
   <link href="~/assets/css/style.css" rel="stylesheet">
   <link href="~/css/admin.css" rel="stylesheet" asp-append-version="true">
   @await RenderSectionAsync("Styles", required: false)
+  <link href="~/css/theme.css" rel="stylesheet" asp-append-version="true">
 </head>
 
 <body>
@@ -61,6 +64,35 @@
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
+
+        <li class="nav-item dropdown">
+          <button class="btn btn-link nav-link nav-icon border-0" id="themeToggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Tema seç" title="Tema">
+            <i class="bi bi-circle-half"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" aria-labelledby="themeToggle">
+            <li>
+              <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-theme-value="light">
+                <i class="bi bi-sun"></i>
+                <span>Açık</span>
+                <i class="bi bi-check2 ms-auto theme-check d-none"></i>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-theme-value="dark">
+                <i class="bi bi-moon-stars"></i>
+                <span>Koyu</span>
+                <i class="bi bi-check2 ms-auto theme-check d-none"></i>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-theme-value="auto">
+                <i class="bi bi-circle-half"></i>
+                <span>Sistem</span>
+                <i class="bi bi-check2 ms-auto theme-check d-none"></i>
+              </button>
+            </li>
+          </ul>
+        </li>
 
         <li class="nav-item dropdown pe-3">
 
@@ -240,6 +272,8 @@
   <script src="~/js/confirm-modal.js" asp-append-version="true"></script>
 
   @await RenderSectionAsync("Scripts", required: false)
+
+  <script src="~/js/theme.js" asp-append-version="true"></script>
 
 </body>
 

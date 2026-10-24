@@ -3,60 +3,80 @@
     var active = Model ?? string.Empty;
 }
 
-<ul class="nav nav-pills mb-4 flex-wrap gap-2">
-    <li class="nav-item">
-        <a class="nav-link @(active == "hakkimizda" ? "active" : "")" href="/icerik?sekme=hakkimizda">
-            <i class="bi bi-info-circle me-1"></i> Hakkımızda
+<div class="content-nav-wrapper mb-4">
+    <nav class="content-nav" aria-label="İçerik gezinme çubuğu">
+        <a href="/icerik" class="chip content-nav-back" title="İçerik Merkezi">
+            <i class="bi bi-arrow-left"></i>
+            <span>Tüm içerik</span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(active == "iletisim" ? "active" : "")" href="/icerik?sekme=iletisim">
-            <i class="bi bi-telephone me-1"></i> İletişim Bilgileri
+
+        <div class="content-nav-divider" aria-hidden="true"></div>
+
+        <!-- Kurumsal -->
+        <a class="chip @(active == "hakkimizda" ? "active" : "")" href="/icerik?sekme=hakkimizda">
+            <i class="bi bi-info-circle"></i>
+            <span>Hakkımızda</span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(active == "sosyal-medya" ? "active" : "")" href="/icerik?sekme=sosyal-medya">
-            <i class="bi bi-share me-1"></i> Sosyal Medya
+        <a class="chip @(active == "iletisim" ? "active" : "")" href="/icerik?sekme=iletisim">
+            <i class="bi bi-telephone"></i>
+            <span>İletişim</span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(active == "sss" ? "active" : "")" href="/icerik?sekme=sss">
-            <i class="bi bi-question-circle me-1"></i> SSS
+        <a class="chip @(active == "sosyal-medya" ? "active" : "")" href="/icerik?sekme=sosyal-medya">
+            <i class="bi bi-share"></i>
+            <span>Sosyal Medya</span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(active == "banner" ? "active" : "")" href="/icerik?sekme=banner">
-            <i class="bi bi-image me-1"></i> Ana Sayfa Banner
+
+        <div class="content-nav-divider" aria-hidden="true"></div>
+
+        <!-- Ana Sayfa -->
+        <a class="chip @(active == "banner" ? "active" : "")" href="/icerik?sekme=banner">
+            <i class="bi bi-image"></i>
+            <span>Banner</span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(active == "ana-sayfa-gorselleri" ? "active" : "")" href="/icerik/ana-sayfa-gorselleri">
-            <i class="bi bi-images me-1"></i> Ana Sayfa Görselleri
+        <a class="chip @(active == "ana-sayfa-gorselleri" ? "active" : "")" href="/icerik/ana-sayfa-gorselleri">
+            <i class="bi bi-images"></i>
+            <span>Ana Sayfa Görselleri</span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(active == "yorumlar" ? "active" : "")" href="/icerik/yorumlar">
-            <i class="bi bi-chat-quote me-1"></i> Müşteri Yorumları
+        <a class="chip @(active == "yorumlar" ? "active" : "")" href="/icerik/yorumlar">
+            <i class="bi bi-chat-quote"></i>
+            <span>Yorumlar</span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(active == "is-ortaklari" ? "active" : "")" href="/icerik/is-ortaklari">
-            <i class="bi bi-building me-1"></i> İş Ortakları
+        <a class="chip @(active == "is-ortaklari" ? "active" : "")" href="/icerik/is-ortaklari">
+            <i class="bi bi-building"></i>
+            <span>İş Ortakları</span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(active == "sehir-galerisi" ? "active" : "")" href="/icerik/sehir-galerisi">
-            <i class="bi bi-geo-alt me-1"></i> Şehir Galerisi
+
+        <div class="content-nav-divider" aria-hidden="true"></div>
+
+        <!-- Bilgi ve Blog -->
+        <a class="chip @(active == "sss" ? "active" : "")" href="/icerik?sekme=sss">
+            <i class="bi bi-question-circle"></i>
+            <span>SSS</span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(active == "kredi-oranlari" ? "active" : "")" href="/icerik/kredi-oranlari">
-            <i class="bi bi-bank me-1"></i> Kredi Oranları
+        <a class="chip @(active == "blog" ? "active" : "")" href="/icerik/blog">
+            <i class="bi bi-journal-text"></i>
+            <span>Blog</span>
         </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(active == "blog" ? "active" : "")" href="/icerik/blog">
-            <i class="bi bi-journal-text me-1"></i> Blog
+
+        <div class="content-nav-divider" aria-hidden="true"></div>
+
+        <!-- Araçlar ve Sayfalar -->
+        <a class="chip @(active == "sehir-galerisi" ? "active" : "")" href="/icerik/sehir-galerisi">
+            <i class="bi bi-geo-alt"></i>
+            <span>Şehir Galerisi</span>
         </a>
-    </li>
-</ul>
+        <a class="chip @(active == "kredi-oranlari" ? "active" : "")" href="/icerik/kredi-oranlari">
+            <i class="bi bi-bank"></i>
+            <span>Kredi Oranları</span>
+        </a>
+    </nav>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var activeChip = document.querySelector('.content-nav .chip.active');
+        if (activeChip) {
+            activeChip.scrollIntoView({ inline: 'center', block: 'nearest' });
+        }
+    });
+</script>

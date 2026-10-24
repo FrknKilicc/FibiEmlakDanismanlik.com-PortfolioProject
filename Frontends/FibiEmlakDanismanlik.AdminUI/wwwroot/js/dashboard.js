@@ -91,6 +91,25 @@
   }
   Chart.defaults.maintainAspectRatio = false;
 
+  function getThemeColors() {
+    var rootStyle = window.getComputedStyle(document.documentElement);
+    return {
+      muted: rootStyle.getPropertyValue('--fibi-muted').trim() || '#6b7280',
+      border: rootStyle.getPropertyValue('--fibi-border').trim() || '#e6e9f0',
+      surface: rootStyle.getPropertyValue('--fibi-surface').trim() || '#ffffff'
+    };
+  }
+
+  function applyChartDefaults() {
+    var colors = getThemeColors();
+    Chart.defaults.color = colors.muted;
+    Chart.defaults.borderColor = colors.border;
+  }
+
+  applyChartDefaults();
+
+  var createdCharts = [];
+
   var palette = ['#4154f1', '#2eca6a', '#ff771d', '#0dcaf0', '#6f42c1', '#adb5bd'];
   var monthNames = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
 
@@ -125,7 +144,8 @@
         completedCounts.push(m.completedCount || 0);
       });
 
-      new Chart(monthlyCanvas, {
+      var chartMonthly;
+      createdCharts.push(chartMonthly = new Chart(monthlyCanvas, {
         type: 'line',
         data: {
           labels: monthlyLabels,
@@ -245,7 +265,8 @@
     if (totalListingsCount === 0) {
       showEmptyMessage(listingsCanvas);
     } else {
-      new Chart(listingsCanvas, {
+      var chartListings;
+      createdCharts.push(chartListings = new Chart(listingsCanvas, {
         type: 'doughnut',
         data: {
           labels: ringLabels,
@@ -254,7 +275,7 @@
               data: ringValues,
               backgroundColor: palette.slice(0, ringLabels.length),
               borderWidth: 2,
-              borderColor: '#ffffff'
+              borderColor: getThemeColors().surface
             }
           ]
         },
@@ -318,7 +339,8 @@
     if (!hasFunnelData) {
       showEmptyMessage(funnelCanvas);
     } else {
-      new Chart(funnelCanvas, {
+      var chartFunnel;
+      createdCharts.push(chartFunnel = new Chart(funnelCanvas, {
         type: 'bar',
         data: {
           labels: funnelLabels,
@@ -425,7 +447,8 @@
         };
       }
 
-      new Chart(agentsCanvas, {
+      var chartAgents;
+      createdCharts.push(chartAgents = new Chart(agentsCanvas, {
         type: 'bar',
         data: {
           labels: agentLabels,
@@ -454,4 +477,51 @@
       });
     }
   }
+  // --- 3. TEMA DEĞİŞİKLİĞİ DİNLEYİCİSİ (fibi:themechange) ---
+  document.addEventListener('fibi:themechange', function () {
+    applyChartDefaults();
+    var colors = getThemeColors();
+
+    var instances = [];
+    if (Chart.instances) {
+      if (typeof Chart.instances.forEach === 'function') {
+        Chart.instances.forEach(function (c) {
+          instances.push(c);
+        });
+      } else {
+        Object.keys(Chart.instances).forEach(function (k) {
+          if (Chart.instances[k]) {
+            instances.push(Chart.instances[k]);
+          }
+        });
+      }
+    }
+    createdCharts.forEach(function (c) {
+      if (c && instances.indexOf(c) === -1) {
+        instances.push(c);
+      }
+    });
+
+    instances.forEach(function (chart) {
+      if (!chart) {
+        return;
+      }
+      if (chart.config && chart.config.type === 'doughnut') {
+        if (chart.data && chart.data.datasets) {
+          chart.data.datasets.forEach(function (ds) {
+            ds.borderColor = colors.surface;
+          });
+        }
+      }
+      if (chart.options && chart.options.scales) {
+        Object.keys(chart.options.scales).forEach(function (scaleKey) {
+          var scale = chart.options.scales[scaleKey];
+          if (scale && scale.grid) {
+            scale.grid.color = colors.border;
+          }
+        });
+      }
+      chart.update();
+    });
+  });
 })();
