@@ -23,17 +23,19 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.SocialMediaHandlers
         public async Task<List<GetSocialMediaResult>> Handle(GetSocialMediaListQuery request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetAllAsync();
-            return value.Select(x => new GetSocialMediaResult
-            {
-                CreatedDate = DateTime.Now,
-                Icon = x.Icon,
-              Id = x.Id,  
-              IsActive = x.IsActive,
-              Name = x.Name,
-              Order = x.Order,
-              Url=x.Url,
-
-            }).ToList();
+            return value
+                .OrderBy(x => x.Order)
+                .ThenBy(x => x.Id)
+                .Select(x => new GetSocialMediaResult
+                {
+                    CreatedDate = x.CreatedDate,
+                    Icon = x.Icon,
+                    Id = x.Id,  
+                    IsActive = x.IsActive,
+                    Name = x.Name,
+                    Order = x.Order,
+                    Url = x.Url,
+                }).ToList();
         }
     }
 }
