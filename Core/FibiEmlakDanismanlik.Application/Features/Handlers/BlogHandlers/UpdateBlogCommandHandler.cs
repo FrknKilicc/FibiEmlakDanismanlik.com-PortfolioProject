@@ -4,9 +4,9 @@ using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
@@ -23,12 +23,19 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
         public async Task Handle(UpdateBlogCommand request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.BlogId);
-            value.BlogDescription = request.BlogDescription;
+            if (value == null)
+            {
+                throw new KeyNotFoundException("Blog bulunamadı.");
+            }
+
+            value.BlogTitle = request.BlogTitle?.Trim() ?? string.Empty;
+            value.BlogDescription = request.BlogDescription?.Trim() ?? string.Empty;
+            value.BlogImgUrl = request.BlogImgUrl?.Trim() ?? string.Empty;
             value.CreatedDate = request.CreatedDate;
-            value.BlogTitle = request.BlogTitle;
             value.AuthorId = request.AuthorId;
-            value.BlogImgUrl = request.BlogImgUrl;
+            value.BlogCategoryId = request.BlogCategoryId;
             value.TopNews = request.TopNews;
+
             await _repository.UpdateAsync(value);
         }
     }

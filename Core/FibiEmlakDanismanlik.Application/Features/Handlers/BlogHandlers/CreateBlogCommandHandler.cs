@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
@@ -24,11 +25,12 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
             await _repository.CreateAsync(new Blog
             {
                 AuthorId = request.AuthorId,
-                BlogDescription = request.BlogDescription,
-                BlogImgUrl = request.BlogImgUrl,
-                BlogTitle = request.BlogTitle,
+                BlogCategoryId = request.BlogCategoryId,
+                BlogDescription = request.BlogDescription?.Trim() ?? string.Empty,
+                BlogImgUrl = request.BlogImgUrl?.Trim() ?? string.Empty,
+                BlogTitle = request.BlogTitle?.Trim() ?? string.Empty,
                 CreatedDate = request.CreatedDate,
-                TopNews = request.TopNews,
+                TopNews = request.TopNews
             });
         }
     }

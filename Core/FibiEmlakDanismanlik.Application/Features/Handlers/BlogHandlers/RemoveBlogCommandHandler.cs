@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
@@ -22,6 +23,11 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
         public async Task Handle(RemoveBlogCommand request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.Id);
+            if (value == null)
+            {
+                throw new KeyNotFoundException("Blog bulunamadı.");
+            }
+
             await _repository.RemoveAsync(value);
         }
     }
