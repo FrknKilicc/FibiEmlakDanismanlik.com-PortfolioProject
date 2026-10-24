@@ -1,5 +1,7 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Commands.BlogCommands;
+using FibiEmlakDanismanlik.Application.Helpers;
 using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
 using System;
@@ -14,15 +16,17 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
     public class CreateBlogCommandHandler : IRequestHandler<CreateBlogCommand>
     {
         private readonly IRepository<Blog> _repository;
+        private readonly IBlogRepository _blogRepository;
 
-        public CreateBlogCommandHandler(IRepository<Blog> repository)
+        public CreateBlogCommandHandler(IRepository<Blog> repository, IBlogRepository blogRepository)
         {
             _repository = repository;
+            _blogRepository = blogRepository;
         }
 
         public async Task Handle(CreateBlogCommand request, CancellationToken cancellationToken)
         {
-            await _repository.CreateAsync(new Blog
+            var blog = new Blog
             {
                 AuthorId = request.AuthorId,
                 BlogCategoryId = request.BlogCategoryId,
@@ -31,7 +35,14 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
                 BlogTitle = request.BlogTitle?.Trim() ?? string.Empty,
                 CreatedDate = request.CreatedDate,
                 TopNews = request.TopNews
-            });
+            };
+
+            await _repository.CreateAsync(blog);
+
+            if (request.Tags != null)
+            {
+                await _blogRepository.SetBlogTagsAsync(blog.BlogId, BlogTagNormalizer.Normalize(request.Tags));
+            }
         }
     }
 }

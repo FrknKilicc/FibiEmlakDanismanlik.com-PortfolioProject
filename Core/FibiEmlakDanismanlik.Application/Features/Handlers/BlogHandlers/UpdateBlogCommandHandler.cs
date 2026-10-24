@@ -1,5 +1,7 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Commands.BlogCommands;
+using FibiEmlakDanismanlik.Application.Helpers;
 using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
 using System;
@@ -14,10 +16,12 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
     public class UpdateBlogCommandHandler : IRequestHandler<UpdateBlogCommand>
     {
         private readonly IRepository<Blog> _repository;
+        private readonly IBlogRepository _blogRepository;
 
-        public UpdateBlogCommandHandler(IRepository<Blog> repository)
+        public UpdateBlogCommandHandler(IRepository<Blog> repository, IBlogRepository blogRepository)
         {
             _repository = repository;
+            _blogRepository = blogRepository;
         }
 
         public async Task Handle(UpdateBlogCommand request, CancellationToken cancellationToken)
@@ -37,6 +41,11 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
             value.TopNews = request.TopNews;
 
             await _repository.UpdateAsync(value);
+
+            if (request.Tags != null)
+            {
+                await _blogRepository.SetBlogTagsAsync(value.BlogId, BlogTagNormalizer.Normalize(request.Tags));
+            }
         }
     }
 }

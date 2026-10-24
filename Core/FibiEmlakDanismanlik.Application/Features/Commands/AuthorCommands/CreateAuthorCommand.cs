@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Commands.AuthorCommands
 {
-    public class CreateAuthorCommand:IRequest
+    public class CreateAuthorCommand : IRequest
     {
-        public string AuthorName { get; set; }
-        public string AuthorImgUrl { get; set; }
+        public string AuthorName { get; set; } = string.Empty;
+        public string? AuthorImgUrl { get; set; }
     }
 }

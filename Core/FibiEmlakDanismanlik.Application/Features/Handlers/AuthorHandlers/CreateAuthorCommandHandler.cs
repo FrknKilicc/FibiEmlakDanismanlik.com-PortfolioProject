@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthorHandlers
@@ -23,8 +24,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthorHandlers
         {
             await _repository.CreateAsync(new Author
             {
-                AuthorImgUrl = request.AuthorImgUrl,
-                AuthorName = request.AuthorName,
+                AuthorImgUrl = request.AuthorImgUrl?.Trim() ?? string.Empty,
+                AuthorName = request.AuthorName?.Trim() ?? string.Empty,
             });
         }
     }

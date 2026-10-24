@@ -14,6 +14,10 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces
        public Task<List<GetBlogDetailWithAuthorResult?>> GetBlogListWithAuthor(int? blogCategoryId = null);
         public Task<List<BlogCategoryCountResult>> GetTopBlogCategories(int take = 5);
         public Task<List<BlogSuggestionResult>> SearchBlogSuggestion(string q, int take = 6);
-
+        Task<Dictionary<int, int>> GetBlogCountsByAuthorAsync();
+        Task<Dictionary<int, int>> GetBlogCountsByCategoryAsync();
+        Task<List<string>> GetTagNamesAsync(int blogId);
+        Task SetBlogTagsAsync(int blogId, IReadOnlyCollection<string> tagNames);
+        Task<List<string>> GetAllTagNamesAsync();
     }
 }

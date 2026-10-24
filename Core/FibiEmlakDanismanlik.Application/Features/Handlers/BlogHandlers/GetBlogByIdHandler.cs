@@ -1,6 +1,7 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Queries.BlogQueries;
 using FibiEmlakDanismanlik.Application.Features.Results.BlogResults;
 using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
 using System;
@@ -15,10 +16,12 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
     public class GetBlogByIdHandler : IRequestHandler<GetBlogByIdQuery, GetBlogByIdResult>
     {
         private readonly IRepository<Blog> _repository;
+        private readonly IBlogRepository _blogRepository;
 
-        public GetBlogByIdHandler(IRepository<Blog> repository)
+        public GetBlogByIdHandler(IRepository<Blog> repository, IBlogRepository blogRepository)
         {
             _repository = repository;
+            _blogRepository = blogRepository;
         }
 
         public async Task<GetBlogByIdResult> Handle(GetBlogByIdQuery request, CancellationToken cancellationToken)
@@ -28,6 +31,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
             {
                 return null!;
             }
+
+            var tags = await _blogRepository.GetTagNamesAsync(value.BlogId);
 
             return new GetBlogByIdResult
             {
@@ -39,6 +44,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
                 BlogTitle = value.BlogTitle ?? string.Empty,
                 CreatedDate = value.CreatedDate,
                 TopNews = value.TopNews,
+                Tags = tags
             };
         }
     }

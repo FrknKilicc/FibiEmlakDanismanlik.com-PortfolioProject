@@ -1,4 +1,6 @@
 ﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Exceptions;
+using FibiEmlakDanismanlik.Application.Features.Commands.BlogCategoryCommands;
 using FibiEmlakDanismanlik.Application.Features.Commands.BlogCommands;
 using FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers;
 using FibiEmlakDanismanlik.Application.Features.Queries.BlogQueries;
@@ -33,6 +35,66 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         public async Task<IActionResult> GetBlogCategories()
         {
             var values = await _mediator.Send(new GetBlogCategoriesQuery());
+            return Ok(values);
+        }
+
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
+        [HttpPost("categories")]
+        public async Task<IActionResult> CreateBlogCategory(CreateBlogCategoryCommand command)
+        {
+            try
+            {
+                await _mediator.Send(command);
+                return Ok("Kategori Başarıyla Eklendi");
+            }
+            catch (BlogContentConflictException ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
+        [HttpPut("categories")]
+        public async Task<IActionResult> UpdateBlogCategory(UpdateBlogCategoryCommand command)
+        {
+            try
+            {
+                await _mediator.Send(command);
+                return Ok("Kategori Başarıyla Güncellendi");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (BlogContentConflictException ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
+        [HttpDelete("categories")]
+        public async Task<IActionResult> RemoveBlogCategory([FromQuery] int id)
+        {
+            try
+            {
+                await _mediator.Send(new RemoveBlogCategoryCommand(id));
+                return Ok("Kategori Başarıyla Silindi");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (BlogContentConflictException ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpGet("tags")]
+        public async Task<IActionResult> GetAllTagNames()
+        {
+            var values = await _mediator.Send(new GetBlogTagNamesQuery());
             return Ok(values);
         }
 

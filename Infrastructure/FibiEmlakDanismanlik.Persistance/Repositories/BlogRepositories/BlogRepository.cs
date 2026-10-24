@@ -5,6 +5,7 @@ using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -181,6 +182,114 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
             return list;
         }
 
+        public Task<Dictionary<int, int>> GetBlogCountsByAuthorAsync()
+        {
+            return _context.Blogs
+                .GroupBy(b => b.AuthorId)
+                .Select(g => new { AuthorId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.AuthorId, x => x.Count);
+        }
+
+        public Task<Dictionary<int, int>> GetBlogCountsByCategoryAsync()
+        {
+            return _context.Blogs
+                .Where(b => b.BlogCategoryId.HasValue)
+                .GroupBy(b => b.BlogCategoryId!.Value)
+                .Select(g => new { CategoryId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.CategoryId, x => x.Count);
+        }
+
+        public Task<List<string>> GetTagNamesAsync(int blogId)
+        {
+            return _context.BlogTags
+                .Where(bt => bt.BlogId == blogId)
+                .Select(bt => bt.Tag.Name)
+                .OrderBy(name => name)
+                .ToListAsync();
+        }
+
+        public Task<List<string>> GetAllTagNamesAsync()
+        {
+            return _context.Tags
+                .Select(t => t.Name)
+                .OrderBy(name => name)
+                .ToListAsync();
+        }
+
+        public async Task SetBlogTagsAsync(int blogId, IReadOnlyCollection<string> tagNames)
+        {
+            var trCulture = new CultureInfo("tr-TR");
+            var trComparer = StringComparer.Create(trCulture, true);
+
+            var targetNames = (tagNames ?? Array.Empty<string>())
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Distinct(trComparer)
+                .ToList();
+
+            var existingTags = targetNames.Count > 0
+                ? await _context.Tags.Where(t => targetNames.Contains(t.Name)).ToListAsync()
+                : new List<Tag>();
+
+            var existingNames = new HashSet<string>(existingTags.Select(t => t.Name), trComparer);
+            var newTags = targetNames
+                .Where(name => !existingNames.Contains(name))
+                .Select(name => new Tag { Name = name })
+                .ToList();
+
+            if (newTags.Count > 0)
+            {
+                await _context.Tags.AddRangeAsync(newTags);
+                await _context.SaveChangesAsync();
+            }
+
+            var allTargetTags = existingTags.Concat(newTags).ToList();
+            var targetTagIds = allTargetTags.Select(t => t.Id).ToHashSet();
+
+            var currentBlogTags = await _context.BlogTags
+                .Where(bt => bt.BlogId == blogId)
+                .ToListAsync();
+
+            var currentTagIds = currentBlogTags.Select(bt => bt.TagId).ToHashSet();
+
+            var toRemove = currentBlogTags
+                .Where(bt => !targetTagIds.Contains(bt.TagId))
+                .ToList();
+
+            var toAdd = targetTagIds
+                .Where(tagId => !currentTagIds.Contains(tagId))
+                .Select(tagId => new BlogTag { BlogId = blogId, TagId = tagId })
+                .ToList();
+
+            if (toRemove.Count > 0)
+            {
+                _context.BlogTags.RemoveRange(toRemove);
+            }
+
+            if (toAdd.Count > 0)
+            {
+                await _context.BlogTags.AddRangeAsync(toAdd);
+            }
+
+            if (toRemove.Count > 0 || toAdd.Count > 0)
+            {
+                await _context.SaveChangesAsync();
+            }
+
+            if (toRemove.Count > 0)
+            {
+                var removedTagIds = toRemove.Select(bt => bt.TagId).Distinct().ToList();
+                var orphanTags = await _context.Tags
+                    .Where(t => removedTagIds.Contains(t.Id) && !_context.BlogTags.Any(bt => bt.TagId == t.Id))
+                    .ToListAsync();
+
+                if (orphanTags.Count > 0)
+                {
+                    _context.Tags.RemoveRange(orphanTags);
+                    await _context.SaveChangesAsync();
+                }
+            }
+        }
+
         private static string TruncateWithDots(string text, int maxLen)
         {
             if (string.IsNullOrEmpty(text)) return "";
@@ -193,4 +302,4 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
             return Regex.Replace(input, "<.*?>", string.Empty);
         }
     }
-    }
+}

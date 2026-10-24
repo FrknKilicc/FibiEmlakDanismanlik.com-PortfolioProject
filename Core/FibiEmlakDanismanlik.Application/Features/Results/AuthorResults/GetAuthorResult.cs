@@ -11,5 +11,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.AuthorResults
         public int AuthorId { get; set; }
         public string AuthorName { get; set; }
         public string AuthorImgUrl { get; set; }
+        public int BlogCount { get; set; }
     }
 }
