@@ -12,6 +12,7 @@
     bool isDeals = string.Equals(currentController, "Deals", StringComparison.OrdinalIgnoreCase);
     bool isReports = string.Equals(currentController, "Reports", StringComparison.OrdinalIgnoreCase);
     bool isUsers = string.Equals(currentController, "Users", StringComparison.OrdinalIgnoreCase);
+    bool isContent = string.Equals(currentController, "Content", StringComparison.OrdinalIgnoreCase);
     bool isAudit = string.Equals(currentController, "AuditLog", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
@@ -162,10 +163,9 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link collapsed" href="#">
+          <a class="nav-link @(isContent ? "" : "collapsed")" href="/icerik">
             <i class="bi bi-file-earmark-text"></i>
             <span>İçerik</span>
-            <span class="badge bg-secondary ms-auto badge-soon">yakında</span>
           </a>
         </li>
 
