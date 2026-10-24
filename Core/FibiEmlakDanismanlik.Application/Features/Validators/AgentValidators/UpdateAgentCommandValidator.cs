@@ -1,5 +1,6 @@
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Commands.AgentCommands;
+using FibiEmlakDanismanlik.Application.Features.Validators.ContentValidators;
 using FluentValidation;
 
 namespace FibiEmlakDanismanlik.Application.Features.Validators.AgentValidators
@@ -26,6 +27,11 @@ namespace FibiEmlakDanismanlik.Application.Features.Validators.AgentValidators
 
             RuleFor(x => x.AgentDescription)
                 .MaximumLength(500).WithMessage("Danışman açıklaması en fazla 500 karakter olabilir.");
+
+            RuleFor(x => x.AgentImgUrl)
+                .MaximumLength(500).WithMessage("Fotoğraf adresi en fazla 500 karakter olabilir.")
+                .Must(ContentUrlRules.IsSafeImageUrl).WithMessage("Fotoğraf adresi geçerli bir bağlantı veya yol olmalıdır.")
+                .When(x => !string.IsNullOrWhiteSpace(x.AgentImgUrl));
 
             When(x => !string.IsNullOrWhiteSpace(x.Password), () =>
             {

@@ -19,16 +19,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Validators.ContentValidators
 
         private static bool BeValidBannerUrl(string? url)
         {
-            if (string.IsNullOrWhiteSpace(url))
-                return false;
-
-            if (url.Contains(':'))
-            {
-                return Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
-                       (uri.Scheme == "http" || uri.Scheme == "https");
-            }
-
-            return true;
+            return ContentUrlRules.IsSafeImageUrl(url);
         }
     }
 }
