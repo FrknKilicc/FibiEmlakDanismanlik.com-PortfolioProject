@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
@@ -23,13 +24,19 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
         public async Task<GetBlogByIdResult> Handle(GetBlogByIdQuery request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.Id);
+            if (value == null)
+            {
+                return null!;
+            }
+
             return new GetBlogByIdResult
             {
                 AuthorId = value.AuthorId,
-                BlogDescription = value.BlogDescription,
+                BlogCategoryId = value.BlogCategoryId,
+                BlogDescription = value.BlogDescription ?? string.Empty,
                 BlogId = value.BlogId,
-                BlogImgUrl = value.BlogImgUrl,
-                BlogTitle = value.BlogTitle,
+                BlogImgUrl = value.BlogImgUrl ?? string.Empty,
+                BlogTitle = value.BlogTitle ?? string.Empty,
                 CreatedDate = value.CreatedDate,
                 TopNews = value.TopNews,
             };
