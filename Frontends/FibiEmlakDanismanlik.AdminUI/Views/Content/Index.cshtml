@@ -1,5 +1,6 @@
 @model FibiEmlakDanismanlik.AdminUI.Models.Content.ContentIndexViewModel
 @using FibiEmlakDanismanlik.AdminUI.Models.Content
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.SiteImageUrl SiteImageUrl
 
 @{
     ViewData["Title"] = "İçerik";
@@ -88,12 +89,6 @@
     var errDesc = Model.GetFieldError("about", "AboutUsDesc");
     var errImg = Model.GetFieldError("about", "AboutUsImgUrl");
 
-    var imgUrl = Model.AboutUs?.AboutUsImgUrl?.Trim();
-    bool hasValidImg = !string.IsNullOrEmpty(imgUrl) &&
-        (imgUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-         imgUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
-         imgUrl.StartsWith("/"));
-
     <div class="row">
         <div class="col-lg-9 col-12">
             <div class="card shadow-sm border-0 mb-4">
@@ -137,17 +132,19 @@
                             {
                                 <div class="invalid-feedback d-block">@errImg</div>
                             }
+                            <div class="mt-2" data-image-upload data-target="aboutUsImgUrl" data-folder="about" data-preview="aboutUsImgPreview"></div>
 
-                            @if (hasValidImg)
-                            {
-                                <div class="mt-2 p-2 border rounded bg-light d-inline-block">
-                                    <div class="small text-muted mb-1">Mevcut Görsel Önizleme:</div>
-                                    <img src="@imgUrl"
-                                         alt="Hakkımızda Görseli"
-                                         class="img-thumbnail"
-                                         style="max-height: 120px; max-width: 260px; object-fit: cover;" />
-                                </div>
+                            @{
+                                var aboutPreview = SiteImageUrl.Preview(Model.AboutUs?.AboutUsImgUrl);
                             }
+                            <div class="mt-2 p-2 border rounded bg-light d-inline-block">
+                                <div class="small text-muted mb-1">Mevcut Görsel Önizleme:</div>
+                                <img id="aboutUsImgPreview"
+                                     src="@(aboutPreview ?? "")"
+                                     alt="Hakkımızda Görseli"
+                                     class="img-thumbnail @(string.IsNullOrEmpty(aboutPreview) ? "d-none" : "")"
+                                     style="max-height: 120px; max-width: 260px; object-fit: cover;" />
+                            </div>
                         </div>
 
                         <div class="mb-4">
@@ -770,7 +767,7 @@
 
             <div class="alert alert-info py-2 px-3 small d-flex align-items-center mb-3">
                 <i class="bi bi-info-circle-fill me-2 fs-6"></i>
-                <div>Görsel adresi site içi yol (<code>/...</code>) ya da https adresi olmalı; dosya yükleme sonraki adımda.</div>
+                <div>Görsel adresi site içi yol (<code>/...</code>) ya da https adresi olmalı; dosya yükleme butonu ile görsel yükleyebilirsiniz.</div>
             </div>
 
             @if (Model.Banners == null || !Model.Banners.Any())
@@ -790,25 +787,19 @@
                         var errItemUrl = Model.GetFieldError(formKey, "MainBannerUrl");
                         var errItemDesc = Model.GetFieldError(formKey, "MainBannerDesc");
 
-                        var bUrl = item.MainBannerUrl?.Trim();
-                        bool hasValidBannerImg = !string.IsNullOrEmpty(bUrl) &&
-                            (bUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                             bUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
-                             bUrl.StartsWith("/"));
+                        var bannerPreview = SiteImageUrl.Preview(item.MainBannerUrl);
 
                         <div class="col-lg-6 col-12">
                             <div class="card border shadow-none h-100">
                                 <div class="card-body p-3 d-flex flex-column justify-content-between">
                                     <div>
-                                        @if (hasValidBannerImg)
-                                        {
-                                            <div class="mb-2 text-center bg-light p-2 rounded">
-                                                <img src="@bUrl"
-                                                     alt="Banner Önizleme"
-                                                     class="img-fluid rounded"
-                                                     style="max-height: 140px; width: 100%; object-fit: cover;" />
-                                            </div>
-                                        }
+                                        <div class="mb-2 text-center bg-light p-2 rounded">
+                                            <img id="bannerPreview-@item.MainBannerId"
+                                                 src="@(bannerPreview ?? "")"
+                                                 alt="Banner Önizleme"
+                                                 class="img-fluid rounded @(string.IsNullOrEmpty(bannerPreview) ? "d-none" : "")"
+                                                 style="max-height: 140px; width: 100%; object-fit: cover;" />
+                                        </div>
 
                                         <div class="mb-2">
                                             <span class="small text-muted fw-semibold d-block">Görsel Adresi:</span>
@@ -836,9 +827,10 @@
                                                     <input type="hidden" name="MainBannerId" value="@item.MainBannerId" />
 
                                                     <div class="mb-2">
-                                                        <label class="form-label small fw-semibold">Görsel Adresi (URL / Yol) <span class="text-danger">*</span></label>
+                                                        <label class="form-label small fw-semibold" for="bannerUrl-@item.MainBannerId">Görsel Adresi (URL / Yol) <span class="text-danger">*</span></label>
                                                         <input type="text"
                                                                class="form-control form-control-sm @(errItemUrl != null ? "is-invalid" : "")"
+                                                               id="bannerUrl-@item.MainBannerId"
                                                                name="MainBannerUrl"
                                                                value="@item.MainBannerUrl"
                                                                placeholder="https://... veya /uploads/..."
@@ -847,6 +839,7 @@
                                                         {
                                                             <div class="invalid-feedback d-block">@errItemUrl</div>
                                                         }
+                                                        <div class="mt-2" data-image-upload data-target="bannerUrl-@item.MainBannerId" data-folder="banner" data-preview="bannerPreview-@item.MainBannerId"></div>
                                                     </div>
 
                                                     <div class="mb-3">
@@ -903,12 +896,12 @@
 
                         <div class="row g-3">
                             <div class="col-md-6 col-12">
-                                <label for="newBannerUrl" class="form-label small fw-semibold">
+                                <label for="bannerUrl-new" class="form-label small fw-semibold">
                                     Görsel Adresi (URL / Yol) <span class="text-danger">*</span>
                                 </label>
                                 <input type="text"
                                        class="form-control form-control-sm @(errNewBannerUrl != null ? "is-invalid" : "")"
-                                       id="newBannerUrl"
+                                       id="bannerUrl-new"
                                        name="MainBannerUrl"
                                        value="@Model.NewBanner?.MainBannerUrl"
                                        placeholder="https://... veya /uploads/..."
@@ -917,6 +910,17 @@
                                 {
                                     <div class="invalid-feedback d-block">@errNewBannerUrl</div>
                                 }
+                                <div class="mt-2" data-image-upload data-target="bannerUrl-new" data-folder="banner" data-preview="bannerPreview-new"></div>
+                                @{
+                                    var newBannerPreview = SiteImageUrl.Preview(Model.NewBanner?.MainBannerUrl);
+                                }
+                                <div class="mt-2 text-center bg-light p-2 rounded">
+                                    <img id="bannerPreview-new"
+                                         src="@(newBannerPreview ?? "")"
+                                         alt="Banner Önizleme"
+                                         class="img-fluid rounded @(string.IsNullOrEmpty(newBannerPreview) ? "d-none" : "")"
+                                         style="max-height: 120px; width: 100%; object-fit: cover;" />
+                                </div>
                             </div>
 
                             <div class="col-md-6 col-12">
@@ -946,4 +950,8 @@
             </div>
         </div>
     </div>
+}
+
+@section Scripts {
+    <script src="~/js/image-upload.js" asp-append-version="true"></script>
 }

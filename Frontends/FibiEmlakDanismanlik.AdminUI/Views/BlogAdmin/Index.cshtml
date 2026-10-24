@@ -1,5 +1,6 @@
 @model FibiEmlakDanismanlik.AdminUI.Models.Content.BlogIndexViewModel
 @using FibiEmlakDanismanlik.AdminUI.Models.Content
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.SiteImageUrl SiteImageUrl
 
 @{
     ViewData["Title"] = "Blog Yazıları";
@@ -124,10 +125,7 @@ else
                         @foreach (var blog in Model.Blogs)
                         {
                             var imgUrl = blog.BlogImgUrl?.Trim();
-                            bool hasValidImg = !string.IsNullOrEmpty(imgUrl) &&
-                                (imgUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                                 imgUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
-                                 imgUrl.StartsWith("/"));
+                            var previewUrl = SiteImageUrl.Preview(imgUrl);
 
                             var catName = Model.Categories.FirstOrDefault(c => c.BlogCategoryId == blog.BlogCategoryId)?.CategoryName ?? "Kategorisiz";
                             var authorName = Model.Authors.FirstOrDefault(a => a.AuthorId == blog.AuthorId)?.AuthorName ?? "—";
@@ -135,9 +133,9 @@ else
 
                             <tr>
                                 <td class="ps-3">
-                                    @if (hasValidImg)
+                                    @if (!string.IsNullOrEmpty(previewUrl))
                                     {
-                                        <img src="@imgUrl"
+                                        <img src="@previewUrl"
                                              alt="@blog.BlogTitle"
                                              class="rounded border"
                                              style="width: 54px; height: 54px; object-fit: cover;" />
@@ -202,10 +200,7 @@ else
         @foreach (var blog in Model.Blogs)
         {
             var imgUrl = blog.BlogImgUrl?.Trim();
-            bool hasValidImg = !string.IsNullOrEmpty(imgUrl) &&
-                (imgUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                 imgUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
-                 imgUrl.StartsWith("/"));
+            var previewUrl = SiteImageUrl.Preview(imgUrl);
 
             var catName = Model.Categories.FirstOrDefault(c => c.BlogCategoryId == blog.BlogCategoryId)?.CategoryName ?? "Kategorisiz";
             var authorName = Model.Authors.FirstOrDefault(a => a.AuthorId == blog.AuthorId)?.AuthorName ?? "—";
@@ -224,9 +219,9 @@ else
                     </div>
 
                     <div class="d-flex gap-3 mb-2">
-                        @if (hasValidImg)
+                        @if (!string.IsNullOrEmpty(previewUrl))
                         {
-                            <img src="@imgUrl"
+                            <img src="@previewUrl"
                                  alt="@blog.BlogTitle"
                                  class="rounded border flex-shrink-0"
                                  style="width: 64px; height: 64px; object-fit: cover;" />

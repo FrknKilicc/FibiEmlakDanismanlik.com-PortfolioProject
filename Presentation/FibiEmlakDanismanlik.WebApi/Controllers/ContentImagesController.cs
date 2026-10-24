@@ -34,7 +34,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         [HttpPost]
         [RequestSizeLimit(16 * 1024 * 1024)]
         [RequestFormLimits(MultipartBodyLengthLimit = 16 * 1024 * 1024)]
-        public async Task<IActionResult> Upload([FromQuery] string folder, IFormFile? file)
+        public async Task<IActionResult> Upload([FromQuery] string? folder, IFormFile? file)
         {
             if (file == null)
             {
@@ -45,7 +45,7 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             {
                 var command = new UploadContentImageCommand
                 {
-                    Folder = folder,
+                    Folder = folder ?? string.Empty,
                     File = new UploadedImageFile
                     {
                         FileName = file.FileName,

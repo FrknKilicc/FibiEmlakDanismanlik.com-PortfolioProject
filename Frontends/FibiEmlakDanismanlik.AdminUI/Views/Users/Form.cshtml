@@ -1,5 +1,6 @@
 @model FibiEmlakDanismanlik.AdminUI.Models.Users.UserFormViewModel
 @using FibiEmlakDanismanlik.AdminUI.Models.Users
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.SiteImageUrl SiteImageUrl
 
 @{
     var title = Model.IsNew ? "Yeni Kullanıcı" : "Kullanıcıyı Düzenle";
@@ -112,14 +113,14 @@
 
                     <div class="mb-3">
                         <label for="Mail" class="form-label small fw-semibold">
-                            E-posta <span class="text-danger">*</span>
+                            E-posta Adresi <span class="text-danger">*</span>
                         </label>
                         <input type="email"
                                class="form-control @(errMail != null ? "is-invalid" : "")"
                                id="Mail"
                                name="Mail"
                                value="@Model.Form.Mail"
-                               placeholder="ornek@fibiemlak.com"
+                               placeholder="ahmet.yilmaz@fibiemlak.com"
                                required />
                         @if (errMail != null)
                         {
@@ -129,15 +130,14 @@
 
                     <div class="mb-2">
                         <label for="AgentPhoneNumber" class="form-label small fw-semibold">
-                            Telefon Numarası <span class="text-danger">*</span>
+                            Telefon
                         </label>
                         <input type="tel"
                                class="form-control @(errPhone != null ? "is-invalid" : "")"
                                id="AgentPhoneNumber"
                                name="AgentPhoneNumber"
                                value="@Model.Form.AgentPhoneNumber"
-                               placeholder="Örn: 0532 123 45 67"
-                               required />
+                               placeholder="0532 123 45 67" />
                         @if (errPhone != null)
                         {
                             <div class="invalid-feedback d-block">@errPhone</div>
@@ -395,6 +395,18 @@
                         {
                             <div class="invalid-feedback d-block">@errImg</div>
                         }
+                        <div class="mt-2" data-image-upload data-target="AgentImgUrl" data-folder="agent" data-preview="agentImgPreview"></div>
+                    </div>
+
+                    @{
+                        var agentPreview = SiteImageUrl.Preview(Model.Form.AgentImgUrl);
+                    }
+                    <div class="mt-2">
+                        <img id="agentImgPreview"
+                             src="@(agentPreview ?? "")"
+                             alt="Danışman Fotoğrafı"
+                             class="rounded border @(string.IsNullOrEmpty(agentPreview) ? "d-none" : "")"
+                             style="width: 96px; height: 96px; object-fit: cover;" />
                     </div>
                 </div>
             </div>
@@ -420,3 +432,7 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+    <script src="~/js/image-upload.js" asp-append-version="true"></script>
+}

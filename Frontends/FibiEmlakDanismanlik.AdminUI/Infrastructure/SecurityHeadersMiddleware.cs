@@ -6,10 +6,12 @@ namespace FibiEmlakDanismanlik.AdminUI.Infrastructure;
 public sealed class SecurityHeadersMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly SiteImageUrl _siteImageUrl;
 
-    public SecurityHeadersMiddleware(RequestDelegate next)
+    public SecurityHeadersMiddleware(RequestDelegate next, SiteImageUrl siteImageUrl)
     {
         _next = next;
+        _siteImageUrl = siteImageUrl;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -17,6 +19,13 @@ public sealed class SecurityHeadersMiddleware
         context.Response.OnStarting(() =>
         {
             var headers = context.Response.Headers;
+
+            var imgSrc = "img-src 'self' data: blob: https:";
+            if (!string.IsNullOrEmpty(_siteImageUrl.SiteOrigin) &&
+                _siteImageUrl.SiteOrigin.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            {
+                imgSrc += $" {_siteImageUrl.SiteOrigin}";
+            }
 
             headers["X-Content-Type-Options"] = "nosniff";
             headers["X-Frame-Options"] = "DENY";
@@ -30,7 +39,7 @@ public sealed class SecurityHeadersMiddleware
                 "frame-src https://challenges.cloudflare.com; " +
                 "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                 "font-src 'self' https://fonts.gstatic.com data:; " +
-                "img-src 'self' data: blob: https:; " +
+                imgSrc + "; " +
                 "connect-src 'self'; " +
                 "base-uri 'self'; " +
                 "form-action 'self'; " +
