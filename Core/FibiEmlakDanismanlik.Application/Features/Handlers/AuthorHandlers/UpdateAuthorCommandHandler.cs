@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthorHandlers
@@ -22,9 +23,14 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthorHandlers
         public async Task Handle(UpdateAuthorCommand request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.AuthorId);
-            value.AuthorName = request.AuthorName;
-            value.AuthorId = request.AuthorId;
-            value.AuthorName = request.AuthorName;
+            if (value == null)
+            {
+                throw new KeyNotFoundException("Yazar bulunamadı.");
+            }
+
+            value.AuthorName = request.AuthorName?.Trim() ?? string.Empty;
+            value.AuthorImgUrl = request.AuthorImgUrl?.Trim() ?? string.Empty;
+
             await _repository.UpdateAsync(value);
         }
     }

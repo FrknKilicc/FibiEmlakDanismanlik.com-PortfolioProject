@@ -1,4 +1,5 @@
 using FibiEmlakDanismanlik.Application.Features.Commands.BlogCommands;
+using FibiEmlakDanismanlik.Application.Helpers;
 using FluentValidation;
 using System;
 
@@ -31,20 +32,19 @@ namespace FibiEmlakDanismanlik.Application.Features.Validators.ContentValidators
             RuleFor(x => x.CreatedDate)
                 .Must(BeValidCreatedDate)
                 .WithMessage("Oluşturulma tarihi 01.01.2000 ile bugün + 1 yıl arasında olmalıdır.");
+
+            RuleFor(x => x.Tags)
+                .Must(t => BlogTagNormalizer.Normalize(t).Count <= 10)
+                .WithMessage("En fazla 10 etiket eklenebilir.");
+
+            RuleForEach(x => x.Tags)
+                .Must(t => t == null || t.Trim().Length <= 50)
+                .WithMessage("Bir etiket en fazla 50 karakter olabilir.");
         }
 
         private static bool BeValidImageUrl(string? url)
         {
-            if (string.IsNullOrWhiteSpace(url))
-                return false;
-
-            if (url.Contains(':'))
-            {
-                return Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
-                       (uri.Scheme == "http" || uri.Scheme == "https");
-            }
-
-            return true;
+            return ContentUrlRules.IsSafeImageUrl(url);
         }
 
         private static bool BeValidCreatedDate(DateTime date)

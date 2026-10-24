@@ -145,6 +145,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddMemoryCache();
 builder.Services.AddScoped<CurrentAdmin>();
 builder.Services.AddSingleton<LoginChallengeStore>();
+builder.Services.AddSingleton<SiteImageUrl>();
 builder.Services.AddScoped<AdminSignInService>();
 
 // WebApi HTTP İstemcisi

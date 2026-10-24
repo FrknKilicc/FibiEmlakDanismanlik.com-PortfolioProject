@@ -16,5 +16,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.BlogResults
         public bool TopNews { get; set; }
         public int AuthorId { get; set; }
         public int? BlogCategoryId { get; set; }
+        public List<string> Tags { get; set; } = new();
     }
 }

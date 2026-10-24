@@ -147,13 +147,13 @@ public sealed class UsersController : Controller
 
         var payload = new
         {
-            agentName = form.AgentName,
+            agentName = form.AgentName ?? string.Empty,
             agentTitle = form.AgentTitle,
             agentDescription = form.AgentDescription,
             agentImgUrl = form.AgentImgUrl,
-            mail = form.Mail,
-            agentPhoneNumber = form.AgentPhoneNumber,
-            password = form.Password,
+            mail = form.Mail ?? string.Empty,
+            agentPhoneNumber = form.AgentPhoneNumber ?? string.Empty,
+            password = form.Password ?? string.Empty,
             role = form.Role,
             showOnWebsite = form.ShowOnWebsite,
             canViewAllListings = form.CanViewAllListings
@@ -301,12 +301,12 @@ public sealed class UsersController : Controller
         var payload = new
         {
             agentId = id,
-            agentName = form.AgentName,
+            agentName = form.AgentName ?? string.Empty,
             agentTitle = form.AgentTitle,
             agentDescription = form.AgentDescription,
             agentImgUrl = form.AgentImgUrl,
-            mail = form.Mail,
-            agentPhoneNumber = form.AgentPhoneNumber,
+            mail = form.Mail ?? string.Empty,
+            agentPhoneNumber = form.AgentPhoneNumber ?? string.Empty,
             password = string.IsNullOrWhiteSpace(form.Password) ? null : form.Password,
             role = form.Role,
             isActive = form.IsActive,

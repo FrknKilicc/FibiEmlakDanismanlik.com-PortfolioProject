@@ -1,0 +1,199 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.Content.BlogCategoriesViewModel
+@using FibiEmlakDanismanlik.AdminUI.Models.Content
+
+@{
+    ViewData["Title"] = "Blog Kategorileri";
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1>Blog Kategorileri</h1>
+        <nav>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item"><a href="/icerik">İçerik</a></li>
+                <li class="breadcrumb-item"><a href="/icerik/blog">Blog</a></li>
+                <li class="breadcrumb-item active">Kategoriler</li>
+            </ol>
+        </nav>
+    </div>
+    <div>
+        <a href="/icerik/blog" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Blog Yazılarına Dön
+        </a>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Success"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Error"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<!-- Kategoriler Listesi Kartı -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-0">
+        @if (Model.Categories == null || !Model.Categories.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-tags fs-1 text-muted d-block mb-2"></i>
+                <h6 class="fw-semibold text-secondary">Henüz kayıtlı kategori bulunmuyor.</h6>
+                <p class="text-muted small mb-0">Aşağıdaki formu kullanarak yeni bir kategori ekleyebilirsiniz.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-muted small text-uppercase">
+                        <tr>
+                            <th scope="col" class="ps-3">Kategori Adı</th>
+                            <th scope="col" class="text-center" style="width: 140px;">Yazı Sayısı</th>
+                            <th scope="col" class="text-end pe-3" style="width: 220px;">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cat in Model.Categories)
+                        {
+                            var isEditing = Model.EditingId.HasValue && Model.EditingId.Value == cat.BlogCategoryId;
+                            var editNameError = isEditing ? Model.GetFieldError("edit", "CategoryName") : null;
+
+                            <tr>
+                                <td class="ps-3">
+                                    <span class="fw-semibold text-dark">@cat.CategoryName</span>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/icerik/blog?kategori=@cat.BlogCategoryId"
+                                       class="badge bg-secondary-subtle text-secondary border text-decoration-none"
+                                       title="Bu kategorideki yazıları görüntüle">
+                                        @cat.BlogCount yazı
+                                    </a>
+                                </td>
+                                <td class="text-end pe-3">
+                                    <div class="d-inline-flex justify-content-end gap-2">
+                                        <!-- Satır Düzenleme -->
+                                        <details class="text-start position-relative" @(isEditing ? "open" : "")>
+                                            <summary class="btn btn-outline-primary btn-sm py-1 px-2" style="cursor: pointer; list-style: none;">
+                                                <i class="bi bi-pencil me-1"></i> Düzenle
+                                            </summary>
+                                            <div class="border rounded p-3 bg-light mt-2 shadow-sm position-absolute end-0" style="min-width: 280px; max-width: 320px; z-index: 1000;">
+                                                <form method="post" action="/icerik/blog/kategoriler/@cat.BlogCategoryId">
+                                                    @Html.AntiForgeryToken()
+                                                    <div class="mb-2">
+                                                        <label class="form-label small fw-semibold mb-1" for="categoryName_@cat.BlogCategoryId">
+                                                            Kategori Adı <span class="text-danger">*</span>
+                                                        </label>
+                                                        <input type="text"
+                                                               class="form-control form-control-sm @(editNameError != null ? "is-invalid" : "")"
+                                                               id="categoryName_@cat.BlogCategoryId"
+                                                               name="CategoryName"
+                                                               value="@cat.CategoryName"
+                                                               required />
+                                                        @if (editNameError != null)
+                                                        {
+                                                            <div class="invalid-feedback d-block small">@editNameError</div>
+                                                        }
+                                                    </div>
+                                                    <div class="d-flex justify-content-end gap-2 mt-3">
+                                                        <button type="submit" class="btn btn-primary btn-sm px-3">
+                                                            <i class="bi bi-check-lg me-1"></i> Güncelle
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </details>
+
+                                        <!-- Silme Onayı -->
+                                        <details class="text-start position-relative">
+                                            <summary class="btn btn-outline-danger btn-sm py-1 px-2" style="cursor: pointer; list-style: none;">
+                                                <i class="bi bi-trash me-1"></i> Sil
+                                            </summary>
+                                            <div class="border rounded p-3 bg-light mt-2 shadow-sm position-absolute end-0" style="min-width: 260px; max-width: 300px; z-index: 1000;">
+                                                @if (cat.BlogCount > 0)
+                                                {
+                                                    <div class="small text-danger">
+                                                        <i class="bi bi-exclamation-octagon me-1"></i>
+                                                        Bu kategoride @cat.BlogCount yazı var, silinemez.
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <p class="small text-muted mb-2">
+                                                        <strong>@cat.CategoryName</strong> kategorisini silmek istediğinize emin misiniz?
+                                                    </p>
+                                                    <form method="post" action="/icerik/blog/kategoriler/@cat.BlogCategoryId/sil">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                            <i class="bi bi-trash me-1"></i> Evet, Sil
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </div>
+                                        </details>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Yeni Kategori Kartı -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body pt-3">
+        <h5 class="card-title p-0 pb-2 border-bottom mb-3">
+            <i class="bi bi-plus-circle me-2 text-primary"></i>Yeni Kategori Ekle
+        </h5>
+        <form method="post" action="/icerik/blog/kategoriler">
+            @Html.AntiForgeryToken()
+            <div class="row g-3">
+                <div class="col-md-8 col-12">
+                    <label for="newCategoryName" class="form-label small fw-semibold">
+                        Kategori Adı <span class="text-danger">*</span>
+                    </label>
+                    <input type="text"
+                           class="form-control @(Model.GetFieldError("new", "CategoryName") != null ? "is-invalid" : "")"
+                           id="newCategoryName"
+                           name="CategoryName"
+                           value="@Model.NewForm.CategoryName"
+                           placeholder="Örn: Yatırım Tavsiyeleri"
+                           required />
+                    @if (Model.GetFieldError("new", "CategoryName") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("new", "CategoryName")</div>
+                    }
+                </div>
+
+                <div class="col-md-4 col-12 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-lg me-1"></i> Kategori Ekle
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

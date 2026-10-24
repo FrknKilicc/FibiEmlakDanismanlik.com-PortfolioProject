@@ -29,13 +29,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Validators.ContentValidators
             if (string.IsNullOrWhiteSpace(url))
                 return true;
 
-            if (url.Contains(':'))
-            {
-                return Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
-                       (uri.Scheme == "http" || uri.Scheme == "https");
-            }
-
-            return true;
+            return ContentUrlRules.IsSafeImageUrl(url);
         }
     }
 }

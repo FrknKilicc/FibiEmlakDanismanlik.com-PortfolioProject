@@ -18,6 +18,7 @@ public sealed class BlogDto
     public bool TopNews { get; set; }
     public int AuthorId { get; set; }
     public int? BlogCategoryId { get; set; }
+    public List<string> Tags { get; set; } = new();
 }
 
 /// <summary>
@@ -27,6 +28,7 @@ public sealed class BlogCategoryDto
 {
     public int BlogCategoryId { get; set; }
     public string? CategoryName { get; set; }
+    public int BlogCount { get; set; }
 }
 
 /// <summary>
@@ -37,6 +39,7 @@ public sealed class AuthorDto
     public int AuthorId { get; set; }
     public string? AuthorName { get; set; }
     public string? AuthorImgUrl { get; set; }
+    public int BlogCount { get; set; }
 }
 
 /// <summary>
@@ -52,6 +55,7 @@ public sealed class BlogFormModel
     public bool TopNews { get; set; }
     public int AuthorId { get; set; }
     public int? BlogCategoryId { get; set; }
+    public string? TagsText { get; set; }
 }
 
 /// <summary>
@@ -77,8 +81,68 @@ public sealed class BlogFormViewModel
     public BlogFormModel Form { get; set; } = new();
     public List<BlogCategoryDto> Categories { get; set; } = new();
     public List<AuthorDto> Authors { get; set; } = new();
+    public List<string> AllTags { get; set; } = new();
     public bool IsNew { get; set; }
     public string? ErrorMessage { get; set; }
+    public Dictionary<string, string[]> FieldErrors { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+    public string? GetFieldError(string key)
+    {
+        if (FieldErrors != null)
+        {
+            if (FieldErrors.TryGetValue(key, out var errors) && errors != null && errors.Length > 0)
+            {
+                return errors[0];
+            }
+
+            if (string.Equals(key, "Tags", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(key, "TagsText", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (var kvp in FieldErrors)
+                {
+                    if ((kvp.Key.StartsWith("Tags[", StringComparison.OrdinalIgnoreCase) ||
+                         kvp.Key.StartsWith("TagsText[", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(kvp.Key, "Tags", StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(kvp.Key, "TagsText", StringComparison.OrdinalIgnoreCase)) &&
+                        kvp.Value != null && kvp.Value.Length > 0)
+                    {
+                        return kvp.Value[0];
+                    }
+                }
+            }
+        }
+        return null;
+    }
+}
+
+/// <summary>
+/// Yazar ekleme/düzenleme form modeli.
+/// </summary>
+public sealed class AuthorFormModel
+{
+    public int? AuthorId { get; set; }
+    public string? AuthorName { get; set; }
+    public string? AuthorImgUrl { get; set; }
+}
+
+/// <summary>
+/// Blog kategorisi ekleme/düzenleme form modeli.
+/// </summary>
+public sealed class BlogCategoryFormModel
+{
+    public int? BlogCategoryId { get; set; }
+    public string? CategoryName { get; set; }
+}
+
+/// <summary>
+/// Blog yazarları yönetim sayfası görünüm modeli.
+/// </summary>
+public sealed class BlogAuthorsViewModel
+{
+    public List<AuthorDto> Authors { get; set; } = new();
+    public string? ErrorMessage { get; set; }
+    public int? EditingId { get; set; }
+    public AuthorFormModel NewForm { get; set; } = new();
     public Dictionary<string, string[]> FieldErrors { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public string? GetFieldError(string key)
@@ -88,6 +152,37 @@ public sealed class BlogFormViewModel
             return errors[0];
         }
         return null;
+    }
+
+    public string? GetFieldError(string formPrefix, string key)
+    {
+        return GetFieldError($"{formPrefix}:{key}");
+    }
+}
+
+/// <summary>
+/// Blog kategorileri yönetim sayfası görünüm modeli.
+/// </summary>
+public sealed class BlogCategoriesViewModel
+{
+    public List<BlogCategoryDto> Categories { get; set; } = new();
+    public string? ErrorMessage { get; set; }
+    public int? EditingId { get; set; }
+    public BlogCategoryFormModel NewForm { get; set; } = new();
+    public Dictionary<string, string[]> FieldErrors { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+    public string? GetFieldError(string key)
+    {
+        if (FieldErrors != null && FieldErrors.TryGetValue(key, out var errors) && errors != null && errors.Length > 0)
+        {
+            return errors[0];
+        }
+        return null;
+    }
+
+    public string? GetFieldError(string formPrefix, string key)
+    {
+        return GetFieldError($"{formPrefix}:{key}");
     }
 }
 
