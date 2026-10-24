@@ -1,6 +1,7 @@
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -50,10 +51,34 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories
         }
 
         /// <inheritdoc />
+        public async Task<List<ListingImage>> GetPlanImagesAsync(int listingTypeId, int listingId)
+        {
+            return await _context.ListingImages
+                .AsNoTracking()
+                .Where(x => x.ListingTypeId == listingTypeId && x.ListingId == listingId && x.Kind != ListingImageKind.Photo)
+                .OrderBy(x => x.SortOrder)
+                .ToListAsync();
+        }
+
+        /// <inheritdoc />
         public async Task<ListingImage?> GetByIdAsync(int listingImageId)
         {
             return await _context.ListingImages
                 .FirstOrDefaultAsync(x => x.ListingImageId == listingImageId);
+        }
+
+        /// <inheritdoc />
+        public async Task UpdateKindAsync(int listingImageId, ListingImageKind kind, string? caption)
+        {
+            var image = await _context.ListingImages.FirstOrDefaultAsync(x => x.ListingImageId == listingImageId);
+            if (image == null)
+            {
+                return;
+            }
+
+            image.Kind = kind;
+            image.Caption = string.IsNullOrWhiteSpace(caption) ? null : caption.Trim();
+            await _context.SaveChangesAsync();
         }
 
         /// <inheritdoc />
@@ -104,7 +129,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories
             foreach (var img in orderedList)
             {
                 img.SortOrder = currentSortOrder++;
-                img.IsCover = (img.ListingImageId == coverImageId);
+                img.IsCover = img.ListingImageId == coverImageId && img.Kind == ListingImageKind.Photo;
             }
 
             await _context.SaveChangesAsync();
@@ -131,12 +156,9 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories
                 img.SortOrder = order++;
             }
 
-            // Kapak: IsCover olanlardan sıralamada ilk geleni koru, hiç yoksa ilk görsel kapak
-            var firstCover = images.FirstOrDefault(x => x.IsCover);
-            if (firstCover == null)
-            {
-                firstCover = images[0];
-            }
+            // Kapak yalnızca Fotoğraf türünden seçilir
+            var photos = images.Where(x => x.Kind == ListingImageKind.Photo).ToList();
+            var firstCover = photos.FirstOrDefault(x => x.IsCover) ?? photos.FirstOrDefault();
 
             foreach (var img in images)
             {
@@ -154,10 +176,10 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories
                 throw new ArgumentOutOfRangeException(nameof(listingTypeId), listingTypeId, "Bilinmeyen ilan türü kimliği.");
             }
 
-            // Kapak önce, ardından SortOrder sırasıyla oku
+            // Kapak önce, ardından SortOrder sırasıyla oku (yalnızca Fotoğraf türündekiler)
             var images = await _context.ListingImages
                 .AsNoTracking()
-                .Where(x => x.ListingTypeId == listingTypeId && x.ListingId == listingId)
+                .Where(x => x.ListingTypeId == listingTypeId && x.ListingId == listingId && x.Kind == ListingImageKind.Photo)
                 .OrderByDescending(x => x.IsCover)
                 .ThenBy(x => x.SortOrder)
                 .Take(ListingImageConstants.MaxImagesPerListing)

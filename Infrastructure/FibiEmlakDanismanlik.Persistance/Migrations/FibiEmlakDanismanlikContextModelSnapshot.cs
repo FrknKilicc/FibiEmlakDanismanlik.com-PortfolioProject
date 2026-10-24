@@ -2105,6 +2105,10 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
+                    b.Property<string>("Caption")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
@@ -2113,6 +2117,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.Property<bool>("IsCover")
                         .HasColumnType("bit");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
 
                     b.Property<int>("ListingId")
                         .HasColumnType("int");

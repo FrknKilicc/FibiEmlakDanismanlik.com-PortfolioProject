@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FibiEmlakDanismanlik.Domain.Enums;
 
 namespace FibiEmlakDanismanlik.Application.Constants
 {
@@ -11,6 +12,20 @@ namespace FibiEmlakDanismanlik.Application.Constants
         /// Bir ilana eklenebilecek maksimum görsel sayısı (eski PropImgUrl1..30 kolon sayısı ile uyumlu).
         /// </summary>
         public const int MaxImagesPerListing = 30;
+
+        /// <summary>
+        /// Görsel veya plan başlığı için izin verilen maksimum karakter uzunluğu.
+        /// </summary>
+        public const int MaxCaptionLength = 100;
+
+        /// <summary>Görsel türünün Türkçe adı.</summary>
+        public static string KindLabel(ListingImageKind kind) => kind switch
+        {
+            ListingImageKind.FloorPlan => "Kat Planı",
+            ListingImageKind.Sketch => "Kroki",
+            ListingImageKind.ZoningPlan => "İmar Planı",
+            _ => "Fotoğraf"
+        };
 
         /// <summary>
         /// Tek bir görsel için izin verilen maksimum yükleme boyutu (bayt cinsinden, 15 MB).

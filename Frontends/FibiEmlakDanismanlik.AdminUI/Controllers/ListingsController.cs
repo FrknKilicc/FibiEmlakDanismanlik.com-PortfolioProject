@@ -443,6 +443,21 @@ public sealed class ListingsController : Controller
     }
 
     /// <summary>
+    /// Fotoğrafın türünü ve başlığını günceller.
+    /// </summary>
+    [HttpPut("/ilanlar/fotograf/{imageId:int}/tur")]
+    public async Task<IActionResult> UpdatePhotoKind(int imageId, [FromBody] UpdatePhotoKindInputModel body)
+    {
+        var result = await _apiClient.PutAsync<object>($"ListingImages/{imageId}/kind", new { kind = body?.Kind ?? 0, caption = body?.Caption ?? string.Empty });
+        if (result.Success)
+        {
+            return Ok(new { ok = true, message = "Görsel türü güncellendi.", data = (object?)null });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Görsel türü güncellenemedi.", data = (object?)null });
+    }
+
+    /// <summary>
     /// Fotoğraf sıralamasını ve kapak fotoğrafını günceller.
     /// </summary>
     [HttpPut("/ilanlar/{t:int}/{id:int}/fotograf-sirasi")]

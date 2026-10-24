@@ -172,6 +172,8 @@ public sealed class ListingImageDto
     public int Height { get; set; }
     public bool IsCover { get; set; }
     public int SortOrder { get; set; }
+    public int Kind { get; set; }
+    public string? Caption { get; set; }
 }
 
 /// <summary>
@@ -247,4 +249,13 @@ public sealed class CreateListingAccessGrantRequest
 {
     public int AgentId { get; set; }
     public string Access { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// AdminUI fotoğraf türü ve başlığı güncelleme girdi modeli.
+/// </summary>
+public sealed class UpdatePhotoKindInputModel
+{
+    public int Kind { get; set; }
+    public string? Caption { get; set; }
 }

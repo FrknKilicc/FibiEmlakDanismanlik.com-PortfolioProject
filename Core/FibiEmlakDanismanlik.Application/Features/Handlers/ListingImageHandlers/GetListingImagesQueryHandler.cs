@@ -44,7 +44,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
                     Height = x.Height,
                     AltText = x.AltText,
                     IsCover = x.IsCover,
-                    SortOrder = x.SortOrder
+                    SortOrder = x.SortOrder,
+                    Kind = (int)x.Kind,
+                    Caption = x.Caption
                 })
                 .ToList();
         }

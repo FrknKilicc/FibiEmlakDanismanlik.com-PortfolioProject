@@ -154,7 +154,7 @@
                     {
                         <div class="floorplan-inner content-widget">
                             <div class="title-box">
-                                <h4>Plan</h4>
+                                <h4>Planlar ve Krokiler</h4>
                             </div>
 
                             <ul class="accordion-box">
@@ -170,7 +170,7 @@
                                         <div class="acc-content @(isFirst ? "current" : "")">
                                             <div class="content-box">
                                                 <figure class="image-box">
-                                                    <img src="@item.Url" alt="@Model.PropertyName">
+                                                    <a class="lightbox-image" href="@item.Url" data-fancybox="plan-gallery" data-caption="@item.Title"><img src="@item.Url" alt="@Model.PropertyName - @item.Title" loading="lazy" style="width:100%;height:auto;"></a>
                                                 </figure>
                                             </div>
                                         </div>
