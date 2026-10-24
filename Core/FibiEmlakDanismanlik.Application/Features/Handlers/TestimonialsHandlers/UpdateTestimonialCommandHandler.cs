@@ -34,22 +34,23 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.TestimonialsHandler
                 throw new ArgumentException("Ad ve yorum metni zorunludur.");
             }
 
-            var title = request.Title?.Trim();
-            if (string.IsNullOrWhiteSpace(title))
-            {
-                title = null;
-            }
+            var title = string.IsNullOrWhiteSpace(request.Title) ? null : request.Title.Trim();
 
-            var logoUrl = request.LogoUrl?.Trim();
-            if (string.IsNullOrWhiteSpace(logoUrl))
+            // Komuttaki değer boşsa entity'deki değeri değiştirme; entity'deki de boşsa "icon-18" yap
+            if (!string.IsNullOrWhiteSpace(request.LogoUrl))
             {
-                logoUrl = "icon-18";
+                entity.LogoUrl = request.LogoUrl.Trim();
+            }
+            else if (string.IsNullOrWhiteSpace(entity.LogoUrl))
+            {
+                entity.LogoUrl = "icon-18";
             }
 
             entity.Name = name;
             entity.Testimonail = testimonial;
             entity.Title = title;
-            entity.LogoUrl = logoUrl;
+            entity.IsActive = request.IsActive;
+            entity.DisplayOrder = request.DisplayOrder;
 
             await _repository.UpdateAsync(entity);
         }

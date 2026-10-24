@@ -7,5 +7,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Results.TestimonialsResults
         public string? Name { get; set; }
         public string? LogoUrl { get; set; }
         public string? Testimonail { get; set; }
+        public bool IsActive { get; set; }
+        public int DisplayOrder { get; set; }
     }
 }

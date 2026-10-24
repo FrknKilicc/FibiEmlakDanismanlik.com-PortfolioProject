@@ -29,6 +29,14 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok(value);   
         }
 
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
+        [HttpGet("admin")]
+        public async Task<IActionResult> GetOurPartnersListAdmin()
+        {
+            var value = await mediator.Send(new GetOurPartnersQuery(includeInactive: true));
+            return Ok(value);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOurPartnerById(int id)
         {

@@ -2,10 +2,8 @@
 using FibiEmlakDanismanlik.Application.Interfaces.CityGalleryInterfaces;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Persistence.Repositories.CityGalleryRepositories
@@ -39,11 +37,18 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.CityGalleryRepositories
                .FirstOrDefaultAsync();
         }
 
-        public async Task<List<GetCityGalleryListResult>> GetCityGalleryListAsync()
+        public async Task<List<GetCityGalleryListResult>> GetCityGalleryListAsync(bool includeInactive = false)
         {
-            return await _context.CityGalleryImages
+            var query = _context.CityGalleryImages
                 .Include(x => x.City)
-                .Where(x => x.IsActive)
+                .AsQueryable();
+
+            if (!includeInactive)
+            {
+                query = query.Where(x => x.IsActive);
+            }
+
+            return await query
                 .OrderBy(x => x.CityId)
                 .ThenBy(x => x.DisplayOrder)
                 .Select(x => new GetCityGalleryListResult
@@ -60,6 +65,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.CityGalleryRepositories
                 })
                 .ToListAsync();
         }
+
         private static string GenerateSlug(string? text)
         {
             if (string.IsNullOrWhiteSpace(text))

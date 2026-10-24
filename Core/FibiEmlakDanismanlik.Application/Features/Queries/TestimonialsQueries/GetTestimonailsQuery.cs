@@ -8,7 +8,17 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Queries.TestimonialsQueries
 {
-    public class GetTestimonailsQuery:IRequest<List<GetTestimonialsResult> >
+    public class GetTestimonailsQuery : IRequest<List<GetTestimonialsResult>>
     {
+        public bool IncludeInactive { get; set; }
+
+        public GetTestimonailsQuery()
+        {
+        }
+
+        public GetTestimonailsQuery(bool includeInactive)
+        {
+            IncludeInactive = includeInactive;
+        }
     }
 }

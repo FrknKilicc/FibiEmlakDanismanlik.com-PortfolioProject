@@ -29,7 +29,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.OurPartnersHandlers
             {
                 Id = entity.Id,
                 PartnerName = entity.PartnerName,
-                PartnerLogoUrl = entity.PartnerLogoUrl
+                PartnerLogoUrl = entity.PartnerLogoUrl,
+                IsActive = entity.IsActive,
+                DisplayOrder = entity.DisplayOrder
             };
         }
     }

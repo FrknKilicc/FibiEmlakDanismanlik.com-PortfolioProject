@@ -22,7 +22,12 @@ namespace FibiEmlakDanismanlik.Application.Constants
             "banner",
             "about",
             "author",
-            "agent"
+            "agent",
+            "home",
+            "testimonial",
+            "partner",
+            "city",
+            "bank"
         };
 
         /// <summary>
