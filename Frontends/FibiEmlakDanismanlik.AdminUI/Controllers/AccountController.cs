@@ -43,6 +43,11 @@ public sealed class AccountController : Controller
             return RedirectToLocal(returnUrl);
         }
 
+        if (TempData["SuccessMessage"] is string successMessage)
+        {
+            ViewData["SuccessMessage"] = successMessage;
+        }
+
         if (TempData["ErrorMessage"] is string errorMessage)
         {
             ModelState.AddModelError(string.Empty, errorMessage);

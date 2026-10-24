@@ -1,0 +1,479 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.Account.ProfilePageViewModel
+@using FibiEmlakDanismanlik.AdminUI.Models.Account
+@using FibiEmlakDanismanlik.AdminUI.Models.Users
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.SiteImageUrl SiteImageUrl
+
+@{
+    ViewData["Title"] = "Hesabım";
+
+    var profile = Model.Profile;
+    var roleName = UserLabels.RoleName(profile?.Role);
+    var roleBadge = UserLabels.RoleBadge(profile?.Role);
+
+    var isProfil = Model.Sekme == "profil";
+    var isGuvenlik = Model.Sekme == "guvenlik";
+    var isGirisGecmisi = Model.Sekme == "giris-gecmisi";
+
+    // Baş harf avatarı
+    var initial = "";
+    if (!string.IsNullOrWhiteSpace(profile?.AgentName))
+    {
+        initial = profile.AgentName.Trim()[..1].ToUpperInvariant();
+    }
+
+    var profileImgPreview = SiteImageUrl.Preview(profile?.AgentImgUrl);
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1>Hesabım</h1>
+        <nav>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item active">Hesabım</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Success"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Error"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (profile != null)
+{
+    <!-- Profil Özet Kartı -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body pt-3 pb-3">
+            <div class="d-flex align-items-center flex-wrap gap-3">
+                @if (!string.IsNullOrEmpty(profileImgPreview))
+                {
+                    <img src="@profileImgPreview" alt="@profile.AgentName" class="rounded-circle border" style="width: 64px; height: 64px; object-fit: cover;" />
+                }
+                else
+                {
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold fs-4" style="width: 64px; height: 64px; min-width: 64px;">
+                        @initial
+                    </div>
+                }
+                <div>
+                    <h5 class="mb-1 fw-bold">
+                        @profile.AgentName
+                        <span class="badge bg-@roleBadge ms-2 fs-7">@roleName</span>
+                    </h5>
+                    <div class="text-muted small">
+                        <i class="bi bi-envelope me-1"></i>@profile.Mail
+                    </div>
+                    <div class="text-muted small mt-1">
+                        <span class="me-3"><i class="bi bi-box-arrow-in-right me-1"></i>Son giriş: @UserLabels.ToTurkeyTime(profile.LastLoginAtUtc)</span>
+                        <span><i class="bi bi-key me-1"></i>Şifre değişimi: @UserLabels.ToTurkeyTime(profile.PasswordChangedAtUtc)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sekmeler -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link @(isProfil ? "active" : "")" href="/hesabim?sekme=profil">
+                <i class="bi bi-person me-1"></i>Profil
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(isGuvenlik ? "active" : "")" href="/hesabim?sekme=guvenlik">
+                <i class="bi bi-shield-lock me-1"></i>Güvenlik
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(isGirisGecmisi ? "active" : "")" href="/hesabim?sekme=giris-gecmisi">
+                <i class="bi bi-clock-history me-1"></i>Giriş Geçmişi
+            </a>
+        </li>
+    </ul>
+}
+
+@* ============ PROFİL SEKMESİ ============ *@
+@if (isProfil && profile != null)
+{
+    var errName = Model.GetFieldError("profil", "AgentName");
+    var errPhone = Model.GetFieldError("profil", "AgentPhoneNumber");
+    var errTitle = Model.GetFieldError("profil", "AgentTitle");
+    var errDesc = Model.GetFieldError("profil", "AgentDescription");
+    var errImg = Model.GetFieldError("profil", "AgentImgUrl");
+
+    <form method="post" action="/hesabim/profil">
+        @Html.AntiForgeryToken()
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body pt-3">
+                <h5 class="card-title p-0 pb-2 border-bottom mb-3">
+                    <i class="bi bi-person-lines-fill me-2 text-primary"></i>Profil Bilgileri
+                </h5>
+
+                <div class="row g-3">
+                    <div class="col-md-6 col-12">
+                        <label for="AgentName" class="form-label small fw-semibold">Ad Soyad <span class="text-danger">*</span></label>
+                        <input type="text"
+                               class="form-control @(errName != null ? "is-invalid" : "")"
+                               id="AgentName"
+                               name="AgentName"
+                               value="@Model.ProfileForm.AgentName"
+                               required />
+                        @if (errName != null)
+                        {
+                            <div class="invalid-feedback d-block">@errName</div>
+                        }
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label for="AgentPhoneNumber" class="form-label small fw-semibold">Telefon <span class="text-danger">*</span></label>
+                        <input type="text"
+                               class="form-control @(errPhone != null ? "is-invalid" : "")"
+                               id="AgentPhoneNumber"
+                               name="AgentPhoneNumber"
+                               value="@Model.ProfileForm.AgentPhoneNumber"
+                               required />
+                        @if (errPhone != null)
+                        {
+                            <div class="invalid-feedback d-block">@errPhone</div>
+                        }
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label for="AgentTitle" class="form-label small fw-semibold">Unvan</label>
+                        <input type="text"
+                               class="form-control @(errTitle != null ? "is-invalid" : "")"
+                               id="AgentTitle"
+                               name="AgentTitle"
+                               value="@Model.ProfileForm.AgentTitle"
+                               placeholder="Örn: Kıdemli Gayrimenkul Danışmanı" />
+                        @if (errTitle != null)
+                        {
+                            <div class="invalid-feedback d-block">@errTitle</div>
+                        }
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label for="Mail" class="form-label small fw-semibold">E-posta</label>
+                        <input type="email" class="form-control" id="Mail" value="@profile.Mail" disabled readonly />
+                    </div>
+
+                    <div class="col-12">
+                        <label for="AgentDescription" class="form-label small fw-semibold">Hakkında</label>
+                        <textarea class="form-control @(errDesc != null ? "is-invalid" : "")"
+                                  id="AgentDescription"
+                                  name="AgentDescription"
+                                  rows="4"
+                                  placeholder="Uzmanlık alanları, deneyim veya biyografi...">@Model.ProfileForm.AgentDescription</textarea>
+                        @if (errDesc != null)
+                        {
+                            <div class="invalid-feedback d-block">@errDesc</div>
+                        }
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label for="Role" class="form-label small fw-semibold">Rol</label>
+                        <input type="text" class="form-control" id="Role" value="@roleName" disabled readonly />
+                    </div>
+
+                    <div class="col-md-6 col-12">
+                        <label for="AgentImgUrl" class="form-label small fw-semibold">Profil Fotoğrafı URL</label>
+                        <input type="text"
+                               class="form-control @(errImg != null ? "is-invalid" : "")"
+                               id="AgentImgUrl"
+                               name="AgentImgUrl"
+                               value="@Model.ProfileForm.AgentImgUrl"
+                               placeholder="https://... veya /uploads/..." />
+                        @if (errImg != null)
+                        {
+                            <div class="invalid-feedback d-block">@errImg</div>
+                        }
+                        <div class="mt-2" data-image-upload data-target="AgentImgUrl" data-folder="agent" data-preview="agentImgPreview"></div>
+                    </div>
+
+                    <div class="col-12">
+                        @{
+                            var formImgPreview = SiteImageUrl.Preview(Model.ProfileForm.AgentImgUrl);
+                        }
+                        <img id="agentImgPreview"
+                             src="@(formImgPreview ?? "")"
+                             alt="Profil Fotoğrafı"
+                             class="rounded border @(string.IsNullOrEmpty(formImgPreview) ? "d-none" : "")"
+                             style="width: 96px; height: 96px; object-fit: cover;" />
+                    </div>
+                </div>
+
+                <div class="mt-3 text-muted small">
+                    <i class="bi bi-info-circle me-1"></i>E-posta ve rol değişikliği için Sahip veya Yönetici ile iletişime geçin.
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-lg me-1"></i> Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+
+@* ============ GÜVENLİK SEKMESİ ============ *@
+@if (isGuvenlik && profile != null)
+{
+    var errCurrentPw = Model.GetFieldError("sifre", "CurrentPassword");
+    var errNewPw = Model.GetFieldError("sifre", "NewPassword");
+    var errConfirmPw = Model.GetFieldError("sifre", "ConfirmPassword");
+    var errRecoveryPw = Model.GetFieldError("kurtarma", "CurrentPassword");
+
+    <!-- (a) Şifre Değiştir Kartı -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body pt-3">
+            <h5 class="card-title p-0 pb-2 border-bottom mb-3">
+                <i class="bi bi-key me-2 text-primary"></i>Şifre Değiştir
+            </h5>
+
+            <form method="post" action="/hesabim/sifre">
+                @Html.AntiForgeryToken()
+
+                <div class="row g-3">
+                    <div class="col-md-4 col-12">
+                        <label for="CurrentPassword" class="form-label small fw-semibold">Mevcut Şifre</label>
+                        <input type="password"
+                               class="form-control @(errCurrentPw != null ? "is-invalid" : "")"
+                               id="CurrentPassword"
+                               name="CurrentPassword"
+                               autocomplete="current-password"
+                               required />
+                        @if (errCurrentPw != null)
+                        {
+                            <div class="invalid-feedback d-block">@errCurrentPw</div>
+                        }
+                    </div>
+
+                    <div class="col-md-4 col-12">
+                        <label for="NewPassword" class="form-label small fw-semibold">Yeni Şifre</label>
+                        <input type="password"
+                               class="form-control @(errNewPw != null ? "is-invalid" : "")"
+                               id="NewPassword"
+                               name="NewPassword"
+                               autocomplete="new-password"
+                               minlength="12"
+                               required />
+                        @if (errNewPw != null)
+                        {
+                            <div class="invalid-feedback d-block">@errNewPw</div>
+                        }
+                    </div>
+
+                    <div class="col-md-4 col-12">
+                        <label for="ConfirmPassword" class="form-label small fw-semibold">Yeni Şifre (Tekrar)</label>
+                        <input type="password"
+                               class="form-control @(errConfirmPw != null ? "is-invalid" : "")"
+                               id="ConfirmPassword"
+                               name="ConfirmPassword"
+                               autocomplete="new-password"
+                               minlength="12"
+                               required />
+                        @if (errConfirmPw != null)
+                        {
+                            <div class="invalid-feedback d-block">@errConfirmPw</div>
+                        }
+                    </div>
+                </div>
+
+                <div class="mt-3 text-muted small">
+                    <i class="bi bi-info-circle me-1"></i>En az 12 karakter, büyük harf, küçük harf ve rakam içermeli.
+                </div>
+                <div class="mt-1 text-muted small">
+                    <i class="bi bi-exclamation-triangle me-1"></i>Şifre değişince tüm cihazlarda oturumunuz kapanır.
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-lg me-1"></i> Şifreyi Değiştir
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- (b) İki Adımlı Doğrulama Kartı -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body pt-3">
+            <h5 class="card-title p-0 pb-2 border-bottom mb-3">
+                <i class="bi bi-shield-check me-2 text-primary"></i>İki Adımlı Doğrulama (2FA)
+            </h5>
+
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <span>Durum:</span>
+                @if (profile.TwoFactorEnabled)
+                {
+                    <span class="badge bg-success">Açık</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">Kapalı</span>
+                }
+            </div>
+
+            @if (profile.TwoFactorEnabled)
+            {
+                <div class="mb-3">
+                    <span class="text-muted small">Kalan kurtarma kodu: <strong>@profile.UnusedRecoveryCodeCount</strong></span>
+                </div>
+
+                @if (profile.UnusedRecoveryCodeCount <= 3)
+                {
+                    <div class="alert alert-warning d-flex align-items-center py-2 mb-3" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <div class="small">Kurtarma kodlarınız azaldı. Yeni kodlar üretmenizi öneririz.</div>
+                    </div>
+                }
+
+                <form method="post" action="/hesabim/kurtarma-kodlari" data-confirm="Eski kurtarma kodlarınız geçersiz olacak. Devam edilsin mi?">
+                    @Html.AntiForgeryToken()
+
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-4 col-12">
+                            <label for="RecoveryCurrentPassword" class="form-label small fw-semibold">Mevcut Şifre</label>
+                            <input type="password"
+                                   class="form-control @(errRecoveryPw != null ? "is-invalid" : "")"
+                                   id="RecoveryCurrentPassword"
+                                   name="CurrentPassword"
+                                   autocomplete="current-password"
+                                   required />
+                            @if (errRecoveryPw != null)
+                            {
+                                <div class="invalid-feedback d-block">@errRecoveryPw</div>
+                            }
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="bi bi-arrow-repeat me-1"></i> Yeni Kurtarma Kodları Üret
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <div class="text-muted small">
+                    <i class="bi bi-info-circle me-1"></i>İki adımlı doğrulama henüz etkinleştirilmemiş. İlk girişinizde kurulum yapmanız istenecektir.
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- (c) Oturumlar Kartı -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body pt-3">
+            <h5 class="card-title p-0 pb-2 border-bottom mb-3">
+                <i class="bi bi-box-arrow-right me-2 text-primary"></i>Oturumlar
+            </h5>
+
+            <p class="text-muted small mb-3">
+                Bu işlem, bu cihaz dahil tüm cihazlardaki aktif oturumlarınızı kapatır.
+            </p>
+
+            <form method="post" action="/hesabim/tum-oturumlar" data-confirm="Bu cihaz dahil tüm oturumlarınız kapatılacak. Devam edilsin mi?">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="bi bi-power me-1"></i> Tüm Cihazlardan Çıkış Yap
+                </button>
+            </form>
+        </div>
+    </div>
+}
+
+@* ============ GİRİŞ GEÇMİŞİ SEKMESİ ============ *@
+@if (isGirisGecmisi)
+{
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body pt-3">
+            <h5 class="card-title p-0 pb-2 border-bottom mb-3">
+                <i class="bi bi-clock-history me-2 text-primary"></i>Giriş Geçmişi
+            </h5>
+
+            @if (Model.Logins.Count == 0)
+            {
+                <div class="text-center py-4">
+                    <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
+                    <p class="text-muted mb-0">Kayıt yok.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-muted small text-uppercase">
+                            <tr>
+                                <th scope="col">Tarih</th>
+                                <th scope="col">Sonuç</th>
+                                <th scope="col">Açıklama</th>
+                                <th scope="col">IP</th>
+                                <th scope="col">Tarayıcı</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var login in Model.Logins)
+                            {
+                                <tr>
+                                    <td>
+                                        <small class="text-muted text-nowrap">@UserLabels.ToTurkeyTime(login.CreatedAtUtc)</small>
+                                    </td>
+                                    <td>
+                                        @if (login.Succeeded)
+                                        {
+                                            <span class="badge bg-success">Başarılı</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Başarısız</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="small">@LoginLabels.FailureText(login.FailureReason)</span>
+                                    </td>
+                                    <td>
+                                        <code class="small">@(login.IpAddress ?? "—")</code>
+                                    </td>
+                                    <td>
+                                        <span class="small text-muted">@LoginLabels.ShortUserAgent(login.UserAgent)</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/image-upload.js" asp-append-version="true"></script>
+}
