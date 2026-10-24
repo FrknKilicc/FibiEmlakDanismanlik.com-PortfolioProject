@@ -22,6 +22,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.CustomerContactComm
         //Relational
         public int? PropertyListingId { get; set; }
        
+        public bool KvkkApproved { get; set; }
+       
         //Relational
     }
 }

@@ -47,7 +47,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.CustomerContactHand
                 AppointmentDateTime = request.AppointmentDateTime,
                 PropertyListingTypeEnum = request.PropertyListingTypeEnum,
                 LeadStatus = LeadStatus.New,
-                AssignedAgentId = assignedAgentId
+                AssignedAgentId = assignedAgentId,
+                KvkkApprovedAt = DateTime.UtcNow
             });
         }
     }

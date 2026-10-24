@@ -622,6 +622,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("KvkkApprovedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("LeadStatus")
                         .HasColumnType("int")
                         .HasDefaultValue(1);

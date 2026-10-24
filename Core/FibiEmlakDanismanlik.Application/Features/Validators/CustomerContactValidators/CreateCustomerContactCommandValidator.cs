@@ -33,6 +33,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Validators.CustomerContactVa
                     .GreaterThanOrEqualTo(DateTime.Now.AddMinutes(-1))
                     .WithMessage("Randevu tarihi geçmişte olamaz.");
             });
+
+            RuleFor(x => x.KvkkApproved)
+                .Equal(true)
+                .WithMessage("KVKK aydınlatma metnini onaylamanız gerekir.");
         }
     }
 }
