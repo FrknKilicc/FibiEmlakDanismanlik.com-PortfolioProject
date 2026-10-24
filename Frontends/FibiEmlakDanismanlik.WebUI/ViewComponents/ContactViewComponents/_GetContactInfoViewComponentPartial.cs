@@ -23,11 +23,11 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ContactViewComponents
             {
                 var jsonData= await responseMessage.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<List<ResultContactDto>>(jsonData);
-                return View(result);
+                return View(result ?? new List<ResultContactDto>());
             }
             else
             {
-                return View(null);
+                return View(new List<ResultContactDto>());
             }
         }
     }

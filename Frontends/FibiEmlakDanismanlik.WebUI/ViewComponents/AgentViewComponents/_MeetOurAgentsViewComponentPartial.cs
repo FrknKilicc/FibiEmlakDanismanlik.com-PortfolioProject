@@ -23,11 +23,11 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.AgentViewComponents
             {
                 var jsonData= await responseMessage.Content.ReadAsStringAsync();
                 var value = JsonConvert.DeserializeObject<List<ResultAgentDto>>(jsonData);
-                return View(value);
+                return View(value ?? new List<ResultAgentDto>());
             }
             else
             {
-                return View(null);
+                return View(new List<ResultAgentDto>());
             }
         }
     }
