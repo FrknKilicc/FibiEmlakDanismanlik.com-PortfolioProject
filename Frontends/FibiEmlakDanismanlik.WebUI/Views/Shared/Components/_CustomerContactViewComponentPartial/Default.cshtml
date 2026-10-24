@@ -25,6 +25,12 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 form-group">
                                     <textarea name="CustomerContactMessage" placeholder="Mesajınızı Buraya Yazın"></textarea>
                                 </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 form-group">
+                                    <label style="display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.5;cursor:pointer;">
+                                        <input type="checkbox" name="KvkkApproved" value="true" required style="margin-top:4px;width:auto;height:auto;">
+                                        <span><a href="/gizlilik-politikasi" target="_blank">Gizlilik Politikası ve KVKK Aydınlatma Metni</a>'ni okudum, iletişim bilgilerimin bu talep için işlenmesini onaylıyorum.</span>
+                                    </label>
+                                </div>
                                 <partial name="_FormSpamFields" />
                                 <div class="col-lg-12 col-md-12 col-sm-12 form-group message-btn">
                                     <button class="theme-btn btn-one" type="submit" name="submit-form">Gönder</button>

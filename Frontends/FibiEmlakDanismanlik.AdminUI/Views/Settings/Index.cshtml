@@ -1,0 +1,153 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.Settings.SettingsViewModel
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Ayarlar";
+    var invCulture = CultureInfo.InvariantCulture;
+
+    string? lastUpdatedText = null;
+    if (Model.UpdatedAtUtc.HasValue)
+    {
+        TimeZoneInfo tz;
+        try
+        {
+            tz = TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul");
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            try
+            {
+                tz = TimeZoneInfo.FindSystemTimeZoneById("Turkey Standard Time");
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                tz = TimeZoneInfo.CreateCustomTimeZone("TRT", TimeSpan.FromHours(3), "TRT", "TRT");
+            }
+        }
+        var localTime = TimeZoneInfo.ConvertTimeFromUtc(Model.UpdatedAtUtc.Value, tz);
+        lastUpdatedText = localTime.ToString("dd.MM.yyyy HH:mm");
+    }
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1>Ayarlar</h1>
+        <nav>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item active">Ayarlar</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Success"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<form method="post" action="/ayarlar">
+    @Html.AntiForgeryToken()
+
+    <!-- 1. Komisyon Varsayılanları Kartı -->
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body pt-3">
+            <h5 class="card-title p-0 pb-2 border-bottom mb-2">
+                <i class="bi bi-percent me-2 text-primary"></i>Komisyon Varsayılanları
+            </h5>
+            <p class="text-muted small mb-3">
+                Yeni işlem formunda önerilen değerlerdir; her işlemde değiştirilebilir. Mevcut işlemleri etkilemez.
+            </p>
+            <div class="row g-3">
+                <div class="col-md-4 col-12">
+                    <label for="saleBuyerCommissionRate" class="form-label fw-semibold">Satış Alıcı Oranı (%)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.01" min="0" max="100" class="form-control @(Model.GetFieldError("SaleBuyerCommissionRate") != null ? "is-invalid" : "")" id="saleBuyerCommissionRate" name="SaleBuyerCommissionRate" value="@Model.Form.SaleBuyerCommissionRate.ToString(invCulture)" required />
+                        <span class="input-group-text">%</span>
+                    </div>
+                    @if (Model.GetFieldError("SaleBuyerCommissionRate") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("SaleBuyerCommissionRate")</div>
+                    }
+                </div>
+
+                <div class="col-md-4 col-12">
+                    <label for="saleSellerCommissionRate" class="form-label fw-semibold">Satış Satıcı Oranı (%)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.01" min="0" max="100" class="form-control @(Model.GetFieldError("SaleSellerCommissionRate") != null ? "is-invalid" : "")" id="saleSellerCommissionRate" name="SaleSellerCommissionRate" value="@Model.Form.SaleSellerCommissionRate.ToString(invCulture)" required />
+                        <span class="input-group-text">%</span>
+                    </div>
+                    @if (Model.GetFieldError("SaleSellerCommissionRate") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("SaleSellerCommissionRate")</div>
+                    }
+                </div>
+
+                <div class="col-md-4 col-12">
+                    <label for="rentCommissionMonths" class="form-label fw-semibold">Kiralama Komisyonu (Kira Sayısı)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.01" min="0" max="12" class="form-control @(Model.GetFieldError("RentCommissionMonths") != null ? "is-invalid" : "")" id="rentCommissionMonths" name="RentCommissionMonths" value="@Model.Form.RentCommissionMonths.ToString(invCulture)" required />
+                        <span class="input-group-text">ay</span>
+                    </div>
+                    @if (Model.GetFieldError("RentCommissionMonths") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("RentCommissionMonths")</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Site Kuralları Kartı -->
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body pt-3">
+            <h5 class="card-title p-0 pb-2 border-bottom mb-3">
+                <i class="bi bi-sliders me-2 text-primary"></i>Site Kuralları
+            </h5>
+            <div class="row g-3">
+                <div class="col-md-6 col-12">
+                    <label for="bestDealMaxPerUsageType" class="form-label fw-semibold">Vitrin Sınırı (Satılık ve Kiralık İçin Ayrı Ayrı)</label>
+                    <input type="number" step="1" min="1" max="20" class="form-control @(Model.GetFieldError("BestDealMaxPerUsageType") != null ? "is-invalid" : "")" id="bestDealMaxPerUsageType" name="BestDealMaxPerUsageType" value="@Model.Form.BestDealMaxPerUsageType.ToString(invCulture)" required />
+                    <div class="form-text">Sınırı düşürürseniz ana sayfada yalnızca en yeni işaretlenen ilanlar görünür.</div>
+                    @if (Model.GetFieldError("BestDealMaxPerUsageType") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("BestDealMaxPerUsageType")</div>
+                    }
+                </div>
+
+                <div class="col-md-6 col-12">
+                    <label for="listingAlertMaxActivePerPhone" class="form-label fw-semibold">Haber Bekleyen Telefon Başına Aktif Kayıt Sınırı</label>
+                    <input type="number" step="1" min="1" max="50" class="form-control @(Model.GetFieldError("ListingAlertMaxActivePerPhone") != null ? "is-invalid" : "")" id="listingAlertMaxActivePerPhone" name="ListingAlertMaxActivePerPhone" value="@Model.Form.ListingAlertMaxActivePerPhone.ToString(invCulture)" required />
+                    @if (Model.GetFieldError("ListingAlertMaxActivePerPhone") != null)
+                    {
+                        <div class="invalid-feedback d-block">@Model.GetFieldError("ListingAlertMaxActivePerPhone")</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- İşlem Butonları -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <button type="submit" class="btn btn-primary px-4">
+            <i class="bi bi-save me-1"></i> Kaydet
+        </button>
+        @if (!string.IsNullOrEmpty(lastUpdatedText))
+        {
+            <span class="text-muted small">Son güncelleme: @lastUpdatedText</span>
+        }
+    </div>
+</form>

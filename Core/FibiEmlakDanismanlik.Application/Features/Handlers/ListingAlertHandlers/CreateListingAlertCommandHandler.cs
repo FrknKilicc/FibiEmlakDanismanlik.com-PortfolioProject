@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Commands.ListingAlertCommands;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.BusinessSettingInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingAlertInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
@@ -18,13 +19,16 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingAlertHandler
     {
         private readonly IListingAlertRepository _listingAlertRepository;
         private readonly IAdminListingRepository _adminListingRepository;
+        private readonly IBusinessSettingRepository _businessSettingRepository;
 
         public CreateListingAlertCommandHandler(
             IListingAlertRepository listingAlertRepository,
-            IAdminListingRepository adminListingRepository)
+            IAdminListingRepository adminListingRepository,
+            IBusinessSettingRepository businessSettingRepository)
         {
             _listingAlertRepository = listingAlertRepository;
             _adminListingRepository = adminListingRepository;
+            _businessSettingRepository = businessSettingRepository;
         }
 
         public async Task Handle(CreateListingAlertCommand request, CancellationToken cancellationToken)
@@ -46,7 +50,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingAlertHandler
 
             var trimmedPhone = request.PhoneNumber?.Trim() ?? string.Empty;
             var activeCount = await _listingAlertRepository.CountActiveByPhoneAsync(trimmedPhone);
-            if (activeCount >= ListingAlertConstants.MaxActivePerPhone)
+            var settings = await _businessSettingRepository.GetAsync();
+            if (activeCount >= settings.ListingAlertMaxActivePerPhone)
             {
                 // Aynı telefonla aktif kayıt sınırı aşıldığında sessizce dönülür (spam'e bilgi verilmez)
                 return;

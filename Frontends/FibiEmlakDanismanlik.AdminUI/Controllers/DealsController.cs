@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using FibiEmlakDanismanlik.AdminUI.Infrastructure;
 using FibiEmlakDanismanlik.AdminUI.Models.Deals;
 using FibiEmlakDanismanlik.AdminUI.Models.Listings;
+using FibiEmlakDanismanlik.AdminUI.Models.Settings;
 
 namespace FibiEmlakDanismanlik.AdminUI.Controllers;
 
@@ -169,6 +170,28 @@ public sealed class DealsController : Controller
         var isRent = listingTypeId is 7 or 8 or 9;
         var listingPrice = isRent ? listing.Rent : listing.Price;
 
+        string? buyerCommissionRate = null;
+        string? sellerCommissionRate = null;
+        string? buyerCommissionAmount = null;
+
+        var settingsResult = await _apiClient.GetAsync<BusinessSettingsDto>("AdminSettings");
+        if (settingsResult.Success && settingsResult.Data != null)
+        {
+            var settings = settingsResult.Data;
+            if (isRent)
+            {
+                if (listingPrice.HasValue)
+                {
+                    buyerCommissionAmount = Math.Round(listingPrice.Value * settings.RentCommissionMonths, 2).ToString(CultureInfo.InvariantCulture);
+                }
+            }
+            else
+            {
+                buyerCommissionRate = settings.SaleBuyerCommissionRate.ToString(CultureInfo.InvariantCulture);
+                sellerCommissionRate = settings.SaleSellerCommissionRate.ToString(CultureInfo.InvariantCulture);
+            }
+        }
+
         var vm = new DealCreateViewModel
         {
             ListingTitle = listing.PropertyName,
@@ -180,7 +203,10 @@ public sealed class DealsController : Controller
                 ListingTypeId = listingTypeId,
                 ListingId = listingId,
                 AgreedPrice = listingPrice?.ToString(CultureInfo.InvariantCulture),
-                DepositDate = DateTime.Today.ToString("yyyy-MM-dd")
+                DepositDate = DateTime.Today.ToString("yyyy-MM-dd"),
+                BuyerCommissionRate = buyerCommissionRate,
+                SellerCommissionRate = sellerCommissionRate,
+                BuyerCommissionAmount = buyerCommissionAmount
             }
         };
 

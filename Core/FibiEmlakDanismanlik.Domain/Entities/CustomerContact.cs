@@ -42,5 +42,10 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         /// Talep durumunun son güncellenme tarihi (UTC).
         /// </summary>
         public DateTime? StatusUpdatedAtUtc { get; set; }
+
+        /// <summary>
+        /// KVKK aydınlatma metni onay zamanı (UTC). Bu alan eklenmeden önceki kayıtlarda boştur.
+        /// </summary>
+        public DateTime? KvkkApprovedAt { get; set; }
     }
 }

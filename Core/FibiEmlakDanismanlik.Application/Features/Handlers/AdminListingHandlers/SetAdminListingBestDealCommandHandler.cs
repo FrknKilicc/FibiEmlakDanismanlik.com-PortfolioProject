@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Commands.AdminListingCommands;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.BusinessSettingInterfaces;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
@@ -17,10 +18,14 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AdminListingHandler
     public class SetAdminListingBestDealCommandHandler : IRequestHandler<SetAdminListingBestDealCommand, bool>
     {
         private readonly IAdminListingRepository _adminListingRepository;
+        private readonly IBusinessSettingRepository _businessSettingRepository;
 
-        public SetAdminListingBestDealCommandHandler(IAdminListingRepository adminListingRepository)
+        public SetAdminListingBestDealCommandHandler(
+            IAdminListingRepository adminListingRepository,
+            IBusinessSettingRepository businessSettingRepository)
         {
             _adminListingRepository = adminListingRepository;
+            _businessSettingRepository = businessSettingRepository;
         }
 
         public async Task<bool> Handle(SetAdminListingBestDealCommand request, CancellationToken cancellationToken)
@@ -45,12 +50,13 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AdminListingHandler
 
                 bool isRent = AdminListingConstants.IsRent(request.ListingTypeId);
                 var currentCount = await _adminListingRepository.CountBestDealsAsync(isRent);
+                var maxBestDeals = (await _businessSettingRepository.GetAsync()).BestDealMaxPerUsageType;
 
-                if (currentCount >= BestDealConstants.MaxPerUsageType)
+                if (currentCount >= maxBestDeals)
                 {
                     var msg = isRent
-                        ? $"Kiralık vitrinde zaten {BestDealConstants.MaxPerUsageType} ilan var; önce birini kaldırın."
-                        : $"Satılık vitrinde zaten {BestDealConstants.MaxPerUsageType} ilan var; önce birini kaldırın.";
+                        ? $"Kiralık vitrinde zaten {maxBestDeals} ilan var; önce birini kaldırın."
+                        : $"Satılık vitrinde zaten {maxBestDeals} ilan var; önce birini kaldırın.";
 
                     throw new ValidationException(new[]
                     {

@@ -40,14 +40,15 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.CustomerContactHand
             await _repository.CreateAsync(new CustomerContact
             {
                 CustomerContactName = request.CustomerContactName,
-                CustomerContactMail = request.CustomerContactMail,
+                CustomerContactMail = string.IsNullOrWhiteSpace(request.CustomerContactMail) ? null : request.CustomerContactMail.Trim(),
                 CustomerContactPhone = request.CustomerContactPhone,
-                CustomerContactMessage = request.CustomerContactMessage,
+                CustomerContactMessage = request.CustomerContactMessage ?? string.Empty,
                 PropertyListingId = request.PropertyListingId,
                 AppointmentDateTime = request.AppointmentDateTime,
                 PropertyListingTypeEnum = request.PropertyListingTypeEnum,
                 LeadStatus = LeadStatus.New,
-                AssignedAgentId = assignedAgentId
+                AssignedAgentId = assignedAgentId,
+                KvkkApprovedAt = DateTime.UtcNow
             });
         }
     }

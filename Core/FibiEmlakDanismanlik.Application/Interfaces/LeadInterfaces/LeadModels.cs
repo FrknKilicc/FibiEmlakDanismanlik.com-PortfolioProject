@@ -80,6 +80,11 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.LeadInterfaces
         public string? Message { get; set; }
         public string? CustomerNote { get; set; }
         public string? CalculationSummaryJson { get; set; }
+
+        /// <summary>
+        /// KVKK aydınlatma metni onay zamanı (UTC).
+        /// </summary>
+        public DateTime? KvkkApprovedAt { get; set; }
         public List<LeadActivityItem> Activities { get; set; } = new List<LeadActivityItem>();
     }
 

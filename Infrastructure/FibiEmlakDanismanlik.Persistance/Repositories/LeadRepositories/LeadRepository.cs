@@ -208,7 +208,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.LeadRepositories
                     ListingId = c.PropertyListingId,
                     CalculationSummaryJson = null,
                     ServiceModule = null,
-                    NeighborhoodName = null
+                    NeighborhoodName = null,
+                    KvkkApprovedAt = c.KvkkApprovedAt
                 };
             }
             else if (source == LeadSource.FibiService)
@@ -238,7 +239,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.LeadRepositories
                     ListingId = null,
                     CalculationSummaryJson = f.CalculationSummaryJson,
                     ServiceModule = FormatServiceModule(f.SourceModule),
-                    NeighborhoodName = f.Neighborhood?.Name
+                    NeighborhoodName = f.Neighborhood?.Name,
+                    KvkkApprovedAt = f.KvkkApprovedAt
                 };
             }
             else

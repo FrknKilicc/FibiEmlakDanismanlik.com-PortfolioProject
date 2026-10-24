@@ -57,6 +57,13 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
                 return RedirectToAction("Index");
             }
 
+            if (!dto.KvkkApproved)
+            {
+                TempData["MessageType"] = "error";
+                TempData["Message"] = "Lütfen KVKK ve Gizlilik Politikası metnini onaylayınız.";
+                return RedirectToAction("Index");
+            }
+
             try
             {
                 var client = _httpClientFactory.CreateClient();
@@ -111,6 +118,13 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
             {
                 TempData["MessageType"] = "error";
                 TempData["Message"] = "Doğrulama başarısız oldu, lütfen tekrar deneyin.";
+                return Redirect(returnUrl);
+            }
+
+            if (!model.KvkkApproved)
+            {
+                TempData["MessageType"] = "error";
+                TempData["Message"] = "Lütfen KVKK ve Gizlilik Politikası metnini onaylayınız.";
                 return Redirect(returnUrl);
             }
 
