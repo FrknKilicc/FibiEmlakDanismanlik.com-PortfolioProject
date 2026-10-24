@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const kind = parseInt(img.kind, 10) || 0;
             const isPhoto = (kind === 0);
+            const kindText = kind === 1 ? 'Kat Planı' : (kind === 2 ? 'Kroki' : (kind === 3 ? 'İmar Planı' : 'Kat Planı'));
             const thumb = img.thumbUrl || img.url || '';
             const imgClass = isPhoto ? 'object-fit-cover w-100 h-100' : 'object-fit-contain bg-light w-100 h-100';
 
@@ -133,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </span>
                     ` : `
                     <span class="badge bg-info text-dark position-absolute top-0 start-0 m-2">
-                        <i class="bi bi-rulers me-1"></i>Kat Planı/Kroki/İmar Planı
+                        <i class="bi bi-rulers me-1"></i>${kindText}
                     </span>
                     `}
                     <div class="card-footer p-1 bg-white border-top-0">

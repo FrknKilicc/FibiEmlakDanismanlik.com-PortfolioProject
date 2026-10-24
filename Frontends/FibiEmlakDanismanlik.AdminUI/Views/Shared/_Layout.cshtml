@@ -12,7 +12,7 @@
     bool isDeals = string.Equals(currentController, "Deals", StringComparison.OrdinalIgnoreCase);
     bool isReports = string.Equals(currentController, "Reports", StringComparison.OrdinalIgnoreCase);
     bool isUsers = string.Equals(currentController, "Users", StringComparison.OrdinalIgnoreCase);
-    bool isContent = string.Equals(currentController, "Content", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogAdmin", StringComparison.OrdinalIgnoreCase);
+    bool isContent = string.Equals(currentController, "Content", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogAdmin", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "SiteContent", StringComparison.OrdinalIgnoreCase);
     bool isAudit = string.Equals(currentController, "AuditLog", StringComparison.OrdinalIgnoreCase);
     bool isSettings = string.Equals(currentController, "Settings", StringComparison.OrdinalIgnoreCase);
 }
@@ -195,6 +195,25 @@
     @RenderBody()
   </main><!-- End #main -->
 
+  <!-- Ortak Silme Onayı Modal -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmModalLabel">Silme onayı</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmModalText" class="mb-0"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Vazgeç</button>
+          <button type="button" class="btn btn-danger" id="confirmModalOk">Evet, sil</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
     <div class="copyright">
@@ -216,6 +235,7 @@
 
   <!-- Template Main JS File -->
   <script src="~/assets/js/main.js"></script>
+  <script src="~/js/confirm-modal.js" asp-append-version="true"></script>
 
   @await RenderSectionAsync("Scripts", required: false)
 

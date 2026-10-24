@@ -1,0 +1,237 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.Content.HomeImagesViewModel
+@using FibiEmlakDanismanlik.AdminUI.Models.Content
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.SiteImageUrl SiteImageUrl
+
+@{
+    ViewData["Title"] = "Ana Sayfa Görselleri";
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="mb-0">Ana Sayfa Görselleri</h1>
+        <nav class="mt-1">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item"><a href="/icerik">İçerik</a></li>
+                <li class="breadcrumb-item active">Ana Sayfa Görselleri</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Success"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Error"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<partial name="_ContentNav" model="@("ana-sayfa-gorselleri")" />
+
+<div class="alert alert-info d-flex align-items-center mb-4">
+    <i class="bi bi-info-circle-fill flex-shrink-0 me-2 fs-5"></i>
+    <div>
+        Ana sayfadaki özel bölümlerde (Popüler Yerler ve Müşteri Yorumları) gösterilen sabit görselleri buradan yönetebilirsiniz.
+        Görsel eklenmediğinde sitedeki varsayılan tema görseli gösterilir.
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    @foreach (var slotDef in HomeSectionSlots.All)
+    {
+        var existing = Model.Items.FirstOrDefault(x =>
+            string.Equals(x.SectionKey, slotDef.SectionKey, StringComparison.OrdinalIgnoreCase) &&
+            x.Slot == slotDef.Slot);
+
+        var cardKey = $"{slotDef.SectionKey}-{slotDef.Slot}";
+        var previewUrl = SiteImageUrl.Preview(existing?.ImageUrl);
+        var cardError = Model.GetCardError(cardKey);
+        var errImage = Model.GetFieldError(cardKey, "ImageUrl");
+        var errAlt = Model.GetFieldError(cardKey, "AltText");
+        bool hasRecord = existing != null && existing.HomeSectionImageId > 0;
+        bool isActive = existing != null ? existing.IsActive : true;
+
+        <div class="col-lg-4 col-md-6 col-12">
+            <div class="card h-100 shadow-sm border-0 @(cardError != null ? "border-danger border" : "")">
+                <div class="card-body pt-3 d-flex flex-column justify-content-between">
+                    <div>
+                        <!-- Kart Başlığı ve Durum Rozeti -->
+                        <div class="d-flex justify-content-between align-items-start pb-2 border-bottom mb-3 gap-2">
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">@slotDef.Title</h6>
+                                <span class="badge bg-light text-secondary border small">@slotDef.SectionKey #@slotDef.Slot</span>
+                            </div>
+                            <div>
+                                @if (hasRecord)
+                                {
+                                    if (isActive)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-check-circle me-1"></i>Yayında
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary border">
+                                            <i class="bi bi-eye-slash me-1"></i>Gizli
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle">
+                                        <i class="bi bi-palette me-1"></i>Tema Görseli
+                                    </span>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Önizleme Alanı -->
+                        <div class="mb-3">
+                            <div class="p-2 bg-light rounded border text-center position-relative" style="min-height: 180px; display: flex; align-items: center; justify-content: center;">
+                                @if (!string.IsNullOrEmpty(previewUrl))
+                                {
+                                    <img id="preview_@cardKey"
+                                         src="@previewUrl"
+                                         alt="@(existing?.AltText ?? slotDef.Title)"
+                                         class="img-fluid rounded"
+                                         style="max-height: 200px; width: 100%; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <img id="preview_@cardKey"
+                                         src=""
+                                         alt="@slotDef.Title"
+                                         class="img-fluid rounded d-none"
+                                         style="max-height: 200px; width: 100%; object-fit: cover;" />
+                                    <div id="placeholder_@cardKey" class="text-center py-4 text-muted">
+                                        <i class="bi bi-image display-6 d-block mb-2 text-secondary"></i>
+                                        <span class="small d-block fw-semibold">Henüz görsel yok</span>
+                                        <span class="small text-muted">Sitede tema görseli gösteriliyor</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        @if (cardError != null)
+                        {
+                            <div class="alert alert-danger py-2 px-3 small mb-3">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> @cardError
+                            </div>
+                        }
+
+                        <!-- Düzenleme / Ekleme Formu -->
+                        <form method="post" action="/icerik/ana-sayfa-gorselleri/kaydet">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="SectionKey" value="@slotDef.SectionKey" />
+                            <input type="hidden" name="Slot" value="@slotDef.Slot" />
+                            @if (hasRecord)
+                            {
+                                <input type="hidden" name="HomeSectionImageId" value="@existing!.HomeSectionImageId" />
+                            }
+
+                            <div class="mb-3">
+                                <label for="imageUrl_@cardKey" class="form-label small fw-semibold">
+                                    Görsel Adresi <span class="text-danger">*</span>
+                                </label>
+                                <input type="text"
+                                       class="form-control form-control-sm @(errImage != null ? "is-invalid" : "")"
+                                       id="imageUrl_@cardKey"
+                                       name="ImageUrl"
+                                       value="@existing?.ImageUrl"
+                                       placeholder="https://... veya /uploads/home/..."
+                                       required />
+                                @if (errImage != null)
+                                {
+                                    <div class="invalid-feedback d-block">@errImage</div>
+                                }
+
+                                <div class="mt-2"
+                                     data-image-upload
+                                     data-target="imageUrl_@cardKey"
+                                     data-folder="home"
+                                     data-preview="preview_@cardKey"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="altText_@cardKey" class="form-label small fw-semibold">
+                                    Alt Metin (Açıklama)
+                                </label>
+                                <input type="text"
+                                       class="form-control form-control-sm @(errAlt != null ? "is-invalid" : "")"
+                                       id="altText_@cardKey"
+                                       name="AltText"
+                                       value="@existing?.AltText"
+                                       placeholder="Örn: Popüler Bölgeler Fibi Emlak" />
+                                @if (errAlt != null)
+                                {
+                                    <div class="invalid-feedback d-block">@errAlt</div>
+                                }
+                            </div>
+
+                            <div class="form-check form-switch pt-2 border-top mb-3">
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       id="isActive_@cardKey"
+                                       name="IsActive"
+                                       value="true"
+                                       @(isActive ? "checked" : "") />
+                                <input type="hidden" name="IsActive" value="false" />
+                                <label class="form-check-label small fw-semibold" for="isActive_@cardKey">
+                                    Sitede göster
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-check-lg me-1"></i> @(hasRecord ? "Görseli Güncelle" : "Görseli Kaydet")
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/image-upload.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Görsel inputları değiştiğinde placeholder'ı gizleyip img'yi göster
+            var imageInputs = document.querySelectorAll('input[name="ImageUrl"]');
+            imageInputs.forEach(function (input) {
+                var targetId = input.id;
+                var cardKey = targetId.replace('imageUrl_', '');
+                var previewImg = document.getElementById('preview_' + cardKey);
+                var placeholder = document.getElementById('placeholder_' + cardKey);
+
+                input.addEventListener('change', function () {
+                    if (input.value && input.value.trim() !== '') {
+                        if (placeholder) placeholder.classList.add('d-none');
+                        if (previewImg) previewImg.classList.remove('d-none');
+                    }
+                });
+            });
+        });
+    </script>
+}
