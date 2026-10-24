@@ -15,6 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+    // Tarayıcıdan nokta ayraçlı gelen ondalıklı sayıların doğru ayrıştırılması için
+    options.ModelBinderProviders.Insert(0, new InvariantDecimalModelBinderProvider());
 });
 
 // Antiforgery Cookie Güvenlik Ayarları
