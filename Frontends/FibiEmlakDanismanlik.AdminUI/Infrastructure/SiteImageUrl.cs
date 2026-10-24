@@ -29,7 +29,7 @@ public sealed class SiteImageUrl
 
     /// <summary>
     /// Verilen görsel yolunu önizlenebilir tam veya göreli adrese çevirir.
-    /// Boşsa ya da '//' ile başlıyorsa null döner.
+    /// Boşsa, '//' ile başlıyorsa, '\' içeriyorsa veya http/https harici bir şema (':' içeren) taşıyorsa null döner.
     /// </summary>
     public string? Preview(string? url)
     {
@@ -41,6 +41,18 @@ public sealed class SiteImageUrl
         var trimmed = url.Trim();
 
         if (trimmed.StartsWith("//", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        if (trimmed.Contains('\\'))
+        {
+            return null;
+        }
+
+        if (trimmed.Contains(':') &&
+            !trimmed.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+            !trimmed.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }
