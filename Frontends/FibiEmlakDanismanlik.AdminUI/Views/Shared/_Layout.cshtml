@@ -12,7 +12,7 @@
     bool isDeals = string.Equals(currentController, "Deals", StringComparison.OrdinalIgnoreCase);
     bool isReports = string.Equals(currentController, "Reports", StringComparison.OrdinalIgnoreCase);
     bool isUsers = string.Equals(currentController, "Users", StringComparison.OrdinalIgnoreCase);
-    bool isContent = string.Equals(currentController, "Content", StringComparison.OrdinalIgnoreCase);
+    bool isContent = string.Equals(currentController, "Content", StringComparison.OrdinalIgnoreCase) || string.Equals(currentController, "BlogAdmin", StringComparison.OrdinalIgnoreCase);
     bool isAudit = string.Equals(currentController, "AuditLog", StringComparison.OrdinalIgnoreCase);
 }
 <!DOCTYPE html>
