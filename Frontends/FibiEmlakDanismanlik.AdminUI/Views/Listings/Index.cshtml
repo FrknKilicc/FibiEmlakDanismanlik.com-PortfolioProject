@@ -1,5 +1,6 @@
 @model FibiEmlakDanismanlik.AdminUI.Models.Listings.ListingIndexViewModel
 @inject FibiEmlakDanismanlik.AdminUI.Infrastructure.CurrentAdmin CurrentAdmin
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.SiteImageUrl SiteImageUrl
 @{
     var pageTitle = "İlanlar";
     if (string.Equals(Model.Tur, "satilik", StringComparison.OrdinalIgnoreCase))
@@ -308,9 +309,12 @@ else
                         {
                             <tr>
                                 <td class="ps-3">
-                                    @if (!string.IsNullOrWhiteSpace(item.CoverThumbUrl))
+                                    @{
+                                        var thumbUrl = SiteImageUrl.Preview(item.CoverThumbUrl);
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(thumbUrl))
                                     {
-                                        <img src="@item.CoverThumbUrl" alt="@item.Title" class="admin-listing-thumb-table" loading="lazy" />
+                                        <img src="@thumbUrl" alt="@item.Title" class="admin-listing-thumb-table" loading="lazy" />
                                     }
                                     else
                                     {
@@ -392,9 +396,12 @@ else
                 <div class="card-body p-3">
                     <div class="d-flex gap-3">
                         <div class="flex-shrink-0">
-                            @if (!string.IsNullOrWhiteSpace(item.CoverThumbUrl))
+                            @{
+                                var thumbUrl = SiteImageUrl.Preview(item.CoverThumbUrl);
+                            }
+                            @if (!string.IsNullOrWhiteSpace(thumbUrl))
                             {
-                                <img src="@item.CoverThumbUrl" alt="@item.Title" class="admin-listing-thumb-mobile" loading="lazy" />
+                                <img src="@thumbUrl" alt="@item.Title" class="admin-listing-thumb-mobile" loading="lazy" />
                             }
                             else
                             {
