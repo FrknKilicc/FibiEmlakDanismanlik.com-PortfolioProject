@@ -1,7 +1,0 @@
-﻿@model FibiEmlakDanismanlik.Dto.BlogDtos.ResultBlogWithAuthorDto
-@{
-    ViewData["Title"] = "Blog";
-    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
-}
-
-@await Component.InvokeAsync("_BlogDetailWithAuthorViewComponentPartial", new { blog = Model })
