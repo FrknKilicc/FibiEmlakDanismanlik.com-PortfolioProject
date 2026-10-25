@@ -96,6 +96,12 @@
                     </select>
                 </div>
 
+                <!-- Fiyat ve Oda Filtresi -->
+                <div class="lm-price-wrapper">
+                    <input id="lmMinPrice" type="number" inputmode="numeric" min="0" step="1000" placeholder="En az ₺" aria-label="En düşük fiyat" />
+                    <input id="lmMaxPrice" type="number" inputmode="numeric" min="0" step="1000" placeholder="En çok ₺" aria-label="En yüksek fiyat" />
+                    <select id="lmRooms" class="ignore" aria-label="Oda sayısı"><option value="">Tüm Odalar</option></select>
+                </div>
                 <!-- Haritada Görünen / Toplam İlan Sayacı -->
                 <span id="lmCount">Yükleniyor...</span>
             </div>

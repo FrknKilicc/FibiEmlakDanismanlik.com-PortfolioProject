@@ -1,4 +1,17 @@
 ﻿@model ResultCustomerContactDto
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    var officeLat = Configuration["Office:Latitude"];
+    var officeLng = Configuration["Office:Longitude"];
+    var officeZoom = Configuration["Office:Zoom"];
+    var hasOfficeCoordinates = !string.IsNullOrWhiteSpace(officeLat) && !string.IsNullOrWhiteSpace(officeLng);
+}
+
+<style>
+    .office-map { height: 450px; border-radius: 8px; }
+    @@media (max-width: 767px) { .office-map { height: 300px; } }
+    .office-map-directions { display: inline-block; margin-top: 12px; }
+</style>
 
 <section class="contact-section bg-color-1" id="contact-message-form">
     <div class="auto-container">
@@ -28,7 +41,7 @@
                                 <div class="col-lg-12 col-md-12 col-sm-12 form-group">
                                     <label style="display:flex;align-items:flex-start;gap:8px;font-size:14px;line-height:1.5;cursor:pointer;">
                                         <input type="checkbox" name="KvkkApproved" value="true" required style="margin-top:4px;width:auto;height:auto;">
-                                        <span><a href="/gizlilik-politikasi" target="_blank">Gizlilik Politikası ve KVKK Aydınlatma Metni</a>'ni okudum, iletişim bilgilerimin bu talep için işlenmesini onaylıyorum.</span>
+                                        <span><a href="/gizlilik-politikasi" target="_blank">Gizlilik Politikası</a> ve <a href="/kvkk-aydinlatma-metni" target="_blank">KVKK Aydınlatma Metni</a>'ni okudum, iletişim bilgilerimin bu talep için işlenmesini onaylıyorum.</span>
                                     </label>
                                 </div>
                                 <partial name="_FormSpamFields" />
@@ -43,7 +56,11 @@
             <div class="col-lg-6 col-md-12 col-sm-12 map-column">
                 <div class="google-map-area">
                     <div class="google-map">
-                        <img src="https://images.pexels.com/photos/326576/pexels-photo-326576.jpeg" alt="Harita" style="width: 100%; height: auto;" />
+                        @if (hasOfficeCoordinates)
+                        {
+                            <div id="officeMap" class="office-map" data-lat="@officeLat" data-lng="@officeLng" data-zoom="@officeZoom" role="region" aria-label="Ofis konumu haritası"></div>
+                            <a class="office-map-directions" href="https://www.google.com/maps/dir/?api=1&destination=@(officeLat),@(officeLng)" target="_blank" rel="noopener">Yol tarifi al</a>
+                        }
                     </div>
                 </div>
             </div>

@@ -1,17 +1,21 @@
 /* ==========================================================================
-   Haritada İlanlar Sayfası Stilleri (.listings-map-section)
+   Haritada İlanlar Sayfası Stilleri (.listings-map-section & .fibi-embedded-map)
    ========================================================================== */
 
 .listings-map-section {
     padding: 50px 0 80px;
     background-color: #fcfcfc;
+}
+
+.listings-map-section,
+.fibi-embedded-map {
     font-family: "Rubik", sans-serif;
 }
 
 /* --------------------------------------------------------------------------
    Filtre Çubuğu (.lm-toolbar)
    -------------------------------------------------------------------------- */
-.listings-map-section .lm-toolbar {
+:is(.listings-map-section, .fibi-embedded-map) .lm-toolbar {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
@@ -24,14 +28,14 @@
 }
 
 /* Buton Grupları (.lm-group) */
-.listings-map-section .lm-group {
+:is(.listings-map-section, .fibi-embedded-map) .lm-group {
     display: inline-flex;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     overflow: hidden;
 }
 
-.listings-map-section .lm-group .lm-btn {
+:is(.listings-map-section, .fibi-embedded-map) .lm-group .lm-btn {
     background: #ffffff;
     border: none;
     border-right: 1px solid #e5e7eb;
@@ -44,26 +48,31 @@
     outline: none;
 }
 
-.listings-map-section .lm-group .lm-btn:last-child {
+:is(.listings-map-section, .fibi-embedded-map) .lm-group .lm-btn:last-child {
     border-right: none;
 }
 
-.listings-map-section .lm-group .lm-btn:hover:not(.is-active) {
+:is(.listings-map-section, .fibi-embedded-map) .lm-group .lm-btn:hover:not(.is-active) {
     background-color: #f7f7f7;
 }
 
-.listings-map-section .lm-group .lm-btn.is-active {
+:is(.listings-map-section, .fibi-embedded-map) .lm-group .lm-btn.is-active {
     background: #2dbe6c;
     color: #ffffff;
     font-weight: 500;
 }
 
-/* İl Seçimi */
-.listings-map-section .lm-city-wrapper {
-    display: inline-block;
+/* İl & Fiyat Filtreleri */
+:is(.listings-map-section, .fibi-embedded-map) .lm-city-wrapper,
+:is(.listings-map-section, .fibi-embedded-map) .lm-price-wrapper {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
-.listings-map-section #lmCity {
+:is(.listings-map-section, .fibi-embedded-map) #lmCity,
+:is(.listings-map-section, .fibi-embedded-map) #lmDistrict {
     height: 40px;
     border-radius: 8px;
     border: 1px solid #e5e7eb;
@@ -75,14 +84,61 @@
     background-color: #ffffff;
     outline: none;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
-.listings-map-section #lmCity:focus {
+:is(.listings-map-section, .fibi-embedded-map) #lmCity:focus,
+:is(.listings-map-section, .fibi-embedded-map) #lmDistrict:focus {
     border-color: #2dbe6c;
 }
 
+:is(.listings-map-section, .fibi-embedded-map) #lmMinPrice,
+:is(.listings-map-section, .fibi-embedded-map) #lmMaxPrice {
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    width: 120px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #2d2929;
+    background-color: #ffffff;
+    outline: none;
+    box-sizing: border-box;
+}
+
+:is(.listings-map-section, .fibi-embedded-map) #lmMinPrice:focus,
+:is(.listings-map-section, .fibi-embedded-map) #lmMaxPrice:focus {
+    border-color: #2dbe6c;
+}
+
+:is(.listings-map-section, .fibi-embedded-map) #lmRooms {
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    min-width: 130px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #2d2929;
+    background-color: #ffffff;
+    outline: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+:is(.listings-map-section, .fibi-embedded-map) #lmRooms:focus {
+    border-color: #2dbe6c;
+}
+
+:is(.listings-map-section, .fibi-embedded-map) select:disabled,
+:is(.listings-map-section, .fibi-embedded-map) #lmDistrict:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
 /* İlan Sayacı */
-.listings-map-section #lmCount {
+:is(.listings-map-section, .fibi-embedded-map) #lmCount {
     margin-left: auto;
     font-size: 14px;
     color: #93959e;
@@ -91,14 +147,14 @@
 /* --------------------------------------------------------------------------
    İçerik Gövdesi (.lm-body: Harita + Liste)
    -------------------------------------------------------------------------- */
-.listings-map-section .lm-body {
+:is(.listings-map-section, .fibi-embedded-map) .lm-body {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 380px;
     gap: 16px;
 }
 
 /* Harita Alanı (.lm-map) */
-.listings-map-section .lm-map {
+:is(.listings-map-section, .fibi-embedded-map) .lm-map {
     height: 640px;
     border-radius: 10px;
     border: 1px solid #e5e7eb;
@@ -107,7 +163,7 @@
 }
 
 /* Liste Alanı (.lm-list) */
-.listings-map-section .lm-list {
+:is(.listings-map-section, .fibi-embedded-map) .lm-list {
     height: 640px;
     overflow-y: auto;
     background: #ffffff;
@@ -118,8 +174,8 @@
 }
 
 /* Boş ve Hata Durumları */
-.listings-map-section .lm-empty,
-.listings-map-section .lm-error {
+:is(.listings-map-section, .fibi-embedded-map) .lm-empty,
+:is(.listings-map-section, .fibi-embedded-map) .lm-error {
     padding: 40px 20px;
     text-align: center;
     font-size: 14px;
@@ -127,14 +183,14 @@
     line-height: 1.5;
 }
 
-.listings-map-section .lm-error {
+:is(.listings-map-section, .fibi-embedded-map) .lm-error {
     color: #dc2626;
 }
 
 /* --------------------------------------------------------------------------
    Liste Kartı (.lm-card)
    -------------------------------------------------------------------------- */
-.listings-map-section .lm-card {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card {
     display: grid;
     grid-template-columns: 96px 1fr;
     gap: 12px;
@@ -145,17 +201,17 @@
     border-bottom: 1px solid #f3f4f6;
 }
 
-.listings-map-section .lm-card:last-child {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card:last-child {
     border-bottom: none;
 }
 
-.listings-map-section .lm-card:hover,
-.listings-map-section .lm-card:focus {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card:hover,
+:is(.listings-map-section, .fibi-embedded-map) .lm-card:focus {
     background-color: #f7f7f7;
     outline: none;
 }
 
-.listings-map-section .lm-card-img-wrap {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-img-wrap {
     width: 96px;
     height: 72px;
     border-radius: 6px;
@@ -164,7 +220,7 @@
     flex-shrink: 0;
 }
 
-.listings-map-section .lm-card-img {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-img {
     width: 96px;
     height: 72px;
     object-fit: cover;
@@ -172,21 +228,21 @@
     display: block;
 }
 
-.listings-map-section .lm-card-info {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-info {
     min-width: 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.listings-map-section .lm-card-top {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-top {
     display: flex;
     align-items: center;
     gap: 6px;
     margin-bottom: 3px;
 }
 
-.listings-map-section .lm-card-title {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-title {
     font-size: 14px;
     font-weight: 600;
     color: #2d2929;
@@ -198,14 +254,14 @@
     overflow: hidden;
 }
 
-.listings-map-section .lm-card-price {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-price {
     font-size: 15px;
     font-weight: 700;
     color: #2dbe6c;
     margin-bottom: 2px;
 }
 
-.listings-map-section .lm-card-foot {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-foot {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -213,7 +269,7 @@
     margin-top: 2px;
 }
 
-.listings-map-section .lm-card-loc {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-loc {
     font-size: 12px;
     color: #93959e;
     white-space: nowrap;
@@ -222,7 +278,7 @@
     flex: 1;
 }
 
-.listings-map-section .lm-card-link {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-link {
     font-size: 12px;
     font-weight: 600;
     color: #2dbe6c;
@@ -233,7 +289,7 @@
     transition: background-color .15s ease, color .15s ease;
 }
 
-.listings-map-section .lm-card-link:hover {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-link:hover {
     background-color: #eafaf1;
     color: #25a25c;
 }
@@ -241,7 +297,7 @@
 /* --------------------------------------------------------------------------
    Rozetler (.lm-badge)
    -------------------------------------------------------------------------- */
-.listings-map-section .lm-badge {
+:is(.listings-map-section, .fibi-embedded-map) .lm-badge {
     display: inline-block;
     font-size: 11px;
     font-weight: 600;
@@ -250,12 +306,12 @@
     line-height: 1.2;
 }
 
-.listings-map-section .lm-badge--sale {
+:is(.listings-map-section, .fibi-embedded-map) .lm-badge--sale {
     background: #dcfce7;
     color: #15803d;
 }
 
-.listings-map-section .lm-badge--rent {
+:is(.listings-map-section, .fibi-embedded-map) .lm-badge--rent {
     background: #dbeafe;
     color: #1d4ed8;
 }
@@ -263,44 +319,44 @@
 /* --------------------------------------------------------------------------
    Popup Stilleri (.lm-popup & Leaflet Entegrasyonu)
    -------------------------------------------------------------------------- */
-.listings-map-section .leaflet-popup-content-wrapper {
+:is(.listings-map-section, .fibi-embedded-map) .leaflet-popup-content-wrapper {
     padding: 0;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-.listings-map-section .leaflet-popup-content {
+:is(.listings-map-section, .fibi-embedded-map) .leaflet-popup-content {
     margin: 0;
     width: 240px !important;
     line-height: 1.4;
     font-family: "Rubik", sans-serif;
 }
 
-.listings-map-section .lm-popup {
+:is(.listings-map-section, .fibi-embedded-map) .lm-popup {
     width: 240px;
     box-sizing: border-box;
 }
 
-.listings-map-section .lm-popup-img-wrap {
+:is(.listings-map-section, .fibi-embedded-map) .lm-popup-img-wrap {
     width: 100%;
     height: 130px;
     overflow: hidden;
     background: #f3f4f6;
 }
 
-.listings-map-section .lm-popup-img {
+:is(.listings-map-section, .fibi-embedded-map) .lm-popup-img {
     width: 100%;
     height: 130px;
     object-fit: cover;
     display: block;
 }
 
-.listings-map-section .lm-popup-content {
+:is(.listings-map-section, .fibi-embedded-map) .lm-popup-content {
     padding: 10px 12px 12px;
 }
 
-.listings-map-section .lm-popup-title {
+:is(.listings-map-section, .fibi-embedded-map) .lm-popup-title {
     font-size: 15px;
     font-weight: 600;
     color: #2d2929;
@@ -312,33 +368,33 @@
     overflow: hidden;
 }
 
-.listings-map-section .lm-popup-price {
+:is(.listings-map-section, .fibi-embedded-map) .lm-popup-price {
     font-size: 15px;
     font-weight: 700;
     color: #2dbe6c;
     margin-bottom: 4px;
 }
 
-.listings-map-section .lm-popup-features {
+:is(.listings-map-section, .fibi-embedded-map) .lm-popup-features {
     font-size: 12px;
     color: #93959e;
     margin-bottom: 4px;
 }
 
-.listings-map-section .lm-popup-location {
+:is(.listings-map-section, .fibi-embedded-map) .lm-popup-location {
     font-size: 12px;
     color: #93959e;
     margin-bottom: 6px;
 }
 
-.listings-map-section .lm-approx-note {
+:is(.listings-map-section, .fibi-embedded-map) .lm-approx-note {
     font-size: 11px;
     font-style: italic;
     color: #93959e;
     margin-bottom: 8px;
 }
 
-.listings-map-section .lm-popup-link {
+:is(.listings-map-section, .fibi-embedded-map) .lm-popup-link {
     display: block;
     text-align: center;
     background: #2dbe6c;
@@ -351,7 +407,7 @@
     transition: background-color .15s ease;
 }
 
-.listings-map-section .lm-popup-link:hover {
+:is(.listings-map-section, .fibi-embedded-map) .lm-popup-link:hover {
     background: #25a25c;
     color: #ffffff !important;
 }
@@ -359,7 +415,7 @@
 /* --------------------------------------------------------------------------
    Yaklaşık Konum İşaretçisi (.lm-approx)
    -------------------------------------------------------------------------- */
-.listings-map-section .fibi-marker.lm-approx,
+:is(.listings-map-section, .fibi-embedded-map) .fibi-marker.lm-approx,
 .fibi-marker.lm-approx {
     border-style: dashed;
     opacity: .85;
@@ -368,7 +424,7 @@
 /* --------------------------------------------------------------------------
    Lejant (.lm-legend)
    -------------------------------------------------------------------------- */
-.listings-map-section .lm-legend {
+:is(.listings-map-section, .fibi-embedded-map) .lm-legend {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -378,13 +434,13 @@
     margin-top: 12px;
 }
 
-.listings-map-section .lm-legend-item {
+:is(.listings-map-section, .fibi-embedded-map) .lm-legend-item {
     display: inline-flex;
     align-items: center;
     gap: 8px;
 }
 
-.listings-map-section .lm-legend-dot {
+:is(.listings-map-section, .fibi-embedded-map) .lm-legend-dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -392,15 +448,15 @@
     flex-shrink: 0;
 }
 
-.listings-map-section .lm-legend-dot--sale {
+:is(.listings-map-section, .fibi-embedded-map) .lm-legend-dot--sale {
     background: #16a34a;
 }
 
-.listings-map-section .lm-legend-dot--rent {
+:is(.listings-map-section, .fibi-embedded-map) .lm-legend-dot--rent {
     background: #2563eb;
 }
 
-.listings-map-section .lm-legend-dot--approx {
+:is(.listings-map-section, .fibi-embedded-map) .lm-legend-dot--approx {
     background: #ffffff;
     border: 2px dashed #93959e;
 }
@@ -409,106 +465,83 @@
    Duyarlı Tasarım (Responsive Media Queries)
    -------------------------------------------------------------------------- */
 @media (max-width: 991px) {
-    .listings-map-section .lm-body {
+    :is(.listings-map-section, .fibi-embedded-map) .lm-body {
         grid-template-columns: 1fr;
     }
 
-    .listings-map-section .lm-map {
+    :is(.listings-map-section, .fibi-embedded-map) .lm-map {
         height: 60vh;
         min-height: 360px;
     }
 
-    .listings-map-section .lm-list {
+    :is(.listings-map-section, .fibi-embedded-map) .lm-list {
         height: auto;
         max-height: none;
     }
 }
 
 @media (max-width: 575px) {
-    .listings-map-section .lm-toolbar {
+    :is(.listings-map-section, .fibi-embedded-map) .lm-toolbar {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .listings-map-section .lm-group {
+    :is(.listings-map-section, .fibi-embedded-map) .lm-group {
         width: 100%;
         display: flex;
     }
 
-    .listings-map-section .lm-group .lm-btn {
+    :is(.listings-map-section, .fibi-embedded-map) .lm-group .lm-btn {
         flex: 1;
         text-align: center;
         padding: 8px 6px;
     }
 
-    .listings-map-section #lmCity {
+    :is(.listings-map-section, .fibi-embedded-map) .lm-city-wrapper,
+    :is(.listings-map-section, .fibi-embedded-map) .lm-price-wrapper {
+        width: 100%;
+    }
+
+    :is(.listings-map-section, .fibi-embedded-map) #lmCity,
+    :is(.listings-map-section, .fibi-embedded-map) #lmDistrict,
+    :is(.listings-map-section, .fibi-embedded-map) #lmMinPrice,
+    :is(.listings-map-section, .fibi-embedded-map) #lmMaxPrice,
+    :is(.listings-map-section, .fibi-embedded-map) #lmRooms {
         width: 100%;
         min-width: 100%;
     }
 
-    .listings-map-section #lmCount {
+    :is(.listings-map-section, .fibi-embedded-map) #lmCount {
         margin-left: 0;
         text-align: center;
     }
 }
 
 /* --------------------------------------------------------------------------
-   İlçe Filtresi & Satılık / Kiralık Görsel Ayrımı (Görev Harita-4)
+   Satılık / Kiralık Görsel Ayrımı
    -------------------------------------------------------------------------- */
-.listings-map-section .lm-city-wrapper {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.listings-map-section #lmDistrict {
-    height: 40px;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    min-width: 170px;
-    padding: 0 12px;
-    font-size: 14px;
-    font-family: inherit;
-    color: #2d2929;
-    background-color: #ffffff;
-    outline: none;
-    cursor: pointer;
-}
-
-.listings-map-section #lmDistrict:focus {
-    border-color: #2dbe6c;
-}
-
-.listings-map-section select:disabled,
-.listings-map-section #lmDistrict:disabled {
-    opacity: .55;
-    cursor: not-allowed;
-}
-
-/* Satılık / Kiralık Kart Ayrımı */
-.listings-map-section .lm-card--sale {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card--sale {
     border-left: 4px solid #2dbe6c;
     background: linear-gradient(90deg, rgba(45, 190, 108, .07), #fff 45%);
 }
 
-.listings-map-section .lm-card--rent {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card--rent {
     border-left: 4px solid #2563eb;
     background: linear-gradient(90deg, rgba(37, 99, 235, .07), #fff 45%);
 }
 
-.listings-map-section .lm-card--sale:hover,
-.listings-map-section .lm-card--sale:focus {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card--sale:hover,
+:is(.listings-map-section, .fibi-embedded-map) .lm-card--sale:focus {
     background: linear-gradient(90deg, rgba(45, 190, 108, .12), #f9fafb 45%);
 }
 
-.listings-map-section .lm-card--rent:hover,
-.listings-map-section .lm-card--rent:focus {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card--rent:hover,
+:is(.listings-map-section, .fibi-embedded-map) .lm-card--rent:focus {
     background: linear-gradient(90deg, rgba(37, 99, 235, .12), #f9fafb 45%);
 }
 
 /* Kart & Popup Etiketleri (.lm-card-tag & .lm-card-type) */
-.listings-map-section .lm-card-tag {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-tag {
     display: inline-block;
     font-size: 11px;
     font-weight: 700;
@@ -519,15 +552,15 @@
     line-height: 1.2;
 }
 
-.listings-map-section .lm-card-tag--sale {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-tag--sale {
     background-color: #2dbe6c;
 }
 
-.listings-map-section .lm-card-tag--rent {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-tag--rent {
     background-color: #2563eb;
 }
 
-.listings-map-section .lm-card-type {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card-type {
     display: inline-block;
     font-size: 12px;
     color: #93959e;
@@ -536,7 +569,7 @@
 }
 
 /* Fiyat Etiketi & Fiyat Periyodu */
-.listings-map-section .lm-price-label {
+:is(.listings-map-section, .fibi-embedded-map) .lm-price-label {
     display: block;
     font-size: 11px;
     color: #93959e;
@@ -545,11 +578,11 @@
     line-height: 1.2;
 }
 
-.listings-map-section .lm-card--rent .lm-card-price {
+:is(.listings-map-section, .fibi-embedded-map) .lm-card--rent .lm-card-price {
     color: #1d4ed8;
 }
 
-.listings-map-section .lm-price-period {
+:is(.listings-map-section, .fibi-embedded-map) .lm-price-period {
     font-size: 12px;
     font-weight: 500;
     color: #93959e;
@@ -557,7 +590,7 @@
 }
 
 /* Liste Bölüm Başlıkları (.lm-list-head) */
-.listings-map-section .lm-list-head {
+:is(.listings-map-section, .fibi-embedded-map) .lm-list-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -572,39 +605,21 @@
     text-transform: uppercase;
 }
 
-.listings-map-section .lm-list-head--sale {
+:is(.listings-map-section, .fibi-embedded-map) .lm-list-head--sale {
     background-color: #ecfdf3;
     color: #15803d;
 }
 
-.listings-map-section .lm-list-head--rent {
+:is(.listings-map-section, .fibi-embedded-map) .lm-list-head--rent {
     background-color: #eff6ff;
     color: #1d4ed8;
 }
 
-.listings-map-section .lm-list-count {
+:is(.listings-map-section, .fibi-embedded-map) .lm-list-count {
     font-size: 12px;
     font-weight: 600;
     padding: 2px 9px;
     border-radius: 10px;
     background-color: #ffffff;
     color: #2d2929;
-}
-
-/* Lejant */
-.listings-map-section .lm-legend-dot--rent {
-    background: #2563eb;
-}
-
-/* 575px altı duyarlı tasarım kuralı */
-@media (max-width: 575px) {
-    .listings-map-section .lm-city-wrapper {
-        width: 100%;
-    }
-
-    .listings-map-section #lmCity,
-    .listings-map-section #lmDistrict {
-        width: 100%;
-        min-width: 100%;
-    }
 }

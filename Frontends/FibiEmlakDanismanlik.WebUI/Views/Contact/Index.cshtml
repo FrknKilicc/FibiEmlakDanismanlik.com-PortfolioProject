@@ -3,6 +3,15 @@
     ViewData["Title"] = "İletişim";
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
+@section Styles {
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" asp-append-version="true" />
+}
+
 @await Component.InvokeAsync("_GetContactInfoViewComponentPartial")
 @await Component.InvokeAsync("_CityGalleryViewComponentPartial")
 @await Component.InvokeAsync("_CustomerContactViewComponentPartial")
+
+@section Scripts {
+    <script src="~/lib/leaflet/leaflet.js" asp-append-version="true"></script>
+    <script src="~/js/office-map.js" asp-append-version="true"></script>
+}

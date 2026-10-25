@@ -87,6 +87,7 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
             AddEntry(Url.Action("NeighborhoodAnalysis", "FibiServices"));
             AddEntry(Url.Action("Terms", "Legal"));
             AddEntry(Url.Action("Privacy", "Legal"));
+            AddEntry(Url.Action("Kvkk", "Legal"));
 
             var client = _httpClientFactory.CreateClient();
             var apiUrl = _configuration["Url:ApiUrl"] ?? string.Empty;
@@ -124,6 +125,22 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
                                 if (!string.IsNullOrWhiteSpace(listing.District))
                                 {
                                     AddEntry(ListingUrl.ListPath(isRent, listing.City.Trim(), listing.District.Trim()));
+                                }
+                            }
+
+                            var category = ListingUrl.CategorySlug(listing.ListingTypeId, listing.ListingTypeName);
+                            if (category is "konut" or "arsa" or "isyeri")
+                            {
+                                AddEntry(ListingUrl.ListPath(isRent, null, null, category));
+
+                                if (!string.IsNullOrWhiteSpace(listing.City))
+                                {
+                                    AddEntry(ListingUrl.ListPath(isRent, listing.City.Trim(), null, category));
+
+                                    if (!string.IsNullOrWhiteSpace(listing.District))
+                                    {
+                                        AddEntry(ListingUrl.ListPath(isRent, listing.City.Trim(), listing.District.Trim(), category));
+                                    }
                                 }
                             }
                         }

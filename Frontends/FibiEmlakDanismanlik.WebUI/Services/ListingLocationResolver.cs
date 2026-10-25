@@ -17,14 +17,14 @@ namespace FibiEmlakDanismanlik.WebUI.Services
             _memoryCache = memoryCache;
         }
 
-        public async Task<ListingLocationVm?> ResolveAsync(bool isRent, string citySlug, string? districtSlug)
+        private async Task<(LocationOptionVm City, LocationOptionVm? District)?> FindLocationAsync(string citySlug, string? districtSlug)
         {
             if (string.IsNullOrWhiteSpace(citySlug))
                 return null;
 
             var cities = await GetCitiesAsync();
-
-            var city = cities.FirstOrDefault(x => ListingUrl.Slugify(x.Text) == citySlug.ToLowerInvariant());
+            var targetCitySlug = citySlug.ToLowerInvariant();
+            var city = cities.FirstOrDefault(x => ListingUrl.Slugify(x.Text) == targetCitySlug);
             if (city == null)
                 return null;
 
@@ -32,13 +32,22 @@ namespace FibiEmlakDanismanlik.WebUI.Services
             if (!string.IsNullOrWhiteSpace(districtSlug))
             {
                 var districts = await GetDistrictsAsync(city.Id);
-
                 var targetDistrictSlug = districtSlug.ToLowerInvariant();
                 district = districts.FirstOrDefault(x => ListingUrl.Slugify(x.Text) == targetDistrictSlug);
                 if (district == null)
                     return null;
             }
 
+            return (city, district);
+        }
+
+        public async Task<ListingLocationVm?> ResolveAsync(bool isRent, string citySlug, string? districtSlug)
+        {
+            var location = await FindLocationAsync(citySlug, districtSlug);
+            if (location == null)
+                return null;
+
+            var (city, district) = location.Value;
             var tur = isRent ? "Kiralık" : "Satılık";
             var heading = district != null
                 ? $"{district.Text}, {city.Text} {tur} İlanlar"
@@ -55,6 +64,69 @@ namespace FibiEmlakDanismanlik.WebUI.Services
                 District = district?.Text,
                 CanonicalPath = canonicalPath,
                 Heading = heading
+            };
+        }
+
+        public async Task<ListingLocationVm?> ResolveCategoryAsync(bool isRent, string category, string? citySlug, string? districtSlug)
+        {
+            var listingTypeId = ListingUrl.ListingTypeIdFromCategory(isRent, category);
+            if (!listingTypeId.HasValue)
+                return null;
+
+            LocationOptionVm? city = null;
+            LocationOptionVm? district = null;
+
+            if (!string.IsNullOrWhiteSpace(citySlug))
+            {
+                var location = await FindLocationAsync(citySlug, districtSlug);
+                if (location == null)
+                    return null;
+
+                city = location.Value.City;
+                district = location.Value.District;
+            }
+            else if (!string.IsNullOrWhiteSpace(districtSlug))
+            {
+                return null;
+            }
+
+            var categoryNormalized = category.Trim().ToLowerInvariant();
+            var categoryTitle = categoryNormalized switch
+            {
+                "konut" => "Konut",
+                "arsa" => "Arsa",
+                "isyeri" => "İşyeri",
+                _ => categoryNormalized
+            };
+
+            var tur = isRent ? "Kiralık" : "Satılık";
+            string heading;
+            if (district != null)
+            {
+                heading = $"{district.Text}, {city!.Text} {tur} {categoryTitle} İlanları";
+            }
+            else if (city != null)
+            {
+                heading = $"{city.Text} {tur} {categoryTitle} İlanları";
+            }
+            else
+            {
+                heading = $"{tur} {categoryTitle} İlanları";
+            }
+
+            var canonicalPath = ListingUrl.ListPath(isRent, city?.Text, district?.Text, category.ToLowerInvariant());
+
+            return new ListingLocationVm
+            {
+                IsRent = isRent,
+                CityId = city?.Id ?? 0,
+                City = city?.Text ?? string.Empty,
+                DistrictId = district?.Id,
+                District = district?.Text,
+                CanonicalPath = canonicalPath,
+                Heading = heading,
+                ListingTypeId = listingTypeId,
+                Category = category.ToLowerInvariant()
             };
         }
 

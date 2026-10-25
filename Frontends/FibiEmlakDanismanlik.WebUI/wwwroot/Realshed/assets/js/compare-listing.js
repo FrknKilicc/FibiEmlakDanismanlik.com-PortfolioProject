@@ -29,6 +29,25 @@
         }
     }
 
+    function buildCompareUrl(state) {
+        const ids = state.items.map(function (x) { return x.listingId; }).join(",");
+        const type = encodeURIComponent(state.compareTypeKey || "");
+        return `${COMPARE_PAGE_URL}?ids=${ids}&type=${type}`;
+    }
+
+    function checkComparePageAutoRedirect() {
+        const path = (window.location.pathname || "").toLowerCase().replace(/\/+$/, "");
+        if (path === "/compare" || path === "/compare/index") {
+            const params = new URLSearchParams(window.location.search);
+            if (!params.has("ids")) {
+                const state = getCompareState();
+                if (state.items && state.items.length >= 2) {
+                    window.location.replace(buildCompareUrl(state));
+                }
+            }
+        }
+    }
+
     function setCompareState(state) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         renderCompareBar();
@@ -94,9 +113,7 @@
                 return;
             }
 
-            const ids = state.items.map(function (x) { return x.listingId; }).join(",");
-            const type = encodeURIComponent(state.compareTypeKey || "");
-            window.location.href = `${COMPARE_PAGE_URL}?ids=${ids}&type=${type}`;
+            window.location.href = buildCompareUrl(state);
         });
 
         clearBtn.addEventListener("click", function () {
@@ -182,6 +199,7 @@
     });
 
     document.addEventListener("DOMContentLoaded", function () {
+        checkComparePageAutoRedirect();
         renderCompareBar();
     });
 
@@ -189,6 +207,7 @@
         getState: getCompareState,
         setState: setCompareState,
         clear: clearCompareState,
-        render: renderCompareBar
+        render: renderCompareBar,
+        buildCompareUrl: buildCompareUrl
     };
 })();
