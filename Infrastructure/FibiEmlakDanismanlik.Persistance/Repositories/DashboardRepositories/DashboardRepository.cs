@@ -36,7 +36,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.DashboardRepositories
                 fibiQuery = fibiQuery.Where(f => f.AssignedAgentId == agentId);
             }
 
-            // Huni: aralıkta oluşturulan her talep, şu anki durumu ve geçmişte geçtiği tüm durumlar (LeadActivities) için bir kez sayılır
+            // Huni: aralıkta oluşturulan talepler, durum geçmişiyle (LeadActivities) birlikte kümülatif sayılır
             var contactLeads = await contactsQuery
                 .Where(c => c.CreatedDate >= from && c.CreatedDate < toExclusive)
                 .Select(c => new { Id = c.CustomerContactId, Status = c.LeadStatus })
@@ -63,12 +63,22 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.DashboardRepositories
 
                 foreach (var lead in leads)
                 {
-                    var reached = new HashSet<LeadStatus> { LeadStatus.New, lead.Status };
-                    reached.UnionWith(historyByLead[lead.Id]);
-                    foreach (var status in reached)
+                    // Huni kümülatif: talep, ulaştığı en ileri aşamaya kadar (Kaybedildi hariç) her aşamada bir kez sayılır;
+                    // Yeni'den doğrudan Kazanıldı'ya çekilen talep aradaki aşamalarda da görünür. Kaybedildi yalnızca şu anki durumsa sayılır.
+                    var furthest = historyByLead[lead.Id]
+                        .Append(lead.Status)
+                        .Where(s => s != LeadStatus.Lost)
+                        .DefaultIfEmpty(LeadStatus.New)
+                        .Max();
+                    for (var status = LeadStatus.New; status <= furthest; status++)
                     {
                         var key = status.ToString();
                         byStatus[key] = byStatus.GetValueOrDefault(key) + 1;
+                    }
+                    if (lead.Status == LeadStatus.Lost)
+                    {
+                        var lostKey = LeadStatus.Lost.ToString();
+                        byStatus[lostKey] = byStatus.GetValueOrDefault(lostKey) + 1;
                     }
                 }
             }
