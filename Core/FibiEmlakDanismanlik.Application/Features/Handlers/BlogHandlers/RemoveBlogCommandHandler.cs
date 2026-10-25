@@ -1,5 +1,6 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Commands.BlogCommands;
 using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
 using System;
@@ -14,10 +15,12 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
     public class RemoveBlogCommandHandler : IRequestHandler<RemoveBlogCommand>
     {
         private readonly IRepository<Blog> _repository;
+        private readonly IBlogRepository _blogRepository;
 
-        public RemoveBlogCommandHandler(IRepository<Blog> repository)
+        public RemoveBlogCommandHandler(IRepository<Blog> repository, IBlogRepository blogRepository)
         {
             _repository = repository;
+            _blogRepository = blogRepository;
         }
 
         public async Task Handle(RemoveBlogCommand request, CancellationToken cancellationToken)
@@ -27,6 +30,9 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers
             {
                 throw new KeyNotFoundException("Blog bulunamadı.");
             }
+
+            // Etiket bağlarını kaldırır; başka yazıda kullanılmayan etiketler de silinir
+            await _blogRepository.SetBlogTagsAsync(value.BlogId, Array.Empty<string>());
 
             await _repository.RemoveAsync(value);
         }

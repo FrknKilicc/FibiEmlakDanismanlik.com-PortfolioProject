@@ -16,6 +16,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingDealRepositories
     /// </summary>
     public class ListingDealRepository : IListingDealRepository
     {
+        // shortcut: işlem günü Türkiye saatiyle (UTC+3, 2016'dan beri yaz saati yok) hesaplanır; saat dilimi kuralı değişirse TimeZoneInfo ile bellekte hesaplanmalı
         private readonly FibiEmlakDanismanlikContext _context;
 
         public ListingDealRepository(FibiEmlakDanismanlikContext context)
@@ -41,7 +42,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingDealRepositories
             }
 
             var rows = await query
-                .OrderByDescending(d => d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.Date)
+                .OrderByDescending(d => d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.AddHours(3).Date)
                 .ThenByDescending(d => d.ListingDealId)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -59,7 +60,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingDealRepositories
                     TotalShares = d.Shares.Sum(s => (decimal?)s.Amount) ?? 0m,
                     CompanyShare = ((d.BuyerCommissionAmount ?? 0m) + (d.SellerCommissionAmount ?? 0m)) - (d.Shares.Sum(s => (decimal?)s.Amount) ?? 0m),
                     CustomerName = d.CustomerName,
-                    DealDate = d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.Date,
+                    DealDate = d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.AddHours(3).Date,
                     ShareAgentNames = _context.DealShares
                         .Where(s => s.ListingDealId == d.ListingDealId)
                         .Join(_context.Agents, s => s.AgentId, a => a.AgentId, (s, a) => a.AgentName)
@@ -235,7 +236,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingDealRepositories
         {
             var query = _context.ListingDeals.AsNoTracking()
                 .Where(d => d.ListingTypeId == listingTypeId && d.ListingId == listingId)
-                .OrderByDescending(d => d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.Date)
+                .OrderByDescending(d => d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.AddHours(3).Date)
                 .ThenByDescending(d => d.ListingDealId);
 
             var rows = await query
@@ -253,7 +254,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingDealRepositories
                     TotalShares = d.Shares.Sum(s => (decimal?)s.Amount) ?? 0m,
                     CompanyShare = ((d.BuyerCommissionAmount ?? 0m) + (d.SellerCommissionAmount ?? 0m)) - (d.Shares.Sum(s => (decimal?)s.Amount) ?? 0m),
                     CustomerName = d.CustomerName,
-                    DealDate = d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.Date,
+                    DealDate = d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.AddHours(3).Date,
                     ShareAgentNames = _context.DealShares
                         .Where(s => s.ListingDealId == d.ListingDealId)
                         .Join(_context.Agents, s => s.AgentId, a => a.AgentId, (s, a) => a.AgentName)
@@ -356,13 +357,13 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingDealRepositories
             if (f.From.HasValue)
             {
                 var fromDate = f.From.Value.Date;
-                query = query.Where(d => (d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.Date) >= fromDate);
+                query = query.Where(d => (d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.AddHours(3).Date) >= fromDate);
             }
 
             if (f.To.HasValue)
             {
                 var toExclusive = f.To.Value.Date.AddDays(1);
-                query = query.Where(d => (d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.Date) < toExclusive);
+                query = query.Where(d => (d.CompletedDate ?? d.CancelledDate ?? d.DepositDate ?? d.CreatedAtUtc.AddHours(3).Date) < toExclusive);
             }
 
             if (!string.IsNullOrWhiteSpace(f.Search))
