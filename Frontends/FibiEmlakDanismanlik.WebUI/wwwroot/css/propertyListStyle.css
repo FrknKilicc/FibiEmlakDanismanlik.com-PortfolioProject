@@ -440,3 +440,87 @@ price-range alanı */
     height: 1px;
     overflow: hidden;
 }
+
+
+/* ==========================================================================
+   Liste | Harita Görünüm Geçişi (.fibi-view-toggle & .fibi-embedded-map)
+   ========================================================================== */
+.fibi-view-toggle {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-left: 14px;
+    background: #ffffff;
+    vertical-align: middle;
+}
+
+.fibi-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 38px;
+    padding: 0 14px;
+    border: none;
+    border-right: 1px solid #e5e7eb;
+    background: #ffffff;
+    color: #2d2929;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all .2s ease;
+    outline: none;
+}
+
+.fibi-view-btn:last-child {
+    border-right: none;
+}
+
+.fibi-view-btn i {
+    color: #22c55e;
+    transition: color .2s ease;
+}
+
+.fibi-view-btn:hover:not(.is-active) {
+    background-color: #f7f7f7;
+}
+
+.fibi-view-btn.is-active {
+    background: #22c55e;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.fibi-view-btn.is-active i {
+    color: #ffffff;
+}
+
+/* Gömülü Harita */
+.fibi-embedded-map {
+    margin-bottom: 30px;
+}
+
+.fibi-embedded-map .lm-map {
+    height: 560px;
+}
+
+.fibi-embedded-map .lm-list {
+    height: 560px;
+}
+
+[data-list-view][hidden],
+#listingsMapRoot[hidden] {
+    display: none !important;
+}
+
+@media only screen and (max-width: 991px) {
+    .fibi-embedded-map .lm-map {
+        height: 420px;
+    }
+
+    .fibi-embedded-map .lm-list {
+        height: auto;
+    }
+}

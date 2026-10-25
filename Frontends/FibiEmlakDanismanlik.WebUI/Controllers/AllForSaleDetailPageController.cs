@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using FibiEmlakDanismanlik.Dto.PropertyDtos;
 using FibiEmlakDanismanlik.WebUI.Models;
+using FibiEmlakDanismanlik.WebUI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -10,11 +11,16 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
+        private readonly ListingLocationResolver _listingLocationResolver;
 
-        public AllForSaleDetailPageController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public AllForSaleDetailPageController(
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration,
+            ListingLocationResolver listingLocationResolver)
         {
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
+            _listingLocationResolver = listingLocationResolver;
         }
 
         /// <summary>
@@ -74,7 +80,8 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
         {
             if (!ListingUrl.TryParseId(slugAndId, out var id))
             {
-                return NotFound();
+                var vm = await _listingLocationResolver.ResolveCategoryAsync(false, category, slugAndId, null);
+                return ListingLandingResult.Render(this, vm, false, "~/Views/AllForSalePage/Index.cshtml");
             }
 
             var listingTypeId = ListingUrl.ListingTypeIdFromCategory(false, category);

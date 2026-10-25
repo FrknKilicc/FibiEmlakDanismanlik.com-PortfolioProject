@@ -63,7 +63,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             string? district = TryStr("district");
             string? neighborhood = TryStr("neighborhood");
 
-            if (location != null && cityId == null)
+            if (location != null && location.CityId > 0 && cityId == null)
             {
                 cityId = location.CityId;
                 city = location.City;
@@ -117,6 +117,9 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 if (matchedListingType != null)
                     selectedIds.Add(matchedListingType.ListingTypeId);
             }
+
+            if (location?.ListingTypeId != null && !selectedIds.Any())
+                selectedIds.Add(location.ListingTypeId.Value);
 
             foreach (var f in facets)
                 f.Selected = selectedIds.Contains(f.ListingTypeId);

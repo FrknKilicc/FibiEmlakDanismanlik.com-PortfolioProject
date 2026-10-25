@@ -26,26 +26,25 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
             return RedirectPermanent("/kiralik" + Request.QueryString);
         }
 
+        private IActionResult RenderLanding(ListingLocationVm? vm)
+        {
+            return ListingLandingResult.Render(this, vm, true, "Index");
+        }
+
         [HttpGet("kiralik/{citySlug}")]
         [HttpGet("kiralik/{citySlug}/{districtSlug}")]
         public async Task<IActionResult> Location(string citySlug, string? districtSlug = null)
         {
             var vm = await _listingLocationResolver.ResolveAsync(true, citySlug, districtSlug);
-            if (vm == null)
-            {
-                return NotFound();
-            }
+            return RenderLanding(vm);
+        }
 
-            if (!string.Equals(Request.Path.Value, vm.CanonicalPath, StringComparison.Ordinal))
-            {
-                return RedirectPermanent(vm.CanonicalPath + Request.QueryString);
-            }
-
-            HttpContext.Items[PageMeta.TitleItemKey] = vm.Heading;
-            var yer = !string.IsNullOrWhiteSpace(vm.District) ? $"{vm.District}, {vm.City}" : vm.City;
-            HttpContext.Items[PageMeta.DescriptionItemKey] = $"{yer} bölgesindeki kiralık konut, arsa ve işyeri ilanları. Fibi Yapı Emlak & Danışmanlık.";
-
-            return View("Index", vm);
+        [HttpGet("kiralik/{category:listingcategory}")]
+        [HttpGet("kiralik/{category:listingcategory}/{citySlug}/{districtSlug}")]
+        public async Task<IActionResult> CategoryLocation(string category, string? citySlug = null, string? districtSlug = null)
+        {
+            var vm = await _listingLocationResolver.ResolveCategoryAsync(true, category, citySlug, districtSlug);
+            return RenderLanding(vm);
         }
     }
 }

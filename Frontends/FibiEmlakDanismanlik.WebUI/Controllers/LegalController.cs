@@ -52,5 +52,18 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
             var footerViewModel = await FooterContentLoader.LoadAsync(_httpClientFactory, _configuration, _memoryCache);
             return View(footerViewModel);
         }
+
+        /// <summary>
+        /// KVKK Aydınlatma Metni sayfasını görüntüler.
+        /// </summary>
+        [HttpGet("kvkk-aydinlatma-metni")]
+        public async Task<IActionResult> Kvkk()
+        {
+            HttpContext.Items[PageMeta.TitleItemKey] = "KVKK Aydınlatma Metni";
+            HttpContext.Items[PageMeta.DescriptionItemKey] = "Fibi Yapı Emlak & Danışmanlık 6698 sayılı KVKK kapsamında kişisel verilerin işlenmesine ilişkin aydınlatma metni.";
+
+            var footerViewModel = await FooterContentLoader.LoadAsync(_httpClientFactory, _configuration, _memoryCache);
+            return View(footerViewModel);
+        }
     }
 }

@@ -19,6 +19,11 @@ namespace FibiEmlakDanismanlik.WebUI.TagHelpers
             @"^(?<base>.+)-(1600|800|400)\.webp(?<q>\?.*)?$",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        // shortcut: yalnızca repodaki demo görseller (yanlarında -400/-800.webp var); gerçek fotoğraflar gelip demo klasörü silinince bu kalıp da kaldırılmalı
+        private static readonly Regex DemoImageRegex = new(
+            @"^(?<base>/images/listings/[^/?]+)\.jpg$",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         /// <summary>
         /// Duyarlı görsel için sizes özniteliği değeri. Boş bırakılırsa varsayılan olarak "100vw" kullanılır.
         /// </summary>
@@ -42,26 +47,45 @@ namespace FibiEmlakDanismanlik.WebUI.TagHelpers
             }
 
             var match = ImageRegex.Match(src);
-            if (!match.Success)
+            if (match.Success)
             {
+                // Zaten bir srcset özniteliği varsa dokunma
+                if (output.Attributes.ContainsName("srcset"))
+                {
+                    return;
+                }
+
+                var baseUrl = match.Groups["base"].Value;
+                var q = match.Groups["q"].Value;
+
+                var srcset = $"{baseUrl}-400.webp{q} 400w, {baseUrl}-800.webp{q} 800w, {baseUrl}-1600.webp{q} 1600w";
+                var sizes = !string.IsNullOrWhiteSpace(Sizes) ? Sizes : "100vw";
+
+                output.Attributes.SetAttribute("srcset", srcset);
+                output.Attributes.SetAttribute("sizes", sizes);
+                output.Attributes.SetAttribute("src", $"{baseUrl}-800.webp{q}");
                 return;
             }
 
-            // Zaten bir srcset özniteliği varsa dokunma
-            if (output.Attributes.ContainsName("srcset"))
+            var demoMatch = DemoImageRegex.Match(src);
+            if (demoMatch.Success)
             {
+                // Zaten bir srcset özniteliği varsa dokunma
+                if (output.Attributes.ContainsName("srcset"))
+                {
+                    return;
+                }
+
+                var baseUrl = demoMatch.Groups["base"].Value;
+
+                var srcset = $"{baseUrl}-400.webp 400w, {baseUrl}-800.webp 800w, {baseUrl}.jpg 1024w";
+                var sizes = !string.IsNullOrWhiteSpace(Sizes) ? Sizes : "100vw";
+
+                output.Attributes.SetAttribute("srcset", srcset);
+                output.Attributes.SetAttribute("sizes", sizes);
+                output.Attributes.SetAttribute("src", $"{baseUrl}-800.webp");
                 return;
             }
-
-            var baseUrl = match.Groups["base"].Value;
-            var q = match.Groups["q"].Value;
-
-            var srcset = $"{baseUrl}-400.webp{q} 400w, {baseUrl}-800.webp{q} 800w, {baseUrl}-1600.webp{q} 1600w";
-            var sizes = !string.IsNullOrWhiteSpace(Sizes) ? Sizes : "100vw";
-
-            output.Attributes.SetAttribute("srcset", srcset);
-            output.Attributes.SetAttribute("sizes", sizes);
-            output.Attributes.SetAttribute("src", $"{baseUrl}-800.webp{q}");
         }
 
         /// <summary>
@@ -78,15 +102,27 @@ namespace FibiEmlakDanismanlik.WebUI.TagHelpers
             }
 
             var match = ImageRegex.Match(url);
-            if (!match.Success)
+            if (match.Success)
             {
+                var baseUrl = match.Groups["base"].Value;
+                var q = match.Groups["q"].Value;
+
+                return $"{baseUrl}-{width}.webp{q}";
+            }
+
+            var demoMatch = DemoImageRegex.Match(url);
+            if (demoMatch.Success)
+            {
+                var baseUrl = demoMatch.Groups["base"].Value;
+                if (width == 400 || width == 800)
+                {
+                    return $"{baseUrl}-{width}.webp";
+                }
+
                 return url;
             }
 
-            var baseUrl = match.Groups["base"].Value;
-            var q = match.Groups["q"].Value;
-
-            return $"{baseUrl}-{width}.webp{q}";
+            return url;
         }
 
         private static string? ExtractSrc(object? rawValue)

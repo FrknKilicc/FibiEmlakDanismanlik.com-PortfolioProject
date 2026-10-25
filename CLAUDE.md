@@ -219,7 +219,7 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 **Git ve süreç**
 - [x] (2026-10-20) Push + dev'e birleştirme: önce `feature/antigravity-fibi-services-phase2`, sonra `feature/antigravity-listings-map` (harita branch'i Faz 2'den açıldı, sync altyapısını kullanıyor). Footer, dil ve iç sayfa düzeltmeleri de bu branch'lerde; kullanıcı onayıyla
 - [ ] Testler: (2026-10-25) `Tests/FibiEmlakDanismanlik.Persistence.Tests` (xUnit) açıldı; repository'leri LocalDB'de (`(localdb)\MSSQLLocalDB`) her çalıştırmada yeni oluşturulup silinen geçici veritabanına karşı çalıştırır (SQL Server'a özgü sequence/NEWID/GETDATE yüzünden SQLite/InMemory olmaz). Şu an: talep hunisi (kümülatif) ve işlem günü (UTC 22:30 → Türkiye ertesi gün). Çalıştırma: `dotnet test Tests/FibiEmlakDanismanlik.Persistence.Tests`. Eksikler: `ListingSpecsBuilder`, `KfeBulletinParser`, `IbbSeismicCsvParser`, `MarketIndexApplier`, `TurkishTextHelper` için xUnit testleri; headless Chrome kontrol betikleri (şu an oturum scratchpad'inde: harita, detay, taşma taraması) `tools/ui-tests` altına alınıp duman testi olarak çalıştırılabilir hale getirilsin
-- [ ] Yeni veriyle doğrulanmamış sayfalar: ana sayfa (vitrin, popüler yerler, son ilanlar), satılık/kiralık liste filtreleri (yeni değer biçimleri: bina yaşı "0/1-5/6-10/11-15/16-20/21 ve üzeri", ısıtma, tapu "Kat Mülkiyetli/Müstakil Tapulu", kullanım durumu), karşılaştırma (Compare) sayfası, arama önerileri
+- [x] (2026-10-25, `feature/antigravity-site-batch3`, tarayıcıda) Yeni veriyle doğrulama: ana sayfa bölümleri dolu, kırık yerel görsel yok; satılık liste tür/oda/fiyat filtreleri doğru; karşılaştırma tablosu dolu. Bulunan ve düzeltilenler: (0) sayılı özellikler filtrede gizlendi; menüdeki `/Compare` seçim varken boş sayfa açıyordu (artık seçime yönlenir; `compare-listing.js` önbellek kırıcı sürümle yüklenir). Kalan: ana sayfada 3 görsel dış siteden (onthemarket, britannica, cukurcafotosafari — sonuncusu kırık; muhtemelen müşteri yorumu demo verisi, panelden düzeltilmeli); bülten başlığı İngilizce ("Sign Up To Our Newsletter", bülten maddesiyle birlikte); "Jeneratör" özelliği iki ayrı kayıt olarak listede iki kez çıkıyor (veri); liste filtresinde bina yaşı/ısıtma/tapu ayrı filtre olarak yok (yalnızca özellik etiketleri); arama önerileri denenmedi
 - [ ] Antigravity satır sonlarını LF yapıyor ve BOM'u siliyor (her turda elle geri ekleniyor); `tools/agy-delegate.ps1` iş bitince değişen dosyalarda BOM'u HEAD'deki duruma göre otomatik geri yüklesin
 
 **Hata ve tutarsızlıklar**
@@ -239,11 +239,11 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [x] (2026-10-23, `feature/antigravity-todo-batch2`) İlan detayında kredi taksit hesaplayıcı (FİBİ Finans modülüyle ortak; `BankLoanRates` verisi). Oranlar `BankLoanRates` tahmini başlangıç verisi; banka sağlayıcıları yazılınca güncellenir
 - [x] (2026-10-23, `feature/antigravity-todo-batch2`) Galeri: küçük resim şeridi, fotoğraf sayısı rozeti, tam ekran (fancybox zaten yüklü)
 - [x] (2026-10-23, `feature/antigravity-todo-batch2`) SEO: ilan detayına schema.org `RealEstateListing`/`Offer` yapılandırılmış verisi, Open Graph görseli, `sitemap.xml` ve `robots.txt`
-- [ ] Görseller: WebP + duyarlı boyutlar (srcset), liste kartlarında küçük boy; şu an 1024px JPEG her yerde
+- [x] (2026-10-25, `feature/antigravity-site-batch3`) Görseller: demo görsellerin (`wwwroot/images/listings`, 72 JPEG) yanına `-400.webp`/`-800.webp` üretildi (SkiaSharp, kalite 80, +5.4 MB); `ResponsiveImageTagHelper` ve `listings-map.js` `sizedImageUrl` bu dosyalara srcset verir (`shortcut:` yorumlu; demo klasörü silinince kalıp da kaldırılmalı). Panelden yüklenen fotoğraflar zaten 400/800/1600 WebP
 - [x] (2026-10-20, `feature/antigravity-seo-and-fixes`) Spam koruması: iletişim ve randevu formlarına rate limit (FİBİ lead formundaki gibi) ve isteğe bağlı captcha
-- [ ] "Benzer ilan çıkınca haber ver" talep formu (lead olarak `FibiServiceLeads` benzeri tabloya)
-- [ ] Liste sayfalarında harita/liste görünüm geçişi aynı sayfada (şu an ayrı Haritada İlanlar sayfası var)
-- [ ] Harita sayfasında fiyat aralığı ve oda filtresi; "bu alanda ara" (bbox) ile API tarafı filtreleme
+- [x] (Faz 5'te yapıldı: `ListingAlerts`, `/haber-ver`) "Benzer ilan çıkınca haber ver" talep formu
+- [x] (2026-10-25, `feature/antigravity-site-batch3`) Liste sayfalarında "Liste | Harita" geçişi: `listings-map.js` gömülü mod (`data-embedded="true"`, URL'ye yazmaz, gizliyken kurulmaz, `lm:show` olayıyla açılır), başlangıç filtresi listedeki tür/il/ilçe/fiyat/odadan; seçim `sessionStorage` `fibi-list-view`; `wwwroot/js/listing-view-toggle.js`
+- [ ] Harita sayfası: (2026-10-25 yapıldı: fiyat aralığı ve oda filtresi, URL'de `minPrice`/`maxPrice`/`rooms`); kalan: "bu alanda ara" (bbox) ile API tarafı filtreleme
 - [ ] İzleme: yapılandırılmış log (Serilog) ve sync sağlayıcıları için hata bildirimi (Nominatim/TCMB/İBB başarısız olursa)
 
 ### SEO ve form güvenliği (2026-10-20, branch `feature/antigravity-seo-and-fixes`)
@@ -255,18 +255,18 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [x] (2026-10-23, `feature/antigravity-todo-batch2`) Open Graph ile birlikte Twitter Card etiketleri
 - [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Blog adresleri `/blog/{slug}-{id}` (`Models/BlogUrl.cs`), liste `/blog`; eski `/Blog/Detail/{id}` ve `/Blog/Index` 301; olmayan blogda 404, API hatasında 500. Öneri ucu `blog/suggest` (JSON'a `url` alanı eklendi)
 - [x] (2026-10-21, `feature/antigravity-seo-urls-cleanup`) Liste adresleri `/satilik`, `/kiralik`; açılış sayfaları `/satilik/{il}` ve `/satilik/{il}/{ilce}` (`Services/ListingLocationResolver.cs`, il/ilçe API listesinden slug ile, 6 saat önbellek; bulunamazsa 404). Detay route'u `listingcategory` constraint'i ile ayrışır (`konut|arsa|isyeri|ilan`; bir il bu adlardan birini alamaz). Eski `/AllForSalePage`, `/AllForRentalPage` 301
-- [ ] Açılış sayfaları için: kategori + konum (`/satilik/konut/istanbul`) yok; filtre panelinden yalnızca il/ilçe seçilince `?cityId=..` query'li adrese gidiliyor (canonical `/satilik`), istenirse açılış sayfasına 301 ile çevrilebilir; sitemap'e açılış sayfaları eklenmeli
+- [x] (2026-10-25, `feature/antigravity-site-batch3`) Kategori + konum açılış sayfaları: `/satilik|kiralik/{konut|arsa|isyeri}[/{il}[/{ilce}]]` (`ListingLocationResolver.ResolveCategoryAsync`, ortak `Controllers/ListingLandingResult.Render`; 3 parçalı adres detay route'una düşer, id yoksa açılış sayfası sayılır; `ilan` kategorisi 404), sitemap'te. Kalan: filtre panelinden yalnızca il/ilçe seçilince `?cityId=..` query'li adrese gidiliyor (canonical `/satilik`), istenirse açılış sayfasına 301 ile çevrilebilir; sitemap'e açılış sayfaları eklenmeli
 - [ ] Captcha'yı açmak için Cloudflare Turnstile anahtarı: `Captcha:TurnstileSiteKey`, `Captcha:ScriptUrl`, `Captcha:VerifyUrl` appsettings'e, `Captcha:TurnstileSecretKey` User Secrets'a; dördü de doluysa formlarda kendiliğinden açılır
 - [x] (2026-10-25, `feature/antigravity-panel-fixes`) WebUI'ye ForwardedHeaders + `ForwardedHeaders:KnownProxies` eklendi (WebApi ile aynı kalıp, varsayılan loopback); canlıda proxy IP'si ayara yazılmalı
 - [ ] `FormSpamGuard` sayaçları bellek içi; WebUI birden fazla örnekle çalışırsa paylaşılmaz (gerekirse dağıtık önbellek)
 - [ ] API CORS (`AllowLocalhost`) yalnızca sabit localhost portlarına izin veriyor; harita sayfası API'yi tarayıcıdan çağırdığı için canlı alan adı ayardan okunmalı
 - [x] (2026-10-24, G9 ile) API'deki diğer GetById handler'ları da kayıt yoksa null kontrolsüz olabilir (ör. blog detayı); G9 kapsamında taranmalı
 - [ ] Veri: `Contacts.PhoneNumber2` = `PhoneNumber1` (iletişim sayfasında aynı numara iki kez), `EMail2` kişisel Gmail (`fibiinfo@gmail.com`)
-- [ ] Kozmetik: uzun ilan adlarında detay sayfası üst başlığı iki satıra iniyor; 404 sayfasında mobilde "404" yazısı sabit header'a çok yakın
+- [x] (2026-10-25, `feature/antigravity-site-batch3`) Kozmetik: detay başlık bandı `page-title--listing` (clamp 26–42px, en fazla 2 satır); 404/hata sayfası mobilde `padding-top: 170px` (header absolute ~132px)
 - [ ] Veri: `Contacts.EMail1` iletişim sayfasında olduğu gibi `info@fibiEmlak.com` (büyük harfli) görünüyor; link küçük harfe çevriliyor ama kayıt düzeltilmeli
 - [ ] Ana sayfadaki bülten aboneliği formu tema kalıntısı (`UILayout/Index.cshtml`, `action="contact.html"`): çalışmıyor; ya gerçek bir abonelik ucuna (KVKK onayı + spam koruması ile) bağlanmalı ya kaldırılmalı
-- [ ] Blog detayında yazar adı linki tema kalıntısı (`href="blog-details.html"`); yazarın yazılarına filtreli blog listesine gitmeli ya da link kaldırılmalı
-- [ ] İletişim sayfasındaki "harita" aslında harici bir stok fotoğraf (pexels hotlink); ofis konumu gerçek harita (Leaflet, ilan detayındaki gibi) ile gösterilmeli
+- [x] (2026-10-21'de yapılmıştı, 2026-10-25'te doğrulandı) Blog detayında yazar adı linki kaldırıldı (düz başlık)
+- [x] (2026-10-25, `feature/antigravity-site-batch3`) İletişim sayfasında gerçek harita: Leaflet, `wwwroot/js/office-map.js`, koordinat `appsettings` `Office:Latitude/Longitude/Zoom` + "Yol tarifi al". **Koordinat yaklaşık** (Telsiz Mahallesi merkezi; 85/2. Sokak OSM'de yok): ofisin kesin konumu ayara yazılmalı. Site haritalarında OSM karoları alt alan adsız `tile.openstreetmap.org`
 - [x] (2026-10-23) Bu branch dev'e birleştirildi ve push edildi (aşağıdaki elle test listesi ayrıca yapılmadı; otomatik duman testiyle doğrulandı)
 
 **Elle test listesi (bu branch için, kullanıcı 2026-10-21'de yapacak)**
@@ -282,7 +282,7 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 
 ### Haritada İlanlar (2026-10-19, branch `feature/antigravity-listings-map`)
 `ListingsMap` sayfası `GET api/Map/listings` ucundan satılık + kiralık tüm aktif ilanları tek haritada gösterir. Koordinatı olmayan ilanlara `listing-geocode` sağlayıcısı (sync altyapısı, 6 saatte bir) OSM Nominatim ile mahalle > ilçe > il düzeyinde yaklaşık konum yazar (`ListingGeoPoints.Source = nominatim`, `Precision = neighborhood|district|city`); haritada kesikli çerçeveyle gösterilir.
-- [ ] Admin paneli: ilan formunda haritadan kesin pin seçme (Leaflet tıkla/sürükle); kaydedince `ListingGeoPoints` kaydı `Source = manual`, `Precision = building` olarak yaklaşık kaydın yerine yazılsın (şu an `AddGeoPointsAsync` mevcut kaydı ezmiyor, güncelleme ucu ayrıca yazılmalı)
+- [x] (Faz 4'te yapıldı: `api/AdminListings` harita pini, panelde "Konumu Kaydet"; 2026-10-25'te harita karo sorunu da düzeldi) Admin paneli: ilan formunda haritadan kesin pin seçme (Leaflet tıkla/sürükle); kaydedince `ListingGeoPoints` kaydı `Source = manual`, `Precision = building` olarak yaklaşık kaydın yerine yazılsın (şu an `AddGeoPointsAsync` mevcut kaydı ezmiyor, güncelleme ucu ayrıca yazılmalı)
 - [x] (2026-10-19, `tools/sql/demo-listings-refresh.ps1`) Veri: demo ilanların çoğunda mahalle alanı il/ilçeyle uyumsuz (ör. Kadıköy ve Çankaya ilanlarında "Veliefendi"); bu yüzden 68 ilanın 47'si yalnızca ilçe düzeyinde konumlandı. Mahalle düzeltilince ilgili `nominatim` kayıtları silinirse sağlayıcı yeniden konumlar
 - [x] (2026-10-19, `feature/antigravity-todo-batch1`) İlan güncellenip ili/ilçesi/mahallesi değişirse `nominatim` kaynaklı eski koordinat kalıyor; adres değişikliğinde yaklaşık kayıt silinmeli (manuel pin hariç)
 - [ ] Harita sayfası tüm ilanları tek istekte alıp istemci tarafında filtreliyor (şimdilik 70 ilan); ilan sayısı birkaç bini geçerse `Map/listings` ucunun mevcut `usageType/category/cityId` filtreleri ve harita sınırlarına göre (bbox) sorgu kullanılmalı
@@ -335,7 +335,7 @@ Bitti: kademeli emsal şeması + migration (yerel DB'ye uygulandı), mahalle > i
 - [ ] Fibi Eksper modülü (şerefiye katsayılı değerleme bandı + satıcı lead)
 - [ ] Fibi Yatırım modülü (bütçe + strateji ile en iyi 5 bölge)
 - [ ] EVDS anahtarı alınırsa `dotnet user-secrets set "FibiMarketDataSync:EvdsApiKey" "<anahtar>"`; sağlayıcının yanıt biçimi o zaman doğrulanmalı
-- [ ] KVKK aydınlatma metni sayfası (onay artık `KvkkApprovedAt` ile kaydediliyor)
+- [ ] KVKK aydınlatma metni: (2026-10-25, `feature/antigravity-site-batch3`) `/kvkk-aydinlatma-metni` taslak sayfası yazıldı (veri sorumlusu bilgileri `Contacts`'tan; footer, sitemap, Gizlilik Politikası ve 6 formdaki onay metni bağlandı; "taslak" notu yalnızca Development'ta görünür). Kalan: canlı öncesi hukukçu okumalı; saklama süreleri (talep sonrası 2 yıl, haber ver 1 yıl hareketsizlik) metne yazıldı ama kodda otomatik silme yok
 - [ ] Canlıda reverse proxy IP'si `ForwardedHeaders:KnownProxies` ayarına yazılmalı
 
 ---
