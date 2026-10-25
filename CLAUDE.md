@@ -89,6 +89,7 @@ Fluent API konfigürasyonu `OnModelCreating` içine eklenir.
 ### WebUI
 ViewComponent + `IHttpClientFactory` + `_configuration["Url:ApiUrl"]`
 Dto projesinde `Result{X}Dto` kullanılır. Realshed teması bozulmaz.
+UI değişikliklerinde mevcut tasarım dili (Realshed sitesi, NiceAdmin paneli: renk, font, bileşen) korunur; yeniden tasarım yalnızca Furkan isterse yapılır. Değişiklik masaüstü + mobil ekran görüntüsüyle (Chrome DevTools MCP) kontrol edilir.
 
 ---
 
