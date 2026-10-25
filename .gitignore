@@ -368,3 +368,7 @@ FodyWeavers.xsd
 
 # Panelden yuklenen ilan fotograflari (sunucuda tutulur, repoya girmez)
 Presentation/FibiEmlakDanismanlik.WebApi/uploads/
+
+# Local tooling (never push)
+graphify-out/
+.claude/settings.local.json
