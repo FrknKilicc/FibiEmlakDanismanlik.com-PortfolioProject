@@ -30,40 +30,51 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.DashboardRepositories
                 contactsQuery = contactsQuery.Where(c => c.AssignedAgentId == agentId);
             }
 
-            var contactStatusCounts = await contactsQuery
-                .Where(c => c.CreatedDate >= from && c.CreatedDate < toExclusive)
-                .GroupBy(c => c.LeadStatus)
-                .Select(g => new { Status = g.Key, Count = g.Count() })
-                .ToListAsync();
-
             var fibiQuery = _context.FibiServiceLeads.AsNoTracking();
             if (!seeAll)
             {
                 fibiQuery = fibiQuery.Where(f => f.AssignedAgentId == agentId);
             }
 
-            var fibiStatusCounts = await fibiQuery
+            // Huni: aralıkta oluşturulan her talep, şu anki durumu ve geçmişte geçtiği tüm durumlar (LeadActivities) için bir kez sayılır
+            var contactLeads = await contactsQuery
+                .Where(c => c.CreatedDate >= from && c.CreatedDate < toExclusive)
+                .Select(c => new { Id = c.CustomerContactId, Status = c.LeadStatus })
+                .ToListAsync();
+
+            var fibiLeads = await fibiQuery
                 .Where(f => f.CreatedDate >= from && f.CreatedDate < toExclusive)
-                .GroupBy(f => f.LeadStatus)
-                .Select(g => new { Status = g.Key, Count = g.Count() })
+                .Select(f => new { Id = f.FibiServiceLeadId, Status = f.LeadStatus })
                 .ToListAsync();
 
             var byStatus = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-            var createdInRange = 0;
+            var createdInRange = contactLeads.Count + fibiLeads.Count;
 
-            foreach (var item in contactStatusCounts)
+            async Task CountReachedAsync(LeadSource source, List<(int Id, LeadStatus Status)> leads)
             {
-                var key = item.Status.ToString();
-                byStatus[key] = byStatus.GetValueOrDefault(key) + item.Count;
-                createdInRange += item.Count;
+                if (leads.Count == 0) return;
+                var ids = leads.Select(l => l.Id).ToList();
+                // shortcut: id listesi SQL IN olarak gider; aralıktaki talep sayısı binleri geçerse geçici tablo/join gerekir
+                var history = await _context.LeadActivities.AsNoTracking()
+                    .Where(a => a.Source == source && a.Type == LeadActivityType.StatusChange && a.NewStatus != null && ids.Contains(a.LeadId))
+                    .Select(a => new { a.LeadId, NewStatus = a.NewStatus!.Value })
+                    .ToListAsync();
+                var historyByLead = history.ToLookup(h => h.LeadId, h => h.NewStatus);
+
+                foreach (var lead in leads)
+                {
+                    var reached = new HashSet<LeadStatus> { LeadStatus.New, lead.Status };
+                    reached.UnionWith(historyByLead[lead.Id]);
+                    foreach (var status in reached)
+                    {
+                        var key = status.ToString();
+                        byStatus[key] = byStatus.GetValueOrDefault(key) + 1;
+                    }
+                }
             }
 
-            foreach (var item in fibiStatusCounts)
-            {
-                var key = item.Status.ToString();
-                byStatus[key] = byStatus.GetValueOrDefault(key) + item.Count;
-                createdInRange += item.Count;
-            }
+            await CountReachedAsync(LeadSource.Contact, contactLeads.Select(l => (l.Id, l.Status)).ToList());
+            await CountReachedAsync(LeadSource.FibiService, fibiLeads.Select(l => (l.Id, l.Status)).ToList());
 
             var todayStart = DateTime.Today;
             var todayEnd = todayStart.AddDays(1);

@@ -577,7 +577,7 @@ public sealed class ListingsController : Controller
             Access = access.Trim()
         };
 
-        var result = await _apiClient.PostAsync<List<ListingAccessGrantDto>>($"AdminListings/{t}/{id}/grants", request);
+        var result = await _apiClient.PostAsync<object>($"AdminListings/{t}/{id}/grants", request);
 
         if (result.Success)
         {

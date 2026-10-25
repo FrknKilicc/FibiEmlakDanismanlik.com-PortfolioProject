@@ -1,4 +1,6 @@
-﻿using FibiEmlakDanismanlik.WebUI.Models;
+﻿using System.Net;
+using Microsoft.AspNetCore.HttpOverrides;
+using FibiEmlakDanismanlik.WebUI.Models;
 using FibiEmlakDanismanlik.WebUI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +21,21 @@ builder.Services.Configure<RouteOptions>(o => o.ConstraintMap["listingcategory"]
 // IConfiguration aracılığıyla AppSettings.json'daki yapılandırmayı yükleme
 
 
+// Reverse proxy arkasında form sınırının gerçek ziyaretçi IP'sini görmesi için.
+// Yalnızca güvenilen proxy'lerden gelen X-Forwarded-For kabul edilir (varsayılan: loopback).
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    foreach (var proxy in builder.Configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>() ?? Array.Empty<string>())
+    {
+        if (IPAddress.TryParse(proxy, out var address))
+            options.KnownProxies.Add(address);
+    }
+});
+
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 
 // Configure the HTTP request pipeline.
