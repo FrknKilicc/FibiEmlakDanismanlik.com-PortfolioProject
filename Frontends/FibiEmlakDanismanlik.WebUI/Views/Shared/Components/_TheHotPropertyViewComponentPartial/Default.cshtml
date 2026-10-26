@@ -1,5 +1,7 @@
 @model BestDealsViewModel
+@inject FibiEmlakDanismanlik.WebUI.Services.SiteTextService SiteTextService
 @{
+    var texts = await SiteTextService.GetAsync();
     if (Model == null || ((Model.ForSale == null || !Model.ForSale.Any()) && (Model.ForRent == null || !Model.ForRent.Any())))
     {
         return;
@@ -18,8 +20,8 @@
 <section class="deals-style-two sec-pad" id="bestDealsRoot">
     <div class="auto-container">
         <div class="sec-title centred">
-            <h5>Fırsat ilanlar</h5>
-            <h2>Özel Teklifler</h2>
+            <h5>@texts["home.deals.eyebrow"]</h5>
+            <h2>@texts["home.deals.title"]</h2>
         </div>
 
         @foreach (var panel in panelList)

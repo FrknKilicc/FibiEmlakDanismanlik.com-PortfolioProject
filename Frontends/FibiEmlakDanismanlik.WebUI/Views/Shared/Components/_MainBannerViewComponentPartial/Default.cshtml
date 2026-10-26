@@ -1,4 +1,8 @@
 ﻿@model List<ResultMainBannerDto>
+@inject FibiEmlakDanismanlik.WebUI.Services.SiteTextService SiteTextService
+@{
+    var bannerSubtitle = (await SiteTextService.GetAsync())["home.banner.subtitle"];
+}
 
 
 <section class="banner-style-two centred">
@@ -10,7 +14,10 @@
                 <div class="auto-container">
                     <div class="content-box">
                         <h2>@item.MainBannerDesc</h2>
-                        <p>Fibi Emlak Danışmanlık, Kazandıran Gayrimenkul Çözümleri</p>
+                        @if (!string.IsNullOrWhiteSpace(bannerSubtitle))
+                        {
+                            <p>@bannerSubtitle</p>
+                        }
                     </div>
                 </div>
             </div>

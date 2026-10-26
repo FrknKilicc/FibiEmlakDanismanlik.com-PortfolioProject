@@ -135,6 +135,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         public DbSet<ListingDeal> ListingDeals { get; set; }
         public DbSet<DealShare> DealShares { get; set; }
         public DbSet<BusinessSetting> BusinessSettings { get; set; }
+        public DbSet<SiteText> SiteTexts { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -961,6 +962,13 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                     BestDealMaxPerUsageType = 5,
                     ListingAlertMaxActivePerPhone = 5
                 });
+            });
+
+            modelBuilder.Entity<SiteText>(entity =>
+            {
+                entity.Property(x => x.Key).IsRequired().HasMaxLength(100);
+                entity.Property(x => x.Value).IsRequired().HasMaxLength(2000);
+                entity.HasIndex(x => x.Key).IsUnique();
             });
 
             // İlanların il/ilçe ilişkileri ve indeksleri

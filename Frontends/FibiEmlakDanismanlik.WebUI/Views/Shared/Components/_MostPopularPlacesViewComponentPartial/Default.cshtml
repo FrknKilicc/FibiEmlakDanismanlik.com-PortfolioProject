@@ -1,4 +1,8 @@
 @model FibiEmlakDanismanlik.WebUI.Models.PopularPlacesViewModel
+@inject FibiEmlakDanismanlik.WebUI.Services.SiteTextService SiteTextService
+@{
+    var texts = await SiteTextService.GetAsync();
+}
 
 <style>
     #popularPlacesRoot .popular-places-empty { color: #93959e; padding: 16px 0; font-size: 15px; }
@@ -27,7 +31,7 @@
                         }
 
                         <div class="sec-title">
-                            <h5>Öne Çıkan Konumlar</h5>
+                            <h5>@texts["home.places.eyebrow"]</h5>
 
                             @* Satılık başlık (usageType=1) *@
                             @if (isSaleDistrict)

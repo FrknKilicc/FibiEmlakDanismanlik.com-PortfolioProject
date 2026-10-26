@@ -1,6 +1,7 @@
 using System.Text;
 using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
 using FibiEmlakDanismanlik.Dto.PropertyDtos;
+using FibiEmlakDanismanlik.WebUI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -8,14 +9,15 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents
 {
     public class _FeaturedPropertViewComponentPartial : ViewComponent
     {
-        private const int LatestCount = 10;
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly SiteTextService _siteTextService;
 
-        public _FeaturedPropertViewComponentPartial(IConfiguration configuration, IHttpClientFactory httpClientFactory)
+        public _FeaturedPropertViewComponentPartial(IConfiguration configuration, IHttpClientFactory httpClientFactory, SiteTextService siteTextService)
         {
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
+            _siteTextService = siteTextService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
@@ -24,7 +26,8 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents
             try
             {
                 var apiUrl = _configuration["Url:ApiUrl"];
-                if (string.IsNullOrEmpty(apiUrl))
+                var latestCount = (await _siteTextService.GetAsync()).Int("home.latest.count");
+                if (string.IsNullOrEmpty(apiUrl) || latestCount <= 0)
                 {
                     return View(new List<ResultAllForSaleListinForPageDto>());
                 }
@@ -35,7 +38,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents
                     SortBy = "CreatedDate",
                     SortDir = "desc",
                     Page = 1,
-                    PageSize = LatestCount
+                    PageSize = latestCount
                 };
 
                 var body = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");

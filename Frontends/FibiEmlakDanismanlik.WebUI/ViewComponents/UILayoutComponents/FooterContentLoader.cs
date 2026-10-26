@@ -12,7 +12,8 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.UILayoutComponents
     public static class FooterContentLoader
     {
         private const string CacheKey = "footer-layout";
-        private const int CacheMinutes = 5;
+        // Panel değişikliği en geç bu sürede görünür
+        private static readonly TimeSpan CacheDuration = TimeSpan.FromSeconds(30);
         private const int MaxSummaryLength = 180;
         private const int MaxLatestBlogs = 2;
 
@@ -114,7 +115,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.UILayoutComponents
             // Hiçbir istek başarılı olmadıysa önbelleğe alma
             if (anySuccess)
             {
-                memoryCache.Set(CacheKey, model, TimeSpan.FromMinutes(CacheMinutes));
+                memoryCache.Set(CacheKey, model, CacheDuration);
             }
 
             return model;

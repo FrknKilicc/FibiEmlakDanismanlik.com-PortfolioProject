@@ -1,4 +1,8 @@
 @model List<ResultOurPartnersDto>
+@inject FibiEmlakDanismanlik.WebUI.Services.SiteTextService SiteTextService
+@{
+    var texts = await SiteTextService.GetAsync();
+}
 
 @if (Model != null && Model.Count > 0)
 {
@@ -17,8 +21,8 @@
             <div class="row clearfix">
                 <div class="col-lg-4 col-md-12 col-sm-12 title-column">
                     <div class="sec-title">
-                        <h5>Partnerlerimiz</h5>
-                        <h2>Uzun Vadeli İş Ortaklarımız</h2>
+                        <h5>@texts["home.partners.eyebrow"]</h5>
+                        <h2>@texts["home.partners.title"]</h2>
                     </div>
                 </div>
                 <div class="col-lg-8 col-md-12 col-sm-12 inner-column">
