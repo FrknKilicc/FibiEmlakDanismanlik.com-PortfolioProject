@@ -6,6 +6,7 @@
 
 
 <section class="banner-style-two centred">
+    <h1 class="sr-only">@(!string.IsNullOrWhiteSpace(bannerSubtitle) ? bannerSubtitle : "Fibi Emlak Danışmanlık")</h1>
     <div class="banner-carousel owl-theme owl-carousel owl-nav-none">
         @foreach (var item in Model)
         {

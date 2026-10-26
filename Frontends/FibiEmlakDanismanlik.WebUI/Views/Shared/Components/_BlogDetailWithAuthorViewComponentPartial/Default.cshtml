@@ -32,7 +32,7 @@
                                 <h3>@Model.BlogTitle.</h3>
                                 <ul class="post-info clearfix">
                                     <li class="author-box">
-                                        <figure class="author-thumb"><img src="@Model.AuthorImgUrl" alt="@Model.AuthorName"></figure>
+                                        <figure class="author-thumb"><img src="@(!string.IsNullOrWhiteSpace(Model.AuthorImgUrl) ? Model.AuthorImgUrl : "/Realshed/assets/images/FibiLogo.png")" alt="@Model.AuthorName"></figure>
                                         <h5>@Model.AuthorName</h5>
                                     </li>
                                     <li>@Model.CreatedDate</li>
