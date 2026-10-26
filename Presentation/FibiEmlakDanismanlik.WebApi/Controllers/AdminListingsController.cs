@@ -180,6 +180,49 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         }
 
         /// <summary>
+        /// İlanın yakın yer kayıtlarını ve seçilebilir kategorileri döner.
+        /// </summary>
+        [HttpGet("{listingTypeId:int}/{listingId:int}/nearby")]
+        public async Task<IActionResult> GetNearbyPlaces(int listingTypeId, int listingId)
+        {
+            try
+            {
+                var result = await _mediator.Send(new GetAdminListingNearbyPlacesQuery(listingTypeId, listingId));
+                return Ok(result);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (ListingAccessDeniedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// İlanın yakın yer listesini toptan değiştirir.
+        /// </summary>
+        [HttpPut("{listingTypeId:int}/{listingId:int}/nearby")]
+        public async Task<IActionResult> SetNearbyPlaces(int listingTypeId, int listingId, [FromBody] SetListingNearbyPlacesDto dto)
+        {
+            try
+            {
+                var command = new SetAdminListingNearbyPlacesCommand(listingTypeId, listingId, dto?.Places);
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (ListingAccessDeniedException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, ex.Message);
+            }
+        }
+
+        /// <summary>
         /// İlanı ve bağlı tüm verilerini kalıcı olarak siler (Yalnızca Sahip).
         /// </summary>
         [Authorize(Policy = AuthConstants.PolicyOwnerOnly)]
@@ -297,6 +340,14 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
     {
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
+    }
+
+    /// <summary>
+    /// Yakın yer listesi güncelleme istek gövdesi.
+    /// </summary>
+    public class SetListingNearbyPlacesDto
+    {
+        public List<NearbyPlaceInput> Places { get; set; } = new();
     }
 
     /// <summary>

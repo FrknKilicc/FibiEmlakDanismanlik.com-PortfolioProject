@@ -538,6 +538,36 @@ public sealed class ListingsController : Controller
     }
 
     /// <summary>
+    /// İlanın yakın yerlerini ve kategori listesini döner.
+    /// </summary>
+    [HttpGet("/ilanlar/{t:int}/{id:int}/yakin-yerler")]
+    public async Task<IActionResult> GetNearbyPlaces(int t, int id)
+    {
+        var result = await _apiClient.GetAsync<AdminListingNearbyResponse>($"AdminListings/{t}/{id}/nearby");
+        if (result.Success)
+        {
+            return Ok(new { ok = true, data = result.Data });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Yakın yerler yüklenemedi." });
+    }
+
+    /// <summary>
+    /// İlanın yakın yer listesini toptan günceller.
+    /// </summary>
+    [HttpPut("/ilanlar/{t:int}/{id:int}/yakin-yerler")]
+    public async Task<IActionResult> UpdateNearbyPlaces(int t, int id, [FromBody] UpdateNearbyPlacesRequest body)
+    {
+        var result = await _apiClient.PutAsync<object>($"AdminListings/{t}/{id}/nearby", body ?? new UpdateNearbyPlacesRequest());
+        if (result.Success)
+        {
+            return Ok(new { ok = true, message = "Yakın yerler kaydedildi." });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Yakın yerler kaydedilemedi." });
+    }
+
+    /// <summary>
     /// İlan durumunu günceller.
     /// </summary>
     [HttpPost("/ilanlar/{t:int}/{id:int}/durum")]

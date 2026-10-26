@@ -1158,6 +1158,34 @@
                 </div>
             </div>
         </form>
+
+        @if (!isNew)
+        {
+            <!-- Yakın Yerler Kartı (form dışında, kendi kaydı var) -->
+            <div class="card mb-4 shadow-sm border-0" id="nearbyCard" data-type-id="@Model.Form.ListingTypeId" data-listing-id="@Model.Form.ListingId">
+                <div class="card-body pt-3">
+                    <div class="d-flex align-items-center gap-3 pb-3 border-bottom mb-3">
+                        <div>
+                            <h5 class="card-title p-0 m-0 fs-5 d-flex align-items-center gap-2">
+                                <i class="bi bi-signpost-2 text-primary"></i>Yakın Yerler
+                            </h5>
+                            <div class="text-muted small">Okul, hastane, toplu taşıma gibi yakındaki yerler ve uzaklıkları. İlan sayfasında her kategoride en yakın 3 yer gösterilir.</div>
+                        </div>
+                    </div>
+                    <div id="nearbyAlertArea"></div>
+                    <div id="nearbyRows" class="d-flex flex-column gap-2">
+                        <div class="text-muted small">Yükleniyor...</div>
+                    </div>
+                    @if (Model.CanEdit)
+                    {
+                        <div class="d-flex flex-wrap gap-2 justify-content-between mt-3">
+                            <button type="button" id="nearbyAddBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Yer Ekle</button>
+                            <button type="button" id="nearbySaveBtn" class="btn btn-primary btn-sm"><i class="bi bi-check2 me-1"></i>Yakın Yerleri Kaydet</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
 
     @if (!isNew)
@@ -1446,4 +1474,5 @@
     <script src="~/js/listing-map.js" asp-append-version="true"></script>
     <script src="~/js/listing-form.js" asp-append-version="true"></script>
     <script src="~/js/listing-form-ux.js" asp-append-version="true"></script>
+    <script src="~/js/listing-nearby.js" asp-append-version="true"></script>
 }

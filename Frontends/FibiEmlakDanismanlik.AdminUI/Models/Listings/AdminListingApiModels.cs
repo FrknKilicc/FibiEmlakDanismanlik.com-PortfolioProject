@@ -252,6 +252,57 @@ public sealed class CreateListingAccessGrantRequest
 }
 
 /// <summary>
+/// İlan yakın yerleri API yanıtı.
+/// </summary>
+public sealed class AdminListingNearbyResponse
+{
+    public bool CanEdit { get; set; }
+    public List<NearbyCategoryDto> Categories { get; set; } = new();
+    public List<NearbyPlaceDto> Places { get; set; } = new();
+}
+
+/// <summary>
+/// Yakın yer kategorisi.
+/// </summary>
+public sealed class NearbyCategoryDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? IconCss { get; set; }
+}
+
+/// <summary>
+/// İlana bağlı yakın yer kaydı.
+/// </summary>
+public sealed class NearbyPlaceDto
+{
+    public int Id { get; set; }
+    public int NearbyCategoryId { get; set; }
+    public string? CategoryName { get; set; }
+    public string PlaceName { get; set; } = string.Empty;
+    public decimal DistanceKm { get; set; }
+    public bool IsActive { get; set; }
+}
+
+/// <summary>
+/// Yakın yer listesi güncelleme isteği (panel → API).
+/// </summary>
+public sealed class UpdateNearbyPlacesRequest
+{
+    public List<NearbyPlaceInput> Places { get; set; } = new();
+}
+
+/// <summary>
+/// Yakın yer giriş satırı.
+/// </summary>
+public sealed class NearbyPlaceInput
+{
+    public int NearbyCategoryId { get; set; }
+    public string PlaceName { get; set; } = string.Empty;
+    public decimal DistanceKm { get; set; }
+}
+
+/// <summary>
 /// AdminUI fotoğraf türü ve başlığı güncelleme girdi modeli.
 /// </summary>
 public sealed class UpdatePhotoKindInputModel
