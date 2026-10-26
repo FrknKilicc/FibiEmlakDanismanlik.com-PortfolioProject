@@ -44,7 +44,13 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.LeadHandlers
                 }
             }
 
-            return await _leadRepository.GetDetailAsync(request.Source, request.LeadId);
+            var detail = await _leadRepository.GetDetailAsync(request.Source, request.LeadId);
+            if (detail != null && !isPrivileged)
+            {
+                detail.LinkedDealId = null;
+            }
+
+            return detail;
         }
     }
 }

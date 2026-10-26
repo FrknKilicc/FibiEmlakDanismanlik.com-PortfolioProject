@@ -1,5 +1,6 @@
 @model FibiEmlakDanismanlik.AdminUI.Models.Deals.DealDetailViewModel
 @using FibiEmlakDanismanlik.AdminUI.Models.Deals
+@using FibiEmlakDanismanlik.AdminUI.Models.Leads
 @using System.Globalization
 @{
     var d = Model.Detail;
@@ -764,7 +765,7 @@
 
                 <div class="mb-2">
                     <label class="text-muted small d-block">Adı Soyadı</label>
-                    <div class="fw-bold text-dark">@(d.CustomerName ?? "—")</div>
+                    <div class="fw-bold">@(d.CustomerName ?? "—")</div>
                 </div>
 
                 <div class="mb-2">
@@ -772,7 +773,7 @@
                     <div>
                         @if (!string.IsNullOrWhiteSpace(d.CustomerPhone))
                         {
-                            <a href="tel:@d.CustomerPhone" class="fw-semibold text-decoration-none text-dark">
+                            <a href="tel:@d.CustomerPhone" class="fw-semibold text-decoration-none">
                                 <i class="bi bi-telephone text-primary me-1"></i>@d.CustomerPhone
                             </a>
                         }
@@ -783,11 +784,26 @@
                     </div>
                 </div>
 
+                @if (d.LinkedLeadSource.HasValue && d.LinkedLeadId.HasValue)
+                {
+                    var leadSlug = LeadLabels.SourceSlug(d.LinkedLeadSource.Value);
+                    var leadDisplayName = !string.IsNullOrWhiteSpace(d.LinkedLeadName) ? d.LinkedLeadName : $"Talep #{d.LinkedLeadId.Value}";
+                    <div class="mb-2">
+                        <label class="text-muted small d-block">Bağlı talep</label>
+                        <div>
+                            <span class="text-muted small">Bağlı talep: </span>
+                            <a href="/talepler/@leadSlug/@d.LinkedLeadId.Value" class="fw-semibold text-decoration-none">
+                                <i class="bi bi-person-lines-fill me-1"></i>@leadDisplayName
+                            </a>
+                        </div>
+                    </div>
+                }
+
                 @if (!string.IsNullOrWhiteSpace(d.Notes))
                 {
                     <div class="pt-2 border-top mt-2">
                         <label class="text-muted small d-block">Not</label>
-                        <div class="small text-dark mt-1" style="white-space: pre-wrap;">@d.Notes</div>
+                        <div class="small mt-1" style="white-space: pre-wrap;">@d.Notes</div>
                     </div>
                 }
             </div>

@@ -85,6 +85,12 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.LeadInterfaces
         /// KVKK aydınlatma metni onay zamanı (UTC).
         /// </summary>
         public DateTime? KvkkApprovedAt { get; set; }
+
+        /// <summary>
+        /// Bu talebe bağlanmış en son satış veya kiralama işlem kaydının kimliği.
+        /// </summary>
+        public int? LinkedDealId { get; set; }
+
         public List<LeadActivityItem> Activities { get; set; } = new List<LeadActivityItem>();
     }
 

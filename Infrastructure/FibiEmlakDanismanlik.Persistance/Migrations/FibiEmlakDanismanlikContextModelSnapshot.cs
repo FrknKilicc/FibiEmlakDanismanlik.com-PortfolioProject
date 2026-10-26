@@ -2020,6 +2020,12 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<DateTime?>("DepositRefundDate")
                         .HasColumnType("date");
 
+                    b.Property<int?>("LinkedLeadId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LinkedLeadSource")
+                        .HasColumnType("int");
+
                     b.Property<int>("ListingId")
                         .HasColumnType("int");
 

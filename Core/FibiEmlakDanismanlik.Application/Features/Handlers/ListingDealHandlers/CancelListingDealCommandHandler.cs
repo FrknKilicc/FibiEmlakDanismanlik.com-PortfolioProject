@@ -7,6 +7,7 @@ using FibiEmlakDanismanlik.Application.Exceptions;
 using FibiEmlakDanismanlik.Application.Features.Commands.ListingDealCommands;
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.LeadInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingDealInterfaces;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FluentValidation;
@@ -19,15 +20,18 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingDealHandlers
     {
         private readonly IListingDealRepository _listingDealRepository;
         private readonly IAdminListingRepository _adminListingRepository;
+        private readonly ILeadRepository _leadRepository;
         private readonly ICurrentUserService _currentUserService;
 
         public CancelListingDealCommandHandler(
             IListingDealRepository listingDealRepository,
             IAdminListingRepository adminListingRepository,
+            ILeadRepository leadRepository,
             ICurrentUserService currentUserService)
         {
             _listingDealRepository = listingDealRepository;
             _adminListingRepository = adminListingRepository;
+            _leadRepository = leadRepository;
             _currentUserService = currentUserService;
         }
 
@@ -93,6 +97,17 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingDealHandlers
             if (listingStatus == PropertyStatuses.Opsiyonlu)
             {
                 await _adminListingRepository.SetStatusAsync(deal.ListingTypeId, deal.ListingId, PropertyStatuses.Aktif);
+            }
+
+            if (deal.LinkedLeadSource.HasValue && deal.LinkedLeadId.HasValue)
+            {
+                await DealLeadSync.AdvanceAsync(
+                    _leadRepository,
+                    deal.LinkedLeadSource.Value,
+                    deal.LinkedLeadId.Value,
+                    null,
+                    $"#{deal.ListingDealId} numaralı işlem iptal edildi.",
+                    _currentUserService.AgentId);
             }
 
             return true;

@@ -81,6 +81,9 @@ public sealed class DealDetailDto
     public string? CreatedByAgentName { get; set; }
     public DateTime CreatedAtUtc { get; set; }
     public DateTime? UpdatedAtUtc { get; set; }
+    public int? LinkedLeadSource { get; set; }
+    public int? LinkedLeadId { get; set; }
+    public string? LinkedLeadName { get; set; }
     public decimal TotalCommission { get; set; }
     public decimal TotalShares { get; set; }
     public decimal CompanyShare { get; set; }

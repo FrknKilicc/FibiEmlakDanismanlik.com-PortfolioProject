@@ -1,3 +1,4 @@
+using FibiEmlakDanismanlik.AdminUI.Models.Leads;
 using FibiEmlakDanismanlik.AdminUI.Models.Listings;
 
 namespace FibiEmlakDanismanlik.AdminUI.Models.Deals;
@@ -40,6 +41,7 @@ public class DealFormModel
     public string? CustomerName { get; set; }
     public string? CustomerPhone { get; set; }
     public string? Notes { get; set; }
+    public string? LinkedLead { get; set; }
 }
 
 /// <summary>
@@ -52,6 +54,7 @@ public sealed class DealCreateViewModel
     public string? ListingStatus { get; set; }
     public bool IsRent { get; set; }
     public decimal? ListingPrice { get; set; }
+    public List<LeadRowDto> Leads { get; set; } = new();
     public string? ErrorMessage { get; set; }
     public Dictionary<string, string[]> FieldErrors { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
