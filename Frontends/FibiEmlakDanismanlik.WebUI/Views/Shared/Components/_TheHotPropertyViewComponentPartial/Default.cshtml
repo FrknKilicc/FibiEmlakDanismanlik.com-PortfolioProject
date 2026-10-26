@@ -70,11 +70,7 @@
                             }
                             var locationText = string.Join(", ", locParts);
 
-                            var desc = item.PropertyDescription ?? string.Empty;
-                            if (desc.Length > 120)
-                            {
-                                desc = desc.Substring(0, 120) + "…";
-                            }
+                            var desc = FibiEmlakDanismanlik.WebUI.Models.PageMeta.StripHtmlAndTruncate(item.PropertyDescription, 120);
 
                             var isKonut = string.Equals(item.ListingTypeName, "Konut", StringComparison.OrdinalIgnoreCase);
                             var isIsyeri = string.Equals(item.ListingTypeName, "İşyeri", StringComparison.OrdinalIgnoreCase) ||

@@ -199,7 +199,7 @@
                                         <h4>@item.Price.ToString("N0", trCulture) TL</h4>
                                     </div>
                                 </div>
-                                <p class="latest-desc">@item.PropertyDescription</p>
+                                <p class="latest-desc">@FibiEmlakDanismanlik.WebUI.Models.PageMeta.StripHtmlAndTruncate(item.PropertyDescription, 160)</p>
                                 @if (item.Highlights != null && item.Highlights.Any())
                                 {
                                     <ul class="more-details clearfix">

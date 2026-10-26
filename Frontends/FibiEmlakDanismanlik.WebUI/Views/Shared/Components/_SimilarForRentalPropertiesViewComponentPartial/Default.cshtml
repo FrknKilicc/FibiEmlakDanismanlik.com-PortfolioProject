@@ -20,11 +20,10 @@
                 ? item.AgentImageUrl
                 : Url.Content("~/Realshed/assets/images/feature/author-1.jpg");
 
-                var description = !string.IsNullOrWhiteSpace(item.PropertyDescription)
-                ? (item.PropertyDescription.Length > 120
-                ? item.PropertyDescription.Substring(0, 120) + "..."
-                : item.PropertyDescription)
-                : "İlan açıklaması bulunmuyor.";
+                var strippedDesc = FibiEmlakDanismanlik.WebUI.Models.PageMeta.StripHtmlAndTruncate(item.PropertyDescription, 120);
+                var description = !string.IsNullOrWhiteSpace(strippedDesc)
+                    ? strippedDesc
+                    : "İlan açıklaması bulunmuyor.";
 
                 var locationText = string.Join(" / ",
                 new[] { item.Neighborhood, item.District, item.City }
@@ -76,32 +75,32 @@
                                         <h6>Fiyat</h6>
                                         <h4>
                                             @(item.Price.HasValue
-                                                                                ? item.Price.Value.ToString("N0") + " ₺ / ay"
-                                                                                : "Fiyat Yok")
-                                </h4>
-                            </div>
-                            <ul class="other-option pull-right clearfix">
-                                <li><a href="@detailUrl"><i class="icon-12"></i></a></li>
-                                <li><a href="@detailUrl"><i class="icon-13"></i></a></li>
-                            </ul>
-                        </div>
+                                                ? item.Price.Value.ToString("N0") + " ₺ / ay"
+                                                : "Fiyat Yok")
+                                        </h4>
+                                    </div>
+                                    <ul class="other-option pull-right clearfix">
+                                        <li><a href="@detailUrl"><i class="icon-12"></i></a></li>
+                                        <li><a href="@detailUrl"><i class="icon-13"></i></a></li>
+                                    </ul>
+                                </div>
 
                                 <p>@description</p>
 
                                 <ul class="more-details clearfix">
-                            @if (!string.IsNullOrWhiteSpace(item.NumberOfRoom))
+                                    @if (!string.IsNullOrWhiteSpace(item.NumberOfRoom))
                                     {
                                         <li><i class="icon-14"></i>@item.NumberOfRoom</li>
                                     }
 
-                                <li>
-                                    <i class="icon-16"></i>
-                                    @(item.SquareMeter.HasValue
-                                                                    ? item.SquareMeter.Value.ToString("N0") + " m²"
-                                                                    : "-")
-                            </li>
+                                    <li>
+                                        <i class="icon-16"></i>
+                                        @(item.SquareMeter.HasValue
+                                            ? item.SquareMeter.Value.ToString("N0") + " m²"
+                                            : "-")
+                                    </li>
 
-                            @if (!string.IsNullOrWhiteSpace(locationText))
+                                    @if (!string.IsNullOrWhiteSpace(locationText))
                                     {
                                         <li><i class="icon-15"></i>@locationText</li>
                                     }

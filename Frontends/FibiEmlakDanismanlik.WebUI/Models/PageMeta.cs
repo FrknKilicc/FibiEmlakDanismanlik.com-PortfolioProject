@@ -16,6 +16,17 @@ namespace FibiEmlakDanismanlik.WebUI.Models
         public const int DescriptionMaxLength = 155;
 
         /// <summary>
+        /// Metnin zengin metin (HTML) etiketleri içerip içermediğini kontrol eder.
+        /// </summary>
+        public static bool LooksLikeHtml(string? text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            return Regex.IsMatch(text, @"<\s*(p|br|ul|ol|li|strong|b|em|i|u|h[1-6]|blockquote|a|span)\b", RegexOptions.IgnoreCase);
+        }
+
+        /// <summary>
         /// HTML etiketlerini temizler, entity'leri çözer, ardışık boşlukları teke indirir
         /// ve belirtilen uzunluğu aşarsa son boşluktan keserek "…" ekler.
         /// </summary>
