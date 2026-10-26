@@ -303,6 +303,17 @@ public sealed class ContentController : Controller
                         },
                         new ContentHubTile
                         {
+                            Key = "site-metinleri",
+                            Title = "Site Metinleri",
+                            Description = "Ana sayfa bölüm başlıkları, Neden Biz kartları, çağrı bandı, ilan sayıları ve benzer ilanlar.",
+                            Icon = "bi-fonts",
+                            Url = "/icerik/site-metinleri",
+                            SiteUrl = BuildSiteUrl("/"),
+                            Stat = "Başlıklar ve sayılar",
+                            Warning = null
+                        },
+                        new ContentHubTile
+                        {
                             Key = "ana-sayfa-gorselleri",
                             Title = "Ana Sayfa Görselleri",
                             Description = "Popüler yerler ve müşteri yorumları sabit bölüm görselleri.",

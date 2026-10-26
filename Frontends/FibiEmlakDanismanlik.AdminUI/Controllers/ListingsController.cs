@@ -264,6 +264,11 @@ public sealed class ListingsController : Controller
             GeoSource = detailResult.Data.Listing.GeoSource ?? detailResult.Data.GeoSource
         };
 
+        if (viewModel.Lookups?.Amenities != null)
+        {
+            ListingFormViewModel.ApplyAmenitiesToToggles(viewModel.Form, viewModel.Lookups.Amenities);
+        }
+
         return View("Edit", viewModel);
     }
 
@@ -276,9 +281,25 @@ public sealed class ListingsController : Controller
     {
         var isNew = !form.ListingId.HasValue || form.ListingId.Value <= 0;
 
+        // Cephe parçaları seçilmişse virgülle ayrılmış tek metin haline getir
+        if (form.FacadeParts != null)
+        {
+            var parts = form.FacadeParts
+                .Where(p => !string.IsNullOrWhiteSpace(p))
+                .Select(p => p.Trim())
+                .Distinct(StringComparer.CurrentCultureIgnoreCase);
+            var joined = string.Join(", ", parts);
+            form.Facade = string.IsNullOrEmpty(joined) ? null : joined;
+        }
+
+        var lookups = await LoadLookupsAsync();
+        if (lookups.Amenities != null)
+        {
+            ListingFormViewModel.ApplyTogglesToAmenities(form, lookups.Amenities);
+        }
+
         if (!ModelState.IsValid)
         {
-            var lookups = await LoadLookupsAsync();
             var vm = await BuildViewModelAsync(form, lookups, canEdit: true, errorMessage: "Lütfen formdaki eksik veya hatalı alanları düzeltin.");
             foreach (var state in ModelState)
             {
@@ -307,14 +328,12 @@ public sealed class ListingsController : Controller
 
         if (saveResult.StatusCode == StatusCodes.Status403Forbidden)
         {
-            var lookups = await LoadLookupsAsync();
             var vm = await BuildViewModelAsync(form, lookups, canEdit: false, errorMessage: "Bu ilanı düzenleme yetkiniz yok.");
             return View("Edit", vm);
         }
 
         if (saveResult.StatusCode == StatusCodes.Status400BadRequest)
         {
-            var lookups = await LoadLookupsAsync();
             var vm = await BuildViewModelAsync(form, lookups, canEdit: true, errorMessage: saveResult.ErrorMessage ?? "Lütfen formdaki hataları kontrol ediniz.");
             if (saveResult.Errors != null)
             {
@@ -329,7 +348,6 @@ public sealed class ListingsController : Controller
 
         if (!saveResult.Success)
         {
-            var lookups = await LoadLookupsAsync();
             var vm = await BuildViewModelAsync(form, lookups, canEdit: true, errorMessage: saveResult.ErrorMessage ?? "İlan kaydedilirken bir hata oluştu.");
             return View("Edit", vm);
         }
@@ -337,6 +355,24 @@ public sealed class ListingsController : Controller
         TempData["Success"] = "İlan kaydedildi.";
         var targetTypeId = saveResult.Data?.ListingTypeId > 0 ? saveResult.Data.ListingTypeId : form.ListingTypeId;
         var targetId = saveResult.Data?.ListingId > 0 ? saveResult.Data.ListingId : form.ListingId ?? 0;
+
+        if (isNew && form.Latitude.HasValue && form.Longitude.HasValue)
+        {
+            var lat = form.Latitude.Value;
+            var lng = form.Longitude.Value;
+            if (lat >= -90m && lat <= 90m && lng >= -180m && lng <= 180m)
+            {
+                var locResult = await _apiClient.PutAsync<object>($"AdminListings/{targetTypeId}/{targetId}/location", new UpdateLocationRequest { Latitude = form.Latitude, Longitude = form.Longitude });
+                if (!locResult.Success)
+                {
+                    TempData["Success"] += " Konum kaydedilemedi; haritadan tekrar deneyin.";
+                }
+            }
+            else
+            {
+                TempData["Success"] += " Konum kaydedilemedi; haritadan tekrar deneyin.";
+            }
+        }
 
         return Redirect($"/ilanlar/{targetTypeId}/{targetId}");
     }
@@ -499,6 +535,36 @@ public sealed class ListingsController : Controller
         }
 
         return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Konum bilgisi güncellenemedi.", data = (object?)null });
+    }
+
+    /// <summary>
+    /// İlanın yakın yerlerini ve kategori listesini döner.
+    /// </summary>
+    [HttpGet("/ilanlar/{t:int}/{id:int}/yakin-yerler")]
+    public async Task<IActionResult> GetNearbyPlaces(int t, int id)
+    {
+        var result = await _apiClient.GetAsync<AdminListingNearbyResponse>($"AdminListings/{t}/{id}/nearby");
+        if (result.Success)
+        {
+            return Ok(new { ok = true, data = result.Data });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Yakın yerler yüklenemedi." });
+    }
+
+    /// <summary>
+    /// İlanın yakın yer listesini toptan günceller.
+    /// </summary>
+    [HttpPut("/ilanlar/{t:int}/{id:int}/yakin-yerler")]
+    public async Task<IActionResult> UpdateNearbyPlaces(int t, int id, [FromBody] UpdateNearbyPlacesRequest body)
+    {
+        var result = await _apiClient.PutAsync<object>($"AdminListings/{t}/{id}/nearby", body ?? new UpdateNearbyPlacesRequest());
+        if (result.Success)
+        {
+            return Ok(new { ok = true, message = "Yakın yerler kaydedildi." });
+        }
+
+        return StatusCode(result.StatusCode, new { ok = false, message = result.ErrorMessage ?? "Yakın yerler kaydedilemedi." });
     }
 
     /// <summary>

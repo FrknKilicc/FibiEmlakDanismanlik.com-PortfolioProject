@@ -1,13 +1,17 @@
 ﻿@model ResultAllForRentalListingForPageDto
+@inject FibiEmlakDanismanlik.WebUI.Services.HtmlContentSanitizer HtmlSanitizer
+@{
+    var pageTitleBand = string.IsNullOrWhiteSpace(Model.ListingType) ? "Kiralık İlan" : $"Kiralık {Model.ListingType}";
+}
 
 <section class="page-title centred page-title--listing" style="background-image: url(/images/page-title/page-title-bg.jpg);">
     <div class="auto-container">
         <div class="content-box clearfix">
-            <h1>@Model.PropertyName</h1>
+            <div class="page-title-heading">@pageTitleBand</div>
             <ul class="bread-crumb clearfix">
                 <li><a href="@Url.Action("Index","UILayout")">Anasayfa</a></li>
                 <li><a href="@Url.Action("Index","AllForRentalPage")">Kiralık İlanlar</a></li>
-                <li>@Model.PropertyName</li>
+                <li>İlan Detayı</li>
             </ul>
         </div>
     </div>
@@ -80,35 +84,31 @@
 <section class="property-details property-details-one">
     <div class="auto-container">
         <div class="top-details clearfix">
-            <div class="left-column pull-left clearfix">
-                <h3>@Model.PropertyName@if (string.Equals(Model.PropertyStatus?.Trim(), "Opsiyonlu", StringComparison.OrdinalIgnoreCase)) { <span class="listing-status-badge listing-status-badge--inline" title="Bu ilan için opsiyon verildi">Opsiyonlu</span> }</h3>
-                <div class="author-info clearfix">
-                    <div class="author-box pull-left">
-                        <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt="@Model.AgentName"></figure>
-                        <h6>@Model.AgentName</h6>
-                    </div>
+            <h1 class="listing-detail-title">@Model.PropertyName@if (string.Equals(Model.PropertyStatus?.Trim(), "Opsiyonlu", StringComparison.OrdinalIgnoreCase)) { <span class="listing-status-badge listing-status-badge--inline" title="Bu ilan için opsiyon verildi">Opsiyonlu</span> }</h1>
+            <div class="top-details-meta-bar">
+                <div class="author-box">
+                    <figure class="author-thumb"><img src="@Model.AgentImgUrl" alt="@Model.AgentName"></figure>
+                    <h6>@Model.AgentName</h6>
                 </div>
-            </div>
-            <div class="right-column pull-right clearfix">
-                <div class="price-inner clearfix">
-                    <ul class="category clearfix pull-left">
+                <div class="top-details-right-group">
+                    <ul class="category clearfix">
                         <li><a href="@Url.Action("Index","AllForRentalPage")">Kiralık</a></li>
                         <li><a href="@Url.Action("Index","AllForRentalPage")">@Model.ListingType</a></li>
                     </ul>
-                    <div class="price-box pull-right">
+                    <div class="price-box">
                         <h3>@Model.Rent.ToString("N0") TL <span class="price-period">/ ay</span></h3>
                         @if (Model.Deposit.HasValue)
                         {
                             <p class="deposit-text">Depozito : @Model.Deposit.Value.ToString("N0") TL</p>
                         }
                     </div>
+                    @await Component.InvokeAsync("_PropertyDetailActionsViewComponentPartial", new FibiEmlakDanismanlik.WebUI.Models.CompareActionButtonVm
+                    {
+                        ListingId = Model.ListingId,
+                        UsageTypeId = Model.UsageTypeId ?? 2,
+                        ListingType = Model.ListingType ?? string.Empty
+                    })
                 </div>
-                @await Component.InvokeAsync("_PropertyDetailActionsViewComponentPartial", new FibiEmlakDanismanlik.WebUI.Models.CompareActionButtonVm
-                {
-                    ListingId = Model.ListingId,
-                    UsageTypeId = Model.UsageTypeId ?? 2,
-                    ListingType = Model.ListingType ?? string.Empty
-                })
             </div>
         </div>
         <div class="row clearfix">
@@ -140,13 +140,18 @@
                             <h4>İlan Açıklaması</h4>
                         </div>
                         <div class="text">
-                            @{
+                            @if (FibiEmlakDanismanlik.WebUI.Models.PageMeta.LooksLikeHtml(Model.PropertyDescription))
+                            {
+                                @HtmlSanitizer.Sanitize(Model.PropertyDescription)
+                            }
+                            else
+                            {
                                 var descParagraphs = (Model.PropertyDescription ?? "")
                                     .Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                            }
-                            @foreach (var parca in descParagraphs)
-                            {
-                                <p>@parca</p>
+                                foreach (var parca in descParagraphs)
+                                {
+                                    <p>@parca</p>
+                                }
                             }
                         </div>
                     </div>
@@ -299,16 +304,15 @@
                                     <li><i class="fas fa-envelope"></i><a href="mailto:@Model.Mail">@Model.Mail</a></li>
 
                                 </ul>
-                                <partial name="_AgentContactButtons" model="new FibiEmlakDanismanlik.WebUI.Models.AgentContactVm
-                                {
-                                    AgentName = Model.AgentName,
-                                    PhoneNumber = Model.AgentPhoneNumber,
-                                    ListingTitle = Model.PropertyName,
-                                    ListingAbsoluteUrl = SeoUrl.Absolute(Context, canonicalPath)
-                                }" />
                             </div>
                         </div>
-
+                        <partial name="_AgentContactButtons" model="new FibiEmlakDanismanlik.WebUI.Models.AgentContactVm
+                        {
+                            AgentName = Model.AgentName,
+                            PhoneNumber = Model.AgentPhoneNumber,
+                            ListingTitle = Model.PropertyName,
+                            ListingAbsoluteUrl = SeoUrl.Absolute(Context, canonicalPath)
+                        }" />
                     </div>
                     <partial name="_ListingAlertWidget" model="listingAlertModel" />
                 </div>

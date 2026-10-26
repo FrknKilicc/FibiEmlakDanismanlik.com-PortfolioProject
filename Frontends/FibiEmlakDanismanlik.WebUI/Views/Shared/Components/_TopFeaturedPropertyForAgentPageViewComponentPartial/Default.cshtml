@@ -17,11 +17,10 @@
             ? item.PropImgUrl1
             : Url.Content("~/Realshed/assets/images/feature/feature-1.jpg");
 
-            var description = !string.IsNullOrWhiteSpace(item.PropertyDescription)
-            ? (item.PropertyDescription.Length > 120
-            ? item.PropertyDescription.Substring(0, 120) + "..."
-            : item.PropertyDescription)
-            : "İlan açıklaması bulunmuyor.";
+            var strippedDesc = FibiEmlakDanismanlik.WebUI.Models.PageMeta.StripHtmlAndTruncate(item.PropertyDescription, 120);
+            var description = !string.IsNullOrWhiteSpace(strippedDesc)
+                ? strippedDesc
+                : "İlan açıklaması bulunmuyor.";
 
             <div class="feature-block-one">
                 <div class="inner-box">

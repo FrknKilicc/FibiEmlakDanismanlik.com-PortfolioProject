@@ -135,5 +135,15 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces
         /// Danışman bilgilerini döner.
         /// </summary>
         Task<Agent?> GetAgentByIdAsync(int agentId);
+
+        /// <summary>
+        /// Aktif yakın yer kategorilerini ve ilanın tüm yakın yer kayıtlarını (kategori bilgisiyle) döner.
+        /// </summary>
+        Task<(List<NearbyCategory> Categories, List<ListingNearbyPlace> Places)> GetNearbyPlacesAsync(int listingTypeId, int listingId);
+
+        /// <summary>
+        /// İlanın tüm yakın yer kayıtlarını silip verilen listeyi (sırasıyla) yazar.
+        /// </summary>
+        Task<bool> ReplaceNearbyPlacesAsync(int listingTypeId, int listingId, List<(int NearbyCategoryId, string PlaceName, decimal DistanceKm)> places);
     }
 }

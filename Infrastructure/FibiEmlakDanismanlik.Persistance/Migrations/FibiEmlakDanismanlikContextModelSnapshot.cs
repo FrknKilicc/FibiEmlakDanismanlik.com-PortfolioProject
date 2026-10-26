@@ -3237,6 +3237,38 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.ToTable("services");
                 });
 
+            modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.SiteText", b =>
+                {
+                    b.Property<int>("SiteTextId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SiteTextId"));
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedByAgentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.HasKey("SiteTextId");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.ToTable("SiteTexts");
+                });
+
             modelBuilder.Entity("FibiEmlakDanismanlik.Domain.Entities.SocialMedia", b =>
                 {
                     b.Property<int>("Id")

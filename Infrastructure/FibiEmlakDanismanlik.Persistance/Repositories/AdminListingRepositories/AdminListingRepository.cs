@@ -1743,6 +1743,47 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
             return Expression.Lambda<Func<ListingUnifiedEntry, bool>>(body, parameter);
         }
 
+        public async Task<(List<NearbyCategory> Categories, List<ListingNearbyPlace> Places)> GetNearbyPlacesAsync(int listingTypeId, int listingId)
+        {
+            var categories = await _context.NearbyCategories.AsNoTracking()
+                .Where(c => c.IsActive)
+                .OrderBy(c => c.SortOrder)
+                .ToListAsync();
+
+            var places = await _context.ListingNearbyPlaces.AsNoTracking()
+                .Include(p => p.NearbyCategory)
+                .Where(p => p.ListingTypeId == listingTypeId && p.ListingId == listingId)
+                .OrderBy(p => p.NearbyCategory!.SortOrder)
+                .ThenBy(p => p.DistanceKm)
+                .ThenBy(p => p.SortOrder)
+                .ToListAsync();
+
+            return (categories, places);
+        }
+
+        public async Task<bool> ReplaceNearbyPlacesAsync(int listingTypeId, int listingId, List<(int NearbyCategoryId, string PlaceName, decimal DistanceKm)> places)
+        {
+            var existing = await _context.ListingNearbyPlaces
+                .Where(p => p.ListingTypeId == listingTypeId && p.ListingId == listingId)
+                .ToListAsync();
+            _context.ListingNearbyPlaces.RemoveRange(existing);
+
+            _context.ListingNearbyPlaces.AddRange(places.Select((p, i) => new ListingNearbyPlace
+            {
+                ListingTypeId = listingTypeId,
+                ListingId = listingId,
+                NearbyCategoryId = p.NearbyCategoryId,
+                PlaceName = p.PlaceName,
+                DistanceKm = Math.Round(p.DistanceKm, 2),
+                Stars = null,
+                SortOrder = i,
+                IsActive = true
+            }));
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         private sealed class ListingUnifiedEntry
         {
             public int ListingTypeId { get; set; }

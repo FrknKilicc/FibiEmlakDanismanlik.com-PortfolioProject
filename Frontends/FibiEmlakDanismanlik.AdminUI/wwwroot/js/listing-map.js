@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const saveBtn = document.getElementById('saveLocationBtn');
     const geoSourceBadge = document.getElementById('geoSourceBadge');
     const alertArea = document.getElementById('mapAlertArea');
+    const latInput = document.getElementById('latInput');
+    const lngInput = document.getElementById('lngInput');
+    const applyCoordsBtn = document.getElementById('applyCoordsBtn');
 
     function getAntiForgeryToken() {
         const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
@@ -98,6 +101,13 @@ document.addEventListener('DOMContentLoaded', function () {
             coordDisplay.textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
         }
 
+        if (latInput) {
+            latInput.value = lat.toFixed(6);
+        }
+        if (lngInput) {
+            lngInput.value = lng.toFixed(6);
+        }
+
         if (saveBtn && canEdit) {
             saveBtn.disabled = false;
         }
@@ -126,6 +136,83 @@ document.addEventListener('DOMContentLoaded', function () {
 
             onLocationChanged(lat, lng);
         });
+    }
+
+    // Koordinatları oku, parse et ve haritada uygula
+    function applyCoordinates() {
+        if (!canEdit) return;
+
+        let rawLatVal = latInput ? latInput.value.trim() : '';
+        let rawLngVal = lngInput ? lngInput.value.trim() : '';
+
+        // Enlem alanına "41.01, 28.97" gibi iki sayı yapıştırılmışsa böl
+        if (rawLatVal) {
+            let parts = null;
+            if (rawLatVal.indexOf(';') !== -1) {
+                parts = rawLatVal.split(';');
+            } else if (rawLatVal.indexOf(', ') !== -1) {
+                parts = rawLatVal.split(', ');
+            } else if (/\s+/.test(rawLatVal)) {
+                parts = rawLatVal.split(/\s+/);
+            } else if (/^-?\d+(?:[.,]\d+)?,-?\d+(?:[.,]\d+)?$/.test(rawLatVal)) {
+                parts = rawLatVal.split(',');
+            }
+
+            if (parts && parts.length >= 2) {
+                rawLatVal = parts[0].trim();
+                rawLngVal = parts[1].trim();
+                if (latInput) latInput.value = rawLatVal;
+                if (lngInput) lngInput.value = rawLngVal;
+            }
+        }
+
+        // Virgül ondalık ayırıcıysa noktaya çevir
+        rawLatVal = rawLatVal.replace(',', '.');
+        rawLngVal = rawLngVal.replace(',', '.');
+
+        const lat = parseFloat(rawLatVal);
+        const lng = parseFloat(rawLngVal);
+
+        if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+            showMapAlert('Geçersiz koordinat: Enlem -90 ile 90, boylam -180 ile 180 arasında olmalı (örn. 41.01234, 28.97654).', 'danger');
+            return;
+        }
+
+        const isOutsideTurkey = (lat < 35.5 || lat > 42.5 || lng < 25.5 || lng > 45.0);
+        if (isOutsideTurkey) {
+            showMapAlert('Girilen koordinatlar Türkiye sınırları dışında görünüyor. Konum haritada gösterildi.', 'warning');
+        }
+
+        if (!marker) {
+            marker = L.marker([lat, lng], { draggable: canEdit }).addTo(map);
+            attachMarkerEvents(marker);
+        } else {
+            marker.setLatLng([lat, lng]);
+        }
+
+        map.setView([lat, lng], 17);
+        onLocationChanged(lat, lng);
+    }
+
+    if (applyCoordsBtn && canEdit) {
+        applyCoordsBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            applyCoordinates();
+        });
+    }
+
+    function handleCoordsKeyDown(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            applyCoordinates();
+        }
+    }
+
+    if (latInput && canEdit) {
+        latInput.addEventListener('keydown', handleCoordsKeyDown);
+    }
+    if (lngInput && canEdit) {
+        lngInput.addEventListener('keydown', handleCoordsKeyDown);
     }
 
     if (saveBtn && canEdit) {

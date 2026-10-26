@@ -1267,6 +1267,46 @@ a:hover {
 /* ==============================================================
    # Koyu Tema Logo Rozeti
    ============================================================== */
+/* ==============================================================
+   # TinyMCE Zengin Metin Editörü Stilleri
+   ============================================================== */
+.tox-tinymce {
+  border-radius: var(--bs-border-radius);
+}
+
+[data-bs-theme="dark"] .tox-tinymce {
+  border-color: var(--bs-border-color) !important;
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* ==============================================================
+   # Tom Select Koyu Tema ve Doğrulama Uyumluluğu
+   ============================================================== */
+[data-bs-theme="dark"] .ts-control,
+[data-bs-theme="dark"] .ts-dropdown {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .ts-dropdown .option {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .ts-dropdown .active {
+  background-color: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .ts-control input {
+  color: var(--bs-body-color);
+}
+
+.ts-wrapper.is-invalid .ts-control {
+  border-color: var(--bs-form-invalid-border-color);
+}
+
 [data-bs-theme="dark"] .header .logo img,
 [data-bs-theme="dark"] .logo img {
   background-color: #ffffff;

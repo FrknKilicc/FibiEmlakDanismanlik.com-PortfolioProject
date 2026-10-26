@@ -1,9 +1,13 @@
 @model List<ResultAgentDto>
+@inject FibiEmlakDanismanlik.WebUI.Services.SiteTextService SiteTextService
+@{
+    var texts = await SiteTextService.GetAsync();
+}
 <section class="team-section sec-pad centred">
     <div class="auto-container">
         <div class="sec-title">
-            <h5>Danışmanlarımız</h5>
-            <h2>Uzman Danışmanlarımızla Tanışın</h2>
+            <h5>@texts["home.agents.eyebrow"]</h5>
+            <h2>@texts["home.agents.title"]</h2>
         </div>
         <div class="three-item-carousel owl-carousel owl-theme owl-nav-none dots-style-one agent-carousel">
             @foreach (var item in Model)

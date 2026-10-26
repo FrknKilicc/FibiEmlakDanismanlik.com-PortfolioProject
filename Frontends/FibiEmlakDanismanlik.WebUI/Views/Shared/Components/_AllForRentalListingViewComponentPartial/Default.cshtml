@@ -324,14 +324,7 @@
                                                             </ul>
                                                         </div>
 
-                                                        @{
-                                                            var desc = item.PropertyDescription ?? "";
-                                                            var shortDesc = desc.Length > 160
-                                                            ? desc.Substring(0, 160) + "..."
-                                                            : desc;
-                                                        }
-
-                                                        <p>@shortDesc</p>
+                                                        <p>@FibiEmlakDanismanlik.WebUI.Models.PageMeta.StripHtmlAndTruncate(item.PropertyDescription, 160)</p>
                                                         @using FibiEmlakDanismanlik.Dto.PropertyDtos
 
                                                             <ul class="more-details clearfix">

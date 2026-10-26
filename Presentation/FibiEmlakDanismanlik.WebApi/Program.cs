@@ -205,6 +205,7 @@ builder.Services.AddScoped(typeof(IListingAlertRepository), typeof(ListingAlertR
 builder.Services.AddScoped(typeof(IListingDealRepository), typeof(ListingDealRepository));
 builder.Services.AddScoped(typeof(IDashboardRepository), typeof(DashboardRepository));
 builder.Services.AddScoped(typeof(IBusinessSettingRepository), typeof(BusinessSettingRepository));
+builder.Services.AddScoped<FibiEmlakDanismanlik.Application.Interfaces.SiteTextInterfaces.ISiteTextRepository, FibiEmlakDanismanlik.Persistence.Repositories.SiteTextRepositories.SiteTextRepository>();
 //Configure IRepositories
 
 //MediaTR tried

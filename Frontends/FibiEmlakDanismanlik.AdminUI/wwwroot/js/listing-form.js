@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initLocationDropdowns();
     initPricePerSquareMeterSuggestion();
     initFormSubmitHandler();
+    initNewListingCoordinates();
 });
 
 /**
@@ -29,6 +30,42 @@ function initLocationDropdowns() {
     }
 
     var isReadOnly = citySelect.disabled;
+
+    function initTomSelect(selectEl) {
+        if (!selectEl || typeof TomSelect === 'undefined' || selectEl.tomselect) {
+            return;
+        }
+        new TomSelect(selectEl, {
+            create: false,
+            allowEmptyOption: true,
+            maxOptions: null,
+            placeholder: 'Aramak için yazın...',
+            searchField: ['text'],
+            sortField: [{ field: '$order' }],
+            plugins: []
+        });
+        if (selectEl.disabled && selectEl.tomselect) {
+            selectEl.tomselect.disable();
+        }
+    }
+
+    function refreshSearchable(selectEl) {
+        if (!selectEl || !selectEl.tomselect) return;
+        var ts = selectEl.tomselect;
+        var current = selectEl.value; // sync öncesi DOM'daki seçim
+        ts.clear(true);
+        ts.clearOptions();
+        ts.sync();
+        if (current && selectEl.querySelector('option[value="' + CSS.escape(current) + '"]')) {
+            ts.setValue(current, true);
+        }
+        selectEl.disabled ? ts.disable() : ts.enable();
+    }
+
+    // Tom Select ilk başlatma
+    initTomSelect(citySelect);
+    initTomSelect(districtSelect);
+    initTomSelect(neighborhoodSelect);
 
     var initialCityName = citySelect.getAttribute('data-current-name') || (cityInput ? cityInput.value : '');
     var initialCityId = citySelect.getAttribute('data-current-id') || (cityIdInput ? cityIdInput.value : '');
@@ -67,10 +104,13 @@ function initLocationDropdowns() {
 
         if (cityId) {
             districtSelect.disabled = false;
+            refreshSearchable(districtSelect);
             loadDistricts(cityId, null, null);
         } else {
             districtSelect.disabled = true;
             neighborhoodSelect.disabled = true;
+            refreshSearchable(districtSelect);
+            refreshSearchable(neighborhoodSelect);
         }
     });
 
@@ -90,9 +130,11 @@ function initLocationDropdowns() {
 
         if (districtId) {
             neighborhoodSelect.disabled = false;
+            refreshSearchable(neighborhoodSelect);
             loadNeighborhoods(districtId, null, null);
         } else {
             neighborhoodSelect.disabled = true;
+            refreshSearchable(neighborhoodSelect);
         }
     });
 
@@ -108,6 +150,7 @@ function initLocationDropdowns() {
 
     function loadCities(currentId, currentName, onLoaded) {
         citySelect.innerHTML = '<option value="">Yükleniyor...</option>';
+        refreshSearchable(citySelect);
         fetch('/ilanlar/konum/iller')
             .then(function (res) { return res.ok ? res.json() : []; })
             .then(function (data) {
@@ -141,18 +184,22 @@ function initLocationDropdowns() {
                     citySelect.disabled = true;
                 }
 
+                refreshSearchable(citySelect);
+
                 if (onLoaded) {
                     onLoaded(matchedId);
                 }
             })
             .catch(function () {
                 citySelect.innerHTML = '<option value="">İller yüklenemedi</option>';
+                refreshSearchable(citySelect);
             });
     }
 
     function loadDistricts(cityId, currentId, currentName, onLoaded) {
         districtSelect.innerHTML = '<option value="">Yükleniyor...</option>';
         districtSelect.disabled = false;
+        refreshSearchable(districtSelect);
         fetch('/ilanlar/konum/ilceler?cityId=' + encodeURIComponent(cityId))
             .then(function (res) { return res.ok ? res.json() : []; })
             .then(function (data) {
@@ -186,18 +233,22 @@ function initLocationDropdowns() {
                     districtSelect.disabled = true;
                 }
 
+                refreshSearchable(districtSelect);
+
                 if (onLoaded) {
                     onLoaded(matchedId);
                 }
             })
             .catch(function () {
                 districtSelect.innerHTML = '<option value="">İlçeler yüklenemedi</option>';
+                refreshSearchable(districtSelect);
             });
     }
 
     function loadNeighborhoods(districtId, currentId, currentName) {
         neighborhoodSelect.innerHTML = '<option value="">Yükleniyor...</option>';
         neighborhoodSelect.disabled = false;
+        refreshSearchable(neighborhoodSelect);
         fetch('/ilanlar/konum/mahalleler?districtId=' + encodeURIComponent(districtId))
             .then(function (res) { return res.ok ? res.json() : []; })
             .then(function (data) {
@@ -228,15 +279,19 @@ function initLocationDropdowns() {
                 if (isReadOnly) {
                     neighborhoodSelect.disabled = true;
                 }
+
+                refreshSearchable(neighborhoodSelect);
             })
             .catch(function () {
                 neighborhoodSelect.innerHTML = '<option value="">Mahalleler yüklenemedi</option>';
+                refreshSearchable(neighborhoodSelect);
             });
     }
 
     function resetSelect(selectEl, placeholder) {
         selectEl.innerHTML = '<option value="">' + placeholder + '</option>';
         selectEl.disabled = true;
+        refreshSearchable(selectEl);
     }
 }
 
@@ -276,6 +331,34 @@ function initPricePerSquareMeterSuggestion() {
 
     mainPriceInput.addEventListener('input', calculateM2Price);
     areaInput.addEventListener('input', calculateM2Price);
+}
+
+/**
+ * Yeni ilan sihirbazında enlem ve boylam alanına yapıştırılan koordinatları böler.
+ */
+function initNewListingCoordinates() {
+    var latInput = document.getElementById('newListingLatitude');
+    var lngInput = document.getElementById('newListingLongitude');
+    if (!latInput || !lngInput) return;
+
+    latInput.addEventListener('input', function () {
+        var val = (latInput.value || '').trim();
+        var parts = null;
+        if (val.indexOf(';') !== -1) {
+            parts = val.split(';');
+        } else if (val.indexOf(', ') !== -1) {
+            parts = val.split(', ');
+        } else if (/\s+/.test(val)) {
+            parts = val.split(/\s+/);
+        } else if (/^-?\d+(?:[.,]\d+)?,-?\d+(?:[.,]\d+)?$/.test(val)) {
+            parts = val.split(',');
+        }
+
+        if (parts && parts.length >= 2) {
+            latInput.value = parts[0].trim();
+            lngInput.value = parts[1].trim();
+        }
+    });
 }
 
 /**
