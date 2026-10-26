@@ -2,6 +2,7 @@ using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Interfaces.FibiServiceInterfaces;
 using FibiEmlakDanismanlik.Application.Models.FibiServiceModels;
 using FibiEmlakDanismanlik.Domain.Entities;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,16 @@ namespace FibiEmlakDanismanlik.Application.Services.FibiServices
     {
         private readonly IEnumerable<IMarketDataProvider> _providers;
         private readonly IMarketDataSyncRepository _repository;
+        private readonly ILogger<MarketDataSyncRunner> _logger;
 
         public MarketDataSyncRunner(
             IEnumerable<IMarketDataProvider> providers,
-            IMarketDataSyncRepository repository)
+            IMarketDataSyncRepository repository,
+            ILogger<MarketDataSyncRunner> logger)
         {
             _providers = providers;
             _repository = repository;
+            _logger = logger;
         }
 
         public async Task<IReadOnlyList<(string ProviderKey, MarketDataSyncOutcome Outcome)>> RunAllAsync(bool force, CancellationToken cancellationToken)
@@ -63,6 +67,7 @@ namespace FibiEmlakDanismanlik.Application.Services.FibiServices
         {
             var startedAt = DateTime.Now;
             MarketDataSyncOutcome outcome;
+            Exception? syncException = null;
 
             try
             {
@@ -74,7 +79,9 @@ namespace FibiEmlakDanismanlik.Application.Services.FibiServices
             }
             catch (Exception ex)
             {
+                syncException = ex;
                 outcome = MarketDataSyncOutcome.Failure($"{ex.GetType().Name}: {ex.Message}");
+                _logger.LogError(ex, "Veri senkronizasyonu başarısız: {ProviderKey} — {Message}", provider.Key, outcome.Message);
             }
 
             var finishedAt = DateTime.Now;
@@ -82,6 +89,10 @@ namespace FibiEmlakDanismanlik.Application.Services.FibiServices
             if (!outcome.IsSuccess)
             {
                 _repository.DiscardPendingChanges();
+                if (syncException == null)
+                {
+                    _logger.LogError("Veri senkronizasyonu başarısız: {ProviderKey} — {Message}", provider.Key, outcome.Message);
+                }
             }
 
             if (!outcome.IsSkipped)

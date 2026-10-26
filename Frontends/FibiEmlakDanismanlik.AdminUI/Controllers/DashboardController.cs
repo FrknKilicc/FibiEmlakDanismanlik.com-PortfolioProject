@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -63,6 +64,33 @@ public sealed class DashboardController : Controller
         else
         {
             viewModel.ErrorMessage = result.ErrorMessage ?? "Kontrol paneli verileri yüklenirken bir hata oluştu.";
+        }
+
+        if (_currentAdmin.IsManagerOrAbove)
+        {
+            try
+            {
+                var syncLogsResult = await _apiClient.GetAsync<List<SyncLogDto>>("FibiServices/sync/logs");
+                if (syncLogsResult.Success && syncLogsResult.Data != null)
+                {
+                    viewModel.SyncFailures = syncLogsResult.Data
+                        .Where(x => !string.IsNullOrWhiteSpace(x.ProviderKey))
+                        .GroupBy(x => x.ProviderKey, StringComparer.OrdinalIgnoreCase)
+                        .Select(g => g.OrderByDescending(x => x.FinishedAt).ThenByDescending(x => x.MarketDataSyncLogId).First())
+                        .Where(latest => !latest.IsSuccess)
+                        .Select(latest => new SyncFailureItem
+                        {
+                            ProviderKey = latest.ProviderKey,
+                            FinishedAt = latest.FinishedAt,
+                            Message = latest.Message ?? string.Empty
+                        })
+                        .ToList();
+                }
+            }
+            catch
+            {
+                // Uç hata verirse sessizce geç (kontrol paneli bozulmasın)
+            }
         }
 
         return View(viewModel);

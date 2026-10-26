@@ -368,3 +368,6 @@ FodyWeavers.xsd
 
 # Panelden yuklenen ilan fotograflari (sunucuda tutulur, repoya girmez)
 Presentation/FibiEmlakDanismanlik.WebApi/uploads/
+
+# Serilog dosya logları
+logs/
