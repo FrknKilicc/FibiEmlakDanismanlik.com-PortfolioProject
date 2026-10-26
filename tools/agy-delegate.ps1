@@ -31,6 +31,8 @@
 #   AGY_SUCCESS
 #   MODEL=<slug>
 #   CONVERSATION_ID=<id>
+#   AGY_BOM_RESTORED: <path>
+#   AGY_BOM_WARNING: <message>
 # followed by the agent's response. Pass CONVERSATION_ID back with
 # -Conversation to send a fix request into the same conversation.
 #
@@ -179,6 +181,50 @@ function Get-RunOutcome($run, [bool]$changedSinceStart) {
     return "ERROR"
 }
 
+function Restore-Boms {
+    try {
+        $root = if ($RepoRoot) { $RepoRoot } else { Split-Path $PSScriptRoot -Parent }
+        $changedFiles = & git -C $root diff --name-only 2>$null
+        foreach ($relPath in @($changedFiles)) {
+            if ([string]::IsNullOrWhiteSpace($relPath)) { continue }
+            try {
+                $tempFile = [System.IO.Path]::GetTempFileName()
+                try {
+                    cmd /c "git -C `"$root`" cat-file -p `"HEAD:$relPath`" > `"$tempFile`"" 2>$null
+                    if (Test-Path -LiteralPath $tempFile) {
+                        $headBytes = [System.IO.File]::ReadAllBytes($tempFile)
+                        $headHasBom = ($headBytes.Length -ge 3 -and $headBytes[0] -eq 0xEF -and $headBytes[1] -eq 0xBB -and $headBytes[2] -eq 0xBF)
+                        if ($headHasBom) {
+                            $fullPath = Join-Path $root $relPath
+                            if ((Test-Path -LiteralPath $fullPath) -and (Get-Item -LiteralPath $fullPath).Length -gt 0) {
+                                $workingBytes = [System.IO.File]::ReadAllBytes($fullPath)
+                                $workingHasBom = ($workingBytes.Length -ge 3 -and $workingBytes[0] -eq 0xEF -and $workingBytes[1] -eq 0xBB -and $workingBytes[2] -eq 0xBF)
+                                if (-not $workingHasBom) {
+                                    $newBytes = New-Object byte[] ($workingBytes.Length + 3)
+                                    $newBytes[0] = 0xEF
+                                    $newBytes[1] = 0xBB
+                                    $newBytes[2] = 0xBF
+                                    [System.Buffer]::BlockCopy($workingBytes, 0, $newBytes, 3, $workingBytes.Length)
+                                    [System.IO.File]::WriteAllBytes($fullPath, $newBytes)
+                                    Write-Output "AGY_BOM_RESTORED: $relPath"
+                                }
+                            }
+                        }
+                    }
+                } finally {
+                    if (Test-Path -LiteralPath $tempFile) {
+                        Remove-Item -LiteralPath $tempFile -Force -ErrorAction SilentlyContinue
+                    }
+                }
+            } catch {
+                Write-Output "AGY_BOM_WARNING: $($_.Exception.Message)"
+            }
+        }
+    } catch {
+        Write-Output "AGY_BOM_WARNING: $($_.Exception.Message)"
+    }
+}
+
 $modelOrder = @(Get-ModelOrder)
 if ($modelOrder.Count -eq 0) {
     Write-Output "AGY_UNAVAILABLE: no models found (agy models returned nothing)."
@@ -244,6 +290,7 @@ try {
                     Write-Output "AGY_EMPTY_RESPONSE: raw output follows"
                     Write-Output $run.Raw
                 }
+                Restore-Boms
                 exit 0
             }
             "QUOTA" {
