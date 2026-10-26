@@ -41,6 +41,8 @@ using FibiEmlakDanismanlik.Application.Interfaces.DashboardInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.DashboardRepositories;
 using FibiEmlakDanismanlik.Application.Interfaces.BusinessSettingInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.BusinessSettingRepositories;
+using FibiEmlakDanismanlik.Application.Interfaces.ContentImageInterfaces;
+using FibiEmlakDanismanlik.Persistence.Repositories.ContentImageRepositories;
 using FibiEmlakDanismanlik.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -209,6 +211,7 @@ builder.Services.AddScoped(typeof(IListingDealRepository), typeof(ListingDealRep
 builder.Services.AddScoped(typeof(IDashboardRepository), typeof(DashboardRepository));
 builder.Services.AddScoped(typeof(IBusinessSettingRepository), typeof(BusinessSettingRepository));
 builder.Services.AddScoped<FibiEmlakDanismanlik.Application.Interfaces.SiteTextInterfaces.ISiteTextRepository, FibiEmlakDanismanlik.Persistence.Repositories.SiteTextRepositories.SiteTextRepository>();
+builder.Services.AddScoped<IContentImageUsageRepository, ContentImageUsageRepository>();
 //Configure IRepositories
 
 //MediaTR tried
