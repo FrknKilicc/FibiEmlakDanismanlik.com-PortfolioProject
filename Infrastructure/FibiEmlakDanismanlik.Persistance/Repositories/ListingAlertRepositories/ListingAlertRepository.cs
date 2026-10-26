@@ -103,15 +103,12 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingAlertRepositories
                     .ThenByDescending(x => x.ListingAlertId)
                     .ToListAsync();
 
-                var alertsWithMatches = new List<(ListingAlert Alert, int PendingCount)>();
-                foreach (var alert in activeCandidates)
-                {
-                    var matches = await GetPendingMatchesForAlertAsync(alert);
-                    if (matches.Count > 0)
-                    {
-                        alertsWithMatches.Add((alert, matches.Count));
-                    }
-                }
+                var counts = await GetPendingCountsAsync(activeCandidates);
+
+                var alertsWithMatches = activeCandidates
+                    .Where(x => counts.TryGetValue(x.ListingAlertId, out var count) && count > 0)
+                    .Select(x => (Alert: x, PendingCount: counts[x.ListingAlertId]))
+                    .ToList();
 
                 var total = alertsWithMatches.Count;
                 if (total == 0)
@@ -176,15 +173,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingAlertRepositories
 
             // Kapsamdaki aktif kayıtlar için bekleyen eşleşmesi olanları hesapla
             var activeAlerts = await query.Where(x => x.Status == ListingAlertStatus.Active).ToListAsync();
-            var activeWithPending = 0;
-            foreach (var alert in activeAlerts)
-            {
-                var pending = await GetPendingMatchesForAlertAsync(alert);
-                if (pending.Count > 0)
-                {
-                    activeWithPending++;
-                }
-            }
+            var counts = await GetPendingCountsAsync(activeAlerts);
+            var activeWithPending = counts.Count(kv => kv.Value > 0);
 
             return new ListingAlertSummary
             {
@@ -491,6 +481,198 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingAlertRepositories
         }
 
         #region Eşleşme ve Projeksiyon Yardımcı Metotları
+
+        /// <summary>
+        /// Verilen haber talepleri için bekleyen eşleşme sayılarını toplu (batch) sorgularla hesaplar.
+        /// Toplam sorgu sayısı: en fazla (farklı ilan türü sayısı + 1).
+        /// </summary>
+        private async Task<Dictionary<int, int>> GetPendingCountsAsync(IReadOnlyCollection<ListingAlert> alerts)
+        {
+            var result = new Dictionary<int, int>();
+            if (alerts == null || alerts.Count == 0)
+            {
+                return result;
+            }
+
+            foreach (var alert in alerts)
+            {
+                result[alert.ListingAlertId] = 0;
+            }
+
+            var activeAlerts = alerts.Where(a => a.Status == ListingAlertStatus.Active).ToList();
+            if (activeAlerts.Count == 0)
+            {
+                return result;
+            }
+
+            var alertIds = activeAlerts.Select(a => a.ListingAlertId).Distinct().ToList();
+            var matches = await _context.ListingAlertMatches.AsNoTracking()
+                .Where(m => alertIds.Contains(m.ListingAlertId))
+                .Select(m => new { m.ListingAlertId, m.ListingTypeId, m.ListingId })
+                .ToListAsync();
+
+            var matchSet = new HashSet<(int AlertId, int ListingTypeId, int ListingId)>(
+                matches.Select(m => (m.ListingAlertId, m.ListingTypeId, m.ListingId))
+            );
+
+            var alertsByType = activeAlerts.GroupBy(a => a.ListingTypeId);
+
+            foreach (var group in alertsByType)
+            {
+                var listingTypeId = group.Key;
+                var cityIds = group.Select(a => a.CityId).Distinct().ToList();
+                var minCreatedDate = group.Min(a => a.CreatedDate);
+
+                List<CandidateListing> candidates;
+
+                switch (listingTypeId)
+                {
+                    case 1: // Satılık Arsa
+                        candidates = await _context.forSaleLandListings.AsNoTracking()
+                            .Where(l => l.PropertyStatus == PropertyStatuses.Aktif &&
+                                        l.CreatedDate >= minCreatedDate &&
+                                        l.CityId.HasValue && cityIds.Contains(l.CityId.Value))
+                            .Select(l => new CandidateListing
+                            {
+                                ListingId = l.ForSaleLandListingId,
+                                CityId = l.CityId,
+                                DistrictId = l.DistrictId,
+                                Price = l.Price,
+                                CreatedDate = l.CreatedDate,
+                                NumberOfRoom = null
+                            })
+                            .ToListAsync();
+                        break;
+
+                    case 2: // Satılık Konut
+                        candidates = await _context.forSaleHousingPropertyListings.AsNoTracking()
+                            .Where(l => l.PropertyStatus == PropertyStatuses.Aktif &&
+                                        l.CreatedDate >= minCreatedDate &&
+                                        l.CityId.HasValue && cityIds.Contains(l.CityId.Value))
+                            .Select(l => new CandidateListing
+                            {
+                                ListingId = l.ForSaleHousingListId,
+                                CityId = l.CityId,
+                                DistrictId = l.DistrictId,
+                                Price = l.Price,
+                                CreatedDate = l.CreatedDate,
+                                NumberOfRoom = l.NumberOfRoom
+                            })
+                            .ToListAsync();
+                        break;
+
+                    case 3: // Satılık İşyeri
+                        candidates = await _context.forSaleCommercialPropertyListings.AsNoTracking()
+                            .Where(l => l.PropertyStatus == PropertyStatuses.Aktif &&
+                                        l.CreatedDate >= minCreatedDate &&
+                                        l.CityId.HasValue && cityIds.Contains(l.CityId.Value))
+                            .Select(l => new CandidateListing
+                            {
+                                ListingId = l.ForSaleCommercialListingId,
+                                CityId = l.CityId,
+                                DistrictId = l.DistrictId,
+                                Price = l.Price,
+                                CreatedDate = l.CreatedDate,
+                                NumberOfRoom = null
+                            })
+                            .ToListAsync();
+                        break;
+
+                    case 7: // Kiralık Arsa
+                        candidates = await _context.rentalLandListings.AsNoTracking()
+                            .Where(l => l.PropertyStatus == PropertyStatuses.Aktif &&
+                                        l.CreatedDate >= minCreatedDate &&
+                                        l.CityId.HasValue && cityIds.Contains(l.CityId.Value))
+                            .Select(l => new CandidateListing
+                            {
+                                ListingId = l.RentalLandListingId,
+                                CityId = l.CityId,
+                                DistrictId = l.DistrictId,
+                                Price = l.Rent,
+                                CreatedDate = l.CreatedDate,
+                                NumberOfRoom = null
+                            })
+                            .ToListAsync();
+                        break;
+
+                    case 8: // Kiralık Konut
+                        candidates = await _context.rentalHousingListings.AsNoTracking()
+                            .Where(l => l.PropertyStatus == PropertyStatuses.Aktif &&
+                                        l.CreatedDate >= minCreatedDate &&
+                                        l.CityId.HasValue && cityIds.Contains(l.CityId.Value))
+                            .Select(l => new CandidateListing
+                            {
+                                ListingId = l.RentalHousingListId,
+                                CityId = l.CityId,
+                                DistrictId = l.DistrictId,
+                                Price = l.Rent,
+                                CreatedDate = l.CreatedDate,
+                                NumberOfRoom = l.NumberOfRoom
+                            })
+                            .ToListAsync();
+                        break;
+
+                    case 9: // Kiralık İşyeri
+                        candidates = await _context.rentalCommercialPropertyListings.AsNoTracking()
+                            .Where(l => l.PropertyStatus == PropertyStatuses.Aktif &&
+                                        l.CreatedDate >= minCreatedDate &&
+                                        l.CityId.HasValue && cityIds.Contains(l.CityId.Value))
+                            .Select(l => new CandidateListing
+                            {
+                                ListingId = l.RentalCommercialListId,
+                                CityId = l.CityId,
+                                DistrictId = l.DistrictId,
+                                Price = l.Rent,
+                                CreatedDate = l.CreatedDate,
+                                NumberOfRoom = null
+                            })
+                            .ToListAsync();
+                        break;
+
+                    default:
+                        candidates = new List<CandidateListing>();
+                        break;
+                }
+
+                foreach (var alert in group)
+                {
+                    var count = 0;
+                    foreach (var c in candidates)
+                    {
+                        if (c.CityId != alert.CityId)
+                            continue;
+
+                        if (c.CreatedDate < alert.CreatedDate)
+                            continue;
+
+                        if (alert.DistrictId.HasValue && c.DistrictId != alert.DistrictId.Value)
+                            continue;
+
+                        if (alert.MinPrice.HasValue && c.Price < alert.MinPrice.Value)
+                            continue;
+
+                        if (alert.MaxPrice.HasValue && c.Price > alert.MaxPrice.Value)
+                            continue;
+
+                        if (matchSet.Contains((alert.ListingAlertId, alert.ListingTypeId, c.ListingId)))
+                            continue;
+
+                        if ((listingTypeId == 2 || listingTypeId == 8) &&
+                            !string.IsNullOrWhiteSpace(alert.RoomCounts) &&
+                            !IsRoomMatch(alert.RoomCounts, c.NumberOfRoom))
+                        {
+                            continue;
+                        }
+
+                        count++;
+                    }
+
+                    result[alert.ListingAlertId] = count;
+                }
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Aktif bir haber talebi için eşleşme kriterlerine uyan ve henüz işlem görmemiş ilanları çeker.
@@ -912,6 +1094,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingAlertRepositories
                 .ToDictionaryAsync(g => g.AlertId, g => g.Count);
 
             var pendingCounts = new Dictionary<int, int>();
+            var alertsToFetch = new List<ListingAlert>();
+
             foreach (var alert in alerts)
             {
                 if (knownPendingCounts != null && knownPendingCounts.TryGetValue(alert.ListingAlertId, out var count))
@@ -920,12 +1104,20 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingAlertRepositories
                 }
                 else if (alert.Status == ListingAlertStatus.Active)
                 {
-                    var matches = await GetPendingMatchesForAlertAsync(alert);
-                    pendingCounts[alert.ListingAlertId] = matches.Count;
+                    alertsToFetch.Add(alert);
                 }
                 else
                 {
                     pendingCounts[alert.ListingAlertId] = 0;
+                }
+            }
+
+            if (alertsToFetch.Count > 0)
+            {
+                var fetchedCounts = await GetPendingCountsAsync(alertsToFetch);
+                foreach (var kvp in fetchedCounts)
+                {
+                    pendingCounts[kvp.Key] = kvp.Value;
                 }
             }
 
@@ -1065,6 +1257,16 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingAlertRepositories
             public int? CityId { get; set; }
             public int? DistrictId { get; set; }
             public decimal Price { get; set; }
+            public string? NumberOfRoom { get; set; }
+        }
+
+        private sealed class CandidateListing
+        {
+            public int ListingId { get; set; }
+            public int? CityId { get; set; }
+            public int? DistrictId { get; set; }
+            public decimal Price { get; set; }
+            public DateTime CreatedDate { get; set; }
             public string? NumberOfRoom { get; set; }
         }
 
