@@ -53,7 +53,7 @@
                             <ul class="post-info clearfix">
                                 <li class="author-box">
                                     <figure class="author-thumb">
-                                        <img src="@item.AuthorImgUrl" alt="@item.AuthorName">
+                                        <img src="@(!string.IsNullOrWhiteSpace(item.AuthorImgUrl) ? item.AuthorImgUrl : "/Realshed/assets/images/FibiLogo.png")" alt="@item.AuthorName">
                                     </figure>
                                     <h5>
                                         <a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)">

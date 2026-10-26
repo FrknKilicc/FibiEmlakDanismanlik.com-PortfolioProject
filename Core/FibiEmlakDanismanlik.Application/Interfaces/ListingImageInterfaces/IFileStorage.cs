@@ -1,8 +1,18 @@
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces
 {
+    /// <summary>
+    /// Depolanan dosyanın göreli yolu, boyutu ve son yazılma zamanı bilgisi.
+    /// </summary>
+    /// <param name="RelativePath">Kök depolamaya göre '/' ayraçlı dosya yolu (ör. content/blog/2026/10/x-1600.webp).</param>
+    /// <param name="SizeBytes">Dosyanın bayt cinsinden boyutu.</param>
+    /// <param name="LastWriteUtc">Dosyanın son yazılma UTC zamanı.</param>
+    public sealed record StoredFileInfo(string RelativePath, long SizeBytes, DateTime LastWriteUtc);
+
     /// <summary>
     /// Dosyaların disk veya depolama alanına kaydedilmesi, silinmesi ve genel adreslerinin üretilmesi sözleşmesi.
     /// </summary>
@@ -29,5 +39,12 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces
         /// <param name="relativePath">Göreli dosya yolu.</param>
         /// <returns>Genel erişim URL adresi.</returns>
         string GetPublicUrl(string relativePath);
+
+        /// <summary>
+        /// Belirtilen göreli klasör altındaki tüm dosyaları özyinelemeli olarak listeler.
+        /// </summary>
+        /// <param name="relativeFolder">Kök depolama alanına göre listelenecek göreli klasör yolu.</param>
+        /// <returns>Bulunan dosyaların listesi.</returns>
+        IReadOnlyList<StoredFileInfo> ListFiles(string relativeFolder);
     }
 }

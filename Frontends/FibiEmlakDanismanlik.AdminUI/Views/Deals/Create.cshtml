@@ -1,5 +1,6 @@
 @model FibiEmlakDanismanlik.AdminUI.Models.Deals.DealCreateViewModel
 @using FibiEmlakDanismanlik.AdminUI.Models.Deals
+@using FibiEmlakDanismanlik.AdminUI.Models.Leads
 @{
     ViewData["Title"] = "Yeni İşlem";
 
@@ -14,6 +15,7 @@
     var errCustomerPhone = Model.GetFieldError("CustomerPhone");
     var errNotes = Model.GetFieldError("Notes");
     var errListingId = Model.GetFieldError("ListingId");
+    var errLinkedLead = Model.GetFieldError("LinkedLeadId") ?? Model.GetFieldError("LinkedLead");
 
     var listingUrl = $"/ilanlar/{Model.Form.ListingTypeId}/{Model.Form.ListingId}";
 }
@@ -93,6 +95,36 @@
                     <h5 class="card-title p-0 pb-2 border-bottom mb-3">
                         <i class="bi bi-person me-2 text-primary"></i>Müşteri Bilgileri
                     </h5>
+
+                    <div class="mb-3">
+                        <label for="LinkedLead" class="form-label small fw-semibold">
+                            Bağlı talep (isteğe bağlı)
+                        </label>
+                        <select name="LinkedLead"
+                                id="LinkedLead"
+                                class="form-select @(errLinkedLead != null ? "is-invalid" : "")"
+                                data-help="İşlem açılınca talep Kapora, tamamlanınca Kazanıldı durumuna geçer ve talebin geçmişine yazılır.">
+                            <option value="">Talep bağlama</option>
+                            @if (Model.Leads != null)
+                            {
+                                foreach (var lead in Model.Leads)
+                                {
+                                    var val = $"{lead.Source}-{lead.LeadId}";
+                                    var isSelected = Model.Form.LinkedLead == val;
+                                    <option value="@val"
+                                            data-name="@lead.FullName"
+                                            data-phone="@lead.Phone"
+                                            selected="@(isSelected ? "selected" : null)">
+                                        @($"{lead.FullName} – {lead.Phone} – {LeadLabels.StatusName(lead.Status)} ({lead.CreatedDate:dd.MM.yyyy})")
+                                    </option>
+                                }
+                            }
+                        </select>
+                        @if (errLinkedLead != null)
+                        {
+                            <div class="invalid-feedback d-block">@errLinkedLead</div>
+                        }
+                    </div>
 
                     <div class="mb-3">
                         <label for="CustomerName" class="form-label small fw-semibold">
@@ -252,7 +284,7 @@
                             <div class="col-md-6 col-12">
                                 <div class="p-3 bg-light rounded border">
                                     <h6 class="fw-bold text-dark mb-2">
-                                        <i class="bi bi-house-check me-1 text-primary"></i>Satıcıdan Alınacak Komisyon
+                                        <i class="bi bi-person-check me-1 text-primary"></i>Satıcıdan Alınacak Komisyon
                                     </h6>
                                     <div class="row g-2">
                                         <div class="col-sm-6 col-12">
@@ -287,58 +319,53 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="small text-muted mt-2">
-                            <i class="bi bi-info-circle me-1"></i>Yalnızca oran girerseniz tutar bedelden hesaplanır; tutar girerseniz o geçerlidir. Komisyonu kimden aldıysanız o tarafı doldurun.
-                        </div>
                     }
                     else
                     {
-                        <!-- Kiralama Komisyon Alanları (Oran Alanları Yok) -->
+                        <!-- Kiralama Komisyon Alanları -->
                         <div class="row g-3 mb-2">
                             <div class="col-md-6 col-12">
                                 <div class="p-3 bg-light rounded border">
                                     <h6 class="fw-bold text-dark mb-2">
                                         <i class="bi bi-person-check me-1 text-primary"></i>Kiracıdan Alınacak Komisyon
                                     </h6>
-                                    <label for="BuyerCommissionAmount" class="form-label small text-muted">Tutar (₺)</label>
-                                    <input type="text"
-                                           inputmode="decimal"
-                                           class="form-control form-control-sm @(errBuyerAmount != null ? "is-invalid" : "")"
-                                           id="BuyerCommissionAmount" data-help="Alıcı veya kiracıdan tahsil edilecek net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir."
-                                           name="BuyerCommissionAmount"
-                                           value="@Model.Form.BuyerCommissionAmount"
-                                           placeholder="Örn: 15.000" />
-                                    @if (errBuyerAmount != null)
-                                    {
-                                        <div class="invalid-feedback d-block">@errBuyerAmount</div>
-                                    }
+                                    <div>
+                                        <label for="BuyerCommissionAmount" class="form-label small text-muted">Tutar (₺)</label>
+                                        <input type="text"
+                                               inputmode="decimal"
+                                               class="form-control form-control-sm @(errBuyerAmount != null ? "is-invalid" : "")"
+                                               id="BuyerCommissionAmount" data-help="Alıcı veya kiracıdan tahsil edilecek net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir."
+                                               name="BuyerCommissionAmount"
+                                               value="@Model.Form.BuyerCommissionAmount"
+                                               placeholder="Örn: 20.000" />
+                                        @if (errBuyerAmount != null)
+                                        {
+                                            <div class="invalid-feedback d-block">@errBuyerAmount</div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
-
                             <div class="col-md-6 col-12">
                                 <div class="p-3 bg-light rounded border">
                                     <h6 class="fw-bold text-dark mb-2">
-                                        <i class="bi bi-house-check me-1 text-primary"></i>Ev Sahibinden Alınacak Komisyon
+                                        <i class="bi bi-person-check me-1 text-primary"></i>Ev Sahibinden Alınacak Komisyon
                                     </h6>
-                                    <label for="SellerCommissionAmount" class="form-label small text-muted">Tutar (₺)</label>
-                                    <input type="text"
-                                           inputmode="decimal"
-                                           class="form-control form-control-sm @(errSellerAmount != null ? "is-invalid" : "")"
-                                           id="SellerCommissionAmount" data-help="Satıcı veya ev sahibinden alınacak net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir."
-                                           name="SellerCommissionAmount"
-                                           value="@Model.Form.SellerCommissionAmount"
-                                           placeholder="Örn: 15.000" />
-                                    @if (errSellerAmount != null)
-                                    {
-                                        <div class="invalid-feedback d-block">@errSellerAmount</div>
-                                    }
+                                    <div>
+                                        <label for="SellerCommissionAmount" class="form-label small text-muted">Tutar (₺)</label>
+                                        <input type="text"
+                                               inputmode="decimal"
+                                               class="form-control form-control-sm @(errSellerAmount != null ? "is-invalid" : "")"
+                                               id="SellerCommissionAmount" data-help="Satıcı veya ev sahibinden alınacak net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir."
+                                               name="SellerCommissionAmount"
+                                               value="@Model.Form.SellerCommissionAmount"
+                                               placeholder="Örn: 0" />
+                                        @if (errSellerAmount != null)
+                                        {
+                                            <div class="invalid-feedback d-block">@errSellerAmount</div>
+                                        }
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="small text-muted mt-2">
-                            <i class="bi bi-info-circle me-1"></i>İkisi de boş bırakılırsa kiracıdan bir aylık kira bedeli komisyon sayılır.
                         </div>
                     }
                 </div>
@@ -389,3 +416,7 @@
         </div>
     </div>
 </form>
+
+@section Scripts {
+    <script src="~/js/deal-lead-link.js" asp-append-version="true"></script>
+}

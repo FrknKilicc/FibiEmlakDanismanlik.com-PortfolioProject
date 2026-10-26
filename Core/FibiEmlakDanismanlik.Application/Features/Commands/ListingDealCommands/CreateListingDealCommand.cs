@@ -1,4 +1,5 @@
 using System;
+using FibiEmlakDanismanlik.Domain.Enums;
 using MediatR;
 
 namespace FibiEmlakDanismanlik.Application.Features.Commands.ListingDealCommands
@@ -20,5 +21,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.ListingDealCommands
         public string CustomerName { get; set; } = string.Empty;
         public string? CustomerPhone { get; set; }
         public string? Notes { get; set; }
+        public LeadSource? LinkedLeadSource { get; set; }
+        public int? LinkedLeadId { get; set; }
     }
 }

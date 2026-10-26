@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FibiEmlakDanismanlik.AdminUI.Controllers;
 
 /// <summary>
-/// İş kuralı ayarlarını görüntüleyen ve güncelleyen denetleyici (Yalnızca Sahip).
+/// İş kuralı ayarlarını ve sistem bakım işlemlerini yöneten denetleyici (Yalnızca Sahip).
 /// </summary>
 [Authorize]
 public sealed class SettingsController : Controller
@@ -151,5 +151,93 @@ public sealed class SettingsController : Controller
             ErrorMessage = result.ErrorMessage ?? "Ayarlar kaydedilemedi."
         };
         return View("Index", errorVm);
+    }
+
+    /// <summary>
+    /// Kullanılmayan içerik görsellerini listeler (Yalnızca Sahip).
+    /// </summary>
+    [HttpGet("/ayarlar/kullanilmayan-gorseller")]
+    public async Task<IActionResult> OrphanImages()
+    {
+        if (!_currentAdmin.IsOwner)
+        {
+            return Redirect("/yetkisiz");
+        }
+
+        var result = await _apiClient.GetAsync<GetOrphanContentImagesResultDto>("ContentImages/orphans");
+        if (result.StatusCode == StatusCodes.Status401Unauthorized)
+        {
+            return Redirect("/giris");
+        }
+        if (result.StatusCode == StatusCodes.Status403Forbidden)
+        {
+            return Redirect("/yetkisiz");
+        }
+
+        var vm = new OrphanImagesViewModel();
+        if (result.Success && result.Data != null)
+        {
+            vm.Items = result.Data.Items;
+            vm.TotalBytes = result.Data.TotalBytes;
+            vm.ScannedCount = result.Data.ScannedCount;
+        }
+        else
+        {
+            vm.ErrorMessage = result.ErrorMessage ?? "Kullanılmayan görseller yüklenemedi.";
+        }
+
+        return View("OrphanImages", vm);
+    }
+
+    /// <summary>
+    /// Seçilen kullanılmayan içerik görsellerini siler (Yalnızca Sahip).
+    /// </summary>
+    [HttpPost("/ayarlar/kullanilmayan-gorseller/sil")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteOrphanImages([FromForm] string[]? paths)
+    {
+        if (!_currentAdmin.IsOwner)
+        {
+            return Redirect("/yetkisiz");
+        }
+
+        if (paths == null || paths.Length == 0)
+        {
+            TempData["Error"] = "Lütfen silinecek en az bir görsel seçin.";
+            return Redirect("/ayarlar/kullanilmayan-gorseller");
+        }
+
+        var selectedPaths = paths.Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+        if (selectedPaths.Count == 0)
+        {
+            TempData["Error"] = "Lütfen silinecek en az bir görsel seçin.";
+            return Redirect("/ayarlar/kullanilmayan-gorseller");
+        }
+
+        var payload = new
+        {
+            relativePaths = selectedPaths
+        };
+
+        var result = await _apiClient.PostAsync<DeleteOrphansResponseDto>("ContentImages/orphans/delete", payload);
+        if (result.StatusCode == StatusCodes.Status401Unauthorized)
+        {
+            return Redirect("/giris");
+        }
+        if (result.StatusCode == StatusCodes.Status403Forbidden)
+        {
+            return Redirect("/yetkisiz");
+        }
+
+        if (result.Success && result.Data != null)
+        {
+            TempData["Success"] = $"{result.Data.Deleted} kullanılmayan görsel silindi.";
+        }
+        else
+        {
+            TempData["Error"] = result.ErrorMessage ?? "Görseller silinirken bir hata oluştu.";
+        }
+
+        return Redirect("/ayarlar/kullanilmayan-gorseller");
     }
 }

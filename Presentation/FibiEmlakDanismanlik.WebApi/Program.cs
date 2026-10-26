@@ -41,6 +41,8 @@ using FibiEmlakDanismanlik.Application.Interfaces.DashboardInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.DashboardRepositories;
 using FibiEmlakDanismanlik.Application.Interfaces.BusinessSettingInterfaces;
 using FibiEmlakDanismanlik.Persistence.Repositories.BusinessSettingRepositories;
+using FibiEmlakDanismanlik.Application.Interfaces.ContentImageInterfaces;
+using FibiEmlakDanismanlik.Persistence.Repositories.ContentImageRepositories;
 using FibiEmlakDanismanlik.Persistence.Interceptors;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -59,8 +61,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, services, configuration) => configuration.ReadFrom.Configuration(context.Configuration).ReadFrom.Services(services).Enrich.FromLogContext());
 
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 builder.Services.AddDbContext<FibiEmlakDanismanlikContext>((sp, options) => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")).AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
@@ -206,6 +211,7 @@ builder.Services.AddScoped(typeof(IListingDealRepository), typeof(ListingDealRep
 builder.Services.AddScoped(typeof(IDashboardRepository), typeof(DashboardRepository));
 builder.Services.AddScoped(typeof(IBusinessSettingRepository), typeof(BusinessSettingRepository));
 builder.Services.AddScoped<FibiEmlakDanismanlik.Application.Interfaces.SiteTextInterfaces.ISiteTextRepository, FibiEmlakDanismanlik.Persistence.Repositories.SiteTextRepositories.SiteTextRepository>();
+builder.Services.AddScoped<IContentImageUsageRepository, ContentImageUsageRepository>();
 //Configure IRepositories
 
 //MediaTR tried
@@ -304,6 +310,8 @@ app.UseStaticFiles(new StaticFileOptions
         ctx.Context.Response.Headers["X-Content-Type-Options"] = "nosniff";
     }
 });
+
+app.UseSerilogRequestLogging();
 
 app.UseCors("AllowLocalhost");
 

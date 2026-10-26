@@ -151,6 +151,7 @@ public sealed class DashboardViewModel
     public string? Bitis { get; set; }
     public string? ErrorMessage { get; set; }
     public bool CanSeeFinance { get; set; }
+    public List<SyncFailureItem> SyncFailures { get; set; } = new();
 }
 
 /// <summary>

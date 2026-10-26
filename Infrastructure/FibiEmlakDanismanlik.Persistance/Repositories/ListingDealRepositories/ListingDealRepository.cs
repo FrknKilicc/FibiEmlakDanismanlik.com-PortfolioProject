@@ -177,6 +177,25 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingDealRepositories
                 createdByAgentName = cbName;
             }
 
+            string? linkedLeadName = null;
+            if (deal.LinkedLeadSource.HasValue && deal.LinkedLeadId.HasValue)
+            {
+                if (deal.LinkedLeadSource.Value == LeadSource.Contact)
+                {
+                    linkedLeadName = await _context.customerContacts.AsNoTracking()
+                        .Where(c => c.CustomerContactId == deal.LinkedLeadId.Value)
+                        .Select(c => c.CustomerContactName)
+                        .FirstOrDefaultAsync();
+                }
+                else if (deal.LinkedLeadSource.Value == LeadSource.FibiService)
+                {
+                    linkedLeadName = await _context.FibiServiceLeads.AsNoTracking()
+                        .Where(f => f.FibiServiceLeadId == deal.LinkedLeadId.Value)
+                        .Select(f => f.FullName)
+                        .FirstOrDefaultAsync();
+                }
+            }
+
             var shares = deal.Shares
                 .OrderBy(s => s.DealShareId)
                 .Select(s => new DealShareItem
@@ -225,6 +244,9 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingDealRepositories
                 ListingTitle = title,
                 ListingStatus = status,
                 CreatedByAgentName = createdByAgentName,
+                LinkedLeadSource = deal.LinkedLeadSource,
+                LinkedLeadId = deal.LinkedLeadId,
+                LinkedLeadName = linkedLeadName,
                 TotalCommission = totalCommission,
                 TotalShares = totalShares,
                 CompanyShare = companyShare,

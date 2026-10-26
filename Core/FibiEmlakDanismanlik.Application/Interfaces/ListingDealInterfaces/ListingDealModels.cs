@@ -165,6 +165,9 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.ListingDealInterfaces
         public string? ListingTitle { get; set; }
         public string? ListingStatus { get; set; }
         public string? CreatedByAgentName { get; set; }
+        public LeadSource? LinkedLeadSource { get; set; }
+        public int? LinkedLeadId { get; set; }
+        public string? LinkedLeadName { get; set; }
         public decimal TotalCommission { get; set; }
         public decimal TotalShares { get; set; }
         public decimal CompanyShare { get; set; }

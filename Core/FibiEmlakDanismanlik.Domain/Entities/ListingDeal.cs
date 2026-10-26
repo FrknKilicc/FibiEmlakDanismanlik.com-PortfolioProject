@@ -114,6 +114,16 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string? Notes { get; set; }
 
         /// <summary>
+        /// İşleme bağlanan müşteri talebinin kaynağı (iletişim/randevu veya FİBİ danışmanlık hizmeti).
+        /// </summary>
+        public LeadSource? LinkedLeadSource { get; set; }
+
+        /// <summary>
+        /// İşleme bağlanan müşteri talebinin kimliği.
+        /// </summary>
+        public int? LinkedLeadId { get; set; }
+
+        /// <summary>
         /// İşlem kaydını oluşturan personel / danışman kimliği.
         /// </summary>
         public int? CreatedByAgentId { get; set; }

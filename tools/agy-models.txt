@@ -2,9 +2,10 @@
 # Get the exact slugs with: agy models
 # When a model fails (quota, permission, incomplete, error), the next one is tried.
 # Delete this file to try every model agy lists, in its order.
+# Kullanıcı tercihi (2026-10-26): önce Gemini modelleri.
 gemini-3.8-flash-high
-claude-opus-4-6-thinking
-claude-sonnet-4-6
 gemini-3.8-flash-medium
 gemini-3.8-flash-low
+claude-opus-4-6-thinking
+claude-sonnet-4-6
 gpt-oss-120b-medium

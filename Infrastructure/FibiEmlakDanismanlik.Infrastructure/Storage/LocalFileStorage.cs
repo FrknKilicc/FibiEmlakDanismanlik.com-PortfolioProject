@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -78,6 +79,47 @@ namespace FibiEmlakDanismanlik.Infrastructure.Storage
             }
 
             return $"{_publicBaseUrl}{ListingImageConstants.UploadsRequestPath}/{cleanRelative}";
+        }
+
+        public IReadOnlyList<StoredFileInfo> ListFiles(string relativeFolder)
+        {
+            if (string.IsNullOrWhiteSpace(relativeFolder))
+            {
+                return Array.Empty<StoredFileInfo>();
+            }
+
+            var cleanFolder = relativeFolder.Trim().Trim('/');
+            if (string.IsNullOrWhiteSpace(cleanFolder))
+            {
+                return Array.Empty<StoredFileInfo>();
+            }
+
+            string fullPath;
+            try
+            {
+                fullPath = ValidateAndGetFullPath(cleanFolder);
+            }
+            catch (ArgumentException)
+            {
+                return Array.Empty<StoredFileInfo>();
+            }
+
+            if (!Directory.Exists(fullPath))
+            {
+                return Array.Empty<StoredFileInfo>();
+            }
+
+            var result = new List<StoredFileInfo>();
+            var files = Directory.EnumerateFiles(fullPath, "*", SearchOption.AllDirectories);
+
+            foreach (var filePath in files)
+            {
+                var fi = new FileInfo(filePath);
+                var relative = Path.GetRelativePath(_rootPath, filePath).Replace('\\', '/');
+                result.Add(new StoredFileInfo(relative, fi.Length, fi.LastWriteTimeUtc));
+            }
+
+            return result;
         }
 
         private string ValidateAndGetFullPath(string relativePath)

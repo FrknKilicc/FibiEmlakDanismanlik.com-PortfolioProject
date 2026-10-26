@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using FibiEmlakDanismanlik.AdminUI.Infrastructure;
 using FibiEmlakDanismanlik.AdminUI.Models.Deals;
+using FibiEmlakDanismanlik.AdminUI.Models.Leads;
 using FibiEmlakDanismanlik.AdminUI.Models.Listings;
 using FibiEmlakDanismanlik.AdminUI.Models.Settings;
 
@@ -149,7 +150,15 @@ public sealed class DealsController : Controller
             return Redirect("/yetkisiz");
         }
 
-        var listingResult = await _apiClient.GetAsync<AdminListingDetailResponse>($"AdminListings/{listingTypeId}/{listingId}");
+        var listingTask = _apiClient.GetAsync<AdminListingDetailResponse>($"AdminListings/{listingTypeId}/{listingId}");
+        var leadsTask = _apiClient.GetAsync<List<LeadRowDto>>($"AdminLeads/listing/{listingTypeId}/{listingId}");
+        var settingsTask = _apiClient.GetAsync<BusinessSettingsDto>("AdminSettings");
+
+        await Task.WhenAll(listingTask, leadsTask, settingsTask);
+
+        var listingResult = await listingTask;
+        var leadsResult = await leadsTask;
+        var settingsResult = await settingsTask;
 
         if (listingResult.StatusCode == StatusCodes.Status401Unauthorized)
         {
@@ -174,7 +183,6 @@ public sealed class DealsController : Controller
         string? sellerCommissionRate = null;
         string? buyerCommissionAmount = null;
 
-        var settingsResult = await _apiClient.GetAsync<BusinessSettingsDto>("AdminSettings");
         if (settingsResult.Success && settingsResult.Data != null)
         {
             var settings = settingsResult.Data;
@@ -192,12 +200,24 @@ public sealed class DealsController : Controller
             }
         }
 
+        var leads = leadsResult.Success && leadsResult.Data != null
+            ? leadsResult.Data.Where(l => l.Status != 7).ToList()
+            : new List<LeadRowDto>();
+
+        string? selectedLead = null;
+        var offerLeads = leads.Where(l => l.Status == 4).ToList();
+        if (offerLeads.Count == 1)
+        {
+            selectedLead = $"{offerLeads[0].Source}-{offerLeads[0].LeadId}";
+        }
+
         var vm = new DealCreateViewModel
         {
             ListingTitle = listing.PropertyName,
             ListingStatus = listing.PropertyStatus,
             IsRent = isRent,
             ListingPrice = listingPrice,
+            Leads = leads,
             Form = new DealFormModel
             {
                 ListingTypeId = listingTypeId,
@@ -206,7 +226,8 @@ public sealed class DealsController : Controller
                 DepositDate = DateTime.Today.ToString("yyyy-MM-dd"),
                 BuyerCommissionRate = buyerCommissionRate,
                 SellerCommissionRate = sellerCommissionRate,
-                BuyerCommissionAmount = buyerCommissionAmount
+                BuyerCommissionAmount = buyerCommissionAmount,
+                LinkedLead = selectedLead
             }
         };
 
@@ -300,11 +321,32 @@ public sealed class DealsController : Controller
             }
         }
 
+        int? linkedLeadSource = null;
+        int? linkedLeadId = null;
+        if (!string.IsNullOrWhiteSpace(form.LinkedLead))
+        {
+            var parts = form.LinkedLead.Trim().Split('-');
+            if (parts.Length == 2 && int.TryParse(parts[0], out var src) && int.TryParse(parts[1], out var lId))
+            {
+                linkedLeadSource = src;
+                linkedLeadId = lId;
+            }
+        }
+
         if (fieldErrors.Count > 0)
         {
-            var listingResult = await _apiClient.GetAsync<AdminListingDetailResponse>($"AdminListings/{form.ListingTypeId}/{form.ListingId}");
+            var listingTask = _apiClient.GetAsync<AdminListingDetailResponse>($"AdminListings/{form.ListingTypeId}/{form.ListingId}");
+            var leadsTask = _apiClient.GetAsync<List<LeadRowDto>>($"AdminLeads/listing/{form.ListingTypeId}/{form.ListingId}");
+            await Task.WhenAll(listingTask, leadsTask);
+
+            var listingResult = await listingTask;
+            var leadsResult = await leadsTask;
+
             var listing = listingResult.Data?.Listing;
             var isRent = form.ListingTypeId is 7 or 8 or 9;
+            var leads = leadsResult.Success && leadsResult.Data != null
+                ? leadsResult.Data.Where(l => l.Status != 7).ToList()
+                : new List<LeadRowDto>();
 
             var vm = new DealCreateViewModel
             {
@@ -313,6 +355,7 @@ public sealed class DealsController : Controller
                 ListingStatus = listing?.PropertyStatus,
                 IsRent = isRent,
                 ListingPrice = isRent ? listing?.Rent : listing?.Price,
+                Leads = leads,
                 ErrorMessage = "Lütfen formdaki hataları kontrol ediniz.",
                 FieldErrors = fieldErrors
             };
@@ -333,7 +376,9 @@ public sealed class DealsController : Controller
             sellerCommissionAmount = sellerCommissionAmount,
             customerName = form.CustomerName,
             customerPhone = form.CustomerPhone,
-            notes = form.Notes
+            notes = form.Notes,
+            linkedLeadSource = linkedLeadSource,
+            linkedLeadId = linkedLeadId
         };
 
         var postResult = await _apiClient.PostAsync<CreatedIdDto>("AdminDeals", payload);
@@ -354,9 +399,18 @@ public sealed class DealsController : Controller
             return Redirect($"/islemler/{postResult.Data.Id}");
         }
 
-        var reloadListingResult = await _apiClient.GetAsync<AdminListingDetailResponse>($"AdminListings/{form.ListingTypeId}/{form.ListingId}");
+        var reloadListingTask = _apiClient.GetAsync<AdminListingDetailResponse>($"AdminListings/{form.ListingTypeId}/{form.ListingId}");
+        var reloadLeadsTask = _apiClient.GetAsync<List<LeadRowDto>>($"AdminLeads/listing/{form.ListingTypeId}/{form.ListingId}");
+        await Task.WhenAll(reloadListingTask, reloadLeadsTask);
+
+        var reloadListingResult = await reloadListingTask;
+        var reloadLeadsResult = await reloadLeadsTask;
+
         var reloadListing = reloadListingResult.Data?.Listing;
         var reloadIsRent = form.ListingTypeId is 7 or 8 or 9;
+        var reloadLeads = reloadLeadsResult.Success && reloadLeadsResult.Data != null
+            ? reloadLeadsResult.Data.Where(l => l.Status != 7).ToList()
+            : new List<LeadRowDto>();
 
         var errorVm = new DealCreateViewModel
         {
@@ -365,6 +419,7 @@ public sealed class DealsController : Controller
             ListingStatus = reloadListing?.PropertyStatus,
             IsRent = reloadIsRent,
             ListingPrice = reloadIsRent ? reloadListing?.Rent : reloadListing?.Price,
+            Leads = reloadLeads,
             ErrorMessage = postResult.ErrorMessage ?? "İşlem kaydedilirken bir hata oluştu.",
             FieldErrors = postResult.Errors ?? new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
         };

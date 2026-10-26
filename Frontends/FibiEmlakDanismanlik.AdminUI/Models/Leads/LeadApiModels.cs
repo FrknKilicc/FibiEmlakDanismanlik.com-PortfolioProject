@@ -58,6 +58,7 @@ public sealed class LeadDetailDto : LeadRowDto
     public string? CustomerNote { get; set; }
     public string? CalculationSummaryJson { get; set; }
     public DateTime? KvkkApprovedAt { get; set; }
+    public int? LinkedDealId { get; set; }
     public List<LeadActivityDto> Activities { get; set; } = new();
 }
 

@@ -151,6 +151,19 @@
                         </div>
                     }
 
+                    @if (Model.Detail.LinkedDealId.HasValue && Model.Detail.LinkedDealId.Value > 0)
+                    {
+                        <div class="col-12">
+                            <label class="text-muted small d-block">Bağlı İşlem</label>
+                            <div class="mt-1">
+                                <span class="text-muted">Bağlı işlem: </span>
+                                <a href="/islemler/@Model.Detail.LinkedDealId.Value" class="text-decoration-none fw-semibold">
+                                    <i class="bi bi-link-45deg me-1"></i>#@Model.Detail.LinkedDealId.Value
+                                </a>
+                            </div>
+                        </div>
+                    }
+
                     @if (!string.IsNullOrWhiteSpace(Model.Detail.ServiceModule))
                     {
                         <div class="col-12">
