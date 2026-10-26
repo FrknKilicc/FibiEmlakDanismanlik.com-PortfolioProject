@@ -371,3 +371,6 @@ Presentation/FibiEmlakDanismanlik.WebApi/uploads/
 
 # Serilog dosya logları
 logs/
+
+# Üretilen canlı migration betiği
+tools/sql/deploy/migrations-idempotent.sql
