@@ -374,3 +374,7 @@ logs/
 
 # Üretilen canlı migration betiği
 tools/sql/deploy/migrations-idempotent.sql
+
+# Claude Code yerel ayarlari (.claude/skills repoda kalir)
+.claude/launch.json
+.claude/settings.local.json
