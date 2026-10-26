@@ -57,6 +57,138 @@ public sealed class ListingFormViewModel
         "Stüdyo (1+0)", "1+1", "2+1", "3+1", "4+1", "5+1", "6+1 ve üzeri"
     };
 
+    /// <summary>
+    /// Form anahtarları (switch) ile olanak lookup adları arasındaki eşleme tablosu.
+    /// </summary>
+    public static readonly IReadOnlyDictionary<string, string> ToggleAmenityNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    {
+        [nameof(ListingFormModel.IsElevator)] = "Asansör",
+        [nameof(ListingFormModel.ParkingLot)] = "Otopark",
+        [nameof(ListingFormModel.Furnished)] = "Mobilyalı",
+        [nameof(ListingFormModel.Transferable)] = "Devren"
+    };
+
+    /// <summary>
+    /// Olanaklar listesindeki işaretli değerleri form switch anahtarlarına aktarır.
+    /// </summary>
+    public static void ApplyAmenitiesToToggles(ListingFormModel form, IEnumerable<AmenityLookupDto>? amenities)
+    {
+        if (form == null || amenities == null || form.AmenityIds == null)
+        {
+            return;
+        }
+
+        var amenityList = amenities as IList<AmenityLookupDto> ?? amenities.ToList();
+
+        foreach (var (propName, amenityName) in ToggleAmenityNames)
+        {
+            if (!form.Has(propName))
+            {
+                continue;
+            }
+
+            var match = amenityList.FirstOrDefault(a =>
+                string.Equals(a.DisplayName?.Trim(), amenityName, StringComparison.CurrentCultureIgnoreCase));
+
+            if (match != null && form.AmenityIds.Contains(match.Key))
+            {
+                switch (propName)
+                {
+                    case nameof(ListingFormModel.IsElevator):
+                        form.IsElevator = true;
+                        break;
+                    case nameof(ListingFormModel.ParkingLot):
+                        form.ParkingLot = true;
+                        break;
+                    case nameof(ListingFormModel.Furnished):
+                        form.Furnished = true;
+                        break;
+                    case nameof(ListingFormModel.Transferable):
+                        form.Transferable = true;
+                        break;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Form switch anahtarlarının durumunu olanaklar (AmenityIds) listesine yansıtır.
+    /// </summary>
+    public static void ApplyTogglesToAmenities(ListingFormModel form, IEnumerable<AmenityLookupDto>? amenities)
+    {
+        if (form == null || amenities == null)
+        {
+            return;
+        }
+
+        form.AmenityIds ??= new List<int>();
+        var amenityList = amenities as IList<AmenityLookupDto> ?? amenities.ToList();
+
+        foreach (var (propName, amenityName) in ToggleAmenityNames)
+        {
+            if (!form.Has(propName))
+            {
+                continue;
+            }
+
+            var match = amenityList.FirstOrDefault(a =>
+                string.Equals(a.DisplayName?.Trim(), amenityName, StringComparison.CurrentCultureIgnoreCase));
+
+            if (match == null)
+            {
+                continue;
+            }
+
+            bool? isToggled = propName switch
+            {
+                nameof(ListingFormModel.IsElevator) => form.IsElevator,
+                nameof(ListingFormModel.ParkingLot) => form.ParkingLot,
+                nameof(ListingFormModel.Furnished) => form.Furnished,
+                nameof(ListingFormModel.Transferable) => form.Transferable,
+                _ => null
+            };
+
+            if (isToggled == true)
+            {
+                if (!form.AmenityIds.Contains(match.Key))
+                {
+                    form.AmenityIds.Add(match.Key);
+                }
+            }
+            else
+            {
+                form.AmenityIds.Remove(match.Key);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Verilen olanağın formda gösterilen bir anahtarla (switch) eşleşip eşleşmediğini kontrol eder.
+    /// </summary>
+    public bool IsToggleAmenity(AmenityLookupDto a)
+    {
+        if (a == null)
+        {
+            return false;
+        }
+
+        var name = a.DisplayName?.Trim();
+        if (string.IsNullOrEmpty(name))
+        {
+            return false;
+        }
+
+        foreach (var (propName, amenityName) in ToggleAmenityNames)
+        {
+            if (string.Equals(name, amenityName, StringComparison.CurrentCultureIgnoreCase))
+            {
+                return Form.Has(propName);
+            }
+        }
+
+        return false;
+    }
+
     public static readonly IReadOnlyList<string> ZoningStatusOptions = new[]
     {
         "Konut İmarlı", "Ticari İmarlı", "Konut + Ticari İmarlı", "Sanayi İmarlı", "Turizm İmarlı", "Tarla", "Bağ & Bahçe", "Zeytinlik"

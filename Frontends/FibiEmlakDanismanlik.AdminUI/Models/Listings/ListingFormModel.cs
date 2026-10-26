@@ -43,6 +43,12 @@ public sealed class ListingFormModel
     public bool? BestDeals { get; set; }
 
     public string? Facade { get; set; }
+
+    /// <summary>
+    /// Çoklu seçim cephe parçaları (form bağlama için; API'ye virgülle birleştirilip Facade olarak gider).
+    /// </summary>
+    [System.Text.Json.Serialization.JsonIgnore]
+    public List<string>? FacadeParts { get; set; }
     public bool? IsElevator { get; set; }
     public decimal? GrossArea { get; set; }
     public decimal? NetArea { get; set; }

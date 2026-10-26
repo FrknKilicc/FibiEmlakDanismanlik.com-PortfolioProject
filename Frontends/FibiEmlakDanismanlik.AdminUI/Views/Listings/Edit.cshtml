@@ -144,7 +144,7 @@
             <li data-step-for="sec-price"><span class="wizard-step-num"><span>2</span></span> <span>Fiyat</span></li>
             <li data-step-for="sec-location"><span class="wizard-step-num"><span>3</span></span> <span>Konum</span></li>
             <li data-step-for="sec-features"><span class="wizard-step-num"><span>4</span></span> <span>Özellikler</span></li>
-            @if (Model.ApplicableAmenities.Any())
+            @if (Model.ApplicableAmenities.Any(a => !Model.IsToggleAmenity(a)))
             {
                 <li data-step-for="sec-amenities"><span class="wizard-step-num"><span>5</span></span> <span>Olanaklar</span></li>
             }
@@ -160,7 +160,7 @@
             <a class="section-chip" href="#sec-price" data-section="sec-price"><span class="section-state"></span> Fiyat</a>
             <a class="section-chip" href="#sec-location" data-section="sec-location"><span class="section-state"></span> Konum</a>
             <a class="section-chip" href="#sec-features" data-section="sec-features"><span class="section-state"></span> Özellikler</a>
-            @if (Model.ApplicableAmenities.Any())
+            @if (Model.ApplicableAmenities.Any(a => !Model.IsToggleAmenity(a)))
             {
                 <a class="section-chip" href="#sec-amenities" data-section="sec-amenities"><span class="section-state"></span> Olanaklar</a>
             }
@@ -308,7 +308,7 @@
                             <label for="propertyDescription" class="form-label fw-semibold">
                                 İlan Açıklaması <span class="text-danger">*</span>
                             </label>
-                            <textarea class="form-control @(Model.GetFieldError("PropertyDescription") != null ? "is-invalid" : "")" id="propertyDescription" name="PropertyDescription" rows="8" maxlength="5000" data-counter="true" data-autogrow="true" data-help="İlan detay sayfasındaki açıklama. Konum ve ulaşım, bina özellikleri, iç özellikler ve tapu durumunu paragraflar halinde yazın; telefon numarası yazmayın." required disabled="@disabledAttr" placeholder="İlan detaylarını buraya yazınız... Paragraflar için boş satır bırakabilirsiniz.">@Model.Form.PropertyDescription</textarea>
+                            <textarea class="form-control @(Model.GetFieldError("PropertyDescription") != null ? "is-invalid" : "")" id="propertyDescription" name="PropertyDescription" rows="12" maxlength="8000" data-counter="true" data-help="İlan detay sayfasındaki açıklama. Konum ve ulaşım, bina özellikleri, iç özellikler ve tapu durumunu paragraflar halinde yazın; telefon numarası yazmayın." required disabled="@disabledAttr" placeholder="İlan detaylarını buraya yazınız...">@Model.Form.PropertyDescription</textarea>
                             <div class="form-text d-flex justify-content-between">
                                 <span>En az 300 karakter önerilir: konum, ulaşım, bina ve iç özellikler, tapu durumu.</span>
                                 <span class="char-counter" data-for="propertyDescription"></span>
@@ -533,6 +533,13 @@
                                 <div class="invalid-feedback d-block">@Model.GetFieldError("AddressDesc")</div>
                             }
                         </div>
+
+                        @if (isNew)
+                        {
+                            <div class="col-md-6 col-12"><label for="newListingLatitude" class="form-label fw-semibold">Enlem (isteğe bağlı)</label><input type="text" inputmode="decimal" class="form-control" id="newListingLatitude" name="Latitude" value="@(Model.Form.Latitude?.ToString(System.Globalization.CultureInfo.InvariantCulture))" placeholder="41.01234" data-help="Kesin konum. Boş bırakırsanız ilan mahalle merkezine yaklaşık konumlanır; kaydettikten sonra haritadan da seçebilirsiniz." /></div>
+                            <div class="col-md-6 col-12"><label for="newListingLongitude" class="form-label fw-semibold">Boylam (isteğe bağlı)</label><input type="text" inputmode="decimal" class="form-control" id="newListingLongitude" name="Longitude" value="@(Model.Form.Longitude?.ToString(System.Globalization.CultureInfo.InvariantCulture))" placeholder="28.97654" /></div>
+                            <div class="col-12"><div class="form-text">Google Haritalar'dan kopyaladığınız "41.01234, 28.97654" değerini Enlem alanına yapıştırırsanız iki alana bölünür.</div></div>
+                        }
                     </div>
                 </div>
             </div>
@@ -752,15 +759,32 @@
 
                         @if (Model.Form.Has("Facade"))
                         {
-                            <div class="col-lg-4 col-md-6 col-12">
-                                <label for="facade" class="form-label fw-semibold">Cephe</label>
-                                <select class="form-select @(Model.GetFieldError("Facade") != null ? "is-invalid" : "")" id="facade" name="Facade" disabled="@disabledAttr">
-                                    <option value="">Seçiniz</option>
-                                    @foreach (var opt in ListingFormViewModel.GetOptionsWithCustom(ListingFormViewModel.FacadeOptions, Model.Form.Facade))
+                            var currentFacadeParts = !string.IsNullOrWhiteSpace(Model.Form.Facade)
+                                ? Model.Form.Facade.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                                : Array.Empty<string>();
+
+                            var allFacadeOptions = new List<string>(ListingFormViewModel.FacadeOptions);
+                            foreach (var part in currentFacadeParts)
+                            {
+                                if (!allFacadeOptions.Any(o => string.Equals(o, part, StringComparison.CurrentCultureIgnoreCase)))
+                                {
+                                    allFacadeOptions.Add(part);
+                                }
+                            }
+                            <div class="col-12">
+                                <label class="form-label fw-semibold d-block mb-2">Cephe (birden fazla seçilebilir)</label>
+                                <input type="hidden" name="FacadeParts" value="" disabled="@disabledAttr" />
+                                <div class="d-flex flex-wrap gap-2">
+                                    @for (var i = 0; i < allFacadeOptions.Count; i++)
                                     {
-                                        <option value="@opt" selected="@(string.Equals(Model.Form.Facade, opt, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@opt</option>
+                                        var opt = allFacadeOptions[i];
+                                        var isChecked = currentFacadeParts.Any(p => string.Equals(p, opt, StringComparison.CurrentCultureIgnoreCase));
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" name="FacadeParts" value="@opt" id="facade_@i" checked="@(isChecked ? "checked" : null)" disabled="@disabledAttr" />
+                                            <label class="form-check-label" for="facade_@i">@opt</label>
+                                        </div>
                                     }
-                                </select>
+                                </div>
                                 @if (Model.GetFieldError("Facade") != null)
                                 {
                                     <div class="invalid-feedback d-block">@Model.GetFieldError("Facade")</div>
@@ -1026,9 +1050,9 @@
             </div>
 
             <!-- 5. Olanaklar Kartı -->
-            @if (Model.ApplicableAmenities.Any())
+            @if (Model.ApplicableAmenities.Any(a => !Model.IsToggleAmenity(a)))
             {
-                var groupedAmenities = Model.ApplicableAmenities
+                var groupedAmenities = Model.ApplicableAmenities.Where(a => !Model.IsToggleAmenity(a))
                     .GroupBy(a => string.IsNullOrWhiteSpace(a.GroupName) ? "Genel Özellikler" : a.GroupName)
                     .OrderBy(g => g.Key);
 
@@ -1210,6 +1234,13 @@
                         </span>
                         <span class="text-muted" style="font-size: 0.75rem;">© OpenStreetMap katkıcıları</span>
                     </div>
+
+                    <div class="row g-2 align-items-end mt-2">
+                      <div class="col-5"><label for="latInput" class="form-label small fw-semibold mb-1">Enlem</label><input type="text" inputmode="decimal" id="latInput" class="form-control form-control-sm" placeholder="41.01234" value="@(Model.Latitude?.ToString("F6", invCulture))" disabled="@(Model.CanEdit ? null : "disabled")" /></div>
+                      <div class="col-5"><label for="lngInput" class="form-label small fw-semibold mb-1">Boylam</label><input type="text" inputmode="decimal" id="lngInput" class="form-control form-control-sm" placeholder="28.97654" value="@(Model.Longitude?.ToString("F6", invCulture))" disabled="@(Model.CanEdit ? null : "disabled")" /></div>
+                      <div class="col-2 d-grid"><button type="button" id="applyCoordsBtn" class="btn btn-outline-primary btn-sm" title="Haritada Göster" aria-label="Haritada Göster" disabled="@(Model.CanEdit ? null : "disabled")"><i class="bi bi-crosshair"></i></button></div>
+                    </div>
+                    <div class="form-text small">Google Haritalar'da konuma sağ tıklayıp kopyaladığınız "41.01234, 28.97654" biçimindeki değeri Enlem alanına yapıştırıp <i class="bi bi-crosshair"></i> düğmesine basın, ardından "Konumu Kaydet".</div>
 
                     @if (Model.CanEdit)
                     {
@@ -1403,10 +1434,14 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/tom-select/tom-select.bootstrap5.min.css" />
 }
 
 @section Scripts {
     <script src="~/lib/leaflet/leaflet.js" asp-append-version="true"></script>
+    <script src="~/lib/tom-select/tom-select.complete.min.js"></script>
+    <script src="~/assets/vendor/tinymce/tinymce.min.js"></script>
+    <script src="~/js/listing-description-editor.js" asp-append-version="true"></script>
     <script src="~/js/listing-photos.js" asp-append-version="true"></script>
     <script src="~/js/listing-map.js" asp-append-version="true"></script>
     <script src="~/js/listing-form.js" asp-append-version="true"></script>

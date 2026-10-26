@@ -261,7 +261,7 @@
         {
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light text-muted small text-uppercase">
+                    <thead class="bg-body-tertiary text-muted small text-uppercase">
                         <tr>
                             <th scope="col" class="ps-3">Ay</th>
                             <th scope="col" class="text-end">Kapora</th>
@@ -276,25 +276,25 @@
                         {
                             var companyShare = m.Commission - m.Shares;
                             <tr>
-                                <td class="ps-3 fw-medium text-dark text-nowrap">
+                                <td class="ps-3 fw-medium text-body text-nowrap">
                                     @LeadStatusKeys.MonthName(m.Month) @m.Year
                                 </td>
                                 <td class="text-end">@m.DepositCount</td>
                                 <td class="text-end">@m.CompletedCount</td>
-                                <td class="text-end fw-semibold text-dark text-nowrap">@DealLabels.Money(m.Commission)</td>
+                                <td class="text-end fw-semibold text-body text-nowrap">@DealLabels.Money(m.Commission)</td>
                                 <td class="text-end text-muted text-nowrap">@DealLabels.Money(m.Shares)</td>
                                 <td class="text-end pe-3 fw-bold text-success text-nowrap">@DealLabels.Money(companyShare)</td>
                             </tr>
                         }
                     </tbody>
-                    <tfoot class="table-light fw-bold">
-                        <tr>
-                            <td class="ps-3 text-dark">Toplam</td>
-                            <td class="text-end">@monthlyList.Sum(x => x.DepositCount)</td>
-                            <td class="text-end">@monthlyList.Sum(x => x.CompletedCount)</td>
-                            <td class="text-end text-dark text-nowrap">@DealLabels.Money(monthlyList.Sum(x => x.Commission))</td>
-                            <td class="text-end text-muted text-nowrap">@DealLabels.Money(monthlyList.Sum(x => x.Shares))</td>
-                            <td class="text-end pe-3 text-success text-nowrap">@DealLabels.Money(monthlyList.Sum(x => x.Commission - x.Shares))</td>
+                    <tfoot class="bg-body-tertiary fw-bold">
+                        <tr class="bg-body-tertiary">
+                            <td class="ps-3 text-body bg-body-tertiary">Toplam</td>
+                            <td class="text-end bg-body-tertiary">@monthlyList.Sum(x => x.DepositCount)</td>
+                            <td class="text-end bg-body-tertiary">@monthlyList.Sum(x => x.CompletedCount)</td>
+                            <td class="text-end text-body text-nowrap bg-body-tertiary">@DealLabels.Money(monthlyList.Sum(x => x.Commission))</td>
+                            <td class="text-end text-muted text-nowrap bg-body-tertiary">@DealLabels.Money(monthlyList.Sum(x => x.Shares))</td>
+                            <td class="text-end pe-3 text-success text-nowrap bg-body-tertiary">@DealLabels.Money(monthlyList.Sum(x => x.Commission - x.Shares))</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -318,7 +318,7 @@
         {
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light text-muted small text-uppercase">
+                    <thead class="bg-body-tertiary text-muted small text-uppercase">
                         <tr>
                             <th scope="col" class="ps-3">Çalışan</th>
                             <th scope="col" class="text-end">Atanan Talep</th>
@@ -333,7 +333,7 @@
                         @foreach (var a in agentList)
                         {
                             <tr>
-                                <td class="ps-3 fw-semibold text-dark text-nowrap">
+                                <td class="ps-3 fw-semibold text-body text-nowrap">
                                     @a.AgentName
                                 </td>
                                 <td class="text-end">@a.AssignedLeads</td>
@@ -341,21 +341,21 @@
                                     <span class="badge bg-success-subtle text-success border border-success-subtle px-2">@a.WonLeads</span>
                                 </td>
                                 <td class="text-end">@a.DealCount</td>
-                                <td class="text-end fw-semibold text-dark text-nowrap">@DealLabels.Money(a.ShareTotal)</td>
+                                <td class="text-end fw-semibold text-body text-nowrap">@DealLabels.Money(a.ShareTotal)</td>
                                 <td class="text-end text-success text-nowrap">@DealLabels.Money(a.PaidTotal)</td>
                                 <td class="text-end pe-3 fw-semibold text-danger text-nowrap">@DealLabels.Money(a.PendingTotal)</td>
                             </tr>
                         }
                     </tbody>
-                    <tfoot class="table-light fw-bold">
-                        <tr>
-                            <td class="ps-3 text-dark">Toplam</td>
-                            <td class="text-end">@agentList.Sum(x => x.AssignedLeads)</td>
-                            <td class="text-end">@agentList.Sum(x => x.WonLeads)</td>
-                            <td class="text-end">@agentList.Sum(x => x.DealCount)</td>
-                            <td class="text-end text-dark text-nowrap">@DealLabels.Money(agentList.Sum(x => x.ShareTotal))</td>
-                            <td class="text-end text-success text-nowrap">@DealLabels.Money(agentList.Sum(x => x.PaidTotal))</td>
-                            <td class="text-end pe-3 text-danger text-nowrap">@DealLabels.Money(agentList.Sum(x => x.PendingTotal))</td>
+                    <tfoot class="bg-body-tertiary fw-bold">
+                        <tr class="bg-body-tertiary">
+                            <td class="ps-3 text-body bg-body-tertiary">Toplam</td>
+                            <td class="text-end bg-body-tertiary">@agentList.Sum(x => x.AssignedLeads)</td>
+                            <td class="text-end bg-body-tertiary">@agentList.Sum(x => x.WonLeads)</td>
+                            <td class="text-end bg-body-tertiary">@agentList.Sum(x => x.DealCount)</td>
+                            <td class="text-end text-body text-nowrap bg-body-tertiary">@DealLabels.Money(agentList.Sum(x => x.ShareTotal))</td>
+                            <td class="text-end text-success text-nowrap bg-body-tertiary">@DealLabels.Money(agentList.Sum(x => x.PaidTotal))</td>
+                            <td class="text-end pe-3 text-danger text-nowrap bg-body-tertiary">@DealLabels.Money(agentList.Sum(x => x.PendingTotal))</td>
                         </tr>
                     </tfoot>
                 </table>
