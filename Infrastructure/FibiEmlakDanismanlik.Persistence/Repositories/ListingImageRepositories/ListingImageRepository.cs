@@ -32,7 +32,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories
                 throw new ArgumentOutOfRangeException(nameof(listingTypeId), listingTypeId, "Bilinmeyen ilan türü kimliği.");
             }
 
-            var sql = $"SELECT COUNT(1) FROM [{mapping.Table}] WHERE [{mapping.KeyColumn}] = @id";
+            var sql = $"SELECT COUNT(1) FROM [{mapping.Table}] WHERE [{mapping.KeyColumn}] = @id AND [DeletedAtUtc] IS NULL";
             var countList = await _context.Database
                 .SqlQueryRaw<int>(sql, new SqlParameter("@id", listingId))
                 .ToListAsync();

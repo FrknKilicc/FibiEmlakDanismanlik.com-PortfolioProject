@@ -359,11 +359,11 @@ Bitti: kademeli emsal şeması + migration (yerel DB'ye uygulandı), mahalle > i
 - ~~`Persistance` yazım hatası klasör adında (T7)~~ — çözüldü (2026-10-27): klasör `FibiEmlakDanismanlik.Persistence`
 - 12 deneme-yanılma migration — production öncesi squash (T9)
 - BaseEntity yok — her entity kendi Id'sini taşıyor (T10)
-- Soft delete yok — fiziksel silme yapılıyor (T10)
+- ~~Soft delete yok (T10)~~ — (2026-10-27) ilanlar (6 tablo) ve blog: `ISoftDeletable.DeletedAtUtc` + global filtre, `SaveChanges` silmeyi işarete çevirir; Sahip'e özel kalıcı silme `AllowHardDelete` ile fiziksel. Çalışanlar kapsam dışı (zaten pasife alınıyor; filtre ilanları gizlerdi). Silinmişleri geri alma ekranı yok. Migration `ListingBlogSoftDelete` yerel DB'ye uygulandı (yedek `fibiemlak_before_softdelete_20261027.bak`); canlıya da uygulanmalı
 - ~570 derleme uyarısı, çoğu nullable (CS8618/CS8602/CS8603); yeni kodda yenisi eklenmemeli (T11)
 - ~~Detay sayfası ilanı yalnızca id ile buluyor (T12)~~ — çözüldü: linkler listingTypeId taşıyor; parametresiz eski linkler için sıralı arama yedek olarak duruyor
 - İlan görselleri harici sitelere hotlink (emlakjet, depositphotos, unsplash); kaynak silinince kırılıyor (T13)
-- ~~Kiralık entity'lerde `ListingTypeId` int? (T14)~~ — çözüldü (2026-10-27): `int`, FK NO ACTION açıkça yapılandırıldı; migration `RentalListingTypeIdRequired` (yerel ve canlı DB'ye uygulanmalı)
+- ~~Kiralık entity'lerde `ListingTypeId` int? (T14)~~ — çözüldü (2026-10-27): `int`, FK NO ACTION açıkça yapılandırıldı; migration `RentalListingTypeIdRequired` (yerel DB'ye 2026-10-27'de uygulandı; canlıya da uygulanmalı)
 - `GetUnifiedForSale/RentalPropertyById` ve listeleme sorguları PropertyRepository içinde tekrar ediyor; BestDealRepository ayrı tutuldu (T1 ile birlikte ele alınmalı)
 
 ---

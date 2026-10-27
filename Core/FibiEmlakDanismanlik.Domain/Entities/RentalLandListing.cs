@@ -5,11 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Interfaces;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class RentalLandListing : ILocatedListing //Kiralık Arsa
+    public class RentalLandListing : ILocatedListing, ISoftDeletable //Kiralık Arsa
     {   //MainInfo
         [Key]
         public int RentalLandListingId { get; set; }
@@ -20,6 +21,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string PropertyDescription { get; set; }
         public string PropertyStatus { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime? DeletedAtUtc { get; set; }
         //Adress
         [Required]
         public string City { get; set; } // İl

@@ -35,6 +35,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BlogCategoryHandler
                 throw new BlogContentConflictException($"Bu kategoride {count} blog yazısı var. Önce yazıların kategorisini değiştirin.");
             }
 
+            await _blogRepository.DetachDeletedBlogsFromCategoryAsync(request.Id);
             await _repository.RemoveAsync(value);
         }
     }

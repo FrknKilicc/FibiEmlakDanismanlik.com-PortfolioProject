@@ -290,6 +290,24 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BlogRepositories
             }
         }
 
+        public async Task DetachDeletedBlogsFromCategoryAsync(int blogCategoryId)
+        {
+            var deletedBlogs = await _context.Blogs
+                .IgnoreQueryFilters()
+                .Where(b => b.BlogCategoryId == blogCategoryId && b.DeletedAtUtc != null)
+                .ToListAsync();
+
+            if (deletedBlogs.Count > 0)
+            {
+                foreach (var blog in deletedBlogs)
+                {
+                    blog.BlogCategoryId = null;
+                }
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
         private static string TruncateWithDots(string text, int maxLen)
         {
             if (string.IsNullOrEmpty(text)) return "";
