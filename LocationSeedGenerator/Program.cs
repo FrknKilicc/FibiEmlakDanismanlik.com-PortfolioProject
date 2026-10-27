@@ -18,9 +18,9 @@ namespace LocationSeedGenerator
                 // DEBUG FALLBACK (argüman gelmiyorsa buradan devam)
                 args = new[]
  {
-    @"C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistance\SeedData\sehirler.json",
-    @"C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistance\SeedData\ilceler.json",
-    @"C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistance\SeedData\mahalleler-1.json;C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistance\SeedData\mahalleler-2.json;C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistance\SeedData\mahalleler-3.json;C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistance\SeedData\mahalleler-4.json",
+    @"C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistence\SeedData\sehirler.json",
+    @"C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistence\SeedData\ilceler.json",
+    @"C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistence\SeedData\mahalleler-1.json;C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistence\SeedData\mahalleler-2.json;C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistence\SeedData\mahalleler-3.json;C:\Users\3060\source\repos\FibiEmlakDanismanlik\Infrastructure\FibiEmlakDanismanlik.Persistence\SeedData\mahalleler-4.json",
     @"C:\Temp\Seed_Location.sql"
 };
 

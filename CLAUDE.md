@@ -35,7 +35,7 @@ FibiEmlakDanismanlik.sln
 │       ├── Services/
 │       └── ViewModels/
 ├── Infrastructure/
-│   └── FibiEmlakDanismanlik.Persistance/     (klasör "Persistance", namespace "Persistence")
+│   └── FibiEmlakDanismanlik.Persistence/     (klasör adı 2026-10-27 düzeltildi)
 │       ├── Context/
 │       ├── Migrations/        40 migration
 │       └── Repositories/[Feature]Repositories/
@@ -356,7 +356,7 @@ Bitti: kademeli emsal şeması + migration (yerel DB'ye uygulandı), mahalle > i
 - `PropertyRepository.cs` 3002 satır, DRY ihlali (T1). Dosya UTF-8 değil, ISO-8859/Windows-1254 kodlamalı: Antigravity bu dosyada takılabiliyor, düzenlerken kodlama korunmalı (ileride UTF-8'e çevrilmeli)
 - 30 ayrı `PropImgUrl1..30` kolonu — ayrı tablo olmalı (T5)
 - Katman ihlali: WebUI → Application direkt referans (T6)
-- `Persistance` yazım hatası klasör adında (T7)
+- ~~`Persistance` yazım hatası klasör adında (T7)~~ — çözüldü (2026-10-27): klasör `FibiEmlakDanismanlik.Persistence`
 - 12 deneme-yanılma migration — production öncesi squash (T9)
 - BaseEntity yok — her entity kendi Id'sini taşıyor (T10)
 - Soft delete yok — fiziksel silme yapılıyor (T10)
@@ -382,10 +382,10 @@ cd Frontends/FibiEmlakDanismanlik.WebUI
 dotnet run
 
 # Migration ekle
-dotnet ef migrations add <MigrationName> --project Infrastructure/FibiEmlakDanismanlik.Persistance --startup-project Presentation/FibiEmlakDanismanlik.WebApi
+dotnet ef migrations add <MigrationName> --project Infrastructure/FibiEmlakDanismanlik.Persistence --startup-project Presentation/FibiEmlakDanismanlik.WebApi
 
 # DB güncelle
-dotnet ef database update --project Infrastructure/FibiEmlakDanismanlik.Persistance --startup-project Presentation/FibiEmlakDanismanlik.WebApi
+dotnet ef database update --project Infrastructure/FibiEmlakDanismanlik.Persistence --startup-project Presentation/FibiEmlakDanismanlik.WebApi
 ```
 
 Yeni makinede WebApi'nin açılması için JWT imzalama anahtarı gerekir (yoksa uygulama başlarken hata verir):
@@ -400,7 +400,7 @@ Uygulama login'i (`fibiemlak_app`) yalnızca okuma/yazma yetkisine sahip, şema 
 
 ```powershell
 $env:ConnectionStrings__DefaultConnection = "Server=<SUNUCU>\<INSTANCE>;Database=fibiemlak.com;Integrated Security=True;TrustServerCertificate=True"
-dotnet ef database update --project Infrastructure/FibiEmlakDanismanlik.Persistance --startup-project Presentation/FibiEmlakDanismanlik.WebApi
+dotnet ef database update --project Infrastructure/FibiEmlakDanismanlik.Persistence --startup-project Presentation/FibiEmlakDanismanlik.WebApi
 Remove-Item Env:ConnectionStrings__DefaultConnection
 ```
 
