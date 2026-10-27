@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FibiEmlakDanismanlik.Domain
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{267271E3-78F7-4AD3-BD21-D3D2112C1280}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FibiEmlakDanismanlik.Persistence", "Infrastructure\FibiEmlakDanismanlik.Persistance\FibiEmlakDanismanlik.Persistence.csproj", "{8BEE2ECA-BAC4-410C-9F47-2A21EE736DE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FibiEmlakDanismanlik.Persistence", "Infrastructure\FibiEmlakDanismanlik.Persistence\FibiEmlakDanismanlik.Persistence.csproj", "{8BEE2ECA-BAC4-410C-9F47-2A21EE736DE6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FibiEmlakDanismanlik.Application", "Core\FibiEmlakDanismanlik.Application\FibiEmlakDanismanlik.Application.csproj", "{AF407DBB-2532-4079-8CEF-9D8DC8CA078B}"
 EndProject
