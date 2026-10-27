@@ -676,13 +676,36 @@
         }
 
         var initialFormSnapshot = null;
-        // Konum ve diğer başlangıç AJAX yüklemelerinden sonra ilk snapshot'ı al
-        setTimeout(function () {
-            initialFormSnapshot = getFormSnapshot();
-        }, 800);
+
+        function ensureBaseline() {
+            if (initialFormSnapshot === null) {
+                initialFormSnapshot = getFormSnapshot();
+            }
+        }
+
+        // Temel görüntü sabit bir süre sonra değil, kullanıcının forma ilk gerçek etkileşiminde
+        // (değer henüz değişmeden) alınır. Böylece geç yüklenen TinyMCE veya AJAX verileri
+        // temel görüntüye dahil olur.
+        function handleUserInteraction(e) {
+            if (e && e.isTrusted) {
+                ensureBaseline();
+            }
+        }
+
+        form.addEventListener('pointerdown', handleUserInteraction, true);
+        form.addEventListener('keydown', handleUserInteraction, true);
+        form.addEventListener('fibi-user-intent', function () {
+            ensureBaseline();
+        });
 
         function checkDirty() {
-            if (!initialFormSnapshot || isFormSubmitting) return;
+            if (isFormSubmitting) return;
+            if (!initialFormSnapshot) {
+                if (dirtyIndicator) {
+                    dirtyIndicator.classList.add('d-none');
+                }
+                return;
+            }
             var currentSnapshot = getFormSnapshot();
             var isDirty = (currentSnapshot !== initialFormSnapshot);
             if (dirtyIndicator) {
@@ -708,6 +731,17 @@
                 dirtyIndicator.classList.add('d-none');
             }
         }, true);
+
+        // bfcache'ten (Back/Forward Cache) sayfa geri yüklendiğinde durumu sıfırla
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                isFormSubmitting = false;
+                initialFormSnapshot = null;
+                if (dirtyIndicator) {
+                    dirtyIndicator.classList.add('d-none');
+                }
+            }
+        });
 
         // Ctrl+S / Cmd+S kısayolu
         document.addEventListener('keydown', function (e) {

@@ -334,6 +334,7 @@ Testler: UX 24/24, Hesabım 15/15, kat planı 17/17, içerik 23/23; açık/koyu 
 - [x] İlan: tür seçimi sayfası `/ilanlar/yeni`, yeni ilanda adım adım sihirbaz, düzenlemede bölüm gezinmesi + tamamlanma göstergesi + canlı önizleme, para alanları tr-TR binlik ayraçlı (gönderimde ham değere çevrilir), karakter sayaçları, kaydedilmemiş değişiklik uyarısı, Ctrl+S; sunucunun zorunlu tuttuğu alanlar (fiyat/kira, il, ilçe, kategori) istemcide de zorunlu
 - [x] Hesabım `/hesabim`: profil, şifre değiştirme (tüm oturumlar kapanır), kurtarma kodu yenileme, tüm cihazlardan çıkış, giriş geçmişi
 - [x] Ayarlar `/ayarlar` (Sahip): komisyon varsayılanları, vitrin ve haber bekleyen sınırları (`BusinessSettings`)
+- (2026-10-27) İlan düzenlemede değişiklik yapılmasa da (ve kaydettikten sonra) "kaydedilmemiş değişiklik" çıkış uyarısı çıkıyordu: temel görüntü sabit 800 ms'de alınıyor, TinyMCE/konum listeleri sonra yazıyordu. Artık ilk gerçek kullanıcı etkileşiminde (pointerdown/keydown, TinyMCE için `fibi-user-intent`) alınır; dokunulmadıysa uyarı yok (`listing-form-ux.js`)
 - Bulunan eski hatalar düzeltildi: demo görselli ilanlarda panel fotoğraf göstermiyordu (Width/Height null); düz metin API yanıtında fotoğraf silme/sıralama başarılıyken hata gösteriyordu; e-postasız iletişim/randevu talepleri reddediliyordu; dashboard grafikleri sözdizimi hatasıyla çizilmiyordu
 - [ ] Kalan: ilan listesi, talepler, işlemler ve raporlar sayfaları yalnızca tema/bildirim katmanından yararlanıyor; bu sayfalara özel tasarım turu yapılmadı
 

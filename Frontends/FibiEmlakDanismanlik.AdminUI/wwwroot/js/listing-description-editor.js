@@ -49,6 +49,10 @@ document.addEventListener('DOMContentLoaded', function () {
         content_css: dark ? 'dark' : 'default',
         content_style: 'body{font-family:"Open Sans",system-ui,sans-serif;font-size:15px;line-height:1.6}',
         setup: function (editor) {
+            editor.on('keydown mousedown paste', function () {
+                textarea.dispatchEvent(new CustomEvent('fibi-user-intent', { bubbles: true }));
+            });
+
             editor.on('input change undo redo keyup SetContent', function () {
                 editor.save();
                 textarea.dispatchEvent(new Event('input', { bubbles: true }));
