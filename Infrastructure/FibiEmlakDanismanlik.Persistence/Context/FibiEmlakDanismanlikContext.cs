@@ -199,6 +199,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 .Property(f => f.PropertyNo)
                 .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalCommercialPropertyListings_Table");
 
+
             modelBuilder.Entity<RentalHousingListing>()
                 .Property(f => f.PropertyNo)
                 .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalHousingListings_Table");
@@ -239,13 +240,16 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 .Property(x => x.Rent)
                 .HasPrecision(18, 2);
 
+
             modelBuilder.Entity<RentalHousingListing>()
                 .Property(x => x.Deposit)
                 .HasPrecision(18, 2);
 
+
             modelBuilder.Entity<RentalHousingListing>()
                 .Property(x => x.Dues)
                 .HasPrecision(18, 2);
+
 
             modelBuilder.Entity<RentalHousingListing>()
                 .Property(x => x.Rent)
@@ -254,6 +258,25 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             modelBuilder.Entity<RentalLandListing>()
                 .Property(x => x.PricePerSquareMeter)
                 .HasPrecision(18, 2);
+
+            modelBuilder.Entity<RentalHousingListing>()
+                .HasOne(x => x.ListingType)
+                .WithMany()
+                .HasForeignKey(x => x.ListingTypeId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<RentalCommercialPropertyListing>()
+                .HasOne(x => x.ListingType)
+                .WithMany()
+                .HasForeignKey(x => x.ListingTypeId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<RentalLandListing>()
+                .HasOne(x => x.ListingType)
+                .WithMany()
+                .HasForeignKey(x => x.ListingTypeId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             modelBuilder.Entity<ListingImageSelection>()
     .HasIndex(x => new { x.ListingId, x.SectionKey, x.ImageNo })
     .IsUnique();

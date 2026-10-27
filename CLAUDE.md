@@ -363,7 +363,7 @@ Bitti: kademeli emsal şeması + migration (yerel DB'ye uygulandı), mahalle > i
 - ~570 derleme uyarısı, çoğu nullable (CS8618/CS8602/CS8603); yeni kodda yenisi eklenmemeli (T11)
 - ~~Detay sayfası ilanı yalnızca id ile buluyor (T12)~~ — çözüldü: linkler listingTypeId taşıyor; parametresiz eski linkler için sıralı arama yedek olarak duruyor
 - İlan görselleri harici sitelere hotlink (emlakjet, depositphotos, unsplash); kaynak silinince kırılıyor (T13)
-- Kiralık entity'lerde `ListingTypeId` int?, satılıklarda int — tutarsız (T14)
+- ~~Kiralık entity'lerde `ListingTypeId` int? (T14)~~ — çözüldü (2026-10-27): `int`, FK NO ACTION açıkça yapılandırıldı; migration `RentalListingTypeIdRequired` (yerel ve canlı DB'ye uygulanmalı)
 - `GetUnifiedForSale/RentalPropertyById` ve listeleme sorguları PropertyRepository içinde tekrar ediyor; BestDealRepository ayrı tutuldu (T1 ile birlikte ele alınmalı)
 
 ---
