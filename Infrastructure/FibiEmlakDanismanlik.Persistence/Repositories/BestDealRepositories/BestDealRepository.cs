@@ -1,6 +1,7 @@
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Results.BestDealResults;
 using FibiEmlakDanismanlik.Application.Interfaces.BestDealInterfaces;
+using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -46,7 +47,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BestDealRepositories
                         City = x.City,
                         District = x.District,
                         Neighborhood = x.Neighborhood,
-                        ImageUrl = x.PropImgUrl1,
+                        ImageUrl = _context.ListingImages
+                            .Where(i => i.ListingTypeId == 2 && i.ListingId == x.ForSaleHousingListId && i.Kind == ListingImageKind.Photo)
+                            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                            .Select(i => i.Url)
+                            .FirstOrDefault() ?? "",
                         Area = x.GrossArea,
                         NumberOfRoom = x.NumberOfRoom,
                         NumberOfBathRoom = x.NumberOfBathRoom,
@@ -75,7 +80,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BestDealRepositories
                         City = x.City,
                         District = x.District,
                         Neighborhood = x.Neighborhood,
-                        ImageUrl = x.PropImgUrl1,
+                        ImageUrl = _context.ListingImages
+                            .Where(i => i.ListingTypeId == 3 && i.ListingId == x.ForSaleCommercialListingId && i.Kind == ListingImageKind.Photo)
+                            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                            .Select(i => i.Url)
+                            .FirstOrDefault() ?? "",
                         Area = x.GrossArea,
                         NumberOfRoom = null,
                         NumberOfBathRoom = x.NumberOfBathrooms,
@@ -104,7 +113,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BestDealRepositories
                         City = x.City,
                         District = x.District,
                         Neighborhood = x.Neighborhood,
-                        ImageUrl = x.PropImgUrl1,
+                        ImageUrl = _context.ListingImages
+                            .Where(i => i.ListingTypeId == 1 && i.ListingId == x.ForSaleLandListingId && i.Kind == ListingImageKind.Photo)
+                            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                            .Select(i => i.Url)
+                            .FirstOrDefault() ?? "",
                         Area = x.Area,
                         NumberOfRoom = null,
                         NumberOfBathRoom = null,
@@ -142,7 +155,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BestDealRepositories
                         City = x.City,
                         District = x.District,
                         Neighborhood = x.Neighborhood,
-                        ImageUrl = x.PropImgUrl1,
+                        ImageUrl = _context.ListingImages
+                            .Where(i => i.ListingTypeId == 8 && i.ListingId == x.RentalHousingListId && i.Kind == ListingImageKind.Photo)
+                            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                            .Select(i => i.Url)
+                            .FirstOrDefault() ?? "",
                         Area = x.GrossArea,
                         NumberOfRoom = x.NumberOfRoom,
                         NumberOfBathRoom = x.NumberOfBathRoom,
@@ -171,7 +188,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BestDealRepositories
                         City = x.City,
                         District = x.District,
                         Neighborhood = x.Neighborhood,
-                        ImageUrl = x.PropImgUrl1,
+                        ImageUrl = _context.ListingImages
+                            .Where(i => i.ListingTypeId == 9 && i.ListingId == x.RentalCommercialListId && i.Kind == ListingImageKind.Photo)
+                            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                            .Select(i => i.Url)
+                            .FirstOrDefault() ?? "",
                         Area = x.GrossArea,
                         NumberOfRoom = null,
                         NumberOfBathRoom = x.NumberOfBathrooms,
@@ -200,7 +221,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.BestDealRepositories
                         City = x.City,
                         District = x.District,
                         Neighborhood = x.Neighborhood,
-                        ImageUrl = x.PropImgUrl1,
+                        ImageUrl = _context.ListingImages
+                            .Where(i => i.ListingTypeId == 7 && i.ListingId == x.RentalLandListingId && i.Kind == ListingImageKind.Photo)
+                            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                            .Select(i => i.Url)
+                            .FirstOrDefault() ?? "",
                         Area = x.Area,
                         NumberOfRoom = null,
                         NumberOfBathRoom = null,

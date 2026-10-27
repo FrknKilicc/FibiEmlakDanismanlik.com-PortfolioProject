@@ -209,7 +209,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
                     City = x.City,
                     District = x.District,
                     Neighborhood = x.Neighborhood,
-                    ImageUrl = x.PropImgUrl1
+                    ImageUrl = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 2 && i.ListingId == x.ForSaleHousingListId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? ""
                 }).ToListAsync();
                 rawItems.AddRange(items);
             }
@@ -231,7 +235,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
                     City = x.City,
                     District = x.District,
                     Neighborhood = x.Neighborhood,
-                    ImageUrl = x.PropImgUrl1
+                    ImageUrl = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 1 && i.ListingId == x.ForSaleLandListingId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? ""
                 }).ToListAsync();
                 rawItems.AddRange(items);
             }
@@ -253,7 +261,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
                     City = x.City,
                     District = x.District,
                     Neighborhood = x.Neighborhood,
-                    ImageUrl = x.PropImgUrl1
+                    ImageUrl = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 3 && i.ListingId == x.ForSaleCommercialListingId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? ""
                 }).ToListAsync();
                 rawItems.AddRange(items);
             }
@@ -275,7 +287,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
                     City = x.City,
                     District = x.District,
                     Neighborhood = x.Neighborhood,
-                    ImageUrl = x.PropImgUrl1
+                    ImageUrl = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 8 && i.ListingId == x.RentalHousingListId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? ""
                 }).ToListAsync();
                 rawItems.AddRange(items);
             }
@@ -297,7 +313,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
                     City = x.City,
                     District = x.District,
                     Neighborhood = x.Neighborhood,
-                    ImageUrl = x.PropImgUrl1
+                    ImageUrl = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 7 && i.ListingId == x.RentalLandListingId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? ""
                 }).ToListAsync();
                 rawItems.AddRange(items);
             }
@@ -319,7 +339,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
                     City = x.City,
                     District = x.District,
                     Neighborhood = x.Neighborhood,
-                    ImageUrl = x.PropImgUrl1
+                    ImageUrl = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 9 && i.ListingId == x.RentalCommercialListId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? ""
                 }).ToListAsync();
                 rawItems.AddRange(items);
             }
@@ -571,4 +595,3 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
         }
     }
 }
-

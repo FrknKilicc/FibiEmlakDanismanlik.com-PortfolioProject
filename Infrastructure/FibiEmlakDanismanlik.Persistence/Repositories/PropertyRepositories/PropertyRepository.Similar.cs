@@ -150,7 +150,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     SquareMeter = h.GrossArea,
                     NumberOfRoom = h.NumberOfRoom,
 
-                    CoverImageUrl = h.PropImgUrl1,
+                    CoverImageUrl = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 8 && i.ListingId == h.RentalHousingListId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? "",
                     CreatedDate = h.CreatedDate
                 };
 
@@ -184,7 +188,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     SquareMeter = l.Area,
                     NumberOfRoom = null,
 
-                    CoverImageUrl = l.PropImgUrl1,
+                    CoverImageUrl = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 7 && i.ListingId == l.RentalLandListingId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? "",
                     CreatedDate = l.CreatedDate
                 };
 
@@ -217,7 +225,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     SquareMeter = c.GrossArea,
                     NumberOfRoom = null,
 
-                    CoverImageUrl = c.PropImgUrl1,
+                    CoverImageUrl = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 9 && i.ListingId == c.RentalCommercialListId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? "",
                     CreatedDate = c.CreatedDate
                 };
 
