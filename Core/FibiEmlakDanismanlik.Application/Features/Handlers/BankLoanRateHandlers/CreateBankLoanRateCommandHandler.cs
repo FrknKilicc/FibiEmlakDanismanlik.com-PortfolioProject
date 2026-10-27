@@ -1,5 +1,6 @@
 using FibiEmlakDanismanlik.Application.Features.Commands.BankLoanRateCommands;
 using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
 using System;
@@ -31,7 +32,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.BankLoanRateHandler
                 MaxTermMonths = request.MaxTermMonths,
                 AllocationFeeRate = request.AllocationFeeRate,
                 IsActive = request.IsActive,
-                UpdatedDate = DateTime.Now
+                UpdatedDate = TurkeyClock.Now
             };
 
             await _repository.CreateAsync(entity);

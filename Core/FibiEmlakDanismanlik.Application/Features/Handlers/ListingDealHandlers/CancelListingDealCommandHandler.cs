@@ -9,6 +9,7 @@ using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.LeadInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingDealInterfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FluentValidation;
 using FluentValidation.Results;
@@ -78,7 +79,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingDealHandlers
 
                 deal.DepositOutcome = DepositOutcome.Refunded;
                 deal.DepositRefundAmount = request.DepositRefundAmount.Value;
-                deal.DepositRefundDate = request.DepositRefundDate ?? DateTime.Today;
+                deal.DepositRefundDate = request.DepositRefundDate ?? TurkeyClock.Today;
             }
             else
             {
@@ -88,7 +89,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingDealHandlers
             }
 
             deal.Status = DealStatus.Cancelled;
-            deal.CancelledDate = request.CancelledDate ?? DateTime.Today;
+            deal.CancelledDate = request.CancelledDate ?? TurkeyClock.Today;
             deal.UpdatedAtUtc = DateTime.UtcNow;
 
             await _listingDealRepository.SaveChangesAsync();

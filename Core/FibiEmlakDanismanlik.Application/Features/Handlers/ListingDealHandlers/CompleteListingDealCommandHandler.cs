@@ -9,6 +9,7 @@ using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.LeadInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingDealInterfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FluentValidation;
 using FluentValidation.Results;
@@ -58,7 +59,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingDealHandlers
             }
 
             deal.Status = DealStatus.Completed;
-            deal.CompletedDate = request.CompletedDate ?? DateTime.Today;
+            deal.CompletedDate = request.CompletedDate ?? TurkeyClock.Today;
             deal.UpdatedAtUtc = DateTime.UtcNow;
 
             await _listingDealRepository.SaveChangesAsync();

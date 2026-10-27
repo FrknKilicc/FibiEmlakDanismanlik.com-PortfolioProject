@@ -11,6 +11,7 @@ using FibiEmlakDanismanlik.Application.Interfaces.DashboardInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.LeadInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingAlertInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingDealInterfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Enums;
 using MediatR;
 
@@ -49,7 +50,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.DashboardHandlers
 
         public async Task<GetAdminDashboardResult> Handle(GetAdminDashboardQuery request, CancellationToken cancellationToken)
         {
-            var today = DateTime.Today;
+            var today = TurkeyClock.Today;
             var to = request.To?.Date ?? today;
             var from = request.From?.Date ?? new DateTime(today.Year, 1, 1);
 

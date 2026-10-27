@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FibiEmlakDanismanlik.Application.Interfaces.DashboardInterfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
@@ -86,9 +87,9 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.DashboardRepositories
             await CountReachedAsync(LeadSource.Contact, contactLeads.Select(l => (l.Id, l.Status)).ToList());
             await CountReachedAsync(LeadSource.FibiService, fibiLeads.Select(l => (l.Id, l.Status)).ToList());
 
-            var todayStart = DateTime.Today;
+            var todayStart = TurkeyClock.Today;
             var todayEnd = todayStart.AddDays(1);
-            var now = DateTime.Now;
+            var now = TurkeyClock.Now;
             var next7DaysEnd = todayStart.AddDays(8);
 
             var apptQuery = contactsQuery

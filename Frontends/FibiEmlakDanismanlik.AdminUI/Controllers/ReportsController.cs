@@ -321,7 +321,10 @@ public sealed class ReportsController : Controller
         }
 
         var text = value;
-        if (text.Length > 0)
+        var isNumeric = decimal.TryParse(text, NumberStyles.Number, TrCulture, out _) ||
+                        decimal.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out _);
+
+        if (!isNumeric && text.Length > 0)
         {
             var first = text[0];
             if (first is '=' or '+' or '-' or '@' or '\t' or '\r')

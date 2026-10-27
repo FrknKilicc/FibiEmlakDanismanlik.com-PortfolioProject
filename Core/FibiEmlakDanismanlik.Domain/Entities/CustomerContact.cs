@@ -1,4 +1,5 @@
-﻿using FibiEmlakDanismanlik.Domain.Enums;
+﻿using FibiEmlakDanismanlik.Domain.Common;
+using FibiEmlakDanismanlik.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,7 +19,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 
         public string CustomerContactMessage { get; set; }
 
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = TurkeyClock.Now;
 
         
         public int? PropertyListingId { get; set; }

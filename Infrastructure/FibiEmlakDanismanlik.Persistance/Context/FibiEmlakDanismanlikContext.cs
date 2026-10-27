@@ -206,6 +206,54 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             modelBuilder.Entity<RentalLandListing>()
                 .Property(f => f.PropertyNo)
                 .HasDefaultValueSql("NEXT VALUE FOR Seq_RentalLandListings_Table");
+
+            modelBuilder.Entity<RentalLandListing>()
+                .Property(x => x.Rent)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ForSaleCommercialPropertyListing>()
+                .Property(x => x.Price)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ForSaleHousingListing>()
+                .Property(x => x.Dues)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ForSaleHousingListing>()
+                .Property(x => x.Price)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ForSaleLandListing>()
+                .Property(x => x.Price)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<ForSaleLandListing>()
+                .Property(x => x.PricePerSquareMeter)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<RentalCommercialPropertyListing>()
+                .Property(x => x.Deposit)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<RentalCommercialPropertyListing>()
+                .Property(x => x.Rent)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<RentalHousingListing>()
+                .Property(x => x.Deposit)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<RentalHousingListing>()
+                .Property(x => x.Dues)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<RentalHousingListing>()
+                .Property(x => x.Rent)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<RentalLandListing>()
+                .Property(x => x.PricePerSquareMeter)
+                .HasPrecision(18, 2);
             modelBuilder.Entity<ListingImageSelection>()
     .HasIndex(x => new { x.ListingId, x.SectionKey, x.ImageNo })
     .IsUnique();

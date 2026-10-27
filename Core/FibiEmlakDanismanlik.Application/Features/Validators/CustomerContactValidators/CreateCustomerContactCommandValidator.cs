@@ -1,4 +1,5 @@
 using FibiEmlakDanismanlik.Application.Features.Commands.CustomerContactCommands;
+using FibiEmlakDanismanlik.Domain.Common;
 using FluentValidation;
 using System;
 
@@ -30,7 +31,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Validators.CustomerContactVa
             When(x => x.AppointmentDateTime.HasValue, () =>
             {
                 RuleFor(x => x.AppointmentDateTime!.Value)
-                    .GreaterThanOrEqualTo(DateTime.Now.AddMinutes(-1))
+                    .GreaterThanOrEqualTo(TurkeyClock.Now.AddMinutes(-1))
                     .WithMessage("Randevu tarihi geçmişte olamaz.");
             });
 
