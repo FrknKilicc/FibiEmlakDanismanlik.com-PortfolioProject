@@ -155,6 +155,33 @@ namespace FibiEmlakDanismanlik.WebUI.Services
             return (city.Id, district?.Id);
         }
 
+        /// <summary>
+        /// İl ve ilçe adlarını kimlikleriyle bulur. İl bulunamazsa null döner.
+        /// </summary>
+        public async Task<(string City, string? District)?> FindNamesByIdsAsync(int cityId, int? districtId)
+        {
+            if (cityId <= 0)
+                return null;
+
+            var cities = await GetCitiesAsync();
+            var city = cities.FirstOrDefault(x => x.Id == cityId);
+            if (city == null)
+                return null;
+
+            string? districtName = null;
+            if (districtId.HasValue && districtId.Value > 0)
+            {
+                var districts = await GetDistrictsAsync(city.Id);
+                var district = districts.FirstOrDefault(x => x.Id == districtId.Value);
+                if (district == null)
+                    return null;
+
+                districtName = district.Text;
+            }
+
+            return (city.Text, districtName);
+        }
+
         private async Task<List<LocationOptionVm>> GetCitiesAsync()
         {
             const string citiesCacheKey = "listing-location:cities";

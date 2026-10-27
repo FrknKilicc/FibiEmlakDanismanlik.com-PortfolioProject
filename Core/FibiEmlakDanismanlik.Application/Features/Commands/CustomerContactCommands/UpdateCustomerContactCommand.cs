@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using FibiEmlakDanismanlik.Domain.Common;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.CustomerContactComm
         public string CustomerContactMail { get; set; }
         public string CustomerContactPhone { get; set; }
         public string CustomerContactMessage { get; set; }
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = TurkeyClock.Now;
         //Relational
         public int? PropertyListingId { get; set; }
         //Relational

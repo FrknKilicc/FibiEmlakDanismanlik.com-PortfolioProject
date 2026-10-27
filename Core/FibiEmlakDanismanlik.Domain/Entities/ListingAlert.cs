@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Enums;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
@@ -74,7 +75,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         /// <summary>
         /// Talebin oluşturulma tarihi (yerel saat).
         /// </summary>
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = TurkeyClock.Now;
 
         /// <summary>
         /// Talebin kapatılma tarihi (UTC).

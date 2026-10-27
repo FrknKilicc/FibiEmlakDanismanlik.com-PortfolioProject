@@ -7,6 +7,7 @@ using FibiEmlakDanismanlik.Application.Features.Commands.ListingAlertCommands;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.BusinessSettingInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingAlertInterfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FluentValidation;
@@ -96,7 +97,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingAlertHandler
                 Status = ListingAlertStatus.Active,
                 AssignedAgentId = assignedAgentId,
                 KvkkApprovedAt = DateTime.UtcNow,
-                CreatedDate = DateTime.Now
+                CreatedDate = TurkeyClock.Now
             };
 
             await _listingAlertRepository.AddAsync(alert);

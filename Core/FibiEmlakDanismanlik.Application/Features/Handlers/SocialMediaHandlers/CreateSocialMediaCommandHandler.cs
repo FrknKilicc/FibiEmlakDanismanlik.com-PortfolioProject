@@ -1,5 +1,6 @@
 using FibiEmlakDanismanlik.Application.Features.Commands.SocialMediaCommands;
 using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
 using System;
@@ -26,7 +27,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.SocialMediaHandlers
                 Icon = request.Icon?.Trim(),
                 Order = request.Order,
                 IsActive = request.IsActive,
-                CreatedDate = DateTime.Now
+                CreatedDate = TurkeyClock.Now
             });
         }
     }

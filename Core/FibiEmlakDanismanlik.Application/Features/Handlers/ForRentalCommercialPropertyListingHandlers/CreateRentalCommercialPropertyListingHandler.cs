@@ -1,5 +1,6 @@
 ﻿using FibiEmlakDanismanlik.Application.Features.Commands.RentalCommercialPropertyListingCommands;
 using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
 using System;
@@ -28,7 +29,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.RentalCommercialPro
                 BestDeals = request.BestDeals,
                 BuildingAge = request.BuildingAge,
                 City = request.City,
-                CreatedDate = DateTime.Today,
+                CreatedDate = TurkeyClock.Today,
                 Deposit = request.Deposit,
                 District = request.District,
                 Facade = request.Facade,

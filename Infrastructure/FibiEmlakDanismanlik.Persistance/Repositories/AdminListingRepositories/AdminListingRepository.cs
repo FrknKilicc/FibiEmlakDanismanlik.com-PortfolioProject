@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Features.Commands.AdminListingCommands;
 using FibiEmlakDanismanlik.Application.Interfaces.AdminListingInterfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
@@ -710,7 +711,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                         {
                             entity = new ForSaleLandListing
                             {
-                                CreatedDate = DateTime.Now,
+                                CreatedDate = TurkeyClock.Now,
                                 PropertyStatus = PropertyStatuses.Aktif,
                                 BestDeals = false,
                                 AgentId = agentId,
@@ -773,7 +774,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                         {
                             entity = new ForSaleHousingListing
                             {
-                                CreatedDate = DateTime.Now,
+                                CreatedDate = TurkeyClock.Now,
                                 PropertyStatus = PropertyStatuses.Aktif,
                                 BestDeals = false,
                                 AgentId = agentId,
@@ -843,7 +844,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                         {
                             entity = new ForSaleCommercialPropertyListing
                             {
-                                CreatedDate = DateTime.Now,
+                                CreatedDate = TurkeyClock.Now,
                                 PropertyStatus = PropertyStatuses.Aktif,
                                 BestDeals = false,
                                 AgentId = agentId,
@@ -903,7 +904,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                         {
                             entity = new RentalLandListing
                             {
-                                CreatedDate = DateTime.Now,
+                                CreatedDate = TurkeyClock.Now,
                                 PropertyStatus = PropertyStatuses.Aktif,
                                 BestDeals = false,
                                 AgentId = agentId,
@@ -963,7 +964,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                         {
                             entity = new RentalHousingListing
                             {
-                                CreatedDate = DateTime.Now,
+                                CreatedDate = TurkeyClock.Now,
                                 PropertyStatus = PropertyStatuses.Aktif,
                                 BestDeals = false,
                                 AgentId = agentId,
@@ -1030,7 +1031,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                         {
                             entity = new RentalCommercialPropertyListing
                             {
-                                CreatedDate = DateTime.Now,
+                                CreatedDate = TurkeyClock.Now,
                                 PropertyStatus = PropertyStatuses.Aktif,
                                 BestDeals = false,
                                 AgentId = agentId,

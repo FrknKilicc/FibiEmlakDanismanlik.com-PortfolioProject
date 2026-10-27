@@ -442,9 +442,16 @@
                                     {
                                         <tr>
                                             <td class="ps-2">
-                                                <a href="/ilanlar/@item.ListingTypeId/@item.ListingId" class="fw-semibold text-dark text-decoration-none">
+                                                @if (string.IsNullOrWhiteSpace(item.ListingTitle))
+                                                {
+                                                    <span class="fw-semibold text-muted">Silinmiş ilan</span>
+                                                }
+                                                else
+                                                {
+                                                    <a href="/ilanlar/@item.ListingTypeId/@item.ListingId" class="fw-semibold text-dark text-decoration-none">
                                                     @item.ListingTitle
-                                                </a>
+                                                    </a>
+                                                }
                                                 <div class="text-muted small">#@item.ListingId</div>
                                             </td>
                                             <td class="text-end pe-2">

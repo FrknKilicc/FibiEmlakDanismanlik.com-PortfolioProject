@@ -1,5 +1,6 @@
 using FibiEmlakDanismanlik.Application.Features.Commands.FibiServiceCommands;
 using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Entities;
 using MediatR;
 using System;
@@ -23,7 +24,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.FibiServiceHandlers
             var customerNote = string.IsNullOrWhiteSpace(request.CustomerNote) ? null : request.CustomerNote.Trim();
             var calculationSummary = string.IsNullOrWhiteSpace(request.CalculationSummaryJson) ? null : request.CalculationSummaryJson.Trim();
 
-            var now = DateTime.Now;
+            var now = TurkeyClock.Now;
             var lead = new FibiServiceLead
             {
                 SourceModule = request.SourceModule,

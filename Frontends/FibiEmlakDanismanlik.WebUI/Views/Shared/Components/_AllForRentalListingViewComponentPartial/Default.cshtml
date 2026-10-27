@@ -152,6 +152,34 @@
                             </div>
                         </div>
 
+                        <!-- BİNA YAŞI -->
+                        <div class="filter-widget sidebar-widget" id="buildingAgeWidget" style="display:none;">
+                            <div class="widget-title"><h5>Bina Yaşı</h5></div>
+                            <div class="widget-content">
+                                <select id="buildingAgeSelect" class="wide" data-selected="@Context.Request.Query["buildingAge"].ToString()">
+                                    <option value="">Tümü</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- ISITMA -->
+                        <div class="filter-widget sidebar-widget" id="heatingWidget" style="display:none;">
+                            <div class="widget-title"><h5>Isıtma</h5></div>
+                            <div class="widget-content">
+                                <select id="heatingSelect" class="wide" data-selected="@Context.Request.Query["heating"].ToString()">
+                                    <option value="">Tümü</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- TAPU DURUMU -->
+                        <div class="filter-widget sidebar-widget" id="titleDeedWidget" style="display:none;">
+                            <div class="widget-title"><h5>Tapu Durumu</h5></div>
+                            <div class="widget-content">
+                                <select id="titleDeedSelect" class="wide" data-selected="@Context.Request.Query["titleDeedStatus"].ToString()">
+                                    <option value="">Tümü</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <!-- ÖZELLİKLER (amenities) -->
                         <div class="category-widget sidebar-widget">
                             <div class="widget-title"><h5>Özellikler</h5></div>

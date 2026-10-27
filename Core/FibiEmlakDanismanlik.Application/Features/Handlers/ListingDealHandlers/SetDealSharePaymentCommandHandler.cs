@@ -6,6 +6,7 @@ using FibiEmlakDanismanlik.Application.Exceptions;
 using FibiEmlakDanismanlik.Application.Features.Commands.ListingDealCommands;
 using FibiEmlakDanismanlik.Application.Interfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.ListingDealInterfaces;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Enums;
 using MediatR;
 
@@ -41,7 +42,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingDealHandlers
             if (request.Paid)
             {
                 share.PaymentStatus = DealSharePaymentStatus.Paid;
-                share.PaidDate = request.PaidDate ?? DateTime.Today;
+                share.PaidDate = request.PaidDate ?? TurkeyClock.Today;
             }
             else
             {
