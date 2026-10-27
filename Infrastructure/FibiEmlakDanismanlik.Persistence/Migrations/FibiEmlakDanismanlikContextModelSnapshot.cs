@@ -445,6 +445,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DeletedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("TopNews")
                         .HasColumnType("bit");
 
@@ -975,6 +978,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DeletedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("District")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1184,6 +1190,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("District")
@@ -1443,6 +1452,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<bool?>("DevelopmentRight")
@@ -2562,6 +2574,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DeletedAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("Deposit")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -2770,6 +2785,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Deposit")
@@ -3027,6 +3045,9 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DevelopmentRight")

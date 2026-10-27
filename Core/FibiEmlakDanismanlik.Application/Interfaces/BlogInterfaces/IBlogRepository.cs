@@ -19,5 +19,9 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.BlogInterfaces
         Task<List<string>> GetTagNamesAsync(int blogId);
         Task SetBlogTagsAsync(int blogId, IReadOnlyCollection<string> tagNames);
         Task<List<string>> GetAllTagNamesAsync();
+        /// <summary>
+        /// Silinmiş (soft delete) yazıların kategori bağını kaldırır.
+        /// </summary>
+        Task DetachDeletedBlogsFromCategoryAsync(int blogCategoryId);
     }
 }

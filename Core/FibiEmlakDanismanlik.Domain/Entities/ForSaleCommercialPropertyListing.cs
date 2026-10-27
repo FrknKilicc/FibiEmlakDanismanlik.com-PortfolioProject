@@ -7,11 +7,12 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Interfaces;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class ForSaleCommercialPropertyListing : ILocatedListing //Satılık İşyeri
+    public class ForSaleCommercialPropertyListing : ILocatedListing, ISoftDeletable //Satılık İşyeri
     {
         //MainInfo 
         [Key]
@@ -26,6 +27,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string PropertyDescription { get; set; }
         public string? PropertyStatus { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime? DeletedAtUtc { get; set; }
 
         // Adres Bilgileri
         [Display(Name = "Şehir")]

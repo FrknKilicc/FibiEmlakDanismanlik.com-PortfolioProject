@@ -1,5 +1,6 @@
 using FibiEmlakDanismanlik.Application.Constants;
 using FibiEmlakDanismanlik.Application.Helpers;
+using FibiEmlakDanismanlik.Domain.Common;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Domain.Interfaces;
@@ -78,6 +79,9 @@ namespace FibiEmlakDanismanlik.Persistence.Context
                 return dir.FullName;
             }
         }
+
+        // Sahip'e özel kalıcı silme dışında false kalır
+        public bool AllowHardDelete { get; set; }
 
         public DbSet<AmenityDefinition> AmenityDefinitions { get; set; }
         public DbSet<ForSaleHousingListingAmenity> ForSaleHousingListingAmenities { get; set; }
@@ -1050,6 +1054,22 @@ namespace FibiEmlakDanismanlik.Persistence.Context
             ConfigureListingLocation<RentalLandListing>(modelBuilder);
             ConfigureListingLocation<RentalCommercialPropertyListing>(modelBuilder);
 
+            modelBuilder.Entity<ForSaleHousingListing>().HasQueryFilter(x => x.DeletedAtUtc == null);
+            modelBuilder.Entity<ForSaleLandListing>().HasQueryFilter(x => x.DeletedAtUtc == null);
+            modelBuilder.Entity<ForSaleCommercialPropertyListing>().HasQueryFilter(x => x.DeletedAtUtc == null);
+            modelBuilder.Entity<RentalHousingListing>().HasQueryFilter(x => x.DeletedAtUtc == null);
+            modelBuilder.Entity<RentalLandListing>().HasQueryFilter(x => x.DeletedAtUtc == null);
+            modelBuilder.Entity<RentalCommercialPropertyListing>().HasQueryFilter(x => x.DeletedAtUtc == null);
+            modelBuilder.Entity<Blog>().HasQueryFilter(x => x.DeletedAtUtc == null);
+
+            modelBuilder.Entity<BlogTag>().HasQueryFilter(bt => bt.Blog.DeletedAtUtc == null);
+            modelBuilder.Entity<ForSaleHousingListingAmenity>().HasQueryFilter(a => a.forSaleHousingListing.DeletedAtUtc == null);
+            modelBuilder.Entity<ForSaleLandListingAmenity>().HasQueryFilter(a => a.ForSaleLandListing.DeletedAtUtc == null);
+            modelBuilder.Entity<ForSaleCommercialListingAmenity>().HasQueryFilter(a => a.ForSaleCommercialProperty.DeletedAtUtc == null);
+            modelBuilder.Entity<RentalHousingListingAmenities>().HasQueryFilter(a => a.RentalHousingListing.DeletedAtUtc == null);
+            modelBuilder.Entity<RentalLandListingAmenities>().HasQueryFilter(a => a.RentalLandListing.DeletedAtUtc == null);
+            modelBuilder.Entity<RentalCommercialListingAmenities>().HasQueryFilter(a => a.RentalCommercialPropertyListing.DeletedAtUtc == null);
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -1070,6 +1090,7 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         {
             RemoveStaleGeocodedPoints();
             ResolveListingLocations();
+            ApplySoftDelete();
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
@@ -1077,7 +1098,20 @@ namespace FibiEmlakDanismanlik.Persistence.Context
         {
             await RemoveStaleGeocodedPointsAsync(cancellationToken);
             await ResolveListingLocationsAsync(cancellationToken);
+            ApplySoftDelete();
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void ApplySoftDelete()
+        {
+            if (AllowHardDelete)
+                return;
+
+            foreach (var entry in ChangeTracker.Entries<ISoftDeletable>().Where(e => e.State == EntityState.Deleted))
+            {
+                entry.State = EntityState.Modified;
+                entry.Entity.DeletedAtUtc = DateTime.UtcNow;
+            }
         }
 
         private void RemoveStaleGeocodedPoints()

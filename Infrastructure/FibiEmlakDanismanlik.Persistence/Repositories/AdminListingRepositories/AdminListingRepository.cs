@@ -1509,7 +1509,15 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                     }
             }
 
-            await _context.SaveChangesAsync();
+            _context.AllowHardDelete = true;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            finally
+            {
+                _context.AllowHardDelete = false;
+            }
             return storagePaths;
         }
 

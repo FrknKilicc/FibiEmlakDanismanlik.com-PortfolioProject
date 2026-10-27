@@ -38,6 +38,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthorHandlers
                 throw new BlogContentConflictException($"Bu yazara ait {count} blog yazısı var. Önce yazıları başka bir yazara aktarın veya silin.");
             }
 
+            // Blogs.AuthorId FK'si CASCADE: yazarın yalnızca silinmiş (soft delete) yazıları varsa onlar da kalıcı silinir
             await _repository.RemoveAsync(value);
         }
     }
