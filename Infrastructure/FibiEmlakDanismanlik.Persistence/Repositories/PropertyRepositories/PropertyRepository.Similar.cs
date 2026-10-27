@@ -12,7 +12,7 @@ using FibiEmlakDanismanlik.Domain.DTOs;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
-using FibiEmlakDanismanlik.Persistence.Migrations;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;

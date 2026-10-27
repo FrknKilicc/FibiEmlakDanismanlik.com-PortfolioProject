@@ -12,7 +12,8 @@ using FibiEmlakDanismanlik.Domain.DTOs;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
-using FibiEmlakDanismanlik.Persistence.Migrations;
+
+using FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
@@ -36,6 +37,15 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
         private static List<string> CollectImages(params string?[] urls)
         {
             return urls.Where(u => !string.IsNullOrWhiteSpace(u)).ToList()!;
+        }
+
+        // İlan fotoğraflarını ListingImages'tan okuyup PropImgUrl1..30 alanlarına yazar (eski kolon sırası)
+        private async Task FillPhotoSlotsAsync<T>(IReadOnlyCollection<T> items, Func<T, (int ListingTypeId, int ListingId)> key) where T : class
+        {
+            if (items.Count == 0) return;
+            var map = await ListingPhotoLookup.LoadAsync(_context, items.Select(key));
+            foreach (var item in items)
+                ListingImageSlots.Apply(item, map.TryGetValue(key(item), out var urls) ? urls : null);
         }
 
         public async Task<List<ListingSelectedImageRowDto>> GetSelectedImagesAsync(int listingId, string sectionKey)
