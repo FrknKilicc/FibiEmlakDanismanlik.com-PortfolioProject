@@ -12,7 +12,6 @@ using FibiEmlakDanismanlik.Domain.DTOs;
 using FibiEmlakDanismanlik.Domain.Entities;
 using FibiEmlakDanismanlik.Domain.Enums;
 using FibiEmlakDanismanlik.Persistence.Context;
-using FibiEmlakDanismanlik.Persistence.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
@@ -117,37 +116,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
         ListingType = "Konut",
 
-
-        PropImgUrl1 = house.PropImgUrl1,
-        PropImgUrl2 = house.PropImgUrl2,
-        PropImgUrl3 = house.PropImgUrl3,
-        PropImgUrl4 = house.PropImgUrl4,
-        PropImgUrl5 = house.PropImgUrl5,
-        PropImgUrl6 = house.PropImgUrl6,
-        PropImgUrl7 = house.PropImgUrl7,
-        PropImgUrl8 = house.PropImgUrl8,
-        PropImgUrl9 = house.PropImgUrl9,
-        PropImgUrl10 = house.PropImgUrl10,
-        PropImgUrl11 = house.PropImgUrl11,
-        PropImgUrl12 = house.PropImgUrl12,
-        PropImgUrl13 = house.PropImgUrl13,
-        PropImgUrl14 = house.PropImgUrl14,
-        PropImgUrl15 = house.PropImgUrl15,
-        PropImgUrl16 = house.PropImgUrl16,
-        PropImgUrl17 = house.PropImgUrl17,
-        PropImgUrl18 = house.PropImgUrl18,
-        PropImgUrl19 = house.PropImgUrl19,
-        PropImgUrl20 = house.PropImgUrl20,
-        PropImgUrl21 = house.PropImgUrl21,
-        PropImgUrl22 = house.PropImgUrl22,
-        PropImgUrl23 = house.PropImgUrl23,
-        PropImgUrl24 = house.PropImgUrl24,
-        PropImgUrl25 = house.PropImgUrl25,
-        PropImgUrl26 = house.PropImgUrl26,
-        PropImgUrl27 = house.PropImgUrl27,
-        PropImgUrl28 = house.PropImgUrl28,
-        PropImgUrl29 = house.PropImgUrl29,
-        PropImgUrl30 = house.PropImgUrl30
+        PropImgUrl1 = _context.ListingImages
+            .Where(i => i.ListingTypeId == 2 && i.ListingId == house.ForSaleHousingListId && i.Kind == ListingImageKind.Photo)
+            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+            .Select(i => i.Url)
+            .FirstOrDefault() ?? ""
     };
 
             var commercialQuery =
@@ -241,36 +214,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
         ListingType = "İşyeri",
 
-        PropImgUrl1 = comm.PropImgUrl1,
-        PropImgUrl2 = comm.PropImgUrl2,
-        PropImgUrl3 = comm.PropImgUrl3,
-        PropImgUrl4 = comm.PropImgUrl4,
-        PropImgUrl5 = comm.PropImgUrl5,
-        PropImgUrl6 = comm.PropImgUrl6,
-        PropImgUrl7 = comm.PropImgUrl7,
-        PropImgUrl8 = comm.PropImgUrl8,
-        PropImgUrl9 = comm.PropImgUrl9,
-        PropImgUrl10 = comm.PropImgUrl10,
-        PropImgUrl11 = comm.PropImgUrl11,
-        PropImgUrl12 = comm.PropImgUrl12,
-        PropImgUrl13 = comm.PropImgUrl13,
-        PropImgUrl14 = comm.PropImgUrl14,
-        PropImgUrl15 = comm.PropImgUrl15,
-        PropImgUrl16 = comm.PropImgUrl16,
-        PropImgUrl17 = comm.PropImgUrl17,
-        PropImgUrl18 = comm.PropImgUrl18,
-        PropImgUrl19 = comm.PropImgUrl19,
-        PropImgUrl20 = comm.PropImgUrl20,
-        PropImgUrl21 = comm.PropImgUrl21,
-        PropImgUrl22 = comm.PropImgUrl22,
-        PropImgUrl23 = comm.PropImgUrl23,
-        PropImgUrl24 = comm.PropImgUrl24,
-        PropImgUrl25 = comm.PropImgUrl25,
-        PropImgUrl26 = comm.PropImgUrl26,
-        PropImgUrl27 = comm.PropImgUrl27,
-        PropImgUrl28 = comm.PropImgUrl28,
-        PropImgUrl29 = comm.PropImgUrl29,
-        PropImgUrl30 = comm.PropImgUrl30
+        PropImgUrl1 = _context.ListingImages
+            .Where(i => i.ListingTypeId == 3 && i.ListingId == comm.ForSaleCommercialListingId && i.Kind == ListingImageKind.Photo)
+            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+            .Select(i => i.Url)
+            .FirstOrDefault() ?? ""
     };
 
             var landQuery =
@@ -363,36 +311,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
                     ListingType = "Arsa",
 
-                    PropImgUrl1 = land.PropImgUrl1,
-                    PropImgUrl2 = land.PropImgUrl2,
-                    PropImgUrl3 = land.PropImgUrl3,
-                    PropImgUrl4 = land.PropImgUrl4,
-                    PropImgUrl5 = land.PropImgUrl5,
-                    PropImgUrl6 = land.PropImgUrl6,
-                    PropImgUrl7 = land.PropImgUrl7,
-                    PropImgUrl8 = land.PropImgUrl8,
-                    PropImgUrl9 = land.PropImgUrl9,
-                    PropImgUrl10 = land.PropImgUrl10,
-                    PropImgUrl11 = land.PropImgUrl11,
-                    PropImgUrl12 = land.PropImgUrl12,
-                    PropImgUrl13 = land.PropImgUrl13,
-                    PropImgUrl14 = land.PropImgUrl14,
-                    PropImgUrl15 = land.PropImgUrl15,
-                    PropImgUrl16 = land.PropImgUrl16,
-                    PropImgUrl17 = land.PropImgUrl17,
-                    PropImgUrl18 = land.PropImgUrl18,
-                    PropImgUrl19 = land.PropImgUrl19,
-                    PropImgUrl20 = land.PropImgUrl20,
-                    PropImgUrl21 = land.PropImgUrl21,
-                    PropImgUrl22 = land.PropImgUrl22,
-                    PropImgUrl23 = land.PropImgUrl23,
-                    PropImgUrl24 = land.PropImgUrl24,
-                    PropImgUrl25 = land.PropImgUrl25,
-                    PropImgUrl26 = land.PropImgUrl26,
-                    PropImgUrl27 = land.PropImgUrl27,
-                    PropImgUrl28 = land.PropImgUrl28,
-                    PropImgUrl29 = land.PropImgUrl29,
-                    PropImgUrl30 = land.PropImgUrl30
+                    PropImgUrl1 = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 1 && i.ListingId == land.ForSaleLandListingId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? ""
                 };
 
             return housingQuery.Concat(landQuery).Concat(commercialQuery);
@@ -413,7 +336,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                   AgentName = agent.AgentName,
                                   AgentTitle = agent.AgentTitle,
                                   AgentImgUrl = agent.AgentImgUrl,
-                                  PropImgUrl1 = housing.PropImgUrl1,
+                                  PropImgUrl1 = _context.ListingImages
+                                      .Where(i => i.ListingTypeId == 2 && i.ListingId == housing.ForSaleHousingListId && i.Kind == ListingImageKind.Photo)
+                                      .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                                      .Select(i => i.Url)
+                                      .FirstOrDefault() ?? "",
                                   CreatedDate = housing.CreatedDate,
                               };
 
@@ -430,7 +357,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                    AgentName = agent.AgentName,
                                    AgentTitle = agent.AgentTitle,
                                    AgentImgUrl = agent.AgentImgUrl,
-                                   PropImgUrl1 = land.PropImgUrl1,
+                                   PropImgUrl1 = _context.ListingImages
+                                       .Where(i => i.ListingTypeId == 1 && i.ListingId == land.ForSaleLandListingId && i.Kind == ListingImageKind.Photo)
+                                       .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                                       .Select(i => i.Url)
+                                       .FirstOrDefault() ?? "",
                                    CreatedDate = land.CreatedDate,
                                };
 
@@ -446,7 +377,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                                         AgentImgUrl = agent.AgentImgUrl,
                                         AgentName = agent.AgentName,
                                         AgentTitle = agent.AgentTitle,
-                                        PropImgUrl1 = commercial.PropImgUrl1,
+                                        PropImgUrl1 = _context.ListingImages
+                                            .Where(i => i.ListingTypeId == 3 && i.ListingId == commercial.ForSaleCommercialListingId && i.Kind == ListingImageKind.Photo)
+                                            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                                            .Select(i => i.Url)
+                                            .FirstOrDefault() ?? "",
                                         CreatedDate = commercial.CreatedDate,
                                     };
 
@@ -484,7 +419,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             .OrderBy(x => x.Group)
             .ThenBy(x => x.SortOrder)
             .ToListAsync();
-                return new ForSalePropertyForListingViewModel
+                var vm = new ForSalePropertyForListingViewModel
                 {
                     ListingId = housingById.ForSaleHousingListId,
                     PropertyNo = housingById.PropertyNo,
@@ -524,48 +459,15 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     AgentImgUrl = housingById.Agent.AgentImgUrl,
                     BestDeals = housingById.BestDeals,
                     ListingType = "Konut",
-                    ListingTypeId=housingById.ListingTypeId,
-                    UsageTypeId= (int)housingById.ListingType.UsageType,
+                    ListingTypeId = housingById.ListingTypeId,
+                    UsageTypeId = (int)housingById.ListingType.UsageType,
                     Amenities = amenities,
-                    AgentPhoneNumber =housingById.Agent.AgentPhoneNumber,
-                    Mail = housingById.Agent.Mail,
-                    
-                    //Images
-                    PropImgUrl1 = housingById.PropImgUrl1,
-                    PropImgUrl10 = housingById.PropImgUrl10,
-                    PropImgUrl11 = housingById.PropImgUrl11,
-                    PropImgUrl12 = housingById.PropImgUrl12,
-                    PropImgUrl13 = housingById.PropImgUrl13,
-                    PropImgUrl14 = housingById.PropImgUrl14,
-                    PropImgUrl15 = housingById.PropImgUrl15,
-                    PropImgUrl16 = housingById.PropImgUrl16,
-                    PropImgUrl17 = housingById.PropImgUrl17,
-                    PropImgUrl18 = housingById.PropImgUrl18,
-                    PropImgUrl19 = housingById.PropImgUrl19,
-                    PropImgUrl2 = housingById.PropImgUrl2,
-                    PropImgUrl20 = housingById.PropImgUrl20,
-                    PropImgUrl21 = housingById.PropImgUrl21,
-                    PropImgUrl22 = housingById.PropImgUrl22,
-                    PropImgUrl23 = housingById.PropImgUrl23,
-                    PropImgUrl24 = housingById.PropImgUrl24,
-                    PropImgUrl25 = housingById.PropImgUrl25,
-                    PropImgUrl26 = housingById.PropImgUrl26,
-                    PropImgUrl27 = housingById.PropImgUrl27,
-                    PropImgUrl28 = housingById.PropImgUrl28,
-                    PropImgUrl29 = housingById.PropImgUrl29,
-                    PropImgUrl3 = housingById.PropImgUrl3,
-                    PropImgUrl30 = housingById.PropImgUrl30,
-                    PropImgUrl4 = housingById.PropImgUrl4,
-                    PropImgUrl5 = housingById.PropImgUrl5,
-                    PropImgUrl6 = housingById.PropImgUrl6,
-                    PropImgUrl7 = housingById.PropImgUrl7,
-                    PropImgUrl8 = housingById.PropImgUrl8,
-                    PropImgUrl9 = housingById.PropImgUrl9,
-                    //Images
-
+                    AgentPhoneNumber = housingById.Agent.AgentPhoneNumber,
+                    Mail = housingById.Agent.Mail
                 };
 
-
+                await FillPhotoSlotsAsync(new[] { vm }, x => (2, housingById.ForSaleHousingListId));
+                return vm;
             }
             bool checkLand = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.ForSaleLandListing;
             var land = checkLand
@@ -588,7 +490,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             .OrderBy(x => x.Group)
             .ThenBy(x => x.SortOrder)
             .ToListAsync();
-                return new ForSalePropertyForListingViewModel
+                var vm = new ForSalePropertyForListingViewModel
                 {
                     ListingId = land.ForSaleLandListingId,
                     PropertyNo = land.PropertyNo,
@@ -622,46 +524,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     AgentTitle = land.Agent.AgentTitle,
                     BestDeals = land.BestDeals,
                     ListingType = "Arsa",
-                    ListingTypeId =land.ListingTypeId,
-                    UsageTypeId= (int)land.ListingType.UsageType,
+                    ListingTypeId = land.ListingTypeId,
+                    UsageTypeId = (int)land.ListingType.UsageType,
                     AgentPhoneNumber = land.Agent.AgentPhoneNumber,
-                    Mail = land.Agent.Mail,
-
-                    //Images 
-                    PropImgUrl1 = land.PropImgUrl1,
-                    PropImgUrl10 = land.PropImgUrl10,
-                    PropImgUrl11 = land.PropImgUrl11,
-                    PropImgUrl12 = land.PropImgUrl12,
-                    PropImgUrl13 = land.PropImgUrl13,
-                    PropImgUrl14 = land.PropImgUrl14,
-                    PropImgUrl15 = land.PropImgUrl15,
-                    PropImgUrl16 = land.PropImgUrl16,
-                    PropImgUrl17 = land.PropImgUrl17,
-                    PropImgUrl18 = land.PropImgUrl18,
-                    PropImgUrl19 = land.PropImgUrl19,
-                    PropImgUrl2 = land.PropImgUrl2,
-                    PropImgUrl20 = land.PropImgUrl20,
-                    PropImgUrl21 = land.PropImgUrl21,
-                    PropImgUrl22 = land.PropImgUrl22,
-                    PropImgUrl23 = land.PropImgUrl23,
-                    PropImgUrl24 = land.PropImgUrl24,
-                    PropImgUrl25 = land.PropImgUrl25,
-                    PropImgUrl26 = land.PropImgUrl26,
-                    PropImgUrl27 = land.PropImgUrl27,
-                    PropImgUrl28 = land.PropImgUrl28,
-                    PropImgUrl29 = land.PropImgUrl29,
-                    PropImgUrl3 = land.PropImgUrl3,
-                    PropImgUrl30 = land.PropImgUrl30,
-                    PropImgUrl4 = land.PropImgUrl4,
-                    PropImgUrl5 = land.PropImgUrl5,
-                    PropImgUrl6 = land.PropImgUrl6,
-                    PropImgUrl7 = land.PropImgUrl7,
-                    PropImgUrl8 = land.PropImgUrl8,
-                    PropImgUrl9 = land.PropImgUrl9,
-                    //Images
-
-
+                    Mail = land.Agent.Mail
                 };
+
+                await FillPhotoSlotsAsync(new[] { vm }, x => (1, land.ForSaleLandListingId));
+                return vm;
             }
             bool checkCommercial = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.ForSaleCommercialPropertyListing;
             var commercialById = checkCommercial
@@ -682,7 +552,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             .OrderBy(x => x.Group)
             .ThenBy(x => x.SortOrder)
             .ToListAsync();
-                return new ForSalePropertyForListingViewModel
+                var vm = new ForSalePropertyForListingViewModel
                 {
                     ListingId = commercialById.ForSaleCommercialListingId,
                     PropertyNo = commercialById.PropertyNo,
@@ -715,44 +585,13 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     ListingType = "İşyeri",
                     ListingTypeId = commercialById.ListingTypeId,
                     UsageTypeId = (int)commercialById.ListingType.UsageType,
-                    Amenities=amenities,
-                    Mail =commercialById.Agent.Mail,
-                    AgentPhoneNumber =commercialById.Agent.AgentPhoneNumber,
-                    //Images 
-                    PropImgUrl1 = commercialById.PropImgUrl1,
-                    PropImgUrl10 = commercialById.PropImgUrl10,
-                    PropImgUrl11 = commercialById.PropImgUrl11,
-                    PropImgUrl12 = commercialById.PropImgUrl12,
-                    PropImgUrl13 = commercialById.PropImgUrl13,
-                    PropImgUrl14 = commercialById.PropImgUrl14,
-                    PropImgUrl15 = commercialById.PropImgUrl15,
-                    PropImgUrl16 = commercialById.PropImgUrl16,
-                    PropImgUrl17 = commercialById.PropImgUrl17,
-                    PropImgUrl18 = commercialById.PropImgUrl18,
-                    PropImgUrl19 = commercialById.PropImgUrl19,
-                    PropImgUrl2 = commercialById.PropImgUrl2,
-                    PropImgUrl20 = commercialById.PropImgUrl20,
-                    PropImgUrl21 = commercialById.PropImgUrl21,
-                    PropImgUrl22 = commercialById.PropImgUrl22,
-                    PropImgUrl23 = commercialById.PropImgUrl23,
-                    PropImgUrl24 = commercialById.PropImgUrl24,
-                    PropImgUrl25 = commercialById.PropImgUrl25,
-                    PropImgUrl26 = commercialById.PropImgUrl26,
-                    PropImgUrl27 = commercialById.PropImgUrl27,
-                    PropImgUrl28 = commercialById.PropImgUrl28,
-                    PropImgUrl29 = commercialById.PropImgUrl29,
-                    PropImgUrl3 = commercialById.PropImgUrl3,
-                    PropImgUrl30 = commercialById.PropImgUrl30,
-                    PropImgUrl4 = commercialById.PropImgUrl4,
-                    PropImgUrl5 = commercialById.PropImgUrl5,
-                    PropImgUrl6 = commercialById.PropImgUrl6,
-                    PropImgUrl7 = commercialById.PropImgUrl7,
-                    PropImgUrl8 = commercialById.PropImgUrl8,
-                    PropImgUrl9 = commercialById.PropImgUrl9,
-                    //Images 
-
+                    Amenities = amenities,
+                    Mail = commercialById.Agent.Mail,
+                    AgentPhoneNumber = commercialById.Agent.AgentPhoneNumber
                 };
 
+                await FillPhotoSlotsAsync(new[] { vm }, x => (3, commercialById.ForSaleCommercialListingId));
+                return vm;
             }
             return null;
 
@@ -797,9 +636,13 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
         public async Task<List<ForSalePropertyForListingViewModel>> GetAllForSalePropertyForListing()
         {
-            return await BuildForSaleListingQuery()
+            var list = await BuildForSaleListingQuery()
                 .OrderByDescending(x => x.CreatedDate)
                 .ToListAsync();
+
+            await FillPhotoSlotsAsync(list, x => (x.ListingTypeId, x.ListingId));
+
+            return list;
         }
 
         static string? Normalize(string? s)
@@ -870,10 +713,14 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             var page = filter.Page < 1 ? 1 : filter.Page;
             var pageSize = filter.PageSize is < 1 or > 100 ? 20 : filter.PageSize;
 
-            return await query
+            var list = await query
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+
+            await FillPhotoSlotsAsync(list, x => (x.ListingTypeId, x.ListingId));
+
+            return list;
         }
         private static List<CardHighlightViewModel> BuildHighlights(ForSalePropertyForListingViewModel x)
         {
@@ -1109,6 +956,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+
+            await FillPhotoSlotsAsync(itemsVm, x => (x.ListingTypeId, x.ListingId));
 
             foreach (var item in itemsVm)
             {

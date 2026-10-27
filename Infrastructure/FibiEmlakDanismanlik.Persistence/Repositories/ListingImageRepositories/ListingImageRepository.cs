@@ -224,5 +224,93 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories
 
             await _context.Database.ExecuteSqlRawAsync(sql, parameters.ToArray());
         }
+
+        /// <inheritdoc />
+        public async Task<Dictionary<(int ListingTypeId, int ListingId), List<string>>> GetPhotoUrlMapAsync(
+            IEnumerable<(int ListingTypeId, int ListingId)> listings)
+        {
+            return await ListingPhotoLookup.LoadAsync(_context, listings);
+        }
+
+        /// <inheritdoc />
+        public async Task ReplacePhotoUrlsAsync(int listingTypeId, int listingId, IReadOnlyList<string?> urls)
+        {
+            if (!ListingImageConstants.ListingTables.TryGetValue(listingTypeId, out _))
+            {
+                throw new ArgumentOutOfRangeException(nameof(listingTypeId), listingTypeId, "Bilinmeyen ilan türü kimliği.");
+            }
+
+            var cleanedUrls = new List<string>();
+            if (urls != null)
+            {
+                var seen = new HashSet<string>();
+                foreach (var rawUrl in urls)
+                {
+                    if (string.IsNullOrWhiteSpace(rawUrl))
+                    {
+                        continue;
+                    }
+
+                    var trimmed = rawUrl.Trim();
+                    if (seen.Add(trimmed))
+                    {
+                        cleanedUrls.Add(trimmed);
+                        if (cleanedUrls.Count == ListingImageConstants.MaxImagesPerListing)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            var existingPhotos = await _context.ListingImages
+                .Where(x => x.ListingTypeId == listingTypeId && x.ListingId == listingId && x.Kind == ListingImageKind.Photo)
+                .ToListAsync();
+
+            var targetUrlSet = new HashSet<string>(cleanedUrls);
+            var existingByUrl = new Dictionary<string, ListingImage>();
+
+            foreach (var photo in existingPhotos)
+            {
+                if (targetUrlSet.Contains(photo.Url) && !existingByUrl.ContainsKey(photo.Url))
+                {
+                    existingByUrl[photo.Url] = photo;
+                }
+                else
+                {
+                    _context.ListingImages.Remove(photo);
+                }
+            }
+
+            for (int i = 0; i < cleanedUrls.Count; i++)
+            {
+                var url = cleanedUrls[i];
+                var sortOrder = i + 1;
+                var isCover = (i == 0);
+
+                if (existingByUrl.TryGetValue(url, out var existingImage))
+                {
+                    existingImage.SortOrder = sortOrder;
+                    existingImage.IsCover = isCover;
+                }
+                else
+                {
+                    var newImage = new ListingImage
+                    {
+                        ListingTypeId = listingTypeId,
+                        ListingId = listingId,
+                        Url = url,
+                        Kind = ListingImageKind.Photo,
+                        SortOrder = sortOrder,
+                        IsCover = isCover,
+                        CreatedAtUtc = DateTime.UtcNow
+                    };
+                    _context.ListingImages.Add(newImage);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            await SyncLegacyColumnsAsync(listingTypeId, listingId);
+        }
     }
 }

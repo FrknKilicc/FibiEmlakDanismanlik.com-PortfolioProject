@@ -88,5 +88,20 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces
         /// <param name="listingTypeId">İlan türü kimliği.</param>
         /// <param name="listingId">İlan kimliği.</param>
         Task SyncLegacyColumnsAsync(int listingTypeId, int listingId);
+
+        /// <summary>
+        /// İlanların fotoğraf adreslerini eski PropImgUrl sırasıyla (kapak, SortOrder, Id) tek sorguda getirir.
+        /// </summary>
+        /// <param name="listings">İlan türü ve ilan kimliği çiftleri koleksiyonu.</param>
+        /// <returns>İlan türü ve kimliği anahtarına karşılık fotoğraf adresleri listesi.</returns>
+        Task<Dictionary<(int ListingTypeId, int ListingId), List<string>>> GetPhotoUrlMapAsync(IEnumerable<(int ListingTypeId, int ListingId)> listings);
+
+        /// <summary>
+        /// Eski create/update uçları için: verilen sırayla ilanın fotoğraf listesini bu adreslere eşitler.
+        /// </summary>
+        /// <param name="listingTypeId">İlan türü kimliği.</param>
+        /// <param name="listingId">İlan kimliği.</param>
+        /// <param name="urls">İlan için belirlenen fotoğraf adresleri listesi.</param>
+        Task ReplacePhotoUrlsAsync(int listingTypeId, int listingId, IReadOnlyList<string?> urls);
     }
 }
