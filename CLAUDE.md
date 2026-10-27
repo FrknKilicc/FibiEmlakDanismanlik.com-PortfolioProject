@@ -353,7 +353,7 @@ Bitti: kademeli emsal şeması + migration (yerel DB'ye uygulandı), mahalle > i
 
 ## Bilinen Teknik Borçlar
 
-- `PropertyRepository.cs` 3002 satır, DRY ihlali (T1). Dosya UTF-8 değil, ISO-8859/Windows-1254 kodlamalı: Antigravity bu dosyada takılabiliyor, düzenlerken kodlama korunmalı (ileride UTF-8'e çevrilmeli)
+- `PropertyRepository` DRY ihlali (T1). (2026-10-27) Davranış değiştirmeden `partial class` olarak bölündü: `PropertyRepository.cs` (kurucu + ortak), `.ForSale.cs`, `.Rental.cs`, `.Similar.cs`, `.Search.cs` (satır satır doğrulandı); dosyalar UTF-8 BOM. Kalan: satılık/kiralık sorgu ve eşlemelerindeki tekrar (konut/arsa/işyeri için aynı Select blokları)
 - 30 ayrı `PropImgUrl1..30` kolonu — ayrı tablo olmalı (T5)
 - Katman ihlali: WebUI → Application direkt referans (T6)
 - ~~`Persistance` yazım hatası klasör adında (T7)~~ — çözüldü (2026-10-27): klasör `FibiEmlakDanismanlik.Persistence`
