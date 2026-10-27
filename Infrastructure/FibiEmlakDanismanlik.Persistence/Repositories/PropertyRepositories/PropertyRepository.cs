@@ -1656,7 +1656,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 {
                     ItemType = "housing",
                     ListingId = h.RentalHousingListId,
-                    ListingTypeId = h.ListingTypeId ?? 0,
+                    ListingTypeId = h.ListingTypeId,
                     UsageTypeId = (int)lt.UsageType,
                     ListingType = h.ListingType.Name,
 
@@ -1807,7 +1807,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 {
                     ItemType = "land",
                     ListingId = l.RentalLandListingId,
-                    ListingTypeId = l.ListingTypeId ?? 0,
+                    ListingTypeId = l.ListingTypeId,
                     UsageTypeId = (int)lt.UsageType,
                     ListingType = l.ListingType.Name,
 
@@ -1935,7 +1935,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 {
                     ItemType = "commercial",
                     ListingId = c.RentalCommercialListId,
-                    ListingTypeId = c.ListingTypeId ?? 0,
+                    ListingTypeId = c.ListingTypeId,
                     UsageTypeId = (int)lt.UsageType,
                     ListingType = c.ListingType.Name,
 
@@ -2695,7 +2695,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 select new SimilarPropertyCandidateResult
                 {
                     ListingId = h.RentalHousingListId,
-                    ListingTypeId = h.ListingTypeId ?? 0,
+                    ListingTypeId = h.ListingTypeId,
                     UsageTypeId = (int)lt.UsageType,
                     AgentName = h.Agent.AgentName,
                     AgentImageUrl = h.Agent.AgentImgUrl,
@@ -2727,7 +2727,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 select new SimilarPropertyCandidateResult
                 {
                     ListingId = l.RentalLandListingId,
-                    ListingTypeId = l.ListingTypeId ?? 0,
+                    ListingTypeId = l.ListingTypeId,
                     UsageTypeId = (int)lt.UsageType,
 
                     ListingType = l.ListingType.Name,
@@ -2761,7 +2761,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 select new SimilarPropertyCandidateResult
                 {
                     ListingId = c.RentalCommercialListId,
-                    ListingTypeId = c.ListingTypeId ?? 0,
+                    ListingTypeId = c.ListingTypeId,
                     UsageTypeId = (int)lt.UsageType,
 
                     ListingType = c.ListingType.Name,

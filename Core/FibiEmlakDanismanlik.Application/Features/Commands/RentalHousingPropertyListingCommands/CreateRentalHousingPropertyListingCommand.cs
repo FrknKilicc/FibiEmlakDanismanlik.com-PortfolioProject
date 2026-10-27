@@ -47,7 +47,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Commands.RentalHousingProper
         //relational
         public int HousingCategoryId { get; set; }
         public int AgentId { get; set; }
-        public int? ListingTypeId { get; set; }
+        public int ListingTypeId { get; set; }
         //relational
 
         //Images

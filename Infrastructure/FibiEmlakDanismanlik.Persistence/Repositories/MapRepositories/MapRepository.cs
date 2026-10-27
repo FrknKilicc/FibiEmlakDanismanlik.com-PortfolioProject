@@ -455,11 +455,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
             // 4. Kiralık Konut
             var rentHousing = await _context.rentalHousingListings
                 .AsNoTracking()
-                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus) && x.ListingTypeId != null)
+                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus))
                 .Select(x => new ListingGeocodeCandidate
                 {
                     ListingId = x.RentalHousingListId,
-                    ListingTypeId = x.ListingTypeId!.Value,
+                    ListingTypeId = x.ListingTypeId,
                     City = x.City,
                     District = x.District,
                     Neighborhood = x.Neighborhood
@@ -478,11 +478,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
             // 5. Kiralık Arsa
             var rentLand = await _context.rentalLandListings
                 .AsNoTracking()
-                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus) && x.ListingTypeId != null)
+                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus))
                 .Select(x => new ListingGeocodeCandidate
                 {
                     ListingId = x.RentalLandListingId,
-                    ListingTypeId = x.ListingTypeId!.Value,
+                    ListingTypeId = x.ListingTypeId,
                     City = x.City,
                     District = x.District,
                     Neighborhood = x.Neighborhood
@@ -501,11 +501,11 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.MapRepositories
             // 6. Kiralık Ticari
             var rentCommercial = await _context.rentalCommercialPropertyListings
                 .AsNoTracking()
-                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus) && x.ListingTypeId != null)
+                .Where(x => x.PropertyStatus != null && activeSet.Contains(x.PropertyStatus))
                 .Select(x => new ListingGeocodeCandidate
                 {
                     ListingId = x.RentalCommercialListId,
-                    ListingTypeId = x.ListingTypeId!.Value,
+                    ListingTypeId = x.ListingTypeId,
                     City = x.City,
                     District = x.District,
                     Neighborhood = x.Neighborhood

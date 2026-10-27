@@ -356,7 +356,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.LocationRepositories
                         var items = await query.Select(x => new GetFilteredPropertyLocationListingResult
                         {
                             ListingId = x.RentalLandListingId,
-                            ListingTypeId = x.ListingTypeId ?? 0,
+                            ListingTypeId = x.ListingTypeId,
                             PropertyName = x.PropertyName,
                             PropertyDescription = x.PropertyDescription,
                             City = x.City,
@@ -386,7 +386,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.LocationRepositories
                         var items = await query.Select(x => new GetFilteredPropertyLocationListingResult
                         {
                             ListingId = x.RentalHousingListId,
-                            ListingTypeId = x.ListingTypeId ?? 0,
+                            ListingTypeId = x.ListingTypeId,
                             PropertyName = x.PropertyName,
                             PropertyDescription = x.PropertyDescription,
                             City = x.City,
@@ -416,7 +416,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.LocationRepositories
                         var items = await query.Select(x => new GetFilteredPropertyLocationListingResult
                         {
                             ListingId = x.RentalCommercialListId,
-                            ListingTypeId = x.ListingTypeId ?? 0,
+                            ListingTypeId = x.ListingTypeId,
                             PropertyName = x.PropertyName,
                             PropertyDescription = x.PropertyDescription,
                             City = x.City,
