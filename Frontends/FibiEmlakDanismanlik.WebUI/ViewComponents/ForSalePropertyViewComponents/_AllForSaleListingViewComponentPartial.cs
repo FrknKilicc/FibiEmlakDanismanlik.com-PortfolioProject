@@ -3,7 +3,7 @@ using FibiEmlakDanismanlik.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
-using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
+
 
 
 namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponents
@@ -124,7 +124,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             foreach (var f in facets)
                 f.Selected = selectedIds.Contains(f.ListingTypeId);
 
-            var request = new PropertyFilterRequest
+            var request = new PropertyFilterRequestDto
             {
                 ListingTypeIds = selectedIds.Any() ? selectedIds : null,
                 SelectedAmenityIds = selectedAmenityIds.Any() ? selectedAmenityIds : null,

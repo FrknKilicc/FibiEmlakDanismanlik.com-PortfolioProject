@@ -1,5 +1,5 @@
 using System.Text;
-using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
+
 using FibiEmlakDanismanlik.Dto.PropertyDtos;
 using FibiEmlakDanismanlik.WebUI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +33,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.PropertyViewComponents
                 }
 
                 var client = _httpClientFactory.CreateClient();
-                var request = new PropertyFilterRequest
+                var request = new PropertyFilterRequestDto
                 {
                     SortBy = "CreatedDate",
                     SortDir = "desc",

@@ -1,7 +1,6 @@
-using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
+
 using FibiEmlakDanismanlik.Dto.PropertyDtos;
 using FibiEmlakDanismanlik.WebUI.Models;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
@@ -124,7 +123,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForRentalPropertyViewCompone
             foreach (var f in facets)
                 f.Selected = selectedIds.Contains(f.ListingTypeId);
 
-            var request = new PropertyFilterRequest
+            var request = new PropertyFilterRequestDto
             {
                 ListingTypeIds = selectedIds.Any() ? selectedIds : null,
                 SelectedAmenityIds = selectedAmenityIds.Any() ? selectedAmenityIds : null,
