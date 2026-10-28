@@ -1,3 +1,4 @@
+using FibiEmlakDanismanlik.WebUI.Models;
 using FibiEmlakDanismanlik.WebUI.Models.FibiServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +22,7 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
             {
                 Active = FibiServiceCatalog.Get(key),
                 Items = FibiServiceCatalog.Items,
-                ApiUrl = _configuration["Url:ApiUrl"] ?? string.Empty
+                ApiUrl = _configuration.GetBrowserApiUrl() ?? string.Empty
             };
         }
 

@@ -270,7 +270,7 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [ ] Captcha'yı açmak için Cloudflare Turnstile anahtarı: `Captcha:TurnstileSiteKey`, `Captcha:ScriptUrl`, `Captcha:VerifyUrl` appsettings'e, `Captcha:TurnstileSecretKey` User Secrets'a; dördü de doluysa formlarda kendiliğinden açılır
 - [x] (2026-10-25, `feature/antigravity-panel-fixes`) WebUI'ye ForwardedHeaders + `ForwardedHeaders:KnownProxies` eklendi (WebApi ile aynı kalıp, varsayılan loopback); canlıda proxy IP'si ayara yazılmalı
 - [ ] `FormSpamGuard` sayaçları bellek içi; WebUI birden fazla örnekle çalışırsa paylaşılmaz (gerekirse dağıtık önbellek)
-- [ ] API CORS (`AllowLocalhost`) yalnızca sabit localhost portlarına izin veriyor; harita sayfası API'yi tarayıcıdan çağırdığı için canlı alan adı ayardan okunmalı
+- [x] (2026-10-28, `feature/claude-public-api-url`) Tarayıcının çağırdığı API adresi `Url:PublicApiUrl` (canlıda `/api/`, aynı köken, CORS gerekmez; `Models/BrowserApiUrl.GetBrowserApiUrl`); sunucu tarafı istekler `Url:ApiUrl` ile iç adrese gider. nginx `/api/` altında yalnızca GET + 3 FİBİ Hizmetler POST'unu açar, Auth/Admin/Me uçları dışarıya kapalı (`deploy/server/nginx/fibi.conf`). Yeni bir tarayıcı POST'u eklenirse nginx'e de eklenmeli
 - [x] (2026-10-24, G9 ile) API'deki diğer GetById handler'ları da kayıt yoksa null kontrolsüz olabilir (ör. blog detayı); G9 kapsamında taranmalı
 - [ ] Veri: `Contacts.PhoneNumber2` = `PhoneNumber1` (iletişim sayfasında aynı numara iki kez), `EMail2` kişisel Gmail (`fibiinfo@gmail.com`)
 - [x] (2026-10-25, `feature/antigravity-site-batch3`) Kozmetik: detay başlık bandı `page-title--listing` (clamp 26–42px, en fazla 2 satır); 404/hata sayfası mobilde `padding-top: 170px` (header absolute ~132px)
