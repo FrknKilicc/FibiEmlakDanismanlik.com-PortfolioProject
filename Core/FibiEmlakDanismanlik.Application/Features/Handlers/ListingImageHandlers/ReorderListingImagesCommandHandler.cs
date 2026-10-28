@@ -72,8 +72,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
                 request.CoverImageId);
 
             await _listingImageRepository.NormalizeAsync(request.ListingTypeId, request.ListingId);
-
-            await _listingImageRepository.SyncLegacyColumnsAsync(request.ListingTypeId, request.ListingId);
         }
     }
 }

@@ -287,7 +287,6 @@ public class ListingAlertPendingCountTests
             HousingCategoryId = categoryId,
             AgentId = agentId,
             ListingTypeId = 2,
-            PropImgUrl1 = "https://example.com/img1.jpg"
         };
     }
 
@@ -327,7 +326,6 @@ public class ListingAlertPendingCountTests
             HousingCategoryId = categoryId,
             AgentId = agentId,
             ListingTypeId = 8,
-            PropImgUrl1 = "https://example.com/img2.jpg"
         };
     }
 

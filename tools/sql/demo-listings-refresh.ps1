@@ -3,6 +3,7 @@
 # Görseller wwwroot/images/listings (CC0, CREDITS.md). Kimlikler (Id) değişmez. Adres metni mahalle düzeyindedir (kapı no yok).
 # Kullanım: powershell -ExecutionPolicy Bypass -File tools/sql/demo-listings-refresh.ps1
 # Çalıştırmadan önce: tabloların yedeği (bak20261019 şeması) alınmış olmalı.
+# UYARI (T5 2. aşama): PropImgUrl1..30 kolonları silindi; bu betiğin ürettiği SQL artık çalışmaz. Yeniden kullanılacaksa ImgSql, görselleri ListingImages tablosuna yazacak şekilde değiştirilmeli.
 
 $ErrorActionPreference = 'Stop'
 $tr = [Globalization.CultureInfo]::GetCultureInfo('tr-TR')

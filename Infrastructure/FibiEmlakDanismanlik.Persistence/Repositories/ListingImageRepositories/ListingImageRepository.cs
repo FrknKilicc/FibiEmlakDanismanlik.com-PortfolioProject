@@ -169,63 +169,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories
         }
 
         /// <inheritdoc />
-        public async Task SyncLegacyColumnsAsync(int listingTypeId, int listingId)
-        {
-            if (!ListingImageConstants.ListingTables.TryGetValue(listingTypeId, out var mapping))
-            {
-                throw new ArgumentOutOfRangeException(nameof(listingTypeId), listingTypeId, "Bilinmeyen ilan türü kimliği.");
-            }
-
-            // Kapak önce, ardından SortOrder sırasıyla oku (yalnızca Fotoğraf türündekiler)
-            var images = await _context.ListingImages
-                .AsNoTracking()
-                .Where(x => x.ListingTypeId == listingTypeId && x.ListingId == listingId && x.Kind == ListingImageKind.Photo)
-                .OrderByDescending(x => x.IsCover)
-                .ThenBy(x => x.SortOrder)
-                .Take(ListingImageConstants.MaxImagesPerListing)
-                .Select(x => x.Url)
-                .ToListAsync();
-
-            var parameters = new List<SqlParameter>(ListingImageConstants.MaxImagesPerListing + 1);
-            var setClauses = new List<string>(ListingImageConstants.MaxImagesPerListing);
-
-            for (int i = 1; i <= ListingImageConstants.MaxImagesPerListing; i++)
-            {
-                var paramName = $"@p{i}";
-                setClauses.Add($"[PropImgUrl{i}] = {paramName}");
-
-                string? url = (i - 1 < images.Count) ? images[i - 1] : null;
-
-                // PropImgUrl1 veritabanında NOT NULL
-                object paramValue;
-                if (url != null)
-                {
-                    paramValue = url;
-                }
-                else if (i == 1)
-                {
-                    paramValue = string.Empty;
-                }
-                else
-                {
-                    paramValue = DBNull.Value;
-                }
-
-                var param = new SqlParameter(paramName, System.Data.SqlDbType.NVarChar, 1024)
-                {
-                    Value = paramValue
-                };
-                parameters.Add(param);
-            }
-
-            parameters.Add(new SqlParameter("@id", listingId));
-
-            var sql = $"UPDATE [{mapping.Table}] SET {string.Join(", ", setClauses)} WHERE [{mapping.KeyColumn}] = @id";
-
-            await _context.Database.ExecuteSqlRawAsync(sql, parameters.ToArray());
-        }
-
-        /// <inheritdoc />
         public async Task<Dictionary<(int ListingTypeId, int ListingId), List<string>>> GetPhotoUrlMapAsync(
             IEnumerable<(int ListingTypeId, int ListingId)> listings)
         {
@@ -310,7 +253,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.ListingImageRepositories
             }
 
             await _context.SaveChangesAsync();
-            await SyncLegacyColumnsAsync(listingTypeId, listingId);
         }
     }
 }
