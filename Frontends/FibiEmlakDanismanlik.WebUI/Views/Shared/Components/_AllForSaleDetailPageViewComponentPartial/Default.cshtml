@@ -310,7 +310,11 @@
                         }" />
                     </div>
                     <partial name="_ListingAlertWidget" model="listingAlertModel" />
-                    @await Component.InvokeAsync("_LoanCalculatorViewComponentPartial", new { price = Model.Price, listingType = Model.ListingType })
+                    @* Kredi hesaplayıcı yalnızca krediye uygun ilanlarda (liste filtresiyle aynı kural) *@
+                    @if ((Model.HomeLoan ?? false) || (Model.LandLoan ?? false))
+                    {
+                        @await Component.InvokeAsync("_LoanCalculatorViewComponentPartial", new { price = Model.Price, listingType = Model.ListingType })
+                    }
                 </div>
             </div>
         </div>
