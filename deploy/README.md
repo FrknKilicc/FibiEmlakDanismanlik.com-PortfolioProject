@@ -21,11 +21,11 @@ Komutların hepsi tek satırdır, kopyala-yapıştır yapılabilir. `<IP>` görd
 | Dosya | Görevi |
 |---|---|
 | `server/setup.sh` | Sunucuyu sıfırdan kurar (bir kez) |
-| `server/bin/fibi-db-init` | Yerel veritabanı yedeğini sunucuya ilk kez yükler |
-| `server/bin/fibi-deploy` | Yayın + otomatik geri dönüş (GitHub Actions çağırır) |
-| `server/bin/fibi-migrate` | Yedek + migration |
-| `server/bin/fibi-backup` | Gece yedeği (03:30) |
-| `server/bin/fibi-harden-ssh` | SSH'ta şifreli girişi kapatır |
+| `server/scripts/fibi-db-init` | Yerel veritabanı yedeğini sunucuya ilk kez yükler |
+| `server/scripts/fibi-deploy` | Yayın + otomatik geri dönüş (GitHub Actions çağırır) |
+| `server/scripts/fibi-migrate` | Yedek + migration |
+| `server/scripts/fibi-backup` | Gece yedeği (03:30) |
+| `server/scripts/fibi-harden-ssh` | SSH'ta şifreli girişi kapatır |
 | `../.github/workflows/deploy.yml` | master → canlı yayın |
 | `../.github/workflows/ci.yml` | Her PR'da derleme + test |
 

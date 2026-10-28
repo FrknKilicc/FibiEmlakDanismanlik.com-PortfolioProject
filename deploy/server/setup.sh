@@ -99,7 +99,7 @@ chmod 750 /etc/fibi
 chown root:fibi /etc/fibi
 
 log "Betikler, servisler, nginx"
-install -m 750 -o root -g root "$HERE"/bin/fibi-* /usr/local/bin/
+install -m 750 -o root -g root "$HERE"/scripts/fibi-* /usr/local/bin/
 install -m 640 -o root -g root "$HERE"/db/*.sql /usr/local/share/fibi/db/
 install -m 644 "$HERE"/systemd/fibi-*.service /etc/systemd/system/
 systemctl daemon-reload

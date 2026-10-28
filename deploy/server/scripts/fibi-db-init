@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# Fibi Emlak: yerel bilgisayardan alınan veritabanı yedeğini canlı sunucuya İLK KEZ yükler.
+# Kullanım: sudo fibi-db-init /home/deploy/fibiemlak.bak
+#           sudo fibi-db-init --fix-urls     (yalnızca 5. adım)
+#
+# Yaptıkları:
+#   1) Veritabanı zaten varsa DURUR (canlı veriyi ezmemek için). Bilerek yeniden yüklemek için: --replace
+#   2) .bak dosyasını geri yükler (Windows yollarını Linux yollarına taşır)
+#   3) fibiemlak_app ve fibiemlak_migrator hesaplarını oluşturur (şifreler /etc/fibi'deki dosyalardan)
+#   4) 2FA kayıtlarını sıfırlar (yerel Windows anahtarlarıyla şifreli oldukları için burada çözülemezler)
+#   5) localhost görsel adreslerini önce önizler, onay verirsen canlı adrese çevirir
+set -euo pipefail
+
+BAK="${1:-}"
+MODE="${2:-}"
+
+# shellcheck disable=SC1091
+source /etc/fibi/migrator.env
+SQLCMD=/opt/mssql-tools18/bin/sqlcmd
+SQL_DIR=/usr/local/share/fibi/db
+RESTORE_DIR=/var/opt/mssql/backup
+DATA_DIR=/var/opt/mssql/data
+
+SQLCMDPASSWORD="$(cat /root/.fibi-sa-password)"
+export SQLCMDPASSWORD
+sa() { "$SQLCMD" -S 127.0.0.1 -U sa -C -I -b "$@"; }
+
+fix_urls() {
+    echo
+    echo "localhost görsel adresleri (önizleme):"
+    sa -i "$SQL_DIR/fix-local-urls.sql" -v Apply="0"
+    echo
+    read -r -p "Yukarıdaki adresler https://fibiemlak.com olarak değiştirilsin mi? (e/h) " answer
+    if [[ "$answer" == "e" ]]; then
+        sa -i "$SQL_DIR/fix-local-urls.sql" -v Apply="1"
+    else
+        echo "Adresler değiştirilmedi. Sonra çalıştırmak için: sudo fibi-db-init --fix-urls"
+    fi
+}
+
+if [[ "$BAK" == "--fix-urls" ]]; then
+    fix_urls
+    exit 0
+fi
+[[ -f "$BAK" ]] || { echo "Yedek dosyası bulunamadı: $BAK" >&2; exit 2; }
+
+APP_PASSWORD="$(grep -oP '^ConnectionStrings__DefaultConnection=.*Password=\K[^;]+' /etc/fibi/api.env)"
+
+exists="$(sa -h -1 -W -Q "SET NOCOUNT ON; SELECT COUNT(*) FROM sys.databases WHERE name = N'$DB_NAME';" | tr -d '[:space:]')"
+if [[ "$exists" != "0" && "$MODE" != "--replace" ]]; then
+    echo "[$DB_NAME] zaten var. Canlı veriyi ezmemek için durdum." >&2
+    echo "Bilerek değiştirmek istiyorsan önce yedek al (sudo fibi-backup), sonra: sudo fibi-db-init $BAK --replace" >&2
+    exit 3
+fi
+
+mkdir -p "$RESTORE_DIR"
+cp "$BAK" "$RESTORE_DIR/initial.bak"
+chown mssql:mssql "$RESTORE_DIR/initial.bak"
+
+echo "Yedek doğrulanıyor..."
+sa -Q "RESTORE VERIFYONLY FROM DISK = N'$RESTORE_DIR/initial.bak';"
+
+# Yedekteki mantıksal dosya adlarını oku (veri: D, log: L)
+mapfile -t files < <(sa -h -1 -W -s '|' -Q "SET NOCOUNT ON; RESTORE FILELISTONLY FROM DISK = N'$RESTORE_DIR/initial.bak';" | awk -F'|' 'NF>2 {print $1"|"$3}')
+move_clauses=""
+for entry in "${files[@]}"; do
+    logical="${entry%%|*}"; type="${entry##*|}"
+    case "$type" in
+        D) move_clauses+=", MOVE N'$logical' TO N'$DATA_DIR/${DB_NAME}_${logical}.mdf'" ;;
+        L) move_clauses+=", MOVE N'$logical' TO N'$DATA_DIR/${DB_NAME}_${logical}.ldf'" ;;
+    esac
+done
+[[ -n "$move_clauses" ]] || { echo "Yedekteki dosya listesi okunamadı." >&2; exit 4; }
+
+echo "Geri yükleniyor..."
+sa -Q "RESTORE DATABASE [$DB_NAME] FROM DISK = N'$RESTORE_DIR/initial.bak' WITH REPLACE, RECOVERY, STATS = 10 $move_clauses;"
+sa -Q "ALTER DATABASE [$DB_NAME] SET RECOVERY SIMPLE; ALTER AUTHORIZATION ON DATABASE::[$DB_NAME] TO [sa];"
+
+echo "SQL hesapları oluşturuluyor..."
+sa -i "$SQL_DIR/create-logins.sql" -v AppPassword="$APP_PASSWORD" MigratorPassword="$MIGRATOR_PASSWORD"
+
+echo "2FA kayıtları sıfırlanıyor (Sahip/Yönetici ilk girişte QR kodu yeniden okutur)..."
+sa -i "$SQL_DIR/reset-two-factor.sql"
+
+fix_urls
+
+rm -f "$RESTORE_DIR/initial.bak"
+echo "Veritabanı hazır."
