@@ -716,7 +716,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                                 BestDeals = false,
                                 AgentId = agentId,
                                 ListingTypeId = cmd.ListingTypeId,
-                                PropImgUrl1 = string.Empty
                             };
                             _context.forSaleLandListings.Add(entity);
                         }
@@ -779,7 +778,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                                 BestDeals = false,
                                 AgentId = agentId,
                                 ListingTypeId = cmd.ListingTypeId,
-                                PropImgUrl1 = string.Empty
                             };
                             _context.forSaleHousingPropertyListings.Add(entity);
                         }
@@ -849,7 +847,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                                 BestDeals = false,
                                 AgentId = agentId,
                                 ListingTypeId = cmd.ListingTypeId,
-                                PropImgUrl1 = string.Empty
                             };
                             _context.forSaleCommercialPropertyListings.Add(entity);
                         }
@@ -909,7 +906,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                                 BestDeals = false,
                                 AgentId = agentId,
                                 ListingTypeId = cmd.ListingTypeId,
-                                PropImgUrl1 = string.Empty
                             };
                             _context.rentalLandListings.Add(entity);
                         }
@@ -969,7 +965,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                                 BestDeals = false,
                                 AgentId = agentId,
                                 ListingTypeId = cmd.ListingTypeId,
-                                PropImgUrl1 = string.Empty
                             };
                             _context.rentalHousingListings.Add(entity);
                         }
@@ -1036,7 +1031,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.AdminListingRepositories
                                 BestDeals = false,
                                 AgentId = agentId,
                                 ListingTypeId = cmd.ListingTypeId,
-                                PropImgUrl1 = string.Empty
                             };
                             _context.rentalCommercialPropertyListings.Add(entity);
                         }

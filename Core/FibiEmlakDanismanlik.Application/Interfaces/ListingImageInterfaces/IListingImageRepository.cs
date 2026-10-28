@@ -82,14 +82,6 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces
         Task NormalizeAsync(int listingTypeId, int listingId);
 
         /// <summary>
-        /// O ilanın görsellerini (kapak önce, sonra SortOrder) okur ve ilgili tablonun PropImgUrl1..PropImgUrl30
-        /// kolonlarına Url değerlerini yazar; kalan kolonları NULL yapar.
-        /// </summary>
-        /// <param name="listingTypeId">İlan türü kimliği.</param>
-        /// <param name="listingId">İlan kimliği.</param>
-        Task SyncLegacyColumnsAsync(int listingTypeId, int listingId);
-
-        /// <summary>
         /// İlanların fotoğraf adreslerini eski PropImgUrl sırasıyla (kapak, SortOrder, Id) tek sorguda getirir.
         /// </summary>
         /// <param name="listings">İlan türü ve ilan kimliği çiftleri koleksiyonu.</param>

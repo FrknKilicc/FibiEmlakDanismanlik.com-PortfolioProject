@@ -45,7 +45,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ListingImageHandler
             await _listingImageRepository.UpdateKindAsync(request.ListingImageId, (ListingImageKind)request.Kind, request.Caption);
 
             await _listingImageRepository.NormalizeAsync(listingTypeId, listingId);
-            await _listingImageRepository.SyncLegacyColumnsAsync(listingTypeId, listingId);
 
             return true;
         }

@@ -53,38 +53,6 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSaleCommercialPr
             value.TitleDeedStatus = request.TitleDeedStatus;
             value.Transferable = request.Transferable;
             value.PropertyStatus = request.PropertyStatus;
-            // images
-            value.PropImgUrl1 = request.PropImgUrl1;
-            value.PropImgUrl2 = request.PropImgUrl2;
-            value.PropImgUrl3 = request.PropImgUrl3;
-            value.PropImgUrl4 = request.PropImgUrl4;
-            value.PropImgUrl5 = request.PropImgUrl5;
-            value.PropImgUrl6 = request.PropImgUrl6;
-            value.PropImgUrl7 = request.PropImgUrl7;
-            value.PropImgUrl8 = request.PropImgUrl8;
-            value.PropImgUrl9 = request.PropImgUrl9;
-            value.PropImgUrl10 = request.PropImgUrl10;
-            value.PropImgUrl11 = request.PropImgUrl11;
-            value.PropImgUrl12 = request.PropImgUrl12;
-            value.PropImgUrl13 = request.PropImgUrl13;
-            value.PropImgUrl14 = request.PropImgUrl14;
-            value.PropImgUrl15 = request.PropImgUrl15;
-            value.PropImgUrl16 = request.PropImgUrl16;
-            value.PropImgUrl17 = request.PropImgUrl17;
-            value.PropImgUrl18 = request.PropImgUrl18;
-            value.PropImgUrl19 = request.PropImgUrl19;
-            value.PropImgUrl20 = request.PropImgUrl20;
-            value.PropImgUrl21 = request.PropImgUrl21;
-            value.PropImgUrl22 = request.PropImgUrl22;
-            value.PropImgUrl23 = request.PropImgUrl23;
-            value.PropImgUrl24 = request.PropImgUrl24;
-            value.PropImgUrl25 = request.PropImgUrl25;
-            value.PropImgUrl26 = request.PropImgUrl26;
-            value.PropImgUrl27 = request.PropImgUrl27;
-            value.PropImgUrl28 = request.PropImgUrl28;
-            value.PropImgUrl29 = request.PropImgUrl29;
-            value.PropImgUrl30 = request.PropImgUrl30;
-            // images
 
             await _repository.UpdateAsync(value);
 
