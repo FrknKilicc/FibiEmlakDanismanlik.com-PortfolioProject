@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# Fibi Emlak: yeni sürümü sunucuda devreye alır. GitHub Actions çağırır (sudo ile, deploy kullanıcısı).
+# Kullanım: sudo fibi-deploy <surum_kimligi>
+#   /home/deploy/incoming/<surum_kimligi>/ içinde api.tar.gz, site.tar.gz, panel.tar.gz, migrations.sql beklenir.
+#
+# Sıra: veritabanı yedeği + migration -> api -> site -> panel.
+# Her uygulama yeni klasöre açılır, "current" bağlantısı değiştirilir, servis yeniden başlatılır ve /health kontrol edilir.
+# Sağlık kontrolü başarısız olursa o uygulama otomatik olarak bir önceki sürüme döner ve deploy durur.
+set -euo pipefail
+
+RELEASE_ID="${1:-}"
+if [[ ! "$RELEASE_ID" =~ ^[A-Za-z0-9._-]{6,80}$ ]]; then
+    echo "Geçersiz sürüm kimliği: '$RELEASE_ID'" >&2
+    exit 2
+fi
+
+INCOMING="/home/deploy/incoming/$RELEASE_ID"
+APPS_ROOT="/var/www/fibi"
+KEEP_RELEASES=5
+HEALTH_TIMEOUT_SECONDS=60
+
+declare -A PORTS=([api]=5000 [site]=5001 [panel]=5002)
+
+exec 9>/var/lock/fibi-deploy.lock
+flock -n 9 || { echo "Başka bir deploy sürüyor." >&2; exit 3; }
+
+log() { echo "[$(date '+%F %T')] $*"; }
+
+for file in api.tar.gz site.tar.gz panel.tar.gz migrations.sql; do
+    [[ -f "$INCOMING/$file" ]] || { echo "Eksik dosya: $INCOMING/$file" >&2; exit 4; }
+done
+
+health_ok() {
+    local port="$1" deadline=$((SECONDS + HEALTH_TIMEOUT_SECONDS))
+    while (( SECONDS < deadline )); do
+        if curl -fsS --max-time 5 -H "X-Forwarded-Proto: https" "http://127.0.0.1:${port}/health" >/dev/null 2>&1; then
+            return 0
+        fi
+        sleep 2
+    done
+    return 1
+}
+
+switch_link() {
+    local app="$1" target="$2"
+    ln -sfn "$target" "$APPS_ROOT/$app/current.tmp"
+    mv -Tf "$APPS_ROOT/$app/current.tmp" "$APPS_ROOT/$app/current"
+}
+
+deploy_app() {
+    local app="$1" port="${PORTS[$1]}"
+    local release_dir="$APPS_ROOT/$app/releases/$RELEASE_ID"
+    local previous=""
+    [[ -L "$APPS_ROOT/$app/current" ]] && previous="$(readlink -f "$APPS_ROOT/$app/current")"
+
+    log "$app: açılıyor -> $release_dir"
+    rm -rf "$release_dir"
+    mkdir -p "$release_dir"
+    tar -xzf "$INCOMING/$app.tar.gz" -C "$release_dir"
+    # Uygulama kendi dosyalarını değiştiremez; yalnızca /var/lib/fibi ve /var/log/fibi'ye yazar
+    chown -R root:fibi "$release_dir"
+    find "$release_dir" -type d -exec chmod 750 {} +
+    find "$release_dir" -type f -exec chmod 640 {} +
+
+    switch_link "$app" "$release_dir"
+    systemctl restart "fibi-$app"
+
+    if health_ok "$port"; then
+        log "$app: sağlıklı."
+        return 0
+    fi
+
+    log "$app: SAĞLIK KONTROLÜ BAŞARISIZ. Son loglar:"
+    journalctl -u "fibi-$app" -n 40 --no-pager || true
+    if [[ -n "$previous" && -d "$previous" ]]; then
+        log "$app: önceki sürüme dönülüyor -> $previous"
+        switch_link "$app" "$previous"
+        systemctl restart "fibi-$app"
+        health_ok "$port" && log "$app: önceki sürüm çalışıyor." || log "$app: önceki sürüm de ayağa kalkmadı!"
+    fi
+    return 1
+}
+
+cleanup_old_releases() {
+    local app="$1" current
+    current="$(readlink -f "$APPS_ROOT/$app/current")"
+    ls -1dt "$APPS_ROOT/$app/releases/"*/ 2>/dev/null | tail -n +$((KEEP_RELEASES + 1)) | while read -r dir; do
+        [[ "$(readlink -f "$dir")" == "$current" ]] || rm -rf "$dir"
+    done
+}
+
+log "Sürüm $RELEASE_ID: veritabanı yedeği ve migration"
+/usr/local/bin/fibi-migrate "$INCOMING/migrations.sql"
+
+for app in api site panel; do
+    deploy_app "$app"
+done
+
+for app in api site panel; do
+    cleanup_old_releases "$app"
+done
+
+rm -rf "$INCOMING"
+log "Sürüm $RELEASE_ID yayında."

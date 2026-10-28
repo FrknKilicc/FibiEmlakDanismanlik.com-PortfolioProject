@@ -1,0 +1,29 @@
+[Unit]
+Description=Fibi Emlak WebApi
+After=network.target mssql-server.service
+Wants=mssql-server.service
+
+[Service]
+Type=simple
+User=fibi
+Group=fibi
+WorkingDirectory=/var/www/fibi/api/current
+ExecStart=/usr/bin/dotnet /var/www/fibi/api/current/FibiEmlakDanismanlik.WebApi.dll
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGINT
+SyslogIdentifier=fibi-api
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5000
+Environment=DOTNET_NOLOGO=1
+Environment=DOTNET_CLI_TELEMETRY_OPTOUT=1
+EnvironmentFile=/etc/fibi/api.env
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/lib/fibi /var/log/fibi
+
+[Install]
+WantedBy=multi-user.target

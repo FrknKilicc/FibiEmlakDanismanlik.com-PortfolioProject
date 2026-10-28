@@ -88,6 +88,7 @@ builder.Services.AddScoped<FibiEmlakDanismanlikContext>();
 
 
 builder.Services.AddControllers();
+builder.Services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database");
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -320,5 +321,6 @@ app.UseAuthorization();
 app.UseRateLimiter();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();

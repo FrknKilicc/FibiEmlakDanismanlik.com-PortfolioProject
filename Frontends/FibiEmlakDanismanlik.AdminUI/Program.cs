@@ -164,6 +164,7 @@ builder.Services.AddHttpClient("api", client =>
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 builder.Services.AddScoped<ApiClient>();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -189,6 +190,8 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHealthChecks("/health").AllowAnonymous();
 
 app.MapControllerRoute(
     name: "default",
