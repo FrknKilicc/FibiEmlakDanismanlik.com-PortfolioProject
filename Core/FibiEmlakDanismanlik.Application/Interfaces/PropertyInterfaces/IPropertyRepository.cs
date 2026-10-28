@@ -22,7 +22,6 @@ namespace FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces
         public List<ForRentalPropertForListingViewModel> GetAllForRentalPropertyForListing();
         Task<List<ListingTypeFacetDto>> GetForSaleListingTypeFacetsAsync();
         public Task<List<ForSalePropertyForListingViewModel>> GetAllForSalePropertyForListing();
-        public Task<List<ForSalePropertyForListingViewModel>> GetFilteredForSalePropertyForListing(PropertyFilterRequest filter);
         public Task<ForSaleFilterResponseResult> GetFilteredForSalePropertyForListingWithFacets(PropertyFilterRequest filter);
 
         public Task<List<ListingTypeFacetDto>> GetForRentalListingTypeFacetsAsync();
