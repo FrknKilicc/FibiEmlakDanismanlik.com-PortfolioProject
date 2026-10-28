@@ -378,3 +378,10 @@ tools/sql/deploy/migrations-idempotent.sql
 # Claude Code yerel ayarlari (.claude/skills repoda kalir)
 .claude/launch.json
 .claude/settings.local.json
+
+# Canlı ortam gizli bilgileri: sunucuda /etc/fibi/*.env'de tutulur, repoya asla girmez
+appsettings.Production.json
+secrets.json
+*.env
+!deploy/server/env/*.env.example
+*.bak

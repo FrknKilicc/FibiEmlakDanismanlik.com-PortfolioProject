@@ -10,6 +10,7 @@ builder.Host.UseSerilog((context, services, configuration) => configuration.Read
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHealthChecks();
 builder.Services.AddHttpClient();
 // API'ye ulaşılamazsa istisna yerine 503 yanıtı döner; sayfalar boş içerikle açılır
 builder.Services.AddTransient<ApiUnavailableHandler>();
@@ -61,6 +62,8 @@ app.UseSerilogRequestLogging();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapHealthChecks("/health");
 
 app.MapControllerRoute(
     name: "default",

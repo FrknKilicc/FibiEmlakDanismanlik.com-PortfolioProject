@@ -1,0 +1,116 @@
+# Fibi Emlak: master'a her push'ta derler, test eder ve canlı sunucuya yayınlar.
+#
+# Açma anahtarı: GitHub > Settings > Secrets and variables > Actions > Variables > DEPLOY_ENABLED = true
+#   (sunucu hazır olana kadar bu değişken yoksa yalnızca derleme + test çalışır, yayın atlanır)
+# Gerekli secret'lar: DEPLOY_HOST (sunucu IP), DEPLOY_SSH_KEY (setup.sh'nin verdiği özel anahtar),
+#                     DEPLOY_KNOWN_HOSTS (setup.sh'nin yazdığı parmak izi satırı)
+# Elle tetikleme: Actions > Deploy > Run workflow
+name: Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.release.outputs.id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Sürüm kimliği
+        id: release
+        run: echo "id=${{ github.run_number }}-${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+
+      - name: Derle
+        run: dotnet build FibiEmlakDanismanlik.sln -c Release
+
+      - name: Birim testleri
+        run: dotnet test Tests/FibiEmlakDanismanlik.Unit.Tests -c Release --no-build
+
+      - name: Yayın paketleri
+        run: |
+          dotnet publish Presentation/FibiEmlakDanismanlik.WebApi -c Release --no-build -o out/api
+          dotnet publish Frontends/FibiEmlakDanismanlik.WebUI -c Release --no-build -o out/site
+          dotnet publish Frontends/FibiEmlakDanismanlik.AdminUI -c Release --no-build -o out/panel
+          mkdir -p dist
+          for app in api site panel; do
+            # Sunucudaki gerçek ayarlar /etc/fibi'de; paketten yalnızca geliştirme ayarı çıkarılır
+            rm -f out/$app/appsettings.Development.json
+            tar -czf dist/$app.tar.gz -C out/$app .
+          done
+
+      - name: Migration betiği (idempotent)
+        env:
+          # Betik üretimi veritabanına bağlanmaz; tasarım zamanı fabrikası yalnızca boş olmayan bir değer ister
+          ConnectionStrings__DefaultConnection: "Server=unused;Database=unused;"
+        run: |
+          dotnet tool install --global dotnet-ef --version 8.0.*
+          persistence_project="$(find Infrastructure -name 'FibiEmlakDanismanlik.Persistence.csproj' | head -1)"
+          dotnet ef migrations script --idempotent \
+            --project "$persistence_project" \
+            --startup-project Presentation/FibiEmlakDanismanlik.WebApi \
+            --configuration Release \
+            -o dist/migrations.sql
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: dist/
+          retention-days: 14
+
+  deploy:
+    needs: build
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release
+          path: dist
+
+      - name: SSH ayarı
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+
+      - name: Paketleri sunucuya kopyala
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          RELEASE_ID: ${{ needs.build.outputs.release_id }}
+        run: |
+          ssh -o StrictHostKeyChecking=yes "deploy@$DEPLOY_HOST" "mkdir -p /home/deploy/incoming/$RELEASE_ID"
+          scp -o StrictHostKeyChecking=yes dist/* "deploy@$DEPLOY_HOST:/home/deploy/incoming/$RELEASE_ID/"
+
+      - name: Yedek + migration + yayın (sağlık kontrolü başarısızsa otomatik geri döner)
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          RELEASE_ID: ${{ needs.build.outputs.release_id }}
+        run: ssh -o StrictHostKeyChecking=yes "deploy@$DEPLOY_HOST" "sudo /usr/local/bin/fibi-deploy $RELEASE_ID"
+
+      - name: Anahtarı temizle
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519
