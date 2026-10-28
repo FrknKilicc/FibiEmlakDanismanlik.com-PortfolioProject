@@ -1,5 +1,4 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.CustomerContactCommands;
-using FibiEmlakDanismanlik.Dto.ContactDtos;
+﻿using FibiEmlakDanismanlik.Dto.ContactDtos;
 using FibiEmlakDanismanlik.WebUI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -94,7 +93,7 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendAppointment(
-            CreateCustomerContactCommand model,
+            CreateCustomerContactDto model,
             string date,
             string time)
         {

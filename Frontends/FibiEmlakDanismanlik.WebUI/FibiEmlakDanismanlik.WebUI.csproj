@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\FibiEmlakDanismanlik.Application\FibiEmlakDanismanlik.Application.csproj" />
     <ProjectReference Include="..\FibiEmlakDanismanlik.Dto\FibiEmlakDanismanlik.Dto.csproj" />
   </ItemGroup>
 

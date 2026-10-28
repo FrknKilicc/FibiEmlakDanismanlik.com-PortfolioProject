@@ -1,16 +1,16 @@
-using FibiEmlakDanismanlik.Application.Constants;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 
 namespace FibiEmlakDanismanlik.WebUI.Services
 {
     /// <summary>
-    /// Panelden düzenlenen site metinlerini (api/SiteTexts) kısa süreli önbellekle sunar; API'ye ulaşılamazsa varsayılanlar kullanılır.
+    /// Panelden düzenlenen site metinlerini (api/SiteTexts) kısa süreli önbellekle sunar; API'ye ulaşılamazsa son başarılı değerler (uygulama yeni açıldıysa boş) kullanılır.
     /// Görünümlerde: <c>@inject SiteTextService SiteTextService</c> + <c>var texts = await SiteTextService.GetAsync();</c>
     /// </summary>
     public class SiteTextService
     {
         private const string CacheKey = "site-texts";
+        private const string LastGoodCacheKey = "site-texts-last-good";
         // Panel değişikliği en geç bu sürede görünür
         private static readonly TimeSpan CacheDuration = TimeSpan.FromSeconds(30);
         private static readonly TimeSpan FailureCacheDuration = TimeSpan.FromSeconds(10);
@@ -45,12 +45,28 @@ namespace FibiEmlakDanismanlik.WebUI.Services
             }
             catch
             {
-                // API kapalıysa varsayılan metinlerle devam edilir
+                // API kapalıysa son başarılı metinlerle devam edilir
             }
 
-            var texts = new SiteTexts(SiteTextDefinitions.Merge(stored ?? new Dictionary<string, string>()));
-            _memoryCache.Set(CacheKey, texts, stored != null ? CacheDuration : FailureCacheDuration);
-            return texts;
+            if (stored != null)
+            {
+                var texts = new SiteTexts(stored);
+                _memoryCache.Set(CacheKey, texts, CacheDuration);
+                _memoryCache.Set(LastGoodCacheKey, texts, new MemoryCacheEntryOptions
+                {
+                    Priority = CacheItemPriority.NeverRemove
+                });
+                return texts;
+            }
+
+            // shortcut: soğuk açılışta API kapalıysa metinler boş görünür; gerekirse varsayılanlar Dto'ya taşınmalı
+            if (!_memoryCache.TryGetValue(LastGoodCacheKey, out SiteTexts? fallback) || fallback == null)
+            {
+                fallback = new SiteTexts(new Dictionary<string, string>());
+            }
+
+            _memoryCache.Set(CacheKey, fallback, FailureCacheDuration);
+            return fallback;
         }
     }
 
@@ -71,7 +87,7 @@ namespace FibiEmlakDanismanlik.WebUI.Services
         public int Int(string key)
         {
             if (int.TryParse(this[key], out var n)) return n;
-            return int.TryParse(SiteTextDefinitions.Find(key)?.Default, out var d) ? d : 0;
+            return 0;
         }
     }
 }
