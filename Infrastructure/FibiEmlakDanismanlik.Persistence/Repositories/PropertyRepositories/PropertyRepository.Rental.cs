@@ -510,29 +510,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Dues = h.Dues
                 };
 
-            if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
-                query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
-
-            if (filter.CityId.HasValue)
-                query = query.Where(x => x.CityId == filter.CityId);
-            else if (!string.IsNullOrWhiteSpace(filter.City))
-                query = query.Where(x => x.City == filter.City);
-
-            if (filter.DistrictId.HasValue)
-                query = query.Where(x => x.DistrictId == filter.DistrictId);
-            else if (!string.IsNullOrWhiteSpace(filter.District))
-                query = query.Where(x => x.District == filter.District);
-
-            if (filter.NeighborhoodId.HasValue)
-                query = query.Where(x => x.NeighborhoodId == filter.NeighborhoodId);
-            else if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
-                query = query.Where(x => x.Neighborhood == filter.Neighborhood);
-
-            if (filter.MinPrice.HasValue)
-                query = query.Where(x => x.Price >= filter.MinPrice.Value);
-
-            if (filter.MaxPrice.HasValue)
-                query = query.Where(x => x.Price <= filter.MaxPrice.Value);
+            query = ApplyCommonRentalFilters(query, filter);
 
             if (!string.IsNullOrWhiteSpace(filter.NumberOfRoom))
                 query = query.Where(x => x.NumberOfRoom == filter.NumberOfRoom);
@@ -552,9 +530,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (filter.NumberOfSection.HasValue)
                 query = query.Where(x => false);
 
-            if (filter.AgentId.HasValue)
-                query = query.Where(x => x.AgentId == filter.AgentId.Value);
-
             if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
                 query = query.Where(x => false);
 
@@ -571,19 +546,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             if (filter.LandCategoryId.HasValue || !string.IsNullOrWhiteSpace(filter.TitleDeedStatus) || filter.LoanEligible.HasValue || filter.Transferable.HasValue)
                 query = query.Where(x => false);
-
-            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
-            {
-                var term = filter.SearchTerm.Trim();
-                var dashIdx = term.IndexOf(" - ", StringComparison.Ordinal);
-                var namePart = dashIdx >= 0 ? term.Substring(dashIdx + 3).Trim() : term;
-                query = query.Where(x =>
-                    (x.PropertyName != null && (x.PropertyName.Contains(term) || (namePart.Length > 0 && x.PropertyName.Contains(namePart))))
-                    || (x.PropertyNo != null && x.PropertyNo.ToString() == term)
-                    || (x.City != null && x.City.Contains(term))
-                    || (x.District != null && x.District.Contains(term))
-                    || (x.Neighborhood != null && x.Neighborhood.Contains(term)));
-            }
 
             return query;
         }
@@ -644,30 +606,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     DevelopmentRight = l.DevelopmentRight
                 };
 
-            // Ortak filtreler
-            if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
-                query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
-
-            if (filter.CityId.HasValue)
-                query = query.Where(x => x.CityId == filter.CityId);
-            else if (!string.IsNullOrWhiteSpace(filter.City))
-                query = query.Where(x => x.City == filter.City);
-
-            if (filter.DistrictId.HasValue)
-                query = query.Where(x => x.DistrictId == filter.DistrictId);
-            else if (!string.IsNullOrWhiteSpace(filter.District))
-                query = query.Where(x => x.District == filter.District);
-
-            if (filter.NeighborhoodId.HasValue)
-                query = query.Where(x => x.NeighborhoodId == filter.NeighborhoodId);
-            else if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
-                query = query.Where(x => x.Neighborhood == filter.Neighborhood);
-
-            if (filter.MinPrice.HasValue)
-                query = query.Where(x => x.Price >= filter.MinPrice.Value);
-
-            if (filter.MaxPrice.HasValue)
-                query = query.Where(x => x.Price <= filter.MaxPrice.Value);
+            query = ApplyCommonRentalFilters(query, filter);
 
             if (filter.MinArea.HasValue)
                 query = query.Where(x => x.Area >= filter.MinArea.Value);
@@ -684,9 +623,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (filter.NumberOfSection.HasValue)
                 query = query.Where(x => false);
 
-            if (filter.AgentId.HasValue)
-                query = query.Where(x => x.AgentId == filter.AgentId.Value);
-
             if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
                 query = query.Where(x => x.ZoningStatus == filter.ZoningStatus);
 
@@ -697,19 +633,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             if (filter.HousingCategoryId.HasValue || !string.IsNullOrWhiteSpace(filter.BuildingAge) || !string.IsNullOrWhiteSpace(filter.Heating) || filter.Furnished.HasValue || filter.WithinTheComplex.HasValue || filter.LoanEligible.HasValue || filter.Transferable.HasValue)
                 query = query.Where(x => false);
-
-            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
-            {
-                var term = filter.SearchTerm.Trim();
-                var dashIdx = term.IndexOf(" - ", StringComparison.Ordinal);
-                var namePart = dashIdx >= 0 ? term.Substring(dashIdx + 3).Trim() : term;
-                query = query.Where(x =>
-                    (x.PropertyName != null && (x.PropertyName.Contains(term) || (namePart.Length > 0 && x.PropertyName.Contains(namePart))))
-                    || (x.PropertyNo != null && x.PropertyNo.ToString() == term)
-                    || (x.City != null && x.City.Contains(term))
-                    || (x.District != null && x.District.Contains(term))
-                    || (x.Neighborhood != null && x.Neighborhood.Contains(term)));
-            }
 
             return query;
         }
@@ -769,30 +692,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     Heating = c.Heating
                 };
 
-            // Ortak filtreler
-            if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
-                query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
-
-            if (filter.CityId.HasValue)
-                query = query.Where(x => x.CityId == filter.CityId);
-            else if (!string.IsNullOrWhiteSpace(filter.City))
-                query = query.Where(x => x.City == filter.City);
-
-            if (filter.DistrictId.HasValue)
-                query = query.Where(x => x.DistrictId == filter.DistrictId);
-            else if (!string.IsNullOrWhiteSpace(filter.District))
-                query = query.Where(x => x.District == filter.District);
-
-            if (filter.NeighborhoodId.HasValue)
-                query = query.Where(x => x.NeighborhoodId == filter.NeighborhoodId);
-            else if (!string.IsNullOrWhiteSpace(filter.Neighborhood))
-                query = query.Where(x => x.Neighborhood == filter.Neighborhood);
-
-            if (filter.MinPrice.HasValue)
-                query = query.Where(x => x.Price >= filter.MinPrice.Value);
-
-            if (filter.MaxPrice.HasValue)
-                query = query.Where(x => x.Price <= filter.MaxPrice.Value);
+            query = ApplyCommonRentalFilters(query, filter);
 
             if (filter.MinArea.HasValue)
                 query = query.Where(x => x.GrossArea >= filter.MinArea.Value);
@@ -809,9 +709,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             if (filter.NumberOfSection.HasValue)
                 query = query.Where(x => x.NumberOfSection == filter.NumberOfSection.Value);
 
-            if (filter.AgentId.HasValue)
-                query = query.Where(x => x.AgentId == filter.AgentId.Value);
-
             if (!string.IsNullOrWhiteSpace(filter.ZoningStatus))
                 query = query.Where(x => false);
 
@@ -822,19 +719,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             if (filter.HousingCategoryId.HasValue || filter.LandCategoryId.HasValue || !string.IsNullOrWhiteSpace(filter.TitleDeedStatus) || filter.Furnished.HasValue || filter.WithinTheComplex.HasValue || filter.LoanEligible.HasValue || filter.Transferable.HasValue)
                 query = query.Where(x => false);
-
-            if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
-            {
-                var term = filter.SearchTerm.Trim();
-                var dashIdx = term.IndexOf(" - ", StringComparison.Ordinal);
-                var namePart = dashIdx >= 0 ? term.Substring(dashIdx + 3).Trim() : term;
-                query = query.Where(x =>
-                    (x.PropertyName != null && (x.PropertyName.Contains(term) || (namePart.Length > 0 && x.PropertyName.Contains(namePart))))
-                    || (x.PropertyNo != null && x.PropertyNo.ToString() == term)
-                    || (x.City != null && x.City.Contains(term))
-                    || (x.District != null && x.District.Contains(term))
-                    || (x.Neighborhood != null && x.Neighborhood.Contains(term)));
-            }
 
             return query;
         }
@@ -1111,19 +995,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             if (housingById != null)
             {
-                amenities = await _context.RentalHousingListingAmenities
-            .Where(x => x.RentalHousingListId == id && x.AmenityDefinition.isActive == true)
-            .Include(x => x.AmenityDefinition)
-            .Select(x => new AmenityItemViewModel
-            {
-                Id = x.AmenityDefinition.AmenityId,
-                Text = x.AmenityDefinition.Name,
-                Group = x.AmenityDefinition.GroupName,
-                SortOrder = x.AmenityDefinition.SortOrder
-            })
-            .OrderBy(x => x.Group)
-            .ThenBy(x => x.SortOrder)
-            .ToListAsync();
+                amenities = await LoadAmenitiesAsync(_context.RentalHousingListingAmenities.Where(x => x.RentalHousingListId == id).Select(x => x.AmenityDefinition));
                 var vm = new ForRentalPropertForListingViewModel
                 {
                     ListingId = housingById.RentalHousingListId,
@@ -1182,19 +1054,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 : null;
             if (land != null)
             {
-                amenities = await _context.RentalLandListingAmenities
-            .Where(x => x.RentalLandListingId == id && x.AmenityDefinition.isActive == true)
-            .Include(x => x.AmenityDefinition)
-            .Select(x => new AmenityItemViewModel
-            {
-                Id = x.AmenityDefinition.AmenityId,
-                Text = x.AmenityDefinition.Name,
-                Group = x.AmenityDefinition.GroupName,
-                SortOrder = x.AmenityDefinition.SortOrder
-            })
-            .OrderBy(x => x.Group)
-            .ThenBy(x => x.SortOrder)
-            .ToListAsync();
+                amenities = await LoadAmenitiesAsync(_context.RentalLandListingAmenities.Where(x => x.RentalLandListingId == id).Select(x => x.AmenityDefinition));
                 var vm = new ForRentalPropertForListingViewModel
                 {
                     ListingId = land.RentalLandListingId,
@@ -1246,19 +1106,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 : null;
             if (commercialById != null)
             {
-                amenities = await _context.RentalCommercialListingAmenities
-            .Where(x => x.RentalCommercialListId == id && x.AmenityDefinition.isActive == true)
-            .Include(x => x.AmenityDefinition)
-            .Select(x => new AmenityItemViewModel
-            {
-                Id = x.AmenityDefinition.AmenityId,
-                Text = x.AmenityDefinition.Name,
-                Group = x.AmenityDefinition.GroupName,
-                SortOrder = x.AmenityDefinition.SortOrder
-            })
-            .OrderBy(x => x.Group)
-            .ThenBy(x => x.SortOrder)
-            .ToListAsync();
+                amenities = await LoadAmenitiesAsync(_context.RentalCommercialListingAmenities.Where(x => x.RentalCommercialListId == id).Select(x => x.AmenityDefinition));
                 var vm = new ForRentalPropertForListingViewModel
                 {
                     ListingId = commercialById.RentalCommercialListId,

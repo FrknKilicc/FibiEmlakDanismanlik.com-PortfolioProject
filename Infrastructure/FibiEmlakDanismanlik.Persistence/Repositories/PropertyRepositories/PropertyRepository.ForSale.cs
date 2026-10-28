@@ -406,19 +406,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             if (housingById != null)
             {
-                amenities = await _context.ForSaleHousingListingAmenities
-            .Where(x => x.ForSaleHousingListId == id && x.AmenityDefinition.isActive == true)
-            .Include(x => x.AmenityDefinition)
-            .Select(x => new AmenityItemViewModel
-            {
-                Id = x.AmenityDefinition.AmenityId,
-                Text = x.AmenityDefinition.Name,
-                Group = x.AmenityDefinition.GroupName,
-                SortOrder = x.AmenityDefinition.SortOrder
-            })
-            .OrderBy(x => x.Group)
-            .ThenBy(x => x.SortOrder)
-            .ToListAsync();
+                amenities = await LoadAmenitiesAsync(_context.ForSaleHousingListingAmenities.Where(x => x.ForSaleHousingListId == id).Select(x => x.AmenityDefinition));
                 var vm = new ForSalePropertyForListingViewModel
                 {
                     ListingId = housingById.ForSaleHousingListId,
@@ -477,19 +465,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
             if (land != null)
             {
-                amenities = await _context.ForSaleLandListingAmenities
-            .Where(x => x.ForSaleLandListId == id && x.AmenityDefinition.isActive == true)
-            .Include(x => x.AmenityDefinition)
-            .Select(x => new AmenityItemViewModel
-            {
-                Id = x.AmenityDefinition.AmenityId,          
-                Text = x.AmenityDefinition.Name,
-                Group = x.AmenityDefinition.GroupName,
-                SortOrder = x.AmenityDefinition.SortOrder
-            })
-            .OrderBy(x => x.Group)
-            .ThenBy(x => x.SortOrder)
-            .ToListAsync();
+                amenities = await LoadAmenitiesAsync(_context.ForSaleLandListingAmenities.Where(x => x.ForSaleLandListId == id).Select(x => x.AmenityDefinition));
                 var vm = new ForSalePropertyForListingViewModel
                 {
                     ListingId = land.ForSaleLandListingId,
@@ -539,19 +515,7 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                 : null;
             if (commercialById != null)
             {
-                amenities = await _context.ForSaleCommercialListingAmenities
-            .Where(x => x.ForSaleCommercialListingId == id && x.AmenityDefinition.isActive== true)
-            .Include(x => x.AmenityDefinition)
-            .Select(x => new AmenityItemViewModel
-            {
-                Id = x.AmenityDefinition.AmenityId,         
-                Text = x.AmenityDefinition.Name,
-                Group = x.AmenityDefinition.GroupName,
-                SortOrder = x.AmenityDefinition.SortOrder
-            })
-            .OrderBy(x => x.Group)
-            .ThenBy(x => x.SortOrder)
-            .ToListAsync();
+                amenities = await LoadAmenitiesAsync(_context.ForSaleCommercialListingAmenities.Where(x => x.ForSaleCommercialListingId == id).Select(x => x.AmenityDefinition));
                 var vm = new ForSalePropertyForListingViewModel
                 {
                     ListingId = commercialById.ForSaleCommercialListingId,
@@ -645,83 +609,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             return list;
         }
 
-        static string? Normalize(string? s)
-        {
-            if (string.IsNullOrWhiteSpace(s)) return null;
-
-            s = s.Trim();
-
-
-            if (string.Equals(s, "string", StringComparison.OrdinalIgnoreCase))
-                return null;
-
-            return s;
-        }
-        public async Task<List<ForSalePropertyForListingViewModel>> GetFilteredForSalePropertyForListing(PropertyFilterRequest filter)
-        {
-
-            var query = BuildForSaleListingQuery().AsNoTracking();
-            filter.City = Normalize(filter.City);
-            filter.District = Normalize(filter.District);
-            filter.Neighborhood = Normalize(filter.Neighborhood);
-            filter.NumberOfRoom = Normalize(filter.NumberOfRoom);
-            filter.SortBy = Normalize(filter.SortBy);
-            filter.SortDir = Normalize(filter.SortDir);
-
-            if (filter.ListingTypeIds != null && filter.ListingTypeIds.Any())
-                query = query.Where(x => filter.ListingTypeIds.Contains(x.ListingTypeId));
-
-
-            if (filter.CityId.HasValue)
-                query = query.Where(x => x.CityId == filter.CityId);
-            else if (filter.City != null)
-                query = query.Where(x => x.City == filter.City);
-
-            if (filter.DistrictId.HasValue)
-                query = query.Where(x => x.DistrictId == filter.DistrictId);
-            else if (filter.District != null)
-                query = query.Where(x => x.District == filter.District);
-
-            if (filter.NeighborhoodId.HasValue)
-                query = query.Where(x => x.NeighborhoodId == filter.NeighborhoodId);
-            else if (filter.Neighborhood != null)
-                query = query.Where(x => x.Neighborhood == filter.Neighborhood);
-
-            if (filter.NumberOfRoom != null)
-                query = query.Where(x => x.NumberOfRoom == filter.NumberOfRoom);
-
-
-            if (filter.MinPrice.HasValue)
-                query = query.Where(x => x.Price >= filter.MinPrice.Value);
-
-            if (filter.MaxPrice.HasValue)
-                query = query.Where(x => x.Price <= filter.MaxPrice.Value);
-
-            // Sort
-            var sortBy = (filter.SortBy ?? "CreatedDate").ToLowerInvariant();
-            var sortDir = (filter.SortDir ?? "desc").ToLowerInvariant();
-
-            query = (sortBy, sortDir) switch
-            {
-                ("price", "asc") => query.OrderBy(x => x.Price),
-                ("price", "desc") => query.OrderByDescending(x => x.Price),
-                ("createddate", "asc") => query.OrderBy(x => x.CreatedDate),
-                _ => query.OrderByDescending(x => x.CreatedDate),
-            };
-
-            // Pagination
-            var page = filter.Page < 1 ? 1 : filter.Page;
-            var pageSize = filter.PageSize is < 1 or > 100 ? 20 : filter.PageSize;
-
-            var list = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            await FillPhotoSlotsAsync(list, x => (x.ListingTypeId, x.ListingId));
-
-            return list;
-        }
         private static List<CardHighlightViewModel> BuildHighlights(ForSalePropertyForListingViewModel x)
         {
             var t = (x.ListingType ?? "").ToLowerInvariant();
