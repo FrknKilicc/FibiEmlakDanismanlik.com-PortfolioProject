@@ -156,247 +156,258 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
             return getAllRentalProperties;
         }
 
+        private IQueryable<ForRentalPropertForListingViewModel> RentalHousingRows()
+        {
+            return
+                from house in _context.rentalHousingListings
+                join agent in _context.Agents on house.AgentId equals agent.AgentId
+                select new ForRentalPropertForListingViewModel
+                {
+                    ListingId = house.RentalHousingListId,
+                    RentalHousingListId = house.RentalHousingListId,
+                    RentalLandListingId = null,
+                    RentalCommercialListId = null,
+
+                    PropertyNo = house.PropertyNo,
+                    PropertyName = house.PropertyName,
+                    PropertyDescription = house.PropertyDescription,
+                    PropertyStatus = house.PropertyStatus,
+                    CreatedDate = house.CreatedDate,
+                    Rent = house.Rent,
+                    Deposit = house.Deposit,
+                    Dues = house.Dues,
+                    BestDeals = house.BestDeals,
+
+                    PropertyType = "Kiralık",
+                    ListingType = "Konut",
+                    ListingTypeId = house.ListingTypeId,
+                    ListingTypeName = house.ListingType.Name,
+                    UsageTypeId = (int)house.ListingType.UsageType,
+
+                    City = house.City,
+                    District = house.District,
+                    Neighborhood = house.Neighborhood,
+                    AddressDesc = house.AddressDesc,
+
+                    HousingCategoryId = house.HousingCategory.HousingCategoryId,
+                    HousingCategoryName = house.HousingCategory.HousingCategoryName,
+                    HousingCategory = null,
+                    LandCategoryId = null,
+                    LandCategoryName = null!,
+                    LandCategory = null,
+
+                    Facade = house.Facade,
+                    IsElevator = house.IsElevator,
+                    GrossArea = house.GrossArea,
+                    NetArea = house.NetArea,
+                    OpenArea = house.OpenArea,
+                    BuildingAge = house.BuildingAge,
+                    TotalNumberOfFloor = house.TotalNumberOfFloor,
+                    NumberOfFloors = house.NumberOfFloors,
+                    NumberOfBathRoom = house.NumberOfBathRoom,
+                    NumberOfRoom = house.NumberOfRoom,
+                    Heating = house.Heating,
+                    BlackBox = house.BlackBox,
+                    NumberOfBalconies = house.NumberOfBalconies,
+                    ParkingLot = house.ParkingLot,
+                    Furnished = house.Furnished,
+                    WithinTheComplex = house.WithinTheComplex,
+
+                    Area = null,
+                    PricePerSquareMeter = null,
+                    ParcelNumber = null,
+                    PlotNumber = null,
+                    MapSheetNumber = null,
+                    FloorAreaRatio = null,
+                    BaseAreaRatio = null,
+                    ZoningPlan = null,
+                    ZoningStatus = null,
+                    DevelopmentRight = null,
+                    TitleDeedStatus = null,
+
+                    NumberOfSection = null,
+                    NumberOfKitchens = null,
+                    NumberOfBathrooms = null,
+
+                    AgentId = house.AgentId,
+                    AgentName = agent.AgentName,
+                    AgentTitle = agent.AgentTitle,
+                    AgentImgUrl = agent.AgentImgUrl,
+                    AgentDescription = agent.AgentDescription,
+                    AgentPhoneNumber = agent.AgentPhoneNumber,
+                    Mail = agent.Mail
+                };
+        }
+
+        private IQueryable<ForRentalPropertForListingViewModel> RentalLandRows()
+        {
+            return
+                from land in _context.rentalLandListings
+                join agent in _context.Agents on land.AgentId equals agent.AgentId
+                select new ForRentalPropertForListingViewModel
+                {
+                    ListingId = land.RentalLandListingId,
+                    RentalHousingListId = null,
+                    RentalLandListingId = land.RentalLandListingId,
+                    RentalCommercialListId = null,
+
+                    PropertyNo = land.PropertyNo,
+                    PropertyName = land.PropertyName,
+                    PropertyDescription = land.PropertyDescription,
+                    PropertyStatus = land.PropertyStatus,
+                    CreatedDate = land.CreatedDate,
+                    Rent = land.Rent,
+                    Deposit = null,
+                    Dues = null,
+                    BestDeals = land.BestDeals,
+
+                    PropertyType = "Kiralık",
+                    ListingType = "Arsa",
+                    ListingTypeId = land.ListingTypeId,
+                    ListingTypeName = land.ListingType.Name,
+                    UsageTypeId = (int)land.ListingType.UsageType,
+
+                    City = land.City,
+                    District = land.District,
+                    Neighborhood = land.Neighborhood,
+                    AddressDesc = land.AddressDesc,
+
+                    TitleDeedStatus = land.TitleDeedStatus,
+                    LandCategoryId = land.LandCategory.LandCategoryId,
+                    LandCategoryName = land.LandCategory.LandCategoryName,
+                    LandCategory = null,
+                    HousingCategoryId = null,
+                    HousingCategoryName = null!,
+                    HousingCategory = null,
+
+                    Area = land.Area,
+                    PricePerSquareMeter = land.PricePerSquareMeter,
+                    ParcelNumber = land.ParcelNumber,
+                    PlotNumber = land.PlotNumber,
+                    MapSheetNumber = land.MapSheetNumber,
+                    FloorAreaRatio = land.FloorAreaRatio,
+                    BaseAreaRatio = land.BaseAreaRatio,
+                    ZoningPlan = land.ZoningPlan,
+                    ZoningStatus = land.ZoningStatus,
+                    DevelopmentRight = land.DevelopmentRight,
+
+                    BuildingAge = null,
+                    GrossArea = null,
+                    NetArea = null,
+                    OpenArea = null,
+                    Heating = null,
+                    NumberOfFloors = null,
+                    TotalNumberOfFloor = null,
+                    NumberOfBathRoom = null,
+                    NumberOfRoom = null,
+                    NumberOfBalconies = null,
+                    Facade = null,
+                    IsElevator = null,
+                    BlackBox = null,
+                    ParkingLot = null,
+                    Furnished = null,
+                    WithinTheComplex = null,
+
+                    NumberOfSection = null,
+                    NumberOfKitchens = null,
+                    NumberOfBathrooms = null,
+
+                    AgentId = land.AgentId,
+                    AgentName = agent.AgentName,
+                    AgentTitle = agent.AgentTitle,
+                    AgentImgUrl = agent.AgentImgUrl,
+                    AgentDescription = agent.AgentDescription,
+                    AgentPhoneNumber = agent.AgentPhoneNumber,
+                    Mail = agent.Mail
+                };
+        }
+
+        private IQueryable<ForRentalPropertForListingViewModel> RentalCommercialRows()
+        {
+            return
+                from comm in _context.rentalCommercialPropertyListings
+                join agent in _context.Agents on comm.AgentId equals agent.AgentId
+                select new ForRentalPropertForListingViewModel
+                {
+                    ListingId = comm.RentalCommercialListId,
+                    RentalHousingListId = null,
+                    RentalLandListingId = null,
+                    RentalCommercialListId = comm.RentalCommercialListId,
+
+                    PropertyNo = comm.PropertyNo,
+                    PropertyName = comm.PropertyName,
+                    PropertyDescription = comm.PropertyDescription,
+                    PropertyStatus = comm.PropertyStatus,
+                    CreatedDate = comm.CreatedDate,
+                    Rent = comm.Rent,
+                    Deposit = comm.Deposit,
+                    Dues = null,
+                    BestDeals = comm.BestDeals,
+
+                    PropertyType = "Kiralık",
+                    ListingType = "İşyeri",
+                    ListingTypeId = comm.ListingTypeId,
+                    ListingTypeName = comm.ListingType.Name,
+                    UsageTypeId = (int)comm.ListingType.UsageType,
+
+                    City = comm.City,
+                    District = comm.District,
+                    Neighborhood = comm.Neighborhood,
+                    AddressDesc = comm.AddressDesc,
+
+                    TitleDeedStatus = comm.TitleDeedStatus,
+                    HousingCategoryId = null,
+                    HousingCategoryName = null!,
+                    HousingCategory = null,
+                    LandCategoryId = null,
+                    LandCategoryName = null!,
+                    LandCategory = null,
+
+                    Facade = comm.Facade,
+                    NumberOfSection = comm.NumberOfSection,
+                    NumberOfKitchens = comm.NumberOfKitchens,
+                    NumberOfBathrooms = comm.NumberOfBathrooms,
+                    NumberOfFloors = comm.NumberOfFloors,
+                    GrossArea = comm.GrossArea,
+                    NetArea = comm.NetArea,
+                    BuildingAge = comm.BuildingAge,
+                    Heating = comm.Heating,
+
+                    OpenArea = null,
+                    TotalNumberOfFloor = null,
+                    NumberOfBathRoom = null,
+                    NumberOfRoom = null,
+                    NumberOfBalconies = null,
+                    IsElevator = null,
+                    BlackBox = null,
+                    ParkingLot = null,
+                    Furnished = null,
+                    WithinTheComplex = null,
+
+                    Area = null,
+                    PricePerSquareMeter = null,
+                    ParcelNumber = null,
+                    PlotNumber = null,
+                    MapSheetNumber = null,
+                    FloorAreaRatio = null,
+                    BaseAreaRatio = null,
+                    ZoningPlan = null,
+                    ZoningStatus = null,
+                    DevelopmentRight = null,
+
+                    AgentId = comm.AgentId,
+                    AgentName = agent.AgentName,
+                    AgentTitle = agent.AgentTitle,
+                    AgentImgUrl = agent.AgentImgUrl,
+                    AgentDescription = agent.AgentDescription,
+                    AgentPhoneNumber = agent.AgentPhoneNumber,
+                    Mail = agent.Mail
+                };
+        }
+
         public List<ForRentalPropertForListingViewModel> GetAllForRentalPropertyForListing()
         {
-            var rentalHousingList = from rentalHouse in _context.rentalHousingListings
-                                    join agent in _context.Agents on rentalHouse.AgentId equals agent.AgentId
-                                    select
-                                    new ForRentalPropertForListingViewModel
-                                    {
-                                        RentalHousingListId = rentalHouse.RentalHousingListId,
-                                        PropertyNo = rentalHouse.PropertyNo,
-                                        PropertyName = rentalHouse.PropertyName,
-                                        PropertyDescription = rentalHouse.PropertyDescription,
-                                        PropertyStatus = rentalHouse.PropertyStatus,
-                                        CreatedDate = rentalHouse.CreatedDate,
-                                        Rent = rentalHouse.Rent,
-                                        BuildingAge = rentalHouse.BuildingAge,
-                                        GrossArea = rentalHouse.GrossArea,
-                                        NetArea = rentalHouse.NetArea,
-                                        Heating = rentalHouse.Heating,
-                                        NumberOfFloors = rentalHouse.NumberOfFloors,
-                                        HousingCategoryId = rentalHouse.HousingCategoryId,
-                                        PropertyType = "Konut",
-                                        Deposit = rentalHouse.Deposit,
-
-
-                                        //adress
-                                        City = rentalHouse.City,
-                                        District = rentalHouse.District,
-                                        Neighborhood = rentalHouse.Neighborhood,
-                                        AddressDesc = rentalHouse.AddressDesc,
-
-
-
-                                        IsElevator = rentalHouse.IsElevator,
-                                        OpenArea = rentalHouse.OpenArea,
-                                        TotalNumberOfFloor = rentalHouse.TotalNumberOfFloor,
-                                        NumberOfBathRoom = rentalHouse.NumberOfBathRoom,
-                                        NumberOfBalconies = rentalHouse.NumberOfBalconies,
-                                        NumberOfRoom = rentalHouse.NumberOfRoom,
-                                        BlackBox = rentalHouse.BlackBox,
-                                        ParkingLot = rentalHouse.ParkingLot,
-                                        Furnished = rentalHouse.Furnished,
-                                        WithinTheComplex = rentalHouse.WithinTheComplex,
-                                        Dues = rentalHouse.Dues,
-                                        RentalCommercialListId = null,
-                                        RentalLandListingId = null,
-
-                                        // Arsa alanları boş
-                                        Area = null,
-                                        PricePerSquareMeter = null,
-                                        ParcelNumber = null,
-                                        PlotNumber = null,
-                                        MapSheetNumber = null,
-                                        FloorAreaRatio = null,
-                                        BaseAreaRatio = null,
-                                        ZoningPlan = null,
-                                        ZoningStatus = null,
-                                        DevelopmentRight = null,
-                                        BestDeals = rentalHouse.BestDeals,
-                                        LandCategoryId = null,
-
-                                        // // İşyeri alanlrı boş  
-                                        Facade = null,
-                                        NumberOfSection = null,
-                                        NumberOfKitchens = null,
-                                        NumberOfBathrooms = null,
-                                        LandCategory = null,
-
-
-
-
-                                        //relational
-
-                                        AgentId = rentalHouse.AgentId,
-                                        AgentImgUrl = agent.AgentImgUrl,
-                                        AgentName = agent.AgentName,
-                                        AgentDescription = agent.AgentDescription,
-                                        AgentPhoneNumber = agent.AgentPhoneNumber,
-                                        ListingTypeId = rentalHouse.ListingTypeId
-                                    };
-
-            var rentalCommercialList = from rentalCommercial in _context.rentalCommercialPropertyListings
-                                       join agent in _context.Agents on rentalCommercial.AgentId equals agent.AgentId
-                                       select new ForRentalPropertForListingViewModel
-                                       {
-                                           //BaseModel
-
-                                           PropertyNo = rentalCommercial.PropertyNo,
-                                           PropertyName = rentalCommercial.PropertyName,
-                                           PropertyStatus = rentalCommercial.PropertyStatus,
-                                           PropertyDescription = rentalCommercial.PropertyDescription,
-                                           CreatedDate = rentalCommercial.CreatedDate,
-                                           Rent = rentalCommercial.Rent,
-                                           BestDeals = rentalCommercial.BestDeals,
-                                           PropertyType = "İşyeri",
-                                           Deposit = rentalCommercial.Deposit,
-
-
-                                           //BaseModel Adress
-
-                                           City = rentalCommercial.City,
-                                           District = rentalCommercial.District,
-                                           Neighborhood = rentalCommercial.Neighborhood,
-                                           AddressDesc = rentalCommercial.AddressDesc,
-
-                                           //Relational
-
-                                           AgentId = rentalCommercial.AgentId,
-                                           AgentName = agent.AgentName,
-                                           AgentDescription = agent.AgentDescription,
-                                           AgentImgUrl = agent.AgentImgUrl,
-                                           AgentPhoneNumber = agent.AgentPhoneNumber,
-
-                                           ListingTypeId = rentalCommercial.ListingTypeId,
-                                           HousingCategoryId = null,
-
-
-                                           //ViewModelRental
-
-                                           BuildingAge = rentalCommercial.BuildingAge,
-                                           GrossArea = rentalCommercial.GrossArea,
-                                           NetArea = rentalCommercial.NetArea,
-                                           Heating = rentalCommercial.Heating,
-                                           NumberOfFloors = rentalCommercial.NumberOfFloors,
-                                           RentalCommercialListId = rentalCommercial.RentalCommercialListId,
-                                           RentalHousingListId = null,
-                                           RentalLandListingId = null,
-
-
-                                           IsElevator = null,
-                                           OpenArea = null,
-                                           TotalNumberOfFloor = null,
-                                           NumberOfBathRoom = null,
-                                           NumberOfBalconies = null,
-                                           NumberOfRoom = null,
-                                           ParkingLot = null,
-                                           Furnished = null,
-                                           WithinTheComplex = null,
-                                           Dues = null,
-                                           BlackBox = null,
-
-
-                                           Facade = rentalCommercial.Facade,
-                                           NumberOfSection = rentalCommercial.NumberOfSection,
-                                           NumberOfKitchens = rentalCommercial.NumberOfKitchens,
-                                           NumberOfBathrooms = rentalCommercial.NumberOfBathrooms,
-
-
-                                           ZoningStatus = null,
-                                           Area = null,
-                                           PricePerSquareMeter = null,
-                                           ParcelNumber = null,
-                                           PlotNumber = null,
-                                           MapSheetNumber = null,
-                                           FloorAreaRatio = null,
-                                           BaseAreaRatio = null,
-                                           ZoningPlan = null,
-                                           DevelopmentRight = null,
-                                           LandCategoryId = null,
-                                           LandCategory = null
-                                       };
-            var rentalLandList = from rentalLand in _context.rentalLandListings
-                                 join agent in _context.Agents on rentalLand.AgentId equals agent.AgentId
-                                 select new ForRentalPropertForListingViewModel
-                                 {
-                                     //baseModel
-                                     PropertyNo = rentalLand.PropertyNo,
-                                     PropertyName = rentalLand.PropertyName,
-                                     PropertyDescription = rentalLand.PropertyDescription,
-                                     PropertyStatus = rentalLand.PropertyStatus,
-                                     CreatedDate = rentalLand.CreatedDate,
-                                     Rent = rentalLand.Rent,
-                                     BestDeals = rentalLand.BestDeals,
-                                     PropertyType = "Arsa",
-
-                                     //baseModel Adress
-
-                                     City = rentalLand.City,
-                                     District = rentalLand.District,
-                                     Neighborhood = rentalLand.Neighborhood,
-                                     AddressDesc = rentalLand.AddressDesc,
-
-
-
-                                     //Relational
-
-                                     AgentId = rentalLand.AgentId,
-                                     AgentName = agent.AgentName,
-                                     AgentDescription = agent.AgentDescription,
-                                     AgentImgUrl = agent.AgentImgUrl,
-                                     AgentPhoneNumber = agent.AgentPhoneNumber,
-
-                                     ListingTypeId = rentalLand.ListingTypeId,
-
-
-                                     Deposit = null,
-
-                                     //ViewModel
-
-                                     BuildingAge = null,
-                                     GrossArea = null,
-                                     NetArea = null,
-                                     Heating = null,
-                                     NumberOfFloors = null,
-
-                                     RentalCommercialListId = null,
-                                     RentalHousingListId = null,
-                                     RentalLandListingId = rentalLand.RentalLandListingId,
-
-                                     HousingCategoryId = null,
-                                     IsElevator = null,
-                                     OpenArea = null,
-                                     TotalNumberOfFloor = null,
-                                     NumberOfBathRoom = null,
-                                     NumberOfRoom = null,
-                                     NumberOfBalconies = null,
-                                     BlackBox = null,
-                                     ParkingLot = null,
-                                     Furnished = null,
-                                     WithinTheComplex = null,
-                                     Dues = null,
-
-                                     Facade = null,
-                                     NumberOfSection = null,
-                                     NumberOfKitchens = null,
-                                     NumberOfBathrooms = null,
-                                     LandCategory = null,
-
-                                     ZoningStatus = rentalLand.ZoningStatus,
-                                     Area = rentalLand.Area,
-                                     PricePerSquareMeter = rentalLand.PricePerSquareMeter,
-                                     ParcelNumber = rentalLand.ParcelNumber,
-                                     PlotNumber = rentalLand.PlotNumber,
-                                     MapSheetNumber = rentalLand.MapSheetNumber,
-                                     FloorAreaRatio = rentalLand.FloorAreaRatio,
-                                     BaseAreaRatio = rentalLand.BaseAreaRatio,
-                                     ZoningPlan = rentalLand.ZoningPlan,
-                                     DevelopmentRight = rentalLand.DevelopmentRight,
-                                     LandCategoryId = rentalLand.LandCategoryId
-                                 };
-
-            var listing = rentalHousingList.Concat(rentalLandList).Concat(rentalCommercialList).OrderByDescending(x => x.CreatedDate).ToList();
+            var listing = RentalHousingRows().Concat(RentalLandRows()).Concat(RentalCommercialRows()).OrderByDescending(x => x.CreatedDate).ToList();
 
             FillPhotoSlots(listing, x =>
             {
@@ -982,174 +993,33 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
         public async Task<ForRentalPropertForListingViewModel?> GetUnifiedForRentalPropertyById(int id, int? listingTypeId = null)
         {
-            List<AmenityItemViewModel> amenities = new();
-
             bool checkHousing = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.RentalHousingListing;
-            var housingById = checkHousing
-                ? await _context.rentalHousingListings
-                    .Include(x => x.Agent)
-                    .Include(x => x.ListingType)
-                    .Include(x => x.HousingCategory)
-                    .FirstOrDefaultAsync(x => x.RentalHousingListId == id)
-                : null;
-
-            if (housingById != null)
+            var vm = checkHousing ? await RentalHousingRows().FirstOrDefaultAsync(x => x.ListingId == id) : null;
+            if (vm != null)
             {
-                amenities = await LoadAmenitiesAsync(_context.RentalHousingListingAmenities.Where(x => x.RentalHousingListId == id).Select(x => x.AmenityDefinition));
-                var vm = new ForRentalPropertForListingViewModel
-                {
-                    ListingId = housingById.RentalHousingListId,
-                    Deposit = housingById.Deposit,
-                    HousingCategoryId = housingById.HousingCategory.HousingCategoryId,
-                    HousingCategoryName = housingById.HousingCategory?.HousingCategoryName,
-                    AgentDescription = housingById.Agent.AgentDescription,
-                    ListingTypeName = housingById.ListingType.Name,
-                    PropertyNo = housingById.PropertyNo,
-                    PropertyName = housingById.PropertyName,
-                    PropertyDescription = housingById.PropertyDescription,
-                    PropertyStatus = housingById.PropertyStatus,
-                    CreatedDate = housingById.CreatedDate,
-                    City = housingById.City,
-                    District = housingById.District,
-                    Neighborhood = housingById.Neighborhood,
-                    AddressDesc = housingById.AddressDesc,
-                    Facade = housingById.Facade,
-                    IsElevator = housingById.IsElevator,
-                    GrossArea = housingById.GrossArea,
-                    NetArea = housingById.NetArea,
-                    OpenArea = housingById.OpenArea,
-                    BuildingAge = housingById.BuildingAge,
-                    TotalNumberOfFloor = housingById.TotalNumberOfFloor,
-                    NumberOfFloors = housingById.NumberOfFloors,
-                    NumberOfBathRoom = housingById.NumberOfBathRoom,
-                    NumberOfRoom = housingById.NumberOfRoom,
-                    Heating = housingById.Heating,
-                    BlackBox = housingById.BlackBox,
-                    NumberOfBalconies = housingById.NumberOfBalconies,
-                    ParkingLot = housingById.ParkingLot,
-                    Furnished = housingById.Furnished,
-                    WithinTheComplex = housingById.WithinTheComplex,
-                    Rent = housingById.Rent,
-                    Dues = housingById.Dues,
-                    AgentId = housingById.AgentId,
-                    AgentName = housingById.Agent.AgentName,
-                    AgentTitle = housingById.Agent.AgentTitle,
-                    AgentImgUrl = housingById.Agent.AgentImgUrl,
-                    BestDeals = housingById.BestDeals,
-                    ListingType = "Konut",
-                    PropertyType = "Kiralık",
-                    ListingTypeId = housingById.ListingTypeId,
-                    UsageTypeId = (int)housingById.ListingType.UsageType,
-                    Amenities = amenities,
-                    AgentPhoneNumber = housingById.Agent.AgentPhoneNumber,
-                    Mail = housingById.Agent.Mail
-                };
-
-                await FillPhotoSlotsAsync(new[] { vm }, x => (8, housingById.RentalHousingListId));
+                vm.Amenities = await LoadAmenitiesAsync(_context.RentalHousingListingAmenities.Where(x => x.RentalHousingListId == id).Select(x => x.AmenityDefinition));
+                await FillPhotoSlotsAsync(new[] { vm }, x => (8, id));
                 return vm;
             }
+
             bool checkLand = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.RentalLandListing;
-            var land = checkLand
-                ? await _context.rentalLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x => x.LandCategory).FirstOrDefaultAsync(x => x.RentalLandListingId == id)
-                : null;
-            if (land != null)
+            vm = checkLand ? await RentalLandRows().FirstOrDefaultAsync(x => x.ListingId == id) : null;
+            if (vm != null)
             {
-                amenities = await LoadAmenitiesAsync(_context.RentalLandListingAmenities.Where(x => x.RentalLandListingId == id).Select(x => x.AmenityDefinition));
-                var vm = new ForRentalPropertForListingViewModel
-                {
-                    ListingId = land.RentalLandListingId,
-                    PropertyNo = land.PropertyNo,
-                    PropertyName = land.PropertyName,
-                    PropertyDescription = land.PropertyDescription,
-                    PropertyStatus = land.PropertyStatus,
-                    CreatedDate = land.CreatedDate,
-                    City = land.City,
-                    District = land.District,
-                    Neighborhood = land.Neighborhood,
-                    AddressDesc = land.AddressDesc,
-                    ZoningStatus = land.ZoningStatus,
-                    Area = land.Area,
-                    PricePerSquareMeter = land.PricePerSquareMeter,
-                    ParcelNumber = land.ParcelNumber,
-                    PlotNumber = land.PlotNumber,
-                    MapSheetNumber = land.MapSheetNumber,
-                    FloorAreaRatio = land.FloorAreaRatio,
-                    BaseAreaRatio = land.BaseAreaRatio,
-                    ZoningPlan = land.ZoningPlan,
-                    DevelopmentRight = land.DevelopmentRight,
-                    LandCategoryId = land.LandCategory.LandCategoryId,
-                    LandCategoryName = land.LandCategory.LandCategoryName,
-                    ListingTypeName = land.ListingType.Name,
-                    AgentId = land.AgentId,
-                    AgentImgUrl = land.Agent.AgentImgUrl,
-                    AgentName = land.Agent.AgentName,
-                    AgentTitle = land.Agent.AgentTitle,
-                    AgentDescription = land.Agent.AgentDescription,
-                    BestDeals = land.BestDeals,
-                    TitleDeedStatus = land.TitleDeedStatus,
-                    ListingType = "Arsa",
-                    PropertyType = "Kiralık",
-                    ListingTypeId = land.ListingTypeId,
-                    UsageTypeId = (int)land.ListingType.UsageType,
-                    AgentPhoneNumber = land.Agent.AgentPhoneNumber,
-                    Mail = land.Agent.Mail,
-                    Rent = land.Rent,
-                    Amenities = amenities
-                };
-
-                await FillPhotoSlotsAsync(new[] { vm }, x => (7, land.RentalLandListingId));
+                vm.Amenities = await LoadAmenitiesAsync(_context.RentalLandListingAmenities.Where(x => x.RentalLandListingId == id).Select(x => x.AmenityDefinition));
+                await FillPhotoSlotsAsync(new[] { vm }, x => (7, id));
                 return vm;
             }
+
             bool checkCommercial = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.RentalCommercialPropertyListing;
-            var commercialById = checkCommercial
-                ? await _context.rentalCommercialPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.RentalCommercialListId == id)
-                : null;
-            if (commercialById != null)
+            vm = checkCommercial ? await RentalCommercialRows().FirstOrDefaultAsync(x => x.ListingId == id) : null;
+            if (vm != null)
             {
-                amenities = await LoadAmenitiesAsync(_context.RentalCommercialListingAmenities.Where(x => x.RentalCommercialListId == id).Select(x => x.AmenityDefinition));
-                var vm = new ForRentalPropertForListingViewModel
-                {
-                    ListingId = commercialById.RentalCommercialListId,
-                    PropertyNo = commercialById.PropertyNo,
-                    PropertyName = commercialById.PropertyName,
-                    PropertyDescription = commercialById.PropertyDescription,
-                    PropertyStatus = commercialById.PropertyStatus,
-                    CreatedDate = commercialById.CreatedDate,
-                    City = commercialById.City,
-                    District = commercialById.District,
-                    Neighborhood = commercialById.Neighborhood,
-                    AddressDesc = commercialById.AddressDesc,
-                    Facade = commercialById.Facade,
-                    NumberOfSection = commercialById.NumberOfSection,
-                    NumberOfKitchens = commercialById.NumberOfKitchens,
-                    NumberOfBathrooms = commercialById.NumberOfBathrooms,
-                    NumberOfFloors = commercialById.NumberOfFloors,
-                    GrossArea = commercialById.GrossArea,
-                    NetArea = commercialById.NetArea,
-                    BestDeals = commercialById.BestDeals,
-                    AgentId = commercialById.AgentId,
-                    AgentName = commercialById.Agent.AgentName,
-                    AgentImgUrl = commercialById.Agent.AgentImgUrl,
-                    AgentTitle = commercialById.Agent.AgentTitle,
-                    AgentDescription = commercialById.Agent.AgentDescription,
-                    BuildingAge = commercialById.BuildingAge,
-                    Heating = commercialById.Heating,
-                    TitleDeedStatus = commercialById.TitleDeedStatus,
-                    Rent = commercialById.Rent,
-                    ListingType = "İşyeri",
-                    PropertyType = "Kiralık",
-                    ListingTypeId = commercialById.ListingTypeId,
-                    UsageTypeId = (int)commercialById.ListingType.UsageType,
-                    ListingTypeName = commercialById.ListingType.Name,
-                    Amenities = amenities,
-                    Mail = commercialById.Agent.Mail,
-                    AgentPhoneNumber = commercialById.Agent.AgentPhoneNumber,
-                    Deposit = commercialById.Deposit
-                };
-
-                await FillPhotoSlotsAsync(new[] { vm }, x => (9, commercialById.RentalCommercialListId));
+                vm.Amenities = await LoadAmenitiesAsync(_context.RentalCommercialListingAmenities.Where(x => x.RentalCommercialListId == id).Select(x => x.AmenityDefinition));
+                await FillPhotoSlotsAsync(new[] { vm }, x => (9, id));
                 return vm;
             }
+
             return null;
         }
     }
