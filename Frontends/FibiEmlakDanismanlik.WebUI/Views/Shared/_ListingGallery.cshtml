@@ -1,0 +1,53 @@
+@model FibiEmlakDanismanlik.WebUI.Models.ListingGalleryVm
+
+@if (Model == null || Model.ImageUrls == null || !Model.ImageUrls.Any())
+{
+    return;
+}
+
+@{
+    var count = Model.ImageUrls.Count;
+}
+
+<div class="listing-gallery" data-gallery-title="@Model.Title">
+    <div class="carousel-inner">
+        <div class="single-item-carousel owl-carousel owl-theme owl-dots-none">
+            @for (int i = 0; i < count; i++)
+            {
+                var url = Model.ImageUrls[i];
+                <figure class="image-box">
+                    <a class="lightbox-image" href="@url" data-gallery-index="@i">
+                        @if (i == 0)
+                        {
+                            <img src="@url" alt="@Model.Title - fotoğraf @(i + 1)" fibi-responsive fibi-sizes="(max-width: 991px) 100vw, 770px">
+                        }
+                        else
+                        {
+                            <img src="@url" alt="@Model.Title - fotoğraf @(i + 1)" loading="lazy" fibi-responsive fibi-sizes="(max-width: 991px) 100vw, 770px">
+                        }
+                    </a>
+                </figure>
+            }
+        </div>
+        <span class="listing-gallery-count"><i class="fas fa-camera"></i> 1 / @count</span>
+        <button type="button" class="listing-gallery-fullscreen" aria-label="Tam ekran"><i class="fas fa-expand"></i></button>
+    </div>
+
+    @if (count > 1)
+    {
+        <ul class="listing-gallery-thumbs">
+            @for (int i = 0; i < count; i++)
+            {
+                var url = Model.ImageUrls[i];
+                <li>
+                    <button type="button" class="@(i == 0 ? "is-active" : "")" data-index="@i" aria-label="Fotoğraf @(i + 1)">
+                        <img src="@url" alt="@Model.Title - küçük resim @(i + 1)" loading="lazy" fibi-responsive fibi-sizes="96px">
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+
+    @* System.Text.Json varsayılan encoder'ı HTML özel karakterlerini (<, >, &) kaçırdığından Html.Raw kullanımı güvenlidir. *@
+    <script type="application/json" class="listing-gallery-data">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ImageUrls))</script>
+</div>

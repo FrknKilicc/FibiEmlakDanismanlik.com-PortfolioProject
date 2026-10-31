@@ -1,4 +1,5 @@
-﻿using FibiEmlakDanismanlik.Domain.Enums;
+﻿using FibiEmlakDanismanlik.Domain.Common;
+using FibiEmlakDanismanlik.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,7 +19,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 
         public string CustomerContactMessage { get; set; }
 
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = TurkeyClock.Now;
 
         
         public int? PropertyListingId { get; set; }
@@ -27,5 +28,25 @@ namespace FibiEmlakDanismanlik.Domain.Entities
 
         // Randevu tarihi
         public DateTime? AppointmentDateTime { get; set; }
+
+        /// <summary>
+        /// Talep takip durumu.
+        /// </summary>
+        public LeadStatus LeadStatus { get; set; } = LeadStatus.New;
+
+        /// <summary>
+        /// Talebe atanan danışman kimliği.
+        /// </summary>
+        public int? AssignedAgentId { get; set; }
+
+        /// <summary>
+        /// Talep durumunun son güncellenme tarihi (UTC).
+        /// </summary>
+        public DateTime? StatusUpdatedAtUtc { get; set; }
+
+        /// <summary>
+        /// KVKK aydınlatma metni onay zamanı (UTC). Bu alan eklenmeden önceki kayıtlarda boştur.
+        /// </summary>
+        public DateTime? KvkkApprovedAt { get; set; }
     }
 }

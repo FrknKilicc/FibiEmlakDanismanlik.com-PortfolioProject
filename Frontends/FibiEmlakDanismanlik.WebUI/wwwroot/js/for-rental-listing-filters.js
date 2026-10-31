@@ -16,6 +16,13 @@
         }
     }
 
+    function findIdByName(items, name) {
+        if (!name || !items || !items.length) return "";
+        const target = name.trim().toLocaleUpperCase("tr-TR");
+        const found = items.find(x => x && x.text && x.text.trim().toLocaleUpperCase("tr-TR") === target);
+        return found ? String(found.id) : "";
+    }
+
     function destroyNiceSelect(selectEl) {
         if (!window.jQuery) return;
         const $ = window.jQuery;
@@ -106,7 +113,10 @@
 
         root.addEventListener("click", e => {
             const item = e.target.closest(".filter-option");
-            if (item) item.classList.toggle("active");
+            if (item) {
+                item.classList.toggle("active");
+                loadAdvancedFilters(false);
+            }
         });
     }
 
@@ -132,6 +142,115 @@
         $room.trigger("change.select2");
     }
 
+    let advFiltersReqSeq = 0;
+
+    function resetAdvancedFilters() {
+        advFiltersReqSeq++;
+        setupAdvancedSelect("buildingAgeSelect", false, [], "");
+        setupAdvancedSelect("heatingSelect", false, [], "");
+        setupAdvancedSelect("titleDeedSelect", false, [], "");
+    }
+
+    function setupAdvancedSelect(selectId, isVisible, options, selectedVal) {
+        const selectEl = document.getElementById(selectId);
+        if (!selectEl) return;
+
+        const widget = selectEl.closest(".filter-widget") || selectEl;
+
+        if (!isVisible) {
+            widget.style.display = "none";
+            selectEl.value = "";
+            selectEl.innerHTML = '<option value="">Tümü</option>';
+            if (window.jQuery) {
+                forceDestroyNiceSelect(selectEl);
+                const $sel = window.jQuery(selectEl);
+                if ($sel.data("select2")) {
+                    $sel.val("").trigger("change.select2");
+                }
+            }
+            return;
+        }
+
+        widget.style.display = "";
+        selectEl.innerHTML = "";
+
+        const opt0 = document.createElement("option");
+        opt0.value = "";
+        opt0.textContent = "Tümü";
+        selectEl.appendChild(opt0);
+
+        (options || []).forEach(item => {
+            const val = item.id != null ? item.id : (item.value != null ? item.value : item);
+            const txt = item.text != null ? item.text : (item.name != null ? item.name : val);
+            const opt = document.createElement("option");
+            opt.value = String(val);
+            opt.textContent = String(txt);
+            selectEl.appendChild(opt);
+        });
+
+        const targetVal = selectedVal || selectEl.getAttribute("data-selected") || "";
+        if (targetVal) {
+            selectEl.value = targetVal;
+        }
+
+        if (window.jQuery) {
+            forceDestroyNiceSelect(selectEl);
+            const $sel = window.jQuery(selectEl);
+            if ($sel.data("select2")) $sel.select2("destroy");
+            $sel.select2({
+                width: "100%",
+                placeholder: "Tümü",
+                allowClear: true,
+                dropdownParent: $sel.closest(".filter-widget")
+            });
+            $sel.val(selectEl.value).trigger("change.select2");
+        }
+    }
+
+    async function loadAdvancedFilters(isInitial) {
+        const activeOptions = document.querySelectorAll("#listingTypeFilter .filter-option.active");
+        if (activeOptions.length !== 1) {
+            resetAdvancedFilters();
+            return;
+        }
+
+        const listingTypeId = activeOptions[0].getAttribute("data-id");
+        if (!listingTypeId) {
+            resetAdvancedFilters();
+            return;
+        }
+
+        let api = getApiUrl() || "";
+        if (!api) return;
+        if (!api.endsWith("/")) api += "/";
+
+        const seq = ++advFiltersReqSeq;
+        const ut = 2; // 2 for rental
+        const url = api + "listingtypes/advanced-filters?listingTypeId=" + encodeURIComponent(listingTypeId) + "&usageType=" + ut;
+
+        const data = await fetchOptions(url);
+        if (seq !== advFiltersReqSeq) return;
+        if (!data || typeof data !== "object" || Array.isArray(data)) {
+            resetAdvancedFilters();
+            return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const selBuildingAge = isInitial ? (urlParams.get("buildingAge") || "") : "";
+        const selHeating = isInitial ? (urlParams.get("heating") || "") : "";
+        const selTitleDeed = isInitial ? (urlParams.get("titleDeedStatus") || "") : "";
+
+        setupAdvancedSelect("buildingAgeSelect", !!data.showBuildingAge, data.buildingAgeOptions, selBuildingAge);
+        setupAdvancedSelect("heatingSelect", !!data.showHeating, data.heatingOptions, selHeating);
+        setupAdvancedSelect("titleDeedSelect", !!data.showTitleDeed, data.titleDeedOptions, selTitleDeed);
+
+        if (isInitial) {
+            document.getElementById("buildingAgeSelect")?.removeAttribute("data-selected");
+            document.getElementById("heatingSelect")?.removeAttribute("data-selected");
+            document.getElementById("titleDeedSelect")?.removeAttribute("data-selected");
+        }
+    }
+
     async function initLocationDropdowns() {
         const api = getApiUrl();
         if (!api) return;
@@ -146,9 +265,13 @@
         setSelectDisabled(dist, true);
         setSelectDisabled(neigh, true);
 
-        const cityId = city.getAttribute("data-selected-id");
-        const distId = dist.getAttribute("data-selected-id");
+        let cityId = city.getAttribute("data-selected-id");
+        let distId = dist.getAttribute("data-selected-id");
         const neighId = neigh.getAttribute("data-selected-id");
+
+        if (!cityId) {
+            cityId = findIdByName(cities, city.getAttribute("data-selected-name"));
+        }
 
         if (cityId) {
             city.value = cityId;
@@ -156,6 +279,10 @@
             const districts = await fetchOptions(api + "Location/districts?cityId=" + cityId);
             fillSelect(dist, districts, "İlçe seç");
             setSelectDisabled(dist, false);
+
+            if (!distId) {
+                distId = findIdByName(districts, dist.getAttribute("data-selected-name"));
+            }
 
             if (distId) {
                 dist.value = distId;
@@ -231,6 +358,7 @@
 
         btn.addEventListener("click", function () {
             const url = new URL(window.location.href);
+            url.pathname = "/kiralik";
 
             [
                 "listingTypeIds",
@@ -238,6 +366,7 @@
                 "cityId", "districtId", "neighborhoodId",
                 "city", "district", "neighborhood",
                 "minPrice", "maxPrice", "numberOfRoom",
+                "buildingAge", "heating", "titleDeedStatus",
                 "minArea", "maxArea", "numberOfBathRoom", "floor", "numberOfSection", "agentId", "zoningStatus", "searchTerm",
                 "page"
             ].forEach(p => url.searchParams.delete(p));
@@ -271,6 +400,14 @@
             if (max) url.searchParams.set("maxPrice", max);
             if (room) url.searchParams.set("numberOfRoom", room);
 
+            const buildingAge = document.getElementById("buildingAgeSelect")?.value;
+            const heating = document.getElementById("heatingSelect")?.value;
+            const titleDeed = document.getElementById("titleDeedSelect")?.value;
+
+            if (buildingAge) url.searchParams.set("buildingAge", buildingAge);
+            if (heating) url.searchParams.set("heating", heating);
+            if (titleDeed) url.searchParams.set("titleDeedStatus", titleDeed);
+
             url.searchParams.set("page", "1");
             window.location.href = url.toString();
         });
@@ -280,10 +417,10 @@
         initListingTypeClicks();
         initRoomSelect();
         initLocationDropdowns();
+        loadAdvancedFilters(true);
         initApplyButton();
 
         attachPriceFormatter(document.getElementById("minPrice"));
         attachPriceFormatter(document.getElementById("maxPrice"));
     });
-
 })();

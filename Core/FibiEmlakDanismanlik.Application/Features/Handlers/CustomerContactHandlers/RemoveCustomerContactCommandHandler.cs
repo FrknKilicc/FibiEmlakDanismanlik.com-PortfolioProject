@@ -22,6 +22,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.CustomerContactHand
         public async Task Handle(RemoveCustomerContactCommand request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.Id);
+            if (value == null)
+            {
+                throw new KeyNotFoundException("Müşteri talebi bulunamadı.");
+            }
             await _repository.RemoveAsync(value);
         }
     }

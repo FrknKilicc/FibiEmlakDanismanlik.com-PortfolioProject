@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Queries.MapQueries
 {
-    public class GetListingMarkerQuery:IRequest<ListingMarkerResult>
+    public class GetListingMarkerQuery:IRequest<ListingMarkerResult?>
     {
         public int ListingId { get; set; }
         public int ListingTypeId { get; set; }

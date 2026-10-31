@@ -1,0 +1,1319 @@
+/**
+ * Fibi Admin Tema Değişkenleri ve Koyu Tema Uyumluluk Stilleri
+ */
+
+:root {
+  --fibi-bg: #f5f7fb;
+  --fibi-surface: #ffffff;
+  --fibi-surface-2: #f8fafc;
+  --fibi-border: #e6e9f0;
+  --fibi-text: #1f2937;
+  --fibi-muted: #6b7280;
+  --fibi-heading: #012970;
+  --fibi-primary: #4154f1;
+  --fibi-primary-soft: rgba(65, 84, 241, 0.1);
+  --fibi-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+
+  --bs-body-bg: var(--fibi-bg);
+  --bs-body-color: var(--fibi-text);
+}
+
+[data-bs-theme="dark"] {
+  --fibi-bg: #0f1420;
+  --fibi-surface: #171d2b;
+  --fibi-surface-2: #1d2536;
+  --fibi-border: #2a3347;
+  --fibi-text: #e5e7eb;
+  --fibi-muted: #9aa4b2;
+  --fibi-heading: #e8edf7;
+  --fibi-primary: #7c8cff;
+  --fibi-primary-soft: rgba(124, 140, 255, 0.16);
+  --fibi-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+
+  --bs-body-bg: var(--fibi-bg);
+  --bs-body-color: var(--fibi-text);
+  --bs-border-color: var(--fibi-border);
+}
+
+/* ==============================================================
+   # NiceAdmin Sabit Renklerinin Ezilmesi
+   ============================================================== */
+
+body {
+  background-color: var(--fibi-bg);
+  color: var(--fibi-text);
+}
+
+a {
+  color: var(--fibi-primary);
+}
+
+a:hover {
+  color: var(--fibi-primary);
+  opacity: 0.85;
+}
+
+/* Header */
+.header {
+  background-color: var(--fibi-surface);
+  box-shadow: var(--fibi-shadow);
+  border-bottom: 1px solid var(--fibi-border);
+}
+
+.header .toggle-sidebar-btn {
+  color: var(--fibi-heading);
+}
+
+.logo span {
+  color: var(--fibi-heading);
+}
+
+.header-nav .nav-icon {
+  color: var(--fibi-heading);
+}
+
+.header-nav .nav-icon:hover {
+  color: var(--fibi-primary);
+}
+
+.header-nav .nav-profile {
+  color: var(--fibi-heading);
+}
+
+.header-nav .profile .dropdown-header h6 {
+  color: var(--fibi-heading);
+}
+
+/* Dropdown Menus */
+.dropdown-menu {
+  background-color: var(--fibi-surface);
+  color: var(--fibi-text);
+  border: 1px solid var(--fibi-border);
+  box-shadow: var(--fibi-shadow);
+}
+
+.dropdown-menu .dropdown-header {
+  color: var(--fibi-muted);
+}
+
+.dropdown-menu-arrow::before {
+  background: var(--fibi-surface);
+  border-top: 1px solid var(--fibi-border);
+  border-left: 1px solid var(--fibi-border);
+}
+
+.dropdown-menu .dropdown-item {
+  color: var(--fibi-text);
+}
+
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus {
+  background-color: var(--fibi-surface-2);
+  color: var(--fibi-primary);
+}
+
+.dropdown-menu .dropdown-item.active {
+  background-color: var(--fibi-primary-soft);
+  color: var(--fibi-primary);
+}
+
+.dropdown-menu .dropdown-divider {
+  border-top-color: var(--fibi-border);
+  color: var(--fibi-border);
+  opacity: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: var(--fibi-surface);
+  box-shadow: var(--fibi-shadow);
+  border-right: 1px solid var(--fibi-border);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: var(--fibi-border);
+  border-radius: 4px;
+}
+
+.sidebar-nav .nav-heading {
+  color: var(--fibi-muted);
+}
+
+.sidebar-nav .nav-link {
+  color: var(--fibi-primary);
+  background-color: var(--fibi-primary-soft);
+}
+
+.sidebar-nav .nav-link i {
+  color: var(--fibi-primary);
+}
+
+.sidebar-nav .nav-link.collapsed {
+  color: var(--fibi-heading);
+  background-color: var(--fibi-surface);
+}
+
+.sidebar-nav .nav-link.collapsed i {
+  color: var(--fibi-muted);
+}
+
+.sidebar-nav .nav-link:hover {
+  color: var(--fibi-primary);
+  background-color: var(--fibi-primary-soft);
+}
+
+.sidebar-nav .nav-link:hover i {
+  color: var(--fibi-primary);
+}
+
+.sidebar-nav .nav-content a {
+  color: var(--fibi-heading);
+}
+
+.sidebar-nav .nav-content a:hover,
+.sidebar-nav .nav-content a.active {
+  color: var(--fibi-primary);
+}
+
+/* Page Title & Breadcrumb */
+.pagetitle h1 {
+  color: var(--fibi-heading);
+}
+
+.breadcrumb {
+  color: var(--fibi-muted);
+}
+
+.breadcrumb a {
+  color: var(--fibi-muted);
+}
+
+.breadcrumb a:hover {
+  color: var(--fibi-primary);
+}
+
+.breadcrumb .breadcrumb-item::before {
+  color: var(--fibi-muted);
+}
+
+.breadcrumb .active {
+  color: var(--fibi-heading);
+}
+
+/* Card */
+.card {
+  background-color: var(--fibi-surface);
+  border: 1px solid var(--fibi-border);
+  box-shadow: var(--fibi-shadow);
+  color: var(--fibi-text);
+}
+
+.card-header,
+.card-footer {
+  background-color: var(--fibi-surface);
+  border-color: var(--fibi-border);
+  color: var(--fibi-muted);
+}
+
+.card-title {
+  color: var(--fibi-heading);
+}
+
+.card-title span {
+  color: var(--fibi-muted);
+}
+
+/* Footer */
+.footer {
+  background-color: var(--fibi-surface);
+  border-top: 1px solid var(--fibi-border);
+  color: var(--fibi-muted);
+}
+
+.footer .copyright,
+.footer .credits {
+  color: var(--fibi-muted);
+}
+
+.footer .credits a {
+  color: var(--fibi-primary);
+}
+
+/* Bordered Tabs */
+.nav-tabs-bordered {
+  border-bottom: 2px solid var(--fibi-border);
+}
+
+.nav-tabs-bordered .nav-link {
+  color: var(--fibi-muted);
+}
+
+.nav-tabs-bordered .nav-link:hover,
+.nav-tabs-bordered .nav-link:focus {
+  color: var(--fibi-primary);
+}
+
+.nav-tabs-bordered .nav-link.active {
+  background-color: var(--fibi-surface);
+  color: var(--fibi-primary);
+  border-bottom: 2px solid var(--fibi-primary);
+}
+
+/* Accordion */
+.accordion-item {
+  background-color: var(--fibi-surface);
+  border-color: var(--fibi-border);
+  color: var(--fibi-text);
+}
+
+.accordion-button {
+  background-color: var(--fibi-surface);
+  color: var(--fibi-heading);
+}
+
+.accordion-button:not(.collapsed) {
+  color: var(--fibi-primary);
+  background-color: var(--fibi-primary-soft);
+}
+
+/* Dashboard Info Cards */
+.dashboard .info-card h6 {
+  color: var(--fibi-heading);
+}
+
+/* Back to Top */
+.back-to-top {
+  background-color: var(--fibi-primary);
+  color: #fff;
+}
+
+.back-to-top:hover {
+  background-color: var(--fibi-primary);
+  opacity: 0.9;
+}
+
+/* ==============================================================
+   # Koyu Tema Uyumluluk Düzeltmeleri [data-bs-theme="dark"]
+   ============================================================== */
+
+[data-bs-theme="dark"] .bg-white,
+[data-bs-theme="dark"] .bg-light {
+  background-color: var(--fibi-surface-2) !important;
+}
+
+[data-bs-theme="dark"] .text-dark {
+  color: var(--fibi-text) !important;
+}
+
+[data-bs-theme="dark"] .text-muted {
+  color: var(--fibi-muted) !important;
+}
+
+[data-bs-theme="dark"] .border,
+[data-bs-theme="dark"] .border-bottom,
+[data-bs-theme="dark"] .border-top,
+[data-bs-theme="dark"] .border-start,
+[data-bs-theme="dark"] .border-end {
+  border-color: var(--fibi-border) !important;
+}
+
+/* Tablolar */
+[data-bs-theme="dark"] .table {
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.02);
+  --bs-table-border-color: var(--fibi-border);
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.04);
+  color: var(--fibi-text);
+  border-color: var(--fibi-border);
+}
+
+[data-bs-theme="dark"] .table thead th,
+[data-bs-theme="dark"] .table th {
+  background-color: var(--fibi-surface-2);
+  color: var(--fibi-heading);
+  border-color: var(--fibi-border);
+}
+
+[data-bs-theme="dark"] .table td {
+  border-color: var(--fibi-border);
+  color: var(--fibi-text);
+}
+
+/* Form Elemanları */
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select,
+[data-bs-theme="dark"] .input-group-text {
+  background-color: var(--fibi-surface-2);
+  border-color: var(--fibi-border);
+  color: var(--fibi-text);
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+  background-color: var(--fibi-surface-2);
+  border-color: var(--fibi-primary);
+  color: var(--fibi-text);
+  box-shadow: 0 0 0 0.25rem rgba(124, 140, 255, 0.25);
+}
+
+[data-bs-theme="dark"] .form-control::placeholder {
+  color: var(--fibi-muted);
+}
+
+/* Modallar */
+[data-bs-theme="dark"] .modal-content {
+  background-color: var(--fibi-surface);
+  border-color: var(--fibi-border);
+  color: var(--fibi-text);
+}
+
+[data-bs-theme="dark"] .modal-header,
+[data-bs-theme="dark"] .modal-footer {
+  border-color: var(--fibi-border);
+}
+
+/* Liste Grubu */
+[data-bs-theme="dark"] .list-group-item {
+  background-color: var(--fibi-surface);
+  border-color: var(--fibi-border);
+  color: var(--fibi-text);
+}
+
+/* Uyarılar (Alerts) */
+[data-bs-theme="dark"] .alert-info {
+  background-color: rgba(13, 202, 240, 0.15);
+  border-color: rgba(13, 202, 240, 0.3);
+  color: #6edff6;
+}
+
+[data-bs-theme="dark"] .alert-warning {
+  background-color: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.3);
+  color: #ffda6a;
+}
+
+[data-bs-theme="dark"] .alert-success {
+  background-color: rgba(25, 135, 84, 0.15);
+  border-color: rgba(25, 135, 84, 0.3);
+  color: #75b798;
+}
+
+[data-bs-theme="dark"] .alert-danger {
+  background-color: rgba(220, 53, 69, 0.15);
+  border-color: rgba(220, 53, 69, 0.3);
+  color: #ea868f;
+}
+
+[data-bs-theme="dark"] .alert-primary {
+  background-color: rgba(65, 84, 241, 0.15);
+  border-color: rgba(65, 84, 241, 0.3);
+  color: #9aa7ff;
+}
+
+[data-bs-theme="dark"] .alert-secondary {
+  background-color: rgba(108, 117, 125, 0.15);
+  border-color: rgba(108, 117, 125, 0.3);
+  color: #cbd5e1;
+}
+
+/* Rozetler (Badges) */
+[data-bs-theme="dark"] .badge.bg-light {
+  background-color: var(--fibi-surface-2) !important;
+  color: var(--fibi-text) !important;
+  border: 1px solid var(--fibi-border);
+}
+
+[data-bs-theme="dark"] .bg-primary-subtle {
+  background-color: rgba(124, 140, 255, 0.18) !important;
+  color: #a5b4fc !important;
+}
+
+[data-bs-theme="dark"] .bg-success-subtle {
+  background-color: rgba(46, 202, 106, 0.18) !important;
+  color: #6ee7b7 !important;
+}
+
+[data-bs-theme="dark"] .bg-warning-subtle {
+  background-color: rgba(255, 193, 7, 0.18) !important;
+  color: #fde047 !important;
+}
+
+[data-bs-theme="dark"] .bg-danger-subtle {
+  background-color: rgba(220, 53, 69, 0.18) !important;
+  color: #fca5a5 !important;
+}
+
+[data-bs-theme="dark"] .bg-info-subtle {
+  background-color: rgba(13, 202, 240, 0.18) !important;
+  color: #7dd3fc !important;
+}
+
+[data-bs-theme="dark"] .bg-secondary-subtle {
+  background-color: rgba(108, 117, 125, 0.18) !important;
+  color: #cbd5e1 !important;
+}
+
+[data-bs-theme="dark"] .border-primary-subtle {
+  border-color: rgba(124, 140, 255, 0.3) !important;
+}
+
+/* Dashboard Kart İkonları (Koyu temada yarı saydam) */
+[data-bs-theme="dark"] .dashboard .sales-card .card-icon {
+  background: rgba(65, 84, 241, 0.16) !important;
+  color: #7c8cff !important;
+}
+
+[data-bs-theme="dark"] .dashboard .revenue-card .card-icon {
+  background: rgba(46, 202, 106, 0.16) !important;
+  color: #2eca6a !important;
+}
+
+[data-bs-theme="dark"] .dashboard .customers-card .card-icon {
+  background: rgba(255, 119, 29, 0.16) !important;
+  color: #ff914d !important;
+}
+
+/* Önizleme Kutuları & Dropzone */
+[data-bs-theme="dark"] .bg-light img,
+[data-bs-theme="dark"] .photo-thumb-wrapper {
+  background-color: var(--fibi-surface-2) !important;
+}
+
+[data-bs-theme="dark"] .photo-dropzone {
+  border-color: var(--fibi-border) !important;
+  background-color: var(--fibi-surface-2) !important;
+  color: var(--fibi-muted) !important;
+}
+
+[data-bs-theme="dark"] .photo-dropzone:hover,
+[data-bs-theme="dark"] .photo-dropzone-active {
+  border-color: var(--fibi-primary) !important;
+  background-color: var(--fibi-primary-soft) !important;
+}
+
+[data-bs-theme="dark"] .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+[data-bs-theme="dark"] .accordion-button::after {
+  filter: invert(1);
+}
+
+[data-bs-theme="dark"] .pagination .page-link {
+  background-color: var(--fibi-surface);
+  border-color: var(--fibi-border);
+  color: var(--fibi-text);
+}
+
+[data-bs-theme="dark"] .pagination .page-item.active .page-link {
+  background-color: var(--fibi-primary);
+  border-color: var(--fibi-primary);
+  color: #fff;
+}
+
+[data-bs-theme="dark"] .pagination .page-item.disabled .page-link {
+  background-color: var(--fibi-surface-2);
+  border-color: var(--fibi-border);
+  color: var(--fibi-muted);
+}
+
+/* Tema Seçici Düğme ve Kontrol Stilleri */
+#themeToggle {
+  cursor: pointer;
+}
+
+#themeToggle:focus {
+  box-shadow: none;
+}
+
+.theme-check {
+  font-size: 1.1rem;
+}
+
+/* ==============================================================
+   # Yumuşak Geçiş (prefers-reduced-motion yoksa)
+   ============================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  body,
+  .card,
+  .sidebar,
+  .header {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+}
+
+
+/* ==============================================================
+   # İçerik Merkezi (Hub) ve Gezinme Çubuğu (Content Nav)
+   ============================================================== */
+
+/* Gezinme Çubuğu (Content Nav) */
+.content-nav-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.content-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  padding: 0.35rem 0.25rem 0.65rem 0.25rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.content-nav::-webkit-scrollbar {
+  height: 4px;
+}
+
+.content-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content-nav::-webkit-scrollbar-thumb {
+  background: var(--fibi-border);
+  border-radius: 4px;
+}
+
+.content-nav .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.85rem;
+  border-radius: 50rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  background-color: var(--fibi-surface);
+  color: var(--fibi-text);
+  border: 1px solid var(--fibi-border);
+  box-shadow: var(--fibi-shadow);
+  transition: all 0.15s ease-in-out;
+  flex-shrink: 0;
+}
+
+.content-nav .chip i {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.content-nav .chip:hover {
+  background-color: var(--fibi-surface-2);
+  border-color: var(--fibi-primary);
+  color: var(--fibi-primary);
+}
+
+.content-nav .chip.active {
+  background-color: var(--fibi-primary);
+  border-color: var(--fibi-primary);
+  color: #ffffff;
+}
+
+.content-nav .chip.content-nav-back {
+  background-color: transparent;
+  border-color: var(--fibi-border);
+  color: var(--fibi-muted);
+}
+
+.content-nav .chip.content-nav-back:hover {
+  background-color: var(--fibi-surface-2);
+  color: var(--fibi-primary);
+}
+
+.content-nav-divider {
+  width: 1px;
+  height: 22px;
+  background-color: var(--fibi-border);
+  flex-shrink: 0;
+  margin: 0 0.2rem;
+}
+
+/* İçerik Merkezi (Hub) */
+.content-hub-tile {
+  background-color: var(--fibi-surface);
+  border-color: var(--fibi-border) !important;
+  box-shadow: var(--fibi-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .content-hub-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.content-hub-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--fibi-primary-soft);
+  color: var(--fibi-primary);
+  flex-shrink: 0;
+}
+
+.content-hub-desc {
+  color: var(--fibi-muted) !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.35;
+  min-height: 2.7em;
+}
+
+.content-hub-tile .card-title {
+  color: var(--bs-body-color);
+}
+
+.content-hub-tile .border-top {
+  border-color: var(--fibi-border) !important;
+}
+
+.content-search-wrapper .input-group-text,
+.content-search-wrapper .form-control {
+  background-color: var(--fibi-surface);
+  border-color: var(--fibi-border);
+  color: var(--fibi-text);
+}
+
+.content-search-wrapper .form-control:focus {
+  background-color: var(--fibi-surface);
+  border-color: var(--fibi-primary);
+  color: var(--fibi-text);
+  box-shadow: 0 0 0 0.25rem var(--fibi-primary-soft);
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Tamamlanma Göstergesi (Completeness)
+   ============================================================== */
+.completeness {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.completeness svg {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  transform: rotate(-90deg);
+}
+
+.completeness circle:first-child,
+.completeness .completeness-bg {
+  stroke: var(--fibi-border);
+}
+
+.completeness .completeness-bar {
+  stroke: var(--fibi-primary);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.35s ease;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Bölüm Gezinme Çubuğu (Section Nav)
+   ============================================================== */
+.section-nav {
+  position: sticky;
+  top: 70px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.25rem;
+  background-color: var(--fibi-bg);
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.section-nav::-webkit-scrollbar {
+  height: 4px;
+}
+
+.section-nav::-webkit-scrollbar-thumb {
+  background: var(--fibi-border);
+  border-radius: 4px;
+}
+
+.section-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.85rem;
+  border-radius: 50rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  background-color: var(--fibi-surface);
+  color: var(--fibi-text);
+  border: 1px solid var(--fibi-border);
+  box-shadow: var(--fibi-shadow);
+  transition: all 0.15s ease-in-out;
+  flex-shrink: 0;
+}
+
+.section-chip:hover {
+  background-color: var(--fibi-surface-2);
+  border-color: var(--fibi-primary);
+  color: var(--fibi-primary);
+}
+
+.section-chip.active {
+  background-color: var(--fibi-primary-soft);
+  border-color: var(--fibi-primary);
+  color: var(--fibi-primary);
+  font-weight: 600;
+}
+
+.section-chip .section-state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-chip.done .section-state::before {
+  content: "\F26E";
+  font-family: "bootstrap-icons";
+  color: var(--bs-success, #198754);
+  font-size: 0.95rem;
+}
+
+[data-bs-theme="dark"] .section-chip.done .section-state::before {
+  color: #75b798;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Bölüm Kartı (Listing Section)
+   ============================================================== */
+.listing-section {
+  scroll-margin-top: 130px;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Bölüm Numarası Rozeti (Section Num)
+   ============================================================== */
+.section-num {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--fibi-primary-soft);
+  color: var(--fibi-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Tür Seçim Kartları (Listing Type Card)
+   ============================================================== */
+.listing-type-card {
+  background-color: var(--fibi-surface);
+  border: 1px solid var(--fibi-border);
+  border-radius: 0.75rem;
+  box-shadow: var(--fibi-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.listing-type-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--fibi-primary);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="dark"] .listing-type-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.listing-type-card:focus-within {
+  outline: 2px solid var(--fibi-primary);
+  outline-offset: 3px;
+  border-color: var(--fibi-primary);
+}
+
+.listing-type-card .type-icon-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--fibi-primary-soft);
+  color: var(--fibi-primary);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Önizleme Kartı (Listing Preview)
+   ============================================================== */
+.listing-preview {
+  background-color: var(--fibi-surface);
+  border: 1px solid var(--fibi-border);
+  border-radius: 0.75rem;
+}
+
+.listing-preview .preview-img,
+.listing-preview .preview-img-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.listing-preview .preview-img-placeholder {
+  background-color: var(--fibi-surface-2);
+  color: var(--fibi-muted);
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Değişiklik Göstergesi (Dirty Indicator)
+   ============================================================== */
+.dirty-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #d97706;
+}
+
+.dirty-indicator i {
+  font-size: 0.5rem;
+  color: #f59e0b;
+  line-height: 1;
+}
+
+[data-bs-theme="dark"] .dirty-indicator {
+  color: #fbbf24;
+}
+
+[data-bs-theme="dark"] .dirty-indicator i {
+  color: #f59e0b;
+}
+
+/* ==============================================================
+   # İlan Yönetimi - Wizard Adım Göstergesi (Wizard Steps)
+   ============================================================== */
+.wizard-steps {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0.25rem 0;
+  margin: 0 0 1rem 0;
+  gap: 0.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.wizard-steps::-webkit-scrollbar {
+  height: 4px;
+}
+
+.wizard-steps::-webkit-scrollbar-thumb {
+  background: var(--fibi-border);
+  border-radius: 4px;
+}
+
+.wizard-steps li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0.5rem;
+  background-color: var(--fibi-surface);
+  border: 1px solid var(--fibi-border);
+  color: var(--fibi-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.wizard-steps li .wizard-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--fibi-surface-2);
+  color: var(--fibi-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.wizard-steps li.active {
+  background-color: var(--fibi-primary-soft);
+  border-color: var(--fibi-primary);
+  color: var(--fibi-primary);
+  font-weight: 600;
+}
+
+.wizard-steps li.active .wizard-step-num {
+  background-color: var(--fibi-primary);
+  color: #ffffff;
+}
+
+.wizard-steps li.done {
+  background-color: var(--fibi-surface);
+  border-color: var(--bs-success, #198754);
+  color: var(--fibi-text);
+}
+
+.wizard-steps li.done .wizard-step-num {
+  background-color: var(--bs-success, #198754);
+  color: #ffffff;
+}
+
+.wizard-steps li.done .wizard-step-num span {
+  display: none;
+}
+
+.wizard-steps li.done .wizard-step-num::before {
+  content: "\F26E";
+  font-family: "bootstrap-icons";
+}
+
+[data-bs-theme="dark"] .wizard-steps li.done {
+  border-color: #75b798;
+}
+
+[data-bs-theme="dark"] .wizard-steps li.done .wizard-step-num {
+  background-color: #75b798;
+  color: #0f1420;
+}
+
+/* Karakter sayacı stili */
+.char-counter {
+  color: var(--fibi-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==============================================================
+   # Modern Geri Bildirim Katmanı (Toasts, Tooltips, Validation)
+   ============================================================== */
+
+/* Toast Konteyneri */
+.toast-stack-fixed {
+  z-index: 1090;
+  margin-top: 60px;
+}
+
+/* Zorunlu Alan Yıldızı */
+.req-star {
+  color: var(--bs-danger, #dc3545);
+  margin-left: 2px;
+  font-weight: 700;
+}
+
+[data-bs-theme="dark"] .req-star {
+  color: #ea868f;
+}
+
+/* Alan Açıklama İpucu (Tooltip Butonu) */
+.help-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0 4px;
+  margin-left: 4px;
+  color: var(--fibi-muted);
+  cursor: pointer;
+  line-height: 1;
+  vertical-align: middle;
+  border-radius: 4px;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.help-tip i {
+  font-size: 16px;
+}
+
+.help-tip:hover {
+  color: var(--fibi-primary);
+  transform: scale(1.1);
+}
+
+.help-tip:focus-visible {
+  outline: 2px solid var(--fibi-primary);
+  outline-offset: 2px;
+}
+
+/* Toast Stilleri */
+.fibi-toast {
+  background-color: var(--fibi-surface);
+  border: 1px solid var(--fibi-border);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), var(--fibi-shadow);
+  border-radius: 12px;
+  border-left: 5px solid var(--toast-accent, var(--fibi-primary));
+  position: relative;
+  overflow: hidden;
+  max-width: 380px;
+}
+
+[data-bs-theme="dark"] .fibi-toast {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), var(--fibi-shadow);
+}
+
+.fibi-toast-success {
+  --toast-accent: var(--bs-success, #198754);
+}
+.fibi-toast-error {
+  --toast-accent: var(--bs-danger, #dc3545);
+}
+.fibi-toast-warning {
+  --toast-accent: var(--bs-warning, #ffc107);
+}
+.fibi-toast-info {
+  --toast-accent: var(--bs-info, #0dcaf0);
+}
+
+[data-bs-theme="dark"] .fibi-toast-success {
+  --toast-accent: #75b798;
+}
+[data-bs-theme="dark"] .fibi-toast-error {
+  --toast-accent: #ea868f;
+}
+[data-bs-theme="dark"] .fibi-toast-warning {
+  --toast-accent: #ffda6a;
+}
+[data-bs-theme="dark"] .fibi-toast-info {
+  --toast-accent: #6edff6;
+}
+
+.fibi-toast-header {
+  background-color: transparent;
+  border-bottom: 1px solid var(--fibi-border);
+  color: var(--fibi-heading);
+  padding: 0.65rem 0.85rem;
+}
+
+.fibi-toast-icon {
+  font-size: 1.15rem;
+  color: var(--toast-accent);
+}
+
+.fibi-toast-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--fibi-heading);
+}
+
+.fibi-toast-body {
+  color: var(--fibi-text);
+  padding: 0.75rem 0.85rem;
+  font-size: 0.875rem;
+}
+
+.fibi-toast-list {
+  list-style: disc;
+}
+
+.fibi-toast-list li {
+  margin-top: 0.25rem;
+}
+
+.fibi-toast-item-btn {
+  color: var(--fibi-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-size: 0.85rem;
+}
+
+.fibi-toast-item-btn:hover {
+  opacity: 0.85;
+}
+
+/* Toast İlerleme Çizgisi */
+.fibi-toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background-color: var(--toast-accent);
+  animation: fibi-toast-progress linear forwards;
+}
+
+@keyframes fibi-toast-progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fibi-toast-progress {
+    display: none !important;
+    animation: none !important;
+  }
+}
+
+/* Geçersiz Alan Vurguları */
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid,
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--bs-danger, #dc3545) !important;
+  background-color: rgba(220, 53, 69, 0.04) !important;
+}
+
+.was-validated .form-control:invalid:focus,
+.was-validated .form-select:invalid:focus,
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+  border-color: var(--bs-danger, #dc3545) !important;
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+}
+
+[data-bs-theme="dark"] .was-validated .form-control:invalid,
+[data-bs-theme="dark"] .was-validated .form-select:invalid,
+[data-bs-theme="dark"] .form-control.is-invalid,
+[data-bs-theme="dark"] .form-select.is-invalid {
+  border-color: #ea868f !important;
+  background-color: rgba(220, 53, 69, 0.12) !important;
+}
+
+[data-bs-theme="dark"] .was-validated .form-control:invalid:focus,
+[data-bs-theme="dark"] .was-validated .form-select:invalid:focus,
+[data-bs-theme="dark"] .form-control.is-invalid:focus,
+[data-bs-theme="dark"] .form-select.is-invalid:focus {
+  border-color: #ea868f !important;
+  box-shadow: 0 0 0 0.25rem rgba(234, 134, 143, 0.25) !important;
+}
+
+/* Invalid alanın etiketinde kırmızı renk */
+.field-invalid-label {
+  color: var(--bs-danger, #dc3545) !important;
+}
+
+[data-bs-theme="dark"] .field-invalid-label {
+  color: #ea868f !important;
+}
+
+/* ==============================================================
+   # Form Alanları Görsel Düzeltmeleri ve Doğrulama
+   ============================================================== */
+
+/* Açık temada form alanları zemin rengi (etkin / devre dışı) */
+:root:not([data-bs-theme="dark"]) .form-control,
+:root:not([data-bs-theme="dark"]) .form-select {
+  background-color: var(--fibi-surface);
+}
+
+:root:not([data-bs-theme="dark"]) .form-control:disabled,
+:root:not([data-bs-theme="dark"]) .form-control[readonly],
+:root:not([data-bs-theme="dark"]) .form-select:disabled,
+:root:not([data-bs-theme="dark"]) .form-select[readonly] {
+  background-color: var(--fibi-surface-2);
+}
+
+/* Gönderim denemesinden sonra (.was-validated) yalnızca hatalı alanların işaretlenmesi */
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+  border-color: var(--bs-border-color);
+  background-image: none;
+  padding-right: .75rem;
+}
+
+.was-validated .form-select:valid {
+  padding-right: 2.25rem;
+  background-image: var(--bs-form-select-bg-img);
+}
+
+.was-validated .form-control:valid:focus,
+.was-validated .form-select:valid:focus {
+  border-color: var(--fibi-primary);
+  box-shadow: 0 0 0 .25rem var(--fibi-primary-soft);
+}
+
+.was-validated .form-check-input:valid {
+  border-color: var(--bs-border-color);
+  color: inherit;
+}
+
+.was-validated .form-check-input:valid:checked {
+  background-color: var(--fibi-primary);
+  border-color: var(--fibi-primary);
+}
+
+.was-validated .form-check-input:valid:focus {
+  border-color: var(--fibi-primary);
+  box-shadow: 0 0 0 .25rem var(--fibi-primary-soft);
+}
+
+.was-validated .form-check-input:valid ~ .form-check-label {
+  color: inherit;
+}
+
+/* ==============================================================
+   # Koyu Tema Logo Rozeti
+   ============================================================== */
+/* ==============================================================
+   # TinyMCE Zengin Metin Editörü Stilleri
+   ============================================================== */
+.tox-tinymce {
+  border-radius: var(--bs-border-radius);
+}
+
+[data-bs-theme="dark"] .tox-tinymce {
+  border-color: var(--bs-border-color) !important;
+  border-radius: var(--bs-border-radius) !important;
+}
+
+/* ==============================================================
+   # Tom Select Koyu Tema ve Doğrulama Uyumluluğu
+   ============================================================== */
+[data-bs-theme="dark"] .ts-control,
+[data-bs-theme="dark"] .ts-dropdown {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .ts-dropdown .option {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .ts-dropdown .active {
+  background-color: var(--bs-tertiary-bg);
+  color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .ts-control input {
+  color: var(--bs-body-color);
+}
+
+.ts-wrapper.is-invalid .ts-control {
+  border-color: var(--bs-form-invalid-border-color);
+}
+
+[data-bs-theme="dark"] .header .logo img,
+[data-bs-theme="dark"] .logo img {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 3px 6px;
+  box-shadow: 0 0 0 1px var(--fibi-border);
+  box-sizing: content-box;
+}
+
+

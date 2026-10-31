@@ -1,4 +1,4 @@
-﻿using FibiEmlakDanismanlik.Domain.Entities;
+using FibiEmlakDanismanlik.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -26,6 +26,9 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
         // Adres Bilgileri 
         public string? City { get; set; }
         public string? District { get; set; }
+        public int? CityId { get; set; }
+        public int? DistrictId { get; set; }
+        public int? NeighborhoodId { get; set; }
         public string? Neighborhood { get; set; }
         public string? AddressDesc { get; set; }
 
@@ -45,6 +48,7 @@ namespace FibiEmlakDanismanlik.Application.ViewModels
         public bool? Exchange { get; set; }
         public bool? BestDeals { get; set; }
         public int? LandCategoryId { get; set; }
+        public int? HousingCategoryId { get; set; }
         public List<CardHighlightViewModel> Highlights { get; set; } = new();
 
         // Konut Alanları

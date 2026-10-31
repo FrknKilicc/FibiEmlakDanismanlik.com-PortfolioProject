@@ -1,12 +1,16 @@
-﻿<section class="cta-section alternate-2 centred" style="background-image: url(/Realshed/assets/images/background/Section1.jpeg);">
+﻿@inject FibiEmlakDanismanlik.WebUI.Services.SiteTextService SiteTextService
+@{
+    var texts = await SiteTextService.GetAsync();
+}
+<section class="cta-section alternate-2 centred" style="background-image: url(/Realshed/assets/images/background/Section1.jpeg);">
     <div class="auto-container">
         <div class="inner-box clearfix">
             <div class="text">
-                <h2>Yeni bir mülk almak yada <br />? bir mülkü mü satmak istiyorsunuz</h2>
+                <h2>@texts["home.cta.title"]</h2>
             </div>
             <div class="btn-box">
-                <a href="/Realshed/property-details.html" class="theme-btn btn-three">Kirala</a>
-                <a href="@Url.Action("Index","allforsalepage")" class="theme-btn btn-one" )>Satın Al</a>
+                <a href="@Url.Action("Index","AllForRentalPage")" class="theme-btn btn-three">@texts["home.cta.rent"]</a>
+                <a href="@Url.Action("Index","AllForSalePage")" class="theme-btn btn-one">@texts["home.cta.buy"]</a>
             </div>
         </div>
     </div>

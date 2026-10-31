@@ -1,7 +1,9 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Queries.ForSaleCommercialPropertyListingQueries;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Queries.ForSaleCommercialPropertyListingQueries;
 using FibiEmlakDanismanlik.Application.Features.Queries.ForSalePropertyQueries;
 using FibiEmlakDanismanlik.Application.Features.Results.ForSalePropertyResults;
 using FibiEmlakDanismanlik.Application.Interfaces;
+using FibiEmlakDanismanlik.Application.Interfaces.ListingImageInterfaces;
 using FibiEmlakDanismanlik.Application.Interfaces.PropertyInterfaces;
 using FibiEmlakDanismanlik.Application.ViewModels;
 using FibiEmlakDanismanlik.Domain.DTOs;
@@ -10,24 +12,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHandlers
 {
-    public class GetForSalesPropertyByIdQueryByIdHandler : IRequestHandler<GetForSalesPropertyByIdQueries, GetAllForSalePropertiesForListingResult>
+    public class GetForSalesPropertyByIdQueryByIdHandler : IRequestHandler<GetForSalesPropertyByIdQueries, GetAllForSalePropertiesForListingResult?>
     {
         private readonly IPropertyRepository _repository;
+        private readonly IListingImageRepository _listingImageRepository;
 
-        public GetForSalesPropertyByIdQueryByIdHandler(IPropertyRepository repository)
+        public GetForSalesPropertyByIdQueryByIdHandler(
+            IPropertyRepository repository,
+            IListingImageRepository listingImageRepository)
         {
             _repository = repository;
+            _listingImageRepository = listingImageRepository;
         }
 
-        public async Task<GetAllForSalePropertiesForListingResult> Handle(
+        public async Task<GetAllForSalePropertiesForListingResult?> Handle(
             GetForSalesPropertyByIdQueries request,
             CancellationToken cancellationToken)
         {
-            var value = await _repository.GetUnifiedForSalePropertyById(request.Id);
+            var value = await _repository.GetUnifiedForSalePropertyById(request.Id, request.ListingTypeId);
+
+            // İlan bulunamadı, controller 404 döner
+            if (value == null) return null;
 
             var result = new GetAllForSalePropertiesForListingResult
             {
@@ -124,72 +134,25 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSalePropertyHand
                 PropImgUrl30 = value.PropImgUrl30,
             };
 
-            var selected = await _repository.GetSelectedImagesAsync(result.ListingId, "floorplan");
-
-            result.FloorPlanImageItems = selected
-      .OrderBy(x => x.SortOrder)
-      .Select(x => new GetAllForSalePropertiesForListingResult.SelectedImageDto
-      {
-          SortOrder = x.SortOrder,
-          Title = MapSlotToTitle(x.SlotKey),
-          Url = GetPropImgUrlByNo(result, x.ImageNo) ?? ""
-      })
-      .Where(x => !string.IsNullOrWhiteSpace(x.Url))
-      .Take(3)
-      .ToList();
+            if (result.ListingTypeId == 0)
+            {
+                result.FloorPlanImageItems = new List<GetAllForSalePropertiesForListingResult.SelectedImageDto>();
+            }
+            else
+            {
+                var plans = await _listingImageRepository.GetPlanImagesAsync(result.ListingTypeId, result.ListingId);
+                result.FloorPlanImageItems = plans
+                    .Select(x => new GetAllForSalePropertiesForListingResult.SelectedImageDto
+                    {
+                        SortOrder = x.SortOrder,
+                        Title = string.IsNullOrWhiteSpace(x.Caption) ? ListingImageConstants.KindLabel(x.Kind) : x.Caption!,
+                        Url = x.Url
+                    })
+                    .Take(10)
+                    .ToList();
+            }
 
             return result;
         }
-
-        private static string? GetPropImgUrlByNo(GetAllForSalePropertiesForListingResult v, int no) => no switch
-        {
-            1 => v.PropImgUrl1,
-            2 => v.PropImgUrl2,
-            3 => v.PropImgUrl3,
-            4 => v.PropImgUrl4,
-            5 => v.PropImgUrl5,
-            6 => v.PropImgUrl6,
-            7 => v.PropImgUrl7,
-            8 => v.PropImgUrl8,
-            9 => v.PropImgUrl9,
-            10 => v.PropImgUrl10,
-            11 => v.PropImgUrl11,
-            12 => v.PropImgUrl12,
-            13 => v.PropImgUrl13,
-            14 => v.PropImgUrl14,
-            15 => v.PropImgUrl15,
-            16 => v.PropImgUrl16,
-            17 => v.PropImgUrl17,
-            18 => v.PropImgUrl18,
-            19 => v.PropImgUrl19,
-            20 => v.PropImgUrl20,
-            21 => v.PropImgUrl21,
-            22 => v.PropImgUrl22,
-            23 => v.PropImgUrl23,
-            24 => v.PropImgUrl24,
-            25 => v.PropImgUrl25,
-            26 => v.PropImgUrl26,
-            27 => v.PropImgUrl27,
-            28 => v.PropImgUrl28,
-            29 => v.PropImgUrl29,
-            30 => v.PropImgUrl30,
-            _ => null
-        };
-
-        // floorplanimage tanım alanı (DB'de ki tr karşılıkları)
-
-        private static string MapSlotToTitle(string slotKey) => (slotKey ?? "").ToLower() switch
-        {
-            "kitchen" => "Mutfak",
-            "bathroom" => "Banyo",
-            "livingroom" => "Salon",
-            "exterior" => "Dış Cephe",
-            "street" => "Sokak",
-            "interior" => "İç Mekan",
-            "zoningplan" => "İmar Planı",
-            "parcelsketch" => "Kroki",
-            _ => "Görsel"
-        };
-
     }
 }

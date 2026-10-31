@@ -1,5 +1,4 @@
-﻿using FibiEmlakDanismanlik.Dto.BlogDtos;
-using Microsoft.AspNetCore.Http.HttpResults;
+using FibiEmlakDanismanlik.Dto.BlogDtos;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -16,18 +15,25 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.BlogViewComponents
             _configuration = configuration;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(string viewName = "Default")
         {
-            var client = _httpClientFactory.CreateClient();
-            var responseMessage = await client.GetAsync($"{_configuration["Url:ApiUrl"]}Blog/GetLast3BlogWithAuthor");
-            if (responseMessage.IsSuccessStatusCode)
+            try
             {
-                var jsonData = await responseMessage.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<List<ResultBlogWithAuthorDto>>(jsonData);
-                return View(result);
+                var client = _httpClientFactory.CreateClient();
+                var responseMessage = await client.GetAsync($"{_configuration["Url:ApiUrl"]}Blog/GetLast3BlogWithAuthor");
+                if (responseMessage.IsSuccessStatusCode)
+                {
+                    var jsonData = await responseMessage.Content.ReadAsStringAsync();
+                    var result = JsonConvert.DeserializeObject<List<ResultBlogWithAuthorDto>>(jsonData);
+                    return View(viewName, result ?? new List<ResultBlogWithAuthorDto>());
+                }
             }
-            return View(null);
+            catch (Exception)
+            {
+                // Bloglar yüklenemezse sayfa bozulmasın
+            }
 
+            return View(viewName, new List<ResultBlogWithAuthorDto>());
         }
     }
 }

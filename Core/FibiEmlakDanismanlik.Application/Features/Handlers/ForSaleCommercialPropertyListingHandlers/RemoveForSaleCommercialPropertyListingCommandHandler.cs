@@ -22,6 +22,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ForSaleCommercialPr
         public async Task Handle(RemoveForSaleCommercialPropertyListingCommand request, CancellationToken cancellationToken)
         {
           var value = await _repository.GetByIdAsync(request.Id);
+          if (value == null)
+          {
+              throw new KeyNotFoundException("İlan bulunamadı.");
+          }
           await _repository.RemoveAsync(value);
         }
     }

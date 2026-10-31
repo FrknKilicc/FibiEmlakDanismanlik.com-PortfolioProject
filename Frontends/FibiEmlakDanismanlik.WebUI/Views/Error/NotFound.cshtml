@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Sayfa Bulunamadı";
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+}
+
+<style>
+    .error-section .inner-box .error-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    @@media (max-width: 767px) {
+        .error-section .inner-box h1 {
+            font-size: 110px;
+            line-height: 110px;
+        }
+        .error-section .inner-box h2 {
+            font-size: 22px;
+            line-height: 32px;
+            margin-bottom: 30px;
+        }
+    }
+    @@media (max-width: 991px) {
+        .error-section { padding-top: 170px; }
+    }
+</style>
+
+<section class="error-section centred">
+    <div class="auto-container">
+        <div class="inner-box">
+            <h1>404</h1>
+            <h2>Aradığınız sayfa bulunamadı.<br />Sayfa kaldırılmış ya da adresi değişmiş olabilir.</h2>
+            <div class="error-actions">
+                <a href="@Url.Action("Index", "UILayout")" class="theme-btn btn-one">Anasayfaya Dön</a>
+                <a href="@Url.Action("Index", "AllForSalePage")" class="theme-btn btn-two">Satılık İlanlar</a>
+                <a href="@Url.Action("Index", "AllForRentalPage")" class="theme-btn btn-two">Kiralık İlanlar</a>
+            </div>
+        </div>
+    </div>
+</section>

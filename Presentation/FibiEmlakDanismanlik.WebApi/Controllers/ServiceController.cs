@@ -1,7 +1,9 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.ServiceCommands;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Commands.ServiceCommands;
 using FibiEmlakDanismanlik.Application.Features.Queries.ServiceQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
@@ -23,18 +25,21 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _mediator.Send(new GetServiceByIdQuery(id));
             return Ok(value);
         }
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateService(CreateServiceCommand command)
         {
             await _mediator.Send(command);
             return Ok("Hizmet Bilgisi Başarıyla Oluşturuldu");
         }
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateService(UpdateServiceCommand command)
         {
             await _mediator.Send(command);
             return Ok("Hizmet Bilgisi Başarıyla Güncellendi");
         }
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveService(int id)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FibiEmlakDanismanlik.Domain.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class Blog
+    public class Blog : ISoftDeletable
     {
         [Key]
         public int BlogId { get; set; }
@@ -15,6 +16,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string BlogDescription { get; set; }
         public string BlogImgUrl { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime? DeletedAtUtc { get; set; }
 
         public bool TopNews { get; set; }
         public int AuthorId { get; set; }

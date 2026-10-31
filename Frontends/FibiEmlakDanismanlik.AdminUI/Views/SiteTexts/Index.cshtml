@@ -1,0 +1,113 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.Content.SiteTextsViewModel
+@{
+    ViewData["Title"] = "Site Metinleri";
+    var groups = Model.Items.GroupBy(i => i.Group).ToList();
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1>Site Metinleri</h1>
+        <nav>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item"><a href="/icerik">İçerik</a></li>
+                <li class="breadcrumb-item active">Site Metinleri</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<partial name="_ContentNav" model="@("site-metinleri")" />
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Success"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<p class="text-muted small mb-4">
+    Sitedeki bölüm başlıkları, kart yazıları ve gösterilecek ilan sayıları. Kaydettiğinizde değişiklik sitede en geç 30 saniye içinde görünür.
+    Bir alanı varsayılana döndürmek için yanındaki <i class="bi bi-arrow-counterclockwise"></i> düğmesini kullanın.
+</p>
+
+@if (Model.Items.Any())
+{
+    <form action="/icerik/site-metinleri" method="post" novalidate>
+        @Html.AntiForgeryToken()
+
+        @foreach (var group in groups)
+        {
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-body pt-3">
+                    <h5 class="card-title p-0 pb-2 mb-3 border-bottom">@group.Key</h5>
+                    <div class="row g-3">
+                        @foreach (var item in group)
+                        {
+                            var id = "st_" + item.Key.Replace('.', '_');
+                            Model.FieldErrors.TryGetValue(item.Key, out var errors);
+                            var invalid = errors != null && errors.Length > 0 ? "is-invalid" : "";
+                            var isNumber = item.Kind == "number";
+                            var isMulti = item.Kind == "multiline";
+                            <div class="@(isNumber ? "col-md-4" : isMulti ? "col-12" : "col-md-6") col-12">
+                                <label for="@id" class="form-label fw-semibold">@item.Label</label>
+                                <input type="hidden" name="keys" value="@item.Key" />
+                                <div class="input-group">
+                                    @if (isMulti)
+                                    {
+                                        <textarea id="@id" name="vals" class="form-control @invalid" rows="2" maxlength="@item.MaxLength" data-counter="true" data-default="@item.Default">@item.Value</textarea>
+                                    }
+                                    else if (isNumber)
+                                    {
+                                        <input id="@id" name="vals" type="number" class="form-control @invalid" min="@item.Min" max="@item.Max" step="1" value="@item.Value" data-default="@item.Default" />
+                                    }
+                                    else
+                                    {
+                                        <input id="@id" name="vals" type="text" class="form-control @invalid" maxlength="@item.MaxLength" value="@item.Value" data-default="@item.Default" />
+                                    }
+                                    <button type="button" class="btn btn-outline-secondary" data-reset-default="@id" title="Varsayılana döndür" aria-label="@item.Label: varsayılana döndür">
+                                        <i class="bi bi-arrow-counterclockwise"></i>
+                                    </button>
+                                </div>
+                                @if (errors != null && errors.Length > 0)
+                                {
+                                    <div class="invalid-feedback d-block">@string.Join(" ", errors)</div>
+                                }
+                                <div class="form-text">
+                                    @if (!string.IsNullOrWhiteSpace(item.Help))
+                                    {
+                                        @item.Help<br />
+                                    }
+                                    @if (isNumber)
+                                    {
+                                        <span>@item.Min – @item.Max arası. </span>
+                                    }
+                                    <span>Varsayılan: @(string.IsNullOrEmpty(item.Default) ? "(boş)" : item.Default)</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="d-flex justify-content-end mb-4">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-check2 me-1"></i>Kaydet</button>
+        </div>
+    </form>
+}
+
+@section Scripts {
+    <script src="~/js/site-texts.js" asp-append-version="true"></script>
+}

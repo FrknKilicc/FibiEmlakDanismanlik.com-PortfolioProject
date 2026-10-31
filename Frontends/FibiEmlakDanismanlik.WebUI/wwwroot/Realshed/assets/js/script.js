@@ -193,7 +193,9 @@
 			margin:30,
 			nav:true,
 			smartSpeed: 1000,
-			autoplay: 500,
+			autoplay: false,
+			fibiDeferredAutoplay: true,
+			autoplayTimeout: 5000,
 			navText: [ '<span class="fas fa-algle-left"></span>', '<span class="fas fa-algle-left-right"></span>' ],
 			responsive:{
 				0:{
@@ -222,7 +224,9 @@
 			margin:30,
 			nav:true,
 			smartSpeed: 1000,
-			autoplay: 500,
+			autoplay: false,
+			fibiDeferredAutoplay: true,
+			autoplayTimeout: 5000,
 			navText: [ '<span class="far fa-angle-left"></span>', '<span class="far fa-angle-right"></span>' ],
 			responsive:{
 				0:{
@@ -243,6 +247,25 @@
 			}
 		});    		
 	}
+	// Ana sayfa "Son eklenenler" (4'lü, eşit yükseklikli kartlar)
+	if ($('.latest-listings-carousel').length) {
+		$('.latest-listings-carousel').owlCarousel({
+			loop: $('.latest-listings-carousel').children().length > 4,
+			margin:30,
+			nav:true,
+			smartSpeed: 800,
+			autoplay: false,
+			fibiDeferredAutoplay: true,
+			autoplayTimeout: 5000,
+			navText: [ '<span class="far fa-angle-left"></span>', '<span class="far fa-angle-right"></span>' ],
+			responsive:{
+				0:{ items:1 },
+				768:{ items:2 },
+				992:{ items:3 },
+				1200:{ items:4 }
+			}
+		});
+	}
 	// Five Item Carousel
 	if ($('.five-item-carousel').length) {
 		$('.five-item-carousel').owlCarousel({
@@ -250,7 +273,9 @@
 			margin:30,
 			nav:true,
 			smartSpeed: 500,
-			autoplay: 5000,
+			autoplay: false,
+			fibiDeferredAutoplay: true,
+			autoplayTimeout: 5000,
 			navText: [ '<span class="fas fa-angle-left"></span>', '<span class="fas fa-angle-right"></span>' ],
 			responsive:{
 				0:{
@@ -278,7 +303,9 @@
 			margin:30,
 			nav:true,
 			smartSpeed: 500,
-			autoplay: 5000,
+			autoplay: false,
+			fibiDeferredAutoplay: true,
+			autoplayTimeout: 5000,
 			navText: [ '<span class="fas fa-angle-left"></span>', '<span class="fas fa-angle-right"></span>' ],
 			responsive:{
 				0:{
@@ -354,7 +381,9 @@
 			margin:50,
 			nav:true,
 			smartSpeed: 500,
-			autoplay: 5000,
+			autoplay: false,
+			fibiDeferredAutoplay: true,
+			autoplayTimeout: 5000,
 			navText: [ '<span class="far fa-angle-left"></span>', '<span class="far fa-angle-right"></span>' ],
 			responsive:{
 				0:{
@@ -385,7 +414,9 @@
     		animateIn: 'fadeIn',
     		active: true,
 			smartSpeed: 1000,
-			autoplay: 6000,
+			autoplay: false,
+			fibiDeferredAutoplay: true,
+			autoplayTimeout: 6000,
             navText: [ '<span class="far fa-angle-left"></span>', '<span class="far fa-angle-right"></span>' ],
             responsive:{
                 0:{
@@ -632,9 +663,21 @@
    When document is loaded, do
    ========================================================================== */
 	
+	// Autoplay sayfa (ve görseller) yüklenince başlar; DOM hazır olduğunda başlarsa
+	// görsel geç gelen ilk slayt ekranda bir an görünüp hemen geçiyordu.
+	function startDeferredAutoplay() {
+		$('.owl-carousel').each(function () {
+			var owl = $(this).data('owl.carousel');
+			if (!owl || !owl.options.fibiDeferredAutoplay || owl.options.autoplay) return;
+			owl.options.autoplay = true;
+			$(this).trigger('refresh.owl.carousel');
+		});
+	}
+
 	$(window).on('load', function() {
 		handlePreloader();
 		enableMasonry();
+		startDeferredAutoplay();
 	});
 
 })(window.jQuery);

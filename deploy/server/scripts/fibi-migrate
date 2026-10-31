@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Fibi Emlak: önce veritabanı yedeği alır, sonra EF Core idempotent migration betiğini uygular.
+# Kullanım: sudo fibi-migrate <migrations.sql>
+# Betik idempotent: yalnızca __EFMigrationsHistory'de olmayan migration'lar uygulanır, tekrar çalıştırmak zararsızdır.
+# Migration başarısız olursa betik durur; uygulamalara dokunulmaz. Geri dönüş için alınan yedek yolu ekrana yazılır.
+set -euo pipefail
+
+SCRIPT="${1:-}"
+[[ -f "$SCRIPT" ]] || { echo "Migration betiği bulunamadı: $SCRIPT" >&2; exit 2; }
+
+# shellcheck disable=SC1091
+source /etc/fibi/migrator.env
+SQLCMD=/opt/mssql-tools18/bin/sqlcmd
+BACKUP_DIR=/var/backups/fibi/db
+KEEP_PRE_MIGRATE=10
+
+export SQLCMDPASSWORD="$MIGRATOR_PASSWORD"
+sql() { "$SQLCMD" -S 127.0.0.1 -U "$MIGRATOR_USER" -C -I -b "$@"; }
+
+stamp="$(date '+%Y%m%d-%H%M%S')"
+backup_file="$BACKUP_DIR/pre-migrate-$stamp.bak"
+
+echo "Yedek alınıyor: $backup_file"
+sql -Q "BACKUP DATABASE [$DB_NAME] TO DISK = N'$backup_file' WITH COPY_ONLY, COMPRESSION, CHECKSUM, INIT;" \
+    || sql -Q "BACKUP DATABASE [$DB_NAME] TO DISK = N'$backup_file' WITH COPY_ONLY, CHECKSUM, INIT;"
+sql -Q "RESTORE VERIFYONLY FROM DISK = N'$backup_file' WITH CHECKSUM;" >/dev/null
+echo "Yedek doğrulandı."
+
+echo "Migration uygulanıyor..."
+if ! sql -d "$DB_NAME" -I -i "$SCRIPT"; then
+    echo "MIGRATION BAŞARISIZ. Uygulamalara dokunulmadı. Gerekirse geri yükleme yedeği: $backup_file" >&2
+    exit 1
+fi
+echo "Migration tamam."
+
+# Eski deploy öncesi yedeklerden yalnızca son $KEEP_PRE_MIGRATE tanesi tutulur
+ls -1t "$BACKUP_DIR"/pre-migrate-*.bak 2>/dev/null | tail -n +$((KEEP_PRE_MIGRATE + 1)) | xargs -r rm -f

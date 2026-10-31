@@ -1,0 +1,167 @@
+@model FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm
+@{
+    Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
+    var isHousing = FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm.IsHousing(Model.ListingTypeId);
+}
+
+<!-- Başlık Bandı -->
+<section class="page-title centred" style="background-image: url(/images/page-title/page-title-bg.jpg);">
+    <div class="auto-container">
+        <div class="content-box clearfix">
+            <h1>Benzer İlan Çıkınca Haber Ver</h1>
+            <ul class="bread-crumb clearfix">
+                <li><a href="@Url.Action("Index","UILayout")">Anasayfa</a></li>
+                <li>Haber Ver</li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- Başlık Bandı Sonu -->
+
+<!-- İçerik Alanı -->
+<section class="sidebar-page-container blog-details sec-pad-2">
+    <div class="auto-container">
+        <div class="row clearfix justify-content-center">
+            <div class="col-lg-8 col-md-12 col-sm-12 content-side">
+                <div class="listing-alert-container">
+                    <p class="listing-alert-desc">
+                        Aramanıza uygun yeni bir satılık veya kiralık gayrimenkul portföyümüze eklendiğinde ilk sizin haberiniz olsun. Aşağıdaki kriterleri doldurarak bildirim talebinizi oluşturabilirsiniz.
+                    </p>
+
+                    <form id="listingAlertForm" method="post" action="/haber-ver" data-api-url="@ViewBag.ApiUrl" class="default-form" asp-antiforgery="true">
+                        <div class="row clearfix">
+                            <!-- İlan Türü -->
+                            <div class="col-lg-6 col-md-6 col-sm-12 column">
+                                <div class="form-group">
+                                    <label for="alertListingType">İlan Türü</label>
+                                    <select name="ListingTypeId" id="alertListingType" class="form-control" required>
+                                        @foreach (var opt in FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm.ListingTypeOptions)
+                                        {
+                                            <!option value="@opt.Key" @(Model.ListingTypeId == opt.Key ? "selected" : "")>@opt.Value</!option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- İl -->
+                            <div class="col-lg-6 col-md-6 col-sm-12 column">
+                                <div class="form-group">
+                                    <label for="alertCity">İl</label>
+                                    <select name="CityId" id="alertCity" class="form-control" data-selected-id="@(Model.CityId?.ToString() ?? "")" required>
+                                        <option value="">İl Seçiniz</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- İlçe -->
+                            <div class="col-lg-6 col-md-6 col-sm-12 column">
+                                <div class="form-group">
+                                    <label for="alertDistrict">İlçe</label>
+                                    <select name="DistrictId" id="alertDistrict" class="form-control" data-selected-id="@(Model.DistrictId?.ToString() ?? "")">
+                                        <option value="">Tüm ilçeler</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Fiyat Bandı -->
+                            <div class="col-lg-3 col-md-3 col-sm-6 column">
+                                <div class="form-group">
+                                    <label for="alertMinPrice">Min Fiyat (TL)</label>
+                                    <input type="number" name="MinPrice" id="alertMinPrice" class="form-control" placeholder="Min TL" min="0" step="1000" value="@(Model.MinPrice.HasValue ? Model.MinPrice.Value.ToString("0") : "")">
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-6 column">
+                                <div class="form-group">
+                                    <label for="alertMaxPrice">Max Fiyat (TL)</label>
+                                    <input type="number" name="MaxPrice" id="alertMaxPrice" class="form-control" placeholder="Max TL" min="0" step="1000" value="@(Model.MaxPrice.HasValue ? Model.MaxPrice.Value.ToString("0") : "")">
+                                </div>
+                            </div>
+
+                            <!-- Oda Seçenekleri (yalnızca konut türünde görünür) -->
+                            <div class="col-lg-12 col-md-12 col-sm-12 column" id="alertRooms" style="@(isHousing ? "" : "display: none;")">
+                                <div class="alert-rooms-box">
+                                    <label class="title">Oda Sayısı</label>
+                                    <div class="alert-rooms-grid">
+                                        @foreach (var room in FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm.RoomOptions)
+                                        {
+                                            var isChecked = Model.RoomCounts != null && Model.RoomCounts.Contains(room);
+                                            <label class="alert-room-item">
+                                                <input type="checkbox" name="RoomCounts" value="@room" @(isChecked ? "checked" : "")>
+                                                <span>@room</span>
+                                            </label>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ad Soyad -->
+                            <div class="col-lg-6 col-md-6 col-sm-12 column">
+                                <div class="form-group">
+                                    <label for="alertFullName">Ad Soyad</label>
+                                    <input type="text" name="FullName" id="alertFullName" class="form-control" placeholder="Adınız Soyadınız" value="@Model.FullName" required>
+                                </div>
+                            </div>
+
+                            <!-- Telefon -->
+                            <div class="col-lg-6 col-md-6 col-sm-12 column">
+                                <div class="form-group">
+                                    <label for="alertPhone">Telefon</label>
+                                    <input type="tel" name="PhoneNumber" id="alertPhone" class="form-control" placeholder="Telefon Numaranız (5xx xxx xx xx)" value="@Model.PhoneNumber" required inputmode="numeric">
+                                </div>
+                            </div>
+
+                            <!-- E-posta (isteğe bağlı) -->
+                            <div class="col-lg-12 col-md-12 col-sm-12 column">
+                                <div class="form-group">
+                                    <label for="alertEmail">E-posta (isteğe bağlı)</label>
+                                    <input type="email" name="Email" id="alertEmail" class="form-control" placeholder="E-posta Adresiniz" value="@Model.Email">
+                                </div>
+                            </div>
+
+                            <!-- Not (isteğe bağlı, maxlength 1000) -->
+                            <div class="col-lg-12 col-md-12 col-sm-12 column">
+                                <div class="form-group">
+                                    <label for="alertNote">Not (isteğe bağlı)</label>
+                                    <textarea name="Note" id="alertNote" class="form-control" maxlength="1000" rows="3" placeholder="Aradığınız özel kriterler varsa belirtebilirsiniz...">@Model.Note</textarea>
+                                </div>
+                            </div>
+
+                            <!-- KVKK Onayı -->
+                            <div class="col-lg-12 col-md-12 col-sm-12 column">
+                                <div class="form-group kvkk-row">
+                                    <label class="kvkk-label">
+                                        <input type="checkbox" name="KvkkApproved" value="true" required @(Model.KvkkApproved ? "checked" : "")>
+                                        <span>
+                                            <a href="/gizlilik-politikasi" target="_blank">Gizlilik Politikası</a> ve <a href="/kvkk-aydinlatma-metni" target="_blank">KVKK Aydınlatma Metni</a>'ni okudum, iletişim bilgilerimin bu talep için işlenmesini onaylıyorum.
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Spam & Bot Koruması -->
+                            <div class="col-lg-12 col-md-12 col-sm-12 column">
+                                <partial name="_FormSpamFields" />
+                            </div>
+
+                            <!-- Gönder Butonu -->
+                            <div class="col-lg-12 col-md-12 col-sm-12 column">
+                                <div class="form-group message-btn mt-2">
+                                    <button type="submit" class="theme-btn btn-one">Haber Ver</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- İçerik Alanı Sonu -->
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/listing-alert.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/listing-alert-form.js" asp-append-version="true"></script>
+}

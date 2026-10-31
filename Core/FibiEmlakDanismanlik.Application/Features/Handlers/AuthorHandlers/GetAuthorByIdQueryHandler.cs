@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthorHandlers
@@ -23,6 +24,11 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AuthorHandlers
         public async Task<GetAuthorByIdResult> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.Id);
+            if (value == null)
+            {
+                return null!;
+            }
+
             return new GetAuthorByIdResult
             {
                 AuthorId = value.AuthorId,

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.MapHandlers
 {
-    public class GetListingMarkerQueryHandler : IRequestHandler<GetListingMarkerQuery, ListingMarkerResult>
+    public class GetListingMarkerQueryHandler : IRequestHandler<GetListingMarkerQuery, ListingMarkerResult?>
     {
         private readonly IMapRepository mapRepository;
 

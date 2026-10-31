@@ -1,16 +1,24 @@
 ﻿@model FibiEmlakDanismanlik.Dto.PropertyDtos.ResultAllForRentalListingForPageDto
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Kiralık İlan Detayı";
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
 
-@await Component.InvokeAsync("_AllForRentalDetailPageViewComponentPartial", new { id = Model.ListingId })
+@await Component.InvokeAsync("_AllForRentalDetailPageViewComponentPartial", new { value = Model })
 
 @section Styles {
 
     <link rel="stylesheet" href="/Realshed/assets/css/timePicker.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" asp-append-version="true" />
     <link rel="stylesheet" href="/css/leaflet-markers.css" />
+    <link rel="stylesheet" href="~/css/listing-specs.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/listing-detail-extras.css" asp-append-version="true" />
+    <style>
+        .property-details .map-approx-note { margin: 10px 0 0; font-size: 13px; color: #93959e; }
+        .property-details .map-approx-note i { color: #2dbe6c; margin-right: 4px; }
+        .property-details .price-box .price-period { font-size: 15px; font-weight: 500; color: #93959e; }
+        .property-details .author-widget .agent-title { margin: -4px 0 10px; font-size: 13px; color: #93959e; letter-spacing: .3px; }
+    </style>
 }
 
 
@@ -51,7 +59,12 @@
             }
         });
     </script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="~/lib/leaflet/leaflet.js" asp-append-version="true"></script>
     <script src="/js/listing-detail-map.js"></script>
-
+    <script src="~/js/listing-gallery.js" asp-append-version="true"></script>
+    <script>
+        if (document.querySelector('.listing-mobile-contact-bar')) {
+            document.body.classList.add('has-mobile-contact-bar');
+        }
+    </script>
 }

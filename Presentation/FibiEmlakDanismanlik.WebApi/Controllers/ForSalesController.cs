@@ -32,9 +32,10 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             return Ok(value);
         }
         [HttpGet("GetUnifiedForSalesPropertyById/{id}")]
-        public async Task<IActionResult> GetUnifiedForSalesPropertyById(int id)
+        public async Task<IActionResult> GetUnifiedForSalesPropertyById(int id, [FromQuery] int? listingTypeId)
         {
-            var value = await _meditor.Send(new GetForSalesPropertyByIdQueries(id));
+            var value = await _meditor.Send(new GetForSalesPropertyByIdQueries(id, listingTypeId));
+            if (value == null) return NotFound();
             return Ok(value);
         }
         [HttpGet("GetForSaleListingTypeFacets")]

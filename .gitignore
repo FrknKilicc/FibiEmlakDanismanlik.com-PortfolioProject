@@ -361,3 +361,27 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+# Data Protection anahtarlari ve yerel uygulama verisi (repoya girmez)
+**/App_Data/
+
+# Panelden yuklenen ilan fotograflari (sunucuda tutulur, repoya girmez)
+Presentation/FibiEmlakDanismanlik.WebApi/uploads/
+
+# Serilog dosya logları
+logs/
+
+# Üretilen canlı migration betiği
+tools/sql/deploy/migrations-idempotent.sql
+
+# Claude Code yerel ayarlari (.claude/skills repoda kalir)
+.claude/launch.json
+.claude/settings.local.json
+
+# Canlı ortam gizli bilgileri: sunucuda /etc/fibi/*.env'de tutulur, repoya asla girmez
+appsettings.Production.json
+secrets.json
+*.env
+!deploy/server/env/*.env.example
+*.bak

@@ -1,4 +1,4 @@
-﻿@model FibiEmlakDanismanlik.WebUI.Models.ForRentalListingPageVm
+@model FibiEmlakDanismanlik.WebUI.Models.ForRentalListingPageVm
 
 @functions {
     string UsageBadgeText(int usageTypeId) => usageTypeId switch
@@ -9,14 +9,51 @@
         _ => "İlan"
     };
 }
+@{
+    var heading = ViewBag.Heading as string;
+    string initialCategory = "";
+    if (Model.SelectedListingTypeIds != null && Model.SelectedListingTypeIds.Count == 1)
+    {
+        initialCategory = Model.SelectedListingTypeIds[0] switch
+        {
+            7 => "land",
+            8 => "housing",
+            9 => "commercial",
+            _ => ""
+        };
+    }
+    var initialCity = !string.IsNullOrWhiteSpace(Model.City)
+        ? Model.City
+        : Context.Request.Query["city"].ToString();
+    var initialDistrict = !string.IsNullOrWhiteSpace(Model.District)
+        ? Model.District
+        : Context.Request.Query["district"].ToString();
+    var initialMinPrice = Model.MinPrice.HasValue
+        ? Model.MinPrice.Value.ToString("0")
+        : Context.Request.Query["minPrice"].ToString();
+    var initialMaxPrice = Model.MaxPrice.HasValue
+        ? Model.MaxPrice.Value.ToString("0")
+        : Context.Request.Query["maxPrice"].ToString();
+    var initialRooms = !string.IsNullOrWhiteSpace(Model.NumberOfRoom)
+        ? Model.NumberOfRoom.Trim()
+        : Context.Request.Query["numberOfRoom"].ToString();
+}
 <!--Page Title-->
-<section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
+<section class="page-title centred" style="background-image: url(/images/page-title/page-title-bg.jpg);">
     <div class="auto-container">
         <div class="content-box clearfix">
-            <h1>Kiralık İlanlar</h1>
+            <h1>@(string.IsNullOrWhiteSpace(heading) ? "Kiralık İlanlar" : heading)</h1>
             <ul class="bread-crumb clearfix">
                 <li><a href="@Url.Action("Index","UILayout")">Anasayfa</a></li>
-                <li>Kiralık İlanlar</li>
+                @if (string.IsNullOrWhiteSpace(heading))
+                {
+                    <li>Kiralık İlanlar</li>
+                }
+                else
+                {
+                    <li><a href="@Url.Action("Index","AllForRentalPage")">Kiralık İlanlar</a></li>
+                    <li>@heading</li>
+                }
             </ul>
         </div>
     </div>
@@ -52,6 +89,7 @@
                                     <label>Şehir</label>
                                     <select id="citySelect" class="wide js-city-select"
                                             data-selected-id="@Model.CityId"
+                                            data-selected-name="@Model.City"
                                             data-search-placeholder="İl ara...">
                                         <option value="">Şehir seç</option>
                                     </select>
@@ -61,6 +99,7 @@
                                     <label>İlçe</label>
                                     <select id="districtSelect" class="wide js-district-select"
                                             data-selected-id="@Model.DistrictId"
+                                            data-selected-name="@Model.District"
                                             data-search-placeholder="İlçe ara...">
                                         <option value="">İlçe seç</option>
                                     </select>
@@ -113,12 +152,41 @@
                             </div>
                         </div>
 
+                        <!-- BİNA YAŞI -->
+                        <div class="filter-widget sidebar-widget" id="buildingAgeWidget" style="display:none;">
+                            <div class="widget-title"><h5>Bina Yaşı</h5></div>
+                            <div class="widget-content">
+                                <select id="buildingAgeSelect" class="wide" data-selected="@Context.Request.Query["buildingAge"].ToString()">
+                                    <option value="">Tümü</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- ISITMA -->
+                        <div class="filter-widget sidebar-widget" id="heatingWidget" style="display:none;">
+                            <div class="widget-title"><h5>Isıtma</h5></div>
+                            <div class="widget-content">
+                                <select id="heatingSelect" class="wide" data-selected="@Context.Request.Query["heating"].ToString()">
+                                    <option value="">Tümü</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- TAPU DURUMU -->
+                        <div class="filter-widget sidebar-widget" id="titleDeedWidget" style="display:none;">
+                            <div class="widget-title"><h5>Tapu Durumu</h5></div>
+                            <div class="widget-content">
+                                <select id="titleDeedSelect" class="wide" data-selected="@Context.Request.Query["titleDeedStatus"].ToString()">
+                                    <option value="">Tümü</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <!-- ÖZELLİKLER (amenities) -->
                         <div class="category-widget sidebar-widget">
                             <div class="widget-title"><h5>Özellikler</h5></div>
 
                             <ul class="category-list clearfix">
                                 @foreach (var a in (Model.Amenities ?? new List<AmenityFacetDto>())
+                                                                .Where(x => x.Count > 0 || x.Selected)
                                                                 .OrderBy(x => x.Group).ThenBy(x => x.SortOrder).ThenBy(x => x.Text))
                                 {
                                     var disabledClass = a.Disabled ? "disabled" : "";
@@ -164,8 +232,12 @@
             <div class="col-lg-8 col-md-12 col-sm-12 content-side">
                 <div class="property-content-side">
                     <div class="item-shorting clearfix">
-                        <div class="right-column pull-left">
+                        <div class="right-column pull-left fibi-result-col">
                             <h5>Sonuç: <span>@Model.Total ilan bulundu</span></h5>
+                            <div class="fibi-view-toggle" role="group" aria-label="Görünüm">
+                                <button type="button" class="fibi-view-btn is-active" data-view="list" aria-pressed="true"><i class="fas fa-th-list"></i> Liste</button>
+                                <button type="button" class="fibi-view-btn" data-view="map" aria-pressed="false"><i class="fas fa-map-marked-alt"></i> Harita</button>
+                            </div>
                         </div>
                         <div class="right-column pull-right clearfix">
                             <div class="short-box clearfix">
@@ -189,129 +261,168 @@
                             </div>
                         </div>
                     </div>
-                    <div class="wrapper grid">
-                        <div class="deals-list-content list-item">
-                        </div> @* Burası list-view için kullanılabilir  foreach döndürürek list-view js ile on yapılma seçeneği ile liste görünümüne geçilebilir *@
-                        <div class="deals-grid-content grid-item">
-                            <div class="row clearfix">
-                                    @foreach (var item in Model.Items)
-                                    {
-                                        var img = (item.ImageUrls != null && item.ImageUrls.Any())
-                                        ? item.ImageUrls.First()
-                                        : "/images/no-image.png";
+                    <div id="listingsMapRoot" class="fibi-embedded-map" hidden data-embedded="true"
+                         data-api="@ViewBag.ApiUrl" data-initial-usage="rent"
+                         data-initial-category="@initialCategory" data-initial-city="@initialCity" data-initial-district="@initialDistrict"
+                         data-initial-min-price="@initialMinPrice" data-initial-max-price="@initialMaxPrice" data-initial-rooms="@initialRooms">
+                        <div class="lm-toolbar"><span id="lmCount">Yükleniyor...</span></div>
+                        <div class="lm-body"><div id="lmMap" class="lm-map"></div><aside class="lm-list"><div id="lmList"></div></aside></div>
+                    </div>
+                    <div data-list-view>
+                        <div class="wrapper grid">
+                            <div class="deals-list-content list-item">
+                            </div> @* Burası list-view için kullanılabilir  foreach döndürürek list-view js ile on yapılma seçeneği ile liste görünümüne geçilebilir *@
+                            <div class="deals-grid-content grid-item">
+                                <div class="row clearfix">
+                                        @foreach (var item in Model.Items)
+                                        {
+                                            var detailUrl = ListingUrl.DetailPath(true, item.ListingId, item.ListingTypeId, item.ListingType, item.PropertyName, item.District);
+                                            var img = (item.ImageUrls != null && item.ImageUrls.Any())
+                                            ? item.ImageUrls.First()
+                                            : "/images/no-image.png";
 
-                                        <div class="col-lg-6 col-md-6 col-sm-12 feature-block">
-                                            <div class="feature-block-one">
-                                                <div class="inner-box">
-                                                    <div class="image-box">
-                                                        <figure class="image"><img src="@img" alt="image"></figure>
-
-                                                        @if (item.BestDeals)
-                                                        {
-                                                            <div class="batch"><i class="icon-11"></i></div>
-                                                            <span class="category">En İyi Fiyat</span>
-                                                        }
-                                                    </div>
-
-                                                    <div class="lower-content">
-                                                        <div class="author-info clearfix">
-                                                            <div class="author pull-left">
-                                                                <figure class="author-thumb"><img src="@item.AgentImgUrl" alt=""></figure>
-                                                                <h6>@item.AgentName</h6>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 feature-block">
+                                                <div class="feature-block-one">
+                                                    <div class="inner-box">
+                                                        <div class="image-box">
+                                                            <figure class="image"><img src="@img" alt="@item.PropertyName" fibi-responsive fibi-sizes="(max-width: 767px) 100vw, 370px"></figure>
+                                                            <div class="listing-badges">
+                                                                @if (item.BestDeals)
+                                                                {
+                                                                    <div class="batch"><i class="icon-11"></i></div>
+                                                                    <span class="category">En İyi Fiyat</span>
+                                                                }
+                                                                @if (string.Equals(item.PropertyStatus?.Trim(), "Opsiyonlu", StringComparison.OrdinalIgnoreCase))
+                                                                {
+                                                                    <span class="listing-status-badge" title="Bu ilan için opsiyon verildi">Opsiyonlu</span>
+                                                                }
                                                             </div>
-                                                            <div class="buy-btn pull-right">
-                                                                <a href="@Url.Action("Index", "AllForRentalPage")">@UsageBadgeText(item.UsageTypeId)</a>
+                                                        </div>
+
+                                                        <div class="lower-content">
+                                                            <div class="author-info clearfix">
+                                                                <div class="author pull-left">
+                                                                    <figure class="author-thumb"><img src="@item.AgentImgUrl" alt="@item.AgentName"></figure>
+                                                                    <h6>@item.AgentName</h6>
+                                                                </div>
+                                                                <div class="buy-btn pull-right">
+                                                                    <a href="@Url.Action("Index", "AllForRentalPage")">@UsageBadgeText(item.UsageTypeId)</a>
+                                                                </div>
                                                             </div>
-                                                        </div>
 
-                                                        <div class="title-text">
-                                                            <h4>
-                                                                <a asp-action="Index"
-                                                                   asp-controller="AllForRentalDetailPage"
-                                                                   asp-route-id="@item.ListingId">
-                                                                    @item.PropertyName
-                                                                </a>
-                                                            </h4>
-                                                        </div>
+                                                            <div class="title-text">
+                                                                <h4>
+                                                                    <a href="@detailUrl" title="@item.PropertyName">
+                                                                        @(string.IsNullOrWhiteSpace(item.PropertyName) ? "İlan Başlığı" : item.PropertyName)
+                                                                    </a>
+                                                                </h4>
+                                                            </div>
 
-                                                    @{
-                                                        var rentalCompareTypeKey = item.UsageTypeId switch
-                                                        {
-                                                            1 when item.ListingType == "Konut" => "forsale-housing",
-                                                            1 when item.ListingType == "Arsa" => "forsale-land",
-                                                            1 when item.ListingType == "İşyeri" => "forsale-commercial",
-                                                            2 when item.ListingType == "Konut" => "forrent-housing",
-                                                            2 when item.ListingType == "Arsa" => "forrent-land",
-                                                            2 when item.ListingType == "İşyeri" => "forrent-commercial",
-                                                            _ => "unknown"
-                                                        };
-                                                    }
-
-                                                    <div class="price-box clearfix">
-                                                        <div class="price-info pull-left">
-                                                            <h6>Fiyat</h6>
-                                                            <h4>@item.Price.ToString("N0") TL</h4>
-                                                        </div>
-
-                                                        <ul class="other-option pull-right clearfix">
-                                                            <li>
-                                                                <a href="javascript:void(0)"
-                                                                   class="js-compare-btn"
-                                                                   title="Karşılaştır"
-                                                                   data-listing-id="@item.ListingId"
-                                                                   data-usage-type-id="@item.UsageTypeId"
-                                                                   data-listing-type="@item.ListingType"
-                                                                   data-compare-type-key="@rentalCompareTypeKey">
-                                                                    <i class="icon-12"></i>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-
-                                                    @{
-                                                        var desc = item.PropertyDescription ?? "";
-                                                        var shortDesc = desc.Length > 90
-                                                        ? desc.Substring(0, 90) + "..."
-                                                        : desc;
-                                                    }
-
-                                                    <p>@shortDesc</p>
-                                                        <ul class="more-details clearfix">
-                                                            @foreach (var h in (item.Highlights ?? new List<string>()).Take(3))
+                                                        @{
+                                                            var rentalCompareTypeKey = item.UsageTypeId switch
                                                             {
-                                                                <li><i class="icon-14"></i>@h</li>
-                                                            }
-                                                        </ul>
+                                                                1 when item.ListingType == "Konut" => "forsale-housing",
+                                                                1 when item.ListingType == "Arsa" => "forsale-land",
+                                                                1 when item.ListingType == "İşyeri" => "forsale-commercial",
+                                                                2 when item.ListingType == "Konut" => "forrent-housing",
+                                                                2 when item.ListingType == "Arsa" => "forrent-land",
+                                                                2 when item.ListingType == "İşyeri" => "forrent-commercial",
+                                                                _ => "unknown"
+                                                            };
+                                                        }
 
-                                                        <div class="btn-box">
-                                                            <a asp-route-id="@item.ListingId"
-                                                           asp-action="Index"
-                                                           asp-controller="AllForRentalDetailPage"
-                                                               class="theme-btn btn-two">
-                                                                İlan Detayı
-                                                            </a>
+                                                        <div class="price-box clearfix">
+                                                            <div class="price-info pull-left">
+                                                                <h6>Fiyat</h6>
+                                                                <h4>@item.Price.ToString("N0") TL <span class="price-period">/ ay</span></h4>
+                                                            </div>
+
+                                                            <ul class="other-option pull-right clearfix">
+                                                                <li>
+                                                                    <a href="javascript:void(0)"
+                                                                       class="js-compare-btn"
+                                                                       title="Karşılaştır"
+                                                                       data-listing-id="@item.ListingId"
+                                                                       data-usage-type-id="@item.UsageTypeId"
+                                                                       data-listing-type="@item.ListingType"
+                                                                       data-compare-type-key="@rentalCompareTypeKey">
+                                                                        <i class="icon-12"></i>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+
+                                                        <p>@FibiEmlakDanismanlik.WebUI.Models.PageMeta.StripHtmlAndTruncate(item.PropertyDescription, 160)</p>
+                                                        @using FibiEmlakDanismanlik.Dto.PropertyDtos
+
+                                                            <ul class="more-details clearfix">
+                                                                @foreach (var h in (item.Highlights ?? new List<ResultCardHighlightDto>()).Take(3))
+                                                                {
+                                                                    <li title="@h.Text"><i class="@h.Icon"></i>@h.Text</li>
+                                                                }
+                                                            </ul>
+
+                                                            <div class="btn-box">
+                                                                <a href="@detailUrl" class="theme-btn btn-two">
+                                                                    İlan Detayı
+                                                                </a>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    }
+                                        }
 
+                                </div>
                             </div>
                         </div>
+                        @{
+                            var alertTur = (Model.SelectedListingTypeIds != null && Model.SelectedListingTypeIds.Count == 1)
+                                ? Model.SelectedListingTypeIds[0]
+                                : 8;
+
+                            var alertQuery = new List<string> { $"tur={alertTur}" };
+                            if (Model.CityId.HasValue && Model.CityId.Value > 0)
+                                alertQuery.Add($"cityId={Model.CityId.Value}");
+                            if (Model.DistrictId.HasValue && Model.DistrictId.Value > 0)
+                                alertQuery.Add($"districtId={Model.DistrictId.Value}");
+                            if (Model.MinPrice.HasValue && Model.MinPrice.Value > 0)
+                                alertQuery.Add($"min={Uri.EscapeDataString(Model.MinPrice.Value.ToString("0"))}");
+                            if (Model.MaxPrice.HasValue && Model.MaxPrice.Value > 0)
+                                alertQuery.Add($"max={Uri.EscapeDataString(Model.MaxPrice.Value.ToString("0"))}");
+                            if (!string.IsNullOrWhiteSpace(Model.NumberOfRoom))
+                                alertQuery.Add($"oda={Uri.EscapeDataString(Model.NumberOfRoom.Trim())}");
+
+                            var alertHref = "/haber-ver?" + string.Join("&", alertQuery);
+                        }
+                        <link rel="stylesheet" href="~/css/listing-alert.css" asp-append-version="true" />
+                        <div class="listing-alert-banner">
+                            <div class="alert-content">
+                                <div class="alert-icon"><i class="fas fa-bell"></i></div>
+                                <div class="alert-text">
+                                    <h6>Aradığınızı bulamadınız mı?</h6>
+                                    <p>Kriterlerinize uygun ilan çıkınca size haber verelim.</p>
+                                </div>
+                            </div>
+                            <div class="alert-action">
+                                <a href="@alertHref" class="theme-btn btn-one">Haber Ver</a>
+                            </div>
+                        </div>
+                        @await Html.PartialAsync("~/Views/Shared/Components/_PaginationViewComponentPartial/Default.cshtml", new FibiEmlakDanismanlik.WebUI.Models.PaginationVm
+                        {
+                            Page = Model.Page,
+                                            PageSize = Model.PageSize,
+                                            TotalPages = Model.TotalPages
+                                            })
                     </div>
-                    @await Html.PartialAsync("~/Views/Shared/Components/_PaginationViewComponentPartial/Default.cshtml", new FibiEmlakDanismanlik.WebUI.Models.PaginationVm
-                    {
-                        Page = Model.Page,
-                                        PageSize = Model.PageSize,
-                                        TotalPages = Model.TotalPages
-                                        })
                 </div>
             </div>
         </div>
     </div>
 </section>
 <style>
+    .price-info .price-period { font-size: 14px; font-weight: 500; color: #93959e; }
+
     .category-list li.disabled a,
     .category-list a.disabled {
         pointer-events: none;
@@ -367,5 +478,3 @@
             color: #fff !important;
         }
 </style>
-
-

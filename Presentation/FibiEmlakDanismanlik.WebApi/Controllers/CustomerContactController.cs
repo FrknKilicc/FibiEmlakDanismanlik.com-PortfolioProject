@@ -1,8 +1,10 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.CustomerContactCommands;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Commands.CustomerContactCommands;
 using FibiEmlakDanismanlik.Application.Features.Handlers.CustomerContactHandlers;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
 {
@@ -18,9 +20,10 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         }
 
         [HttpPost]
+        [EnableRateLimiting(CustomerContactConstants.RateLimitPolicy)]
         public async Task<IActionResult> CreateCustomerContactRequest(CreateCustomerContactCommand command)
         {
-          await _mediator.Send(command);
+            await _mediator.Send(command);
             return Ok("Müşteri Talebi Başarılı Bir Şekilde Eklenmiştir.");
         }
     }

@@ -3,14 +3,14 @@
 }
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     @await Component.InvokeAsync("_HeadLayoutViewComponentPartial")
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
 
-    <div class="boxed_wrapper rtl"> </div>
+    <div class="boxed_wrapper">
 
 
         <!-- preloader -->
@@ -21,37 +21,8 @@
         @await Component.InvokeAsync("_HeaderLayoutViewComponentPartial")
         <!-- main-header end -->
         <!-- Mobile Menu  -->
-    <div class="mobile-menu">
-        <div class="menu-backdrop"></div>
-        <div class="close-btn"><i class="fas fa-times"></i></div>
-
-        <nav class="menu-box">
-            <div class="nav-logo">
-                <a href="@Url.Action("Index", "UILayout")">
-                    <img src="/Realshed/assets/images/FibiLogo.png" alt="Fibi Emlak">
-                </a>
-            </div>
-            <div class="menu-outer"><!--Here Menu Will Come Automatically Via Javascript / Same Menu as in Header--></div>
-            <div class="contact-info">
-                <h4>İletişim Bilgisi</h4>
-                <ul>
-                    <li>Telsih Mahallesi - Zeytinburnu | İstanbul</li>
-                    <li><a href="tel:+8801682648101">+88 01682648101</a></li>
-                    <li><a href="mailto:info@example.com">info@fibiemlak.com</a></li>
-                </ul><img src="~/realshed/assets/images/fibilogo.png" />
-            </div>
-            <div class="social-links">
-                <ul class="clearfix">
-                    <li><a href="/Realshed/index.html"><span class="fab fa-twitter"></span></a></li>
-                    <li><a href="/Realshed/index.html"><span class="fab fa-facebook-square"></span></a></li>
-                    <li><a href="/Realshed/index.html"><span class="fab fa-pinterest-p"></span></a></li>
-                    <li><a href="/Realshed/index.html"><span class="fab fa-instagram"></span></a></li>
-                    <li><a href="/Realshed/index.html"><span class="fab fa-youtube"></span></a></li>
-                </ul>
-            </div>
-        </nav>
-    </div>
-            <!-- End Mobile Menu -->
+        @await Component.InvokeAsync("_MobileMenuLayoutViewComponentPartial")
+        <!-- End Mobile Menu -->
         <div>
             @RenderBody()
 
@@ -65,6 +36,7 @@
 <button class="scroll-top scroll-to-target" data-target="html">
     <span class="fal fa-angle-up"></span>
 </button>
+    </div> <!-- boxed_wrapper end -->
     <!-- jequery plugins -->
    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -80,7 +52,7 @@
     <script src="/Realshed/assets/js/validation.js"></script>
     <script src="/Realshed/assets/js/appear.js"></script>
     <script src="/Realshed/assets/js/scrollbar.js"></script>
-    <script src="/Realshed/assets/js/compare-listing.js"></script>
+    <script src="~/Realshed/assets/js/compare-listing.js" asp-append-version="true"></script>
     <script src="/Realshed/assets/js/isotope.js"></script>
     <script src="/Realshed/assets/js/jquery.nice-select.min.js"></script>
     <script src="/Realshed/assets/js/jQuery.style.switcher.min.js"></script>
@@ -136,7 +108,6 @@
 </body>
 
 </html>
-
 
 
 

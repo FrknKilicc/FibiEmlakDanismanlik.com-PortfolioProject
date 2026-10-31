@@ -1,8 +1,26 @@
+@model FibiEmlakDanismanlik.WebUI.Models.PageMetaVm
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-<title>Fibi Yapı Emlak & Danışmanlık</title>
+<title>@Model.Title</title>
+<meta name="description" content="@Model.Description">
+<link rel="canonical" href="@Model.CanonicalUrl">
+@if (!string.IsNullOrWhiteSpace(Model.Robots))
+{
+    <meta name="robots" content="@Model.Robots">
+}
+<meta property="og:site_name" content="@Model.SiteName">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:type" content="@Model.OgType">
+<meta property="og:title" content="@Model.Title">
+<meta property="og:description" content="@Model.Description">
+<meta property="og:url" content="@Model.CanonicalUrl">
+<meta property="og:image" content="@Model.ImageUrl">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="@Model.Title">
+<meta name="twitter:description" content="@Model.Description">
+<meta name="twitter:image" content="@Model.ImageUrl">
 
 <!-- Fav Icon -->
 <link rel="icon" href="/Realshed/assets/images/favicon.ico" type="image/x-icon">
@@ -28,5 +46,6 @@
 <link href="/Realshed/assets/css/responsive.css" rel="stylesheet">
 <link href="~/lib/toastr/toastr.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.css" />
-<link href="/css/propertyListStyle.css" rel="stylesheet">
+<link href="~/css/propertyListStyle.css" rel="stylesheet" asp-append-version="true">
 <link href="/Realshed/assets/css/compare-listing.css" rel="stylesheet" />
+<link href="~/css/agent-carousel.css" rel="stylesheet" asp-append-version="true" />

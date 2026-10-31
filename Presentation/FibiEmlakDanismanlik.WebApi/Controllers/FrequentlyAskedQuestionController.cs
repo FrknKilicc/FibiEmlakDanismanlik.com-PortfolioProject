@@ -1,7 +1,9 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.FrequentlyAskedQuestionCommands;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Commands.FrequentlyAskedQuestionCommands;
 using FibiEmlakDanismanlik.Application.Features.Queries.FrequentlyAskedQuestionQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
@@ -30,18 +32,21 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _mediator.Send(new GetFrequentlyAskedQuestionByIdQuery(id));
             return Ok(value);
         }
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateFrequentlyAskedQuestion(CreateFrequentlyAskedQuestionCommand command)
         {
             await _mediator.Send(command);
             return Ok("Sıkça Sorulan Sorular Bilgisi Başarıyla Oluşturuldu");
         }
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateFrequentlyAskedQuestion(UpdateFrequentlyAskedQuestionCommand command)
         {
             await _mediator.Send(command);
             return Ok("Sıkça Sorulan Sorular Bilgisi Başarıyla Güncelleştirildi");
         }
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveFrequentlyAskedQuestion(int id)
         {

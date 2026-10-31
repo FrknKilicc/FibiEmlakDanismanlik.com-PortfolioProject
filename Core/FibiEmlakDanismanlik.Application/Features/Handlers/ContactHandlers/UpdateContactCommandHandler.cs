@@ -22,6 +22,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.ContactHandlers
         public async Task Handle(UpdateContactCommand request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.ContactId);
+            if (value == null)
+            {
+                throw new KeyNotFoundException("İletişim bilgisi bulunamadı.");
+            }
             value.PhoneNumber2 = request.PhoneNumber2;
             value.PhoneNumber1 = request.PhoneNumber1;
             value.EMail1 = request.EMail1;

@@ -1,14 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FibiEmlakDanismanlik.Domain.Common;
+using FibiEmlakDanismanlik.Domain.Interfaces;
 
 namespace FibiEmlakDanismanlik.Domain.Entities
 {
-    public class RentalHousingListing //Kiralık Konut
+    public class RentalHousingListing : ILocatedListing, ISoftDeletable //Kiralık Konut
     {
         //MainInfo
         [Key]
@@ -20,6 +22,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string PropertyDescription { get; set; }
         public string? PropertyStatus { get; set; }
         public DateTime CreatedDate { get; set; }
+        public DateTime? DeletedAtUtc { get; set; }
         [Required]
         public decimal Rent { get; set; } //Price
         //Adress
@@ -27,6 +30,9 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string City { get; set; } // İl
         [Required]
         public string District { get; set; } // İlçe
+        public int? CityId { get; set; }      // Cities.CityId — City metninden otomatik çözülür
+        public int? DistrictId { get; set; }  // Districts.DistrictId — District metninden otomatik çözülür
+        public int? NeighborhoodId { get; set; }
         [Required]
         public string Neighborhood { get; set; }//Mahalle
         public string? AddressDesc { get; set; } //AçıkAdress
@@ -69,7 +75,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public HousingCategory HousingCategory { get; set; }
         public int AgentId { get; set; }
         public Agent Agent { get; set; }
-        public int? ListingTypeId { get; set; }
+        public int ListingTypeId { get; set; }
 
         [ForeignKey("ListingTypeId")]
         public ListingType ListingType { get; set; }
@@ -78,41 +84,5 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         //relational
 
         //Images
-        [Required]
-        public string? PropImgUrl1 { get; set; }
-        public string? PropImgUrl2 { get; set; }
-        public string? PropImgUrl3 { get; set; }
-        public string? PropImgUrl4 { get; set; }
-        public string? PropImgUrl5 { get; set; }
-        public string? PropImgUrl6 { get; set; }
-        public string? PropImgUrl7 { get; set; }
-        public string? PropImgUrl8 { get; set; }
-        public string? PropImgUrl9 { get; set; }
-        public string? PropImgUrl10 { get; set; }
-        public string? PropImgUrl11 { get; set; }
-        public string? PropImgUrl12 { get; set; }
-        public string? PropImgUrl13 { get; set; }
-        public string? PropImgUrl14 { get; set; }
-        public string? PropImgUrl15 { get; set; }
-        public string? PropImgUrl16 { get; set; }
-        public string? PropImgUrl17 { get; set; }
-        public string? PropImgUrl18 { get; set; }
-        public string? PropImgUrl19 { get; set; }
-        public string? PropImgUrl20 { get; set; }
-        public string? PropImgUrl21 { get; set; }
-        public string? PropImgUrl22 { get; set; }
-        public string? PropImgUrl23 { get; set; }
-        public string? PropImgUrl24 { get; set; }
-        public string? PropImgUrl25 { get; set; }
-        public string? PropImgUrl26 { get; set; }
-        public string? PropImgUrl27 { get; set; }
-        public string? PropImgUrl28 { get; set; }
-        public string? PropImgUrl29 { get; set; }
-        public string? PropImgUrl30 { get; set; }
-
-
-        //Images
-
-
     }
 }

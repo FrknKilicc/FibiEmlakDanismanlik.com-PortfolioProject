@@ -1,7 +1,11 @@
 ﻿@model List<FibiEmlakDanismanlik.WebUI.Models.AgentFeaturedPropertySidebarVm>
 
+<style>
+    .price-info .price-period { font-size: 14px; font-weight: 500; color: #93959e; }
+</style>
+
 <div class="widget-title">
-    <h5>Öne Çıkanlar</h5>
+    <h5>Vitrin İlanları</h5>
 </div>
 
 @if (Model != null && Model.Any())
@@ -13,20 +17,21 @@
             ? item.PropImgUrl1
             : Url.Content("~/Realshed/assets/images/feature/feature-1.jpg");
 
-            var description = !string.IsNullOrWhiteSpace(item.PropertyDescription)
-            ? (item.PropertyDescription.Length > 120
-            ? item.PropertyDescription.Substring(0, 120) + "..."
-            : item.PropertyDescription)
-            : "İlan açıklaması bulunmuyor.";
+            var strippedDesc = FibiEmlakDanismanlik.WebUI.Models.PageMeta.StripHtmlAndTruncate(item.PropertyDescription, 120);
+            var description = !string.IsNullOrWhiteSpace(strippedDesc)
+                ? strippedDesc
+                : "İlan açıklaması bulunmuyor.";
 
             <div class="feature-block-one">
                 <div class="inner-box">
                     <div class="image-box">
                         <figure class="image">
-                            <img src="@imageUrl" alt="@item.PropertyName">
+                            <img src="@imageUrl" alt="@item.PropertyName" fibi-responsive fibi-sizes="(max-width: 767px) 100vw, 370px">
                         </figure>
-                        <div class="batch"><i class="icon-11"></i></div>
-                        <span class="category">@item.PropertyStatusLabel</span>
+                        <div class="listing-badges">
+                            <div class="batch"><i class="icon-11"></i></div>
+                            <span class="category">@item.PropertyStatusLabel</span>
+                        </div>
                     </div>
 
                     <div class="lower-content">
@@ -39,7 +44,14 @@
                         <div class="price-box clearfix">
                             <div class="price-info">
                                 <h6>@item.PropertyStatusLabel</h6>
-                                <h4>@item.Price.ToString("N0") TL</h4>
+                                @if (item.PropertyStatusLabel == "Kiralık")
+                                {
+                                    <h4>@item.Price.ToString("N0") ₺ <span class="price-period">/ ay</span></h4>
+                                }
+                                else
+                                {
+                                    <h4>@item.Price.ToString("N0") ₺</h4>
+                                }
                             </div>
                         </div>
 
@@ -56,5 +68,5 @@
 }
 else
 {
-    <p>Gösterilecek ilan bulunamadı.</p>
+    <p>Şu anda vitrinde ilan bulunmuyor.</p>
 }

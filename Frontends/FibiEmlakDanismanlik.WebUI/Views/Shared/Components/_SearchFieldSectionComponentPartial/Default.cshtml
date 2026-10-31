@@ -189,6 +189,8 @@
     }
     .search-field-section .range-box .price-range,
     .search-field-section .range-box .area-range {
+        display: block;
+        gap: 0;
         padding: 15px 0 10px 0;
         direction: ltr !important;
     }
@@ -255,6 +257,24 @@
     .search-field-section .range-box .ui-slider .ui-slider-handle:focus {
         transform: scale(1.15);
         box-shadow: 0 2px 10px rgba(62,168,67,0.5) !important;
+    }
+
+    /* Sekmeler: aktif sekme beyaz kutuyla birleşik, pasif yarı saydam */
+    #homeSearchRoot .search-field .tab-btn-box li {
+        background-color: rgba(15, 23, 43, 0.55);
+        color: #ffffff;
+        box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+    }
+    #homeSearchRoot .search-field .tab-btn-box li:hover {
+        background-color: rgba(15, 23, 43, 0.75);
+    }
+    #homeSearchRoot .search-field .tab-btn-box li.active-btn {
+        background-color: #ffffff;
+        color: #2dbe6c;
+        box-shadow: inset 0 3px 0 #2dbe6c;
+        cursor: default;
+        position: relative;
+        z-index: 2;
     }
 </style>
 
@@ -340,23 +360,47 @@
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-sort">
                                                 <div class="form-group"><label>Sıralama</label><div class="select-box"><select id="sortDropdown-forsale" class="ignore"><option value="">Sıralama Seçin</option><option value="CreatedDate|desc">En Yeni</option><option value="CreatedDate|asc">En Eski</option><option value="Price|asc">Fiyat Artan</option><option value="Price|desc">Fiyat Azalan</option></select></div></div>
                                             </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-housingcat" style="display:none;">
+                                                <div class="form-group"><label>Konut Tipi</label><div class="select-box"><select id="housingCategoryDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-landcat" style="display:none;">
+                                                <div class="form-group"><label>Arsa Tipi</label><div class="select-box"><select id="landCategoryDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-room" id="roomFilterContainer-forsale" data-filter-type="room-section">
                                                 <div class="form-group"><label id="roomLabel-forsale" data-default-label="Oda Sayısı" data-commercial-label="Bölüm Sayısı">Oda Sayısı</label><div class="select-box"><select id="roomDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance" style="display:none;">
-                                                <div class="form-group"><label>Konuma Uzaklık</label><div class="select-box"><select id="distanceDropdown-forsale" class="ignore"><option value="">Mesafe Seçin</option><option value="1">1 km İçinde</option><option value="3">3 km İçinde</option><option value="5">5 km İçinde</option><option value="10">10 km İçinde</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-zoning" id="zoningFilterContainer-forsale" style="display:none;">
+                                                <div class="form-group"><label>İmar Durumu</label><div class="select-box"><select id="zoningDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-agency" id="agencyFilterContainer-forsale">
-                                                <div class="form-group"><label>Danışman / Ofis</label><div class="select-box"><select id="agentDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-titledeed" style="display:none;">
+                                                <div class="form-group"><label>Tapu Durumu</label><div class="select-box"><select id="titleDeedDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-bath" id="bathFilterContainer-forsale" data-filter-type="bath">
-                                                <div class="form-group"><label id="bathLabel-forsale">Banyo Sayısı</label><div class="select-box"><select id="bathDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-buildingage" style="display:none;">
+                                                <div class="form-group"><label>Bina Yaşı</label><div class="select-box"><select id="buildingAgeDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-heating" style="display:none;">
+                                                <div class="form-group"><label>Isıtma</label><div class="select-box"><select id="heatingDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-floor" id="floorFilterContainer-forsale">
                                                 <div class="form-group"><label>Kat</label><div class="select-box"><select id="floorDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-zoning" id="zoningFilterContainer-forsale" style="display:none;">
-                                                <div class="form-group"><label>İmar Durumu</label><div class="select-box"><select id="zoningDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-furnished" style="display:none;">
+                                                <div class="form-group"><label>Eşya Durumu</label><div class="select-box"><select id="furnishedDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-withincomplex" style="display:none;">
+                                                <div class="form-group"><label>Site İçinde</label><div class="select-box"><select id="withinComplexDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-loan" style="display:none;">
+                                                <div class="form-group"><label>Krediye Uygun</label><div class="select-box"><select id="loanEligibleDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-transferable" style="display:none;">
+                                                <div class="form-group"><label>Devren</label><div class="select-box"><select id="transferableDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-agency" id="agencyFilterContainer-forsale">
+                                                <div class="form-group"><label>Danışman / Ofis</label><div class="select-box"><select id="agentDropdown-forsale" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance" style="display:none;">
+                                                <div class="form-group"><label>Konuma Uzaklık</label><div class="select-box"><select id="distanceDropdown-forsale" class="ignore"><option value="">Mesafe Seçin</option><option value="1">1 km İçinde</option><option value="3">3 km İçinde</option><option value="5">5 km İçinde</option><option value="10">10 km İçinde</option></select></div></div>
                                             </div>
                                         </div>
                                         <div class="range-box">
@@ -440,23 +484,47 @@
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-sort">
                                                 <div class="form-group"><label>Sıralama</label><div class="select-box"><select id="sortDropdown-forrent" class="ignore"><option value="">Sıralama Seçin</option><option value="CreatedDate|desc">En Yeni</option><option value="CreatedDate|asc">En Eski</option><option value="Price|asc">Fiyat Artan</option><option value="Price|desc">Fiyat Azalan</option></select></div></div>
                                             </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-housingcat" style="display:none;">
+                                                <div class="form-group"><label>Konut Tipi</label><div class="select-box"><select id="housingCategoryDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-landcat" style="display:none;">
+                                                <div class="form-group"><label>Arsa Tipi</label><div class="select-box"><select id="landCategoryDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-room" id="roomFilterContainer-forrent" data-filter-type="room-section">
                                                 <div class="form-group"><label id="roomLabel-forrent" data-default-label="Oda Sayısı" data-commercial-label="Bölüm Sayısı">Oda Sayısı</label><div class="select-box"><select id="roomDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance" style="display:none;">
-                                                <div class="form-group"><label>Konuma Uzaklık</label><div class="select-box"><select id="distanceDropdown-forrent" class="ignore"><option value="">Mesafe Seçin</option><option value="1">1 km İçinde</option><option value="3">3 km İçinde</option><option value="5">5 km İçinde</option><option value="10">10 km İçinde</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-zoning" id="zoningFilterContainer-forrent" style="display:none;">
+                                                <div class="form-group"><label>İmar Durumu</label><div class="select-box"><select id="zoningDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-agency" id="agencyFilterContainer-forrent">
-                                                <div class="form-group"><label>Danışman / Ofis</label><div class="select-box"><select id="agentDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-titledeed" style="display:none;">
+                                                <div class="form-group"><label>Tapu Durumu</label><div class="select-box"><select id="titleDeedDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-bath" id="bathFilterContainer-forrent" data-filter-type="bath">
-                                                <div class="form-group"><label id="bathLabel-forrent">Banyo Sayısı</label><div class="select-box"><select id="bathDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-buildingage" style="display:none;">
+                                                <div class="form-group"><label>Bina Yaşı</label><div class="select-box"><select id="buildingAgeDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-heating" style="display:none;">
+                                                <div class="form-group"><label>Isıtma</label><div class="select-box"><select id="heatingDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
                                             <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-floor" id="floorFilterContainer-forrent">
                                                 <div class="form-group"><label>Kat</label><div class="select-box"><select id="floorDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
                                             </div>
-                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-zoning" id="zoningFilterContainer-forrent" style="display:none;">
-                                                <div class="form-group"><label>İmar Durumu</label><div class="select-box"><select id="zoningDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-furnished" style="display:none;">
+                                                <div class="form-group"><label>Eşya Durumu</label><div class="select-box"><select id="furnishedDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-withincomplex" style="display:none;">
+                                                <div class="form-group"><label>Site İçinde</label><div class="select-box"><select id="withinComplexDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-loan" style="display:none;">
+                                                <div class="form-group"><label>Krediye Uygun</label><div class="select-box"><select id="loanEligibleDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-transferable" style="display:none;">
+                                                <div class="form-group"><label>Devren</label><div class="select-box"><select id="transferableDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-agency" id="agencyFilterContainer-forrent">
+                                                <div class="form-group"><label>Danışman / Ofis</label><div class="select-box"><select id="agentDropdown-forrent" class="ignore" disabled><option value="">Önce ilan tipi seçin</option></select></div></div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6 col-sm-12 column adv-filter-distance" style="display:none;">
+                                                <div class="form-group"><label>Konuma Uzaklık</label><div class="select-box"><select id="distanceDropdown-forrent" class="ignore"><option value="">Mesafe Seçin</option><option value="1">1 km İçinde</option><option value="3">3 km İçinde</option><option value="5">5 km İçinde</option><option value="10">10 km İçinde</option></select></div></div>
                                             </div>
                                         </div>
                                         <div class="range-box">

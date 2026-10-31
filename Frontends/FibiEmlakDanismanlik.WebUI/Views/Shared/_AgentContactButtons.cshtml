@@ -1,0 +1,71 @@
+@model FibiEmlakDanismanlik.WebUI.Models.AgentContactVm
+
+@{
+    var (displayPhone, telHref) = FibiEmlakDanismanlik.WebUI.Models.PhoneFormatter.Format(Model?.PhoneNumber);
+    var hasPhone = !string.IsNullOrWhiteSpace(Model?.PhoneNumber) && !string.IsNullOrWhiteSpace(telHref) && telHref != "tel:";
+    var waNumber = FibiEmlakDanismanlik.WebUI.Models.PhoneFormatter.WhatsAppNumber(Model?.PhoneNumber);
+    var hasWhatsApp = !string.IsNullOrWhiteSpace(waNumber);
+
+    string? waUrl = null;
+    if (hasWhatsApp)
+    {
+        var title = Model?.ListingTitle?.Trim();
+        var url = Model?.ListingAbsoluteUrl?.Trim();
+        var sb = new System.Text.StringBuilder("Merhaba, ");
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            sb.Append(title).Append(" ilanı hakkında bilgi almak istiyorum.");
+        }
+        else
+        {
+            sb.Append("ilan hakkında bilgi almak istiyorum.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(url))
+        {
+            sb.Append(" ").Append(url);
+        }
+
+        waUrl = $"https://wa.me/{waNumber}?text={Uri.EscapeDataString(sb.ToString())}";
+    }
+}
+
+@* a) Sidebar Danışman İletişim Butonları *@
+@if (hasPhone)
+{
+    <div class="agent-contact-buttons">
+        <a href="@telHref" class="btn-contact-call" aria-label="Danışmanı Ara">
+            <i class="fas fa-phone"></i>
+            <span>Hemen Ara</span>
+        </a>
+        @if (hasWhatsApp && !string.IsNullOrWhiteSpace(waUrl))
+        {
+            <a href="@waUrl" class="btn-contact-whatsapp" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ile Mesaj Gönder">
+                <i class="fab fa-whatsapp"></i>
+                <span>WhatsApp</span>
+            </a>
+        }
+    </div>
+}
+
+@* b) Mobil Sabit Alt Çubuk (yalnızca 767px ve altında görünür) *@
+<div class="listing-mobile-contact-bar" role="navigation" aria-label="Hızlı İletişim">
+    @if (hasPhone)
+    {
+        <a href="@telHref" class="mobile-bar-item mobile-bar-item--call" aria-label="Danışmanı Ara">
+            <i class="fas fa-phone"></i>
+            <span>Ara</span>
+        </a>
+        @if (hasWhatsApp && !string.IsNullOrWhiteSpace(waUrl))
+        {
+            <a href="@waUrl" class="mobile-bar-item mobile-bar-item--whatsapp" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ile Mesaj Gönder">
+                <i class="fab fa-whatsapp"></i>
+                <span>WhatsApp</span>
+            </a>
+        }
+    }
+    <a href="#schedule-box" class="mobile-bar-item mobile-bar-item--appointment" aria-label="Randevu Talep Et">
+        <i class="far fa-calendar-alt"></i>
+        <span>Randevu</span>
+    </a>
+</div>

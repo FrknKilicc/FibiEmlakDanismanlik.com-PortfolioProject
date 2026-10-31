@@ -1,7 +1,12 @@
 ﻿@model List<ResultMainBannerDto>
+@inject FibiEmlakDanismanlik.WebUI.Services.SiteTextService SiteTextService
+@{
+    var bannerSubtitle = (await SiteTextService.GetAsync())["home.banner.subtitle"];
+}
 
 
 <section class="banner-style-two centred">
+    <h1 class="sr-only">@(!string.IsNullOrWhiteSpace(bannerSubtitle) ? bannerSubtitle : "Fibi Emlak Danışmanlık")</h1>
     <div class="banner-carousel owl-theme owl-carousel owl-nav-none">
         @foreach (var item in Model)
         {
@@ -10,10 +15,20 @@
                 <div class="auto-container">
                     <div class="content-box">
                         <h2>@item.MainBannerDesc</h2>
-                        <p>Fibi Emlak Danışmanlık, Kazandıran Gayrimenkul Çözümleri</p>
+                        @if (!string.IsNullOrWhiteSpace(bannerSubtitle))
+                        {
+                            <p>@bannerSubtitle</p>
+                        }
                     </div>
                 </div>
             </div>
         }
     </div>
 </section>
+
+<style>
+    /* Owl kurulana kadar .owl-carousel display:none; banner yüksekliği sonradan gelip
+       altındaki bölümleri itiyordu (CLS). Kurulumdan önce yalnızca ilk slayt görünsün. */
+    .banner-style-two .banner-carousel.owl-carousel:not(.owl-loaded) { display: block; }
+    .banner-style-two .banner-carousel.owl-carousel:not(.owl-loaded) > .slide-item:not(:first-child) { display: none; }
+</style>

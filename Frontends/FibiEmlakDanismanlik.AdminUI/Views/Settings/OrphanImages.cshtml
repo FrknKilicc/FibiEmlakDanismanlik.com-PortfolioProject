@@ -1,0 +1,170 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.Settings.OrphanImagesViewModel
+@using System.IO
+
+@{
+    ViewData["Title"] = "Kullanılmayan Görseller";
+
+    TimeZoneInfo tz;
+    try
+    {
+        tz = TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul");
+    }
+    catch (TimeZoneNotFoundException)
+    {
+        try
+        {
+            tz = TimeZoneInfo.FindSystemTimeZoneById("Turkey Standard Time");
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            tz = TimeZoneInfo.CreateCustomTimeZone("TRT", TimeSpan.FromHours(3), "TRT", "TRT");
+        }
+    }
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1>Kullanılmayan Görseller</h1>
+        <nav>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item"><a href="/ayarlar">Ayarlar</a></li>
+                <li class="breadcrumb-item active">Kullanılmayan Görseller</li>
+            </ol>
+        </nav>
+    </div>
+    <div>
+        <a href="/ayarlar" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Ayarlara Dön
+        </a>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Success"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Error"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<div class="card mb-4 shadow-sm border-0">
+    <div class="card-body pt-3">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-3 border-bottom mb-3">
+            <div>
+                <h5 class="card-title p-0 m-0">
+                    <i class="bi bi-images me-2 text-primary"></i>Kullanılmayan İçerik Görselleri
+                </h5>
+                <p class="text-muted small mb-0 mt-1">
+                    Panelde değiştirilen veya silinen içeriklerden kalan, sitede hiçbir yerde kullanılmayan görseller. Son 24 saatte yüklenenler listelenmez. Silme geri alınamaz.
+                </p>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-secondary fs-6 py-2 px-3">
+                    @Model.Items.Count adet / @Model.TotalMegaBytes.ToString("N1") MB
+                </span>
+            </div>
+        </div>
+
+        @if (Model.Items.Count == 0)
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-check-circle text-success fs-1 d-block mb-3"></i>
+                <h5 class="fw-semibold">Kullanılmayan görsel yok.</h5>
+                <p class="text-muted small mb-0">Tüm içerik görselleri sitede aktif olarak kullanılıyor veya son 24 saat içerisinde yüklendi.</p>
+            </div>
+        }
+        else
+        {
+            <form id="orphanDeleteForm" method="post" action="/ayarlar/kullanilmayan-gorseller/sil" data-confirm="Seçilen görseller kalıcı olarak silinecek. Emin misiniz?">
+                @Html.AntiForgeryToken()
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" id="btnToggleAll" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-dash-square me-1"></i> Tüm Seçimleri Kaldır
+                        </button>
+                        <span id="selectedCountText" class="text-muted small"></span>
+                    </div>
+                    <div>
+                        <button type="submit" id="btnDeleteSelected" class="btn btn-danger btn-sm" data-confirm="Seçilen görseller kalıcı olarak silinecek. Emin misiniz?">
+                            <i class="bi bi-trash3 me-1"></i> Seçilenleri Sil
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;"></th>
+                                <th style="width: 110px;">Önizleme</th>
+                                <th>Görsel Yolu</th>
+                                <th style="width: 120px;">Boyut</th>
+                                <th style="width: 160px;">Son Değiştirilme</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                var fileName = System.IO.Path.GetFileName(item.RelativePath);
+                                var localDate = TimeZoneInfo.ConvertTimeFromUtc(item.LastWriteUtc, tz).ToString("dd.MM.yyyy HH:mm");
+                                var sizeText = item.SizeBytes >= 1024 * 1024
+                                    ? $"{(item.SizeBytes / (1024.0 * 1024.0)):N1} MB"
+                                    : $"{(item.SizeBytes / 1024.0):N1} KB";
+
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input" name="paths" value="@item.RelativePath" checked aria-label="@fileName" />
+                                    </td>
+                                    <td>
+                                        <img src="@item.Url" alt="@fileName" loading="lazy" class="img-thumbnail" style="max-width: 96px; max-height: 96px; object-fit: cover;" />
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold text-break">@fileName</div>
+                                        <div class="text-muted small text-break">@item.RelativePath</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-light text-body border">@sizeText</span>
+                                    </td>
+                                    <td>
+                                        <span class="small text-muted">@localDate</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mt-3 pt-3 border-top">
+                    <button type="submit" class="btn btn-danger" data-confirm="Seçilen görseller kalıcı olarak silinecek. Emin misiniz?">
+                        <i class="bi bi-trash3 me-1"></i> Seçilenleri Sil
+                    </button>
+                </div>
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/orphan-images.js" asp-append-version="true"></script>
+}

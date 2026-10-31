@@ -1,0 +1,186 @@
+@using System.Globalization
+@model FibiEmlakDanismanlik.AdminUI.Models.Content.SiteContentListViewModel<FibiEmlakDanismanlik.AdminUI.Models.Content.BankLoanRateDto>
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.SiteImageUrl SiteImageUrl
+
+@{
+    ViewData["Title"] = "Kredi Oranları";
+    var trCulture = new CultureInfo("tr-TR");
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1 class="mb-0">Kredi Oranları</h1>
+        <nav class="mt-1">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item"><a href="/icerik">İçerik</a></li>
+                <li class="breadcrumb-item active">Kredi Oranları</li>
+            </ol>
+        </nav>
+    </div>
+    <div>
+        <a href="/icerik/kredi-oranlari/yeni" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i> Yeni Kredi Oranı Ekle
+        </a>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Success"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Error"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<partial name="_ContentNav" model="@("kredi-oranlari")" />
+
+<div class="alert alert-info d-flex align-items-center mb-4">
+    <i class="bi bi-info-circle-fill flex-shrink-0 me-2 fs-5"></i>
+    <div>Oranlar ilan detayındaki kredi hesaplayıcıda kullanılır. Aylık faiz yüzde olarak girilir (ör. 2,49).</div>
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body pt-3">
+        <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+            <h5 class="card-title p-0 m-0">
+                <i class="bi bi-bank me-2 text-primary"></i>Kayıtlı Banka Kredi Oranları
+                <span class="badge bg-secondary-subtle text-secondary border ms-2 fs-6">@Model.Items.Count</span>
+            </h5>
+        </div>
+
+        @if (Model.Items == null || !Model.Items.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-bank display-4 text-muted d-block mb-3"></i>
+                <h6 class="text-body fw-semibold">Henüz kredi oranı eklenmemiş</h6>
+                <p class="text-muted small mb-3">İlan detay sayfasındaki kredi hesaplama aracında kullanılacak banka faiz oranlarını buradan ekleyebilirsiniz.</p>
+                <a href="/icerik/kredi-oranlari/yeni" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i> İlk Kredi Oranını Ekle
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-muted small text-uppercase">
+                        <tr>
+                            <th scope="col">Banka</th>
+                            <th scope="col" class="text-end">Konut Aylık %</th>
+                            <th scope="col" class="text-end">İşyeri Aylık %</th>
+                            <th scope="col" class="text-center">Maks. Vade</th>
+                            <th scope="col" class="text-end">Dosya Masrafı %</th>
+                            <th scope="col">Kaynak</th>
+                            <th scope="col">Son Güncelleme</th>
+                            <th scope="col" style="width: 100px;">Durum</th>
+                            <th scope="col" class="text-end" style="width: 160px;">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            var logoPreview = SiteImageUrl.Preview(item.LogoUrl);
+
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        @if (!string.IsNullOrEmpty(logoPreview))
+                                        {
+                                            <img src="@logoPreview"
+                                                 alt="@item.BankName"
+                                                 class="border rounded p-1 bg-body"
+                                                 style="width: 36px; height: 36px; object-fit: contain;" />
+                                        }
+                                        else
+                                        {
+                                            <div class="bg-body-tertiary border rounded d-flex align-items-center justify-content-center text-muted"
+                                                 style="width: 36px; height: 36px;">
+                                                <i class="bi bi-bank fs-6"></i>
+                                            </div>
+                                        }
+                                        <div>
+                                            <div class="fw-semibold text-body">
+                                                @item.BankName
+                                                @if (!string.IsNullOrWhiteSpace(item.ProviderKey))
+                                                {
+                                                    <span class="badge rounded-pill bg-body-tertiary text-body-secondary border fw-normal ms-1" title="Otomatik güncelleme anahtarı"><i class="bi bi-arrow-repeat"></i> @item.ProviderKey</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-end fw-semibold text-primary">
+                                    %@item.HousingLoanMonthlyRate.ToString("0.00##", trCulture)
+                                </td>
+                                <td class="text-end fw-semibold text-body">
+                                    %@item.CommercialLoanMonthlyRate.ToString("0.00##", trCulture)
+                                </td>
+                                <td class="text-center">
+                                    @item.MaxTermMonths ay
+                                </td>
+                                <td class="text-end text-muted">
+                                    %@item.AllocationFeeRate.ToString("0.00##", trCulture)
+                                </td>
+                                <td>
+                                    <span class="badge bg-body-tertiary text-secondary border">
+                                        @(string.IsNullOrWhiteSpace(item.DataSource) ? "Manual" : item.DataSource)
+                                    </span>
+                                </td>
+                                <td class="small text-muted">
+                                    @item.UpdatedDate.ToString("dd.MM.yyyy HH:mm")
+                                </td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-check-circle me-1"></i>Yayında
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary border">
+                                            <i class="bi bi-eye-slash me-1"></i>Gizli
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-1">
+                                        <a href="/icerik/kredi-oranlari/@item.BankLoanRateId" class="btn btn-outline-primary btn-sm" title="Düzenle">
+                                            <i class="bi bi-pencil me-1"></i> Düzenle
+                                        </a>
+                                        <form method="post" action="/icerik/kredi-oranlari/@item.BankLoanRateId/sil" class="d-inline" data-confirm="«@(item.BankName)» kredi oranı silinsin mi? Bu işlem geri alınamaz.">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Sil">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -33,11 +33,5 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-        public IActionResult Get10RecentRentalProperties()
-        {
-            return ViewComponent("_FeaturedRentalPropertViewComponentPartial");
-        }
-
-
     }
 }

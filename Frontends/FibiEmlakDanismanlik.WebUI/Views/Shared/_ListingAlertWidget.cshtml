@@ -1,0 +1,82 @@
+@model FibiEmlakDanismanlik.WebUI.Models.ListingAlertFormVm
+@{
+    var summaryParts = new List<string>();
+
+    var locationPart = !string.IsNullOrWhiteSpace(Model.DistrictName) && !string.IsNullOrWhiteSpace(Model.CityName)
+        ? $"{Model.DistrictName}, {Model.CityName}"
+        : (!string.IsNullOrWhiteSpace(Model.DistrictName) ? Model.DistrictName : Model.CityName);
+
+    if (!string.IsNullOrWhiteSpace(locationPart))
+    {
+        summaryParts.Add(locationPart);
+    }
+
+    if (Model.RoomCounts != null && Model.RoomCounts.Count > 0 && !string.IsNullOrWhiteSpace(Model.RoomCounts[0]))
+    {
+        summaryParts.Add(Model.RoomCounts[0]);
+    }
+
+    if (Model.MinPrice.HasValue && Model.MaxPrice.HasValue)
+    {
+        summaryParts.Add($"{Model.MinPrice.Value:N0} – {Model.MaxPrice.Value:N0} TL");
+    }
+    else if (Model.MinPrice.HasValue)
+    {
+        summaryParts.Add($"{Model.MinPrice.Value:N0}+ TL");
+    }
+    else if (Model.MaxPrice.HasValue)
+    {
+        summaryParts.Add($"0 – {Model.MaxPrice.Value:N0} TL");
+    }
+
+    var summaryText = string.Join(" · ", summaryParts);
+}
+
+<link rel="stylesheet" href="~/css/listing-alert.css" asp-append-version="true" />
+<div class="sidebar-widget listing-alert-widget">
+    <div class="widget-title">
+        <h5>Benzer ilan çıkınca haber verelim</h5>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(summaryText))
+    {
+        <div class="criteria-summary">
+            <i class="fas fa-bell mr-1"></i> @summaryText
+        </div>
+    }
+    <form action="/haber-ver" method="post" class="default-form" asp-antiforgery="true">
+        <input type="hidden" name="ListingTypeId" value="@Model.ListingTypeId" />
+        <input type="hidden" name="CityName" value="@Model.CityName" />
+        <input type="hidden" name="DistrictName" value="@Model.DistrictName" />
+        <input type="hidden" name="MinPrice" value="@(Model.MinPrice?.ToString("0") ?? "")" />
+        <input type="hidden" name="MaxPrice" value="@(Model.MaxPrice?.ToString("0") ?? "")" />
+        @if (Model.RoomCounts != null && Model.RoomCounts.Count > 0)
+        {
+            <input type="hidden" name="RoomCounts" value="@Model.RoomCounts[0]" />
+        }
+        <input type="hidden" name="SourceListingTypeId" value="@Model.SourceListingTypeId" />
+        <input type="hidden" name="SourceListingId" value="@Model.SourceListingId" />
+        <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+
+        <div class="form-group">
+            <input type="text" name="FullName" placeholder="İsim Soyisim" required class="form-control" />
+        </div>
+        <div class="form-group">
+            <input type="tel" name="PhoneNumber" placeholder="Telefon (5xx xxx xx xx)" required class="form-control" inputmode="numeric" />
+        </div>
+        <div class="form-group">
+            <input type="email" name="Email" placeholder="E-Posta (isteğe bağlı)" class="form-control" />
+        </div>
+        <div class="form-group kvkk-row">
+            <label class="kvkk-label">
+                <input type="checkbox" name="KvkkApproved" value="true" required />
+                <span>
+                    <a href="/gizlilik-politikasi" target="_blank">Gizlilik Politikası</a> ve <a href="/kvkk-aydinlatma-metni" target="_blank">KVKK Aydınlatma Metni</a>'ni okudum, iletişim bilgilerimin bu talep için işlenmesini onaylıyorum.
+                </span>
+            </label>
+        </div>
+
+        <partial name="_FormSpamFields" />
+
+        <button type="submit" class="theme-btn btn-one w-100">Haber Ver</button>
+    </form>
+</div>

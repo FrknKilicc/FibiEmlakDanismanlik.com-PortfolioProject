@@ -1,9 +1,15 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.BlogCommands;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Exceptions;
+using FibiEmlakDanismanlik.Application.Features.Commands.BlogCategoryCommands;
+using FibiEmlakDanismanlik.Application.Features.Commands.BlogCommands;
 using FibiEmlakDanismanlik.Application.Features.Handlers.BlogHandlers;
 using FibiEmlakDanismanlik.Application.Features.Queries.BlogQueries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
 {
@@ -17,36 +23,128 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         {
             _mediator = mediator;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetBlogList()
         {
             var value = await _mediator.Send(new GetBlogQuery());
             return Ok(value);
         }
-        [HttpGet("{id}")]
+
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetBlogCategories()
+        {
+            var values = await _mediator.Send(new GetBlogCategoriesQuery());
+            return Ok(values);
+        }
+
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
+        [HttpPost("categories")]
+        public async Task<IActionResult> CreateBlogCategory(CreateBlogCategoryCommand command)
+        {
+            try
+            {
+                await _mediator.Send(command);
+                return Ok("Kategori Başarıyla Eklendi");
+            }
+            catch (BlogContentConflictException ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
+        [HttpPut("categories")]
+        public async Task<IActionResult> UpdateBlogCategory(UpdateBlogCategoryCommand command)
+        {
+            try
+            {
+                await _mediator.Send(command);
+                return Ok("Kategori Başarıyla Güncellendi");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (BlogContentConflictException ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
+        [HttpDelete("categories")]
+        public async Task<IActionResult> RemoveBlogCategory([FromQuery] int id)
+        {
+            try
+            {
+                await _mediator.Send(new RemoveBlogCategoryCommand(id));
+                return Ok("Kategori Başarıyla Silindi");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (BlogContentConflictException ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpGet("tags")]
+        public async Task<IActionResult> GetAllTagNames()
+        {
+            var values = await _mediator.Send(new GetBlogTagNamesQuery());
+            return Ok(values);
+        }
+
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetBlogById(int id)
         {
             var value = await _mediator.Send(new GetBlogByIdQuery(id));
+            if (value == null)
+            {
+                return NotFound();
+            }
             return Ok(value);
         }
+
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateBlog(CreateBlogCommand command)
         {
             await _mediator.Send(command);
             return Ok("Blog Bilgisi Başarıyla Eklendi");
         }
+
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateBlog(UpdateBlogCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Blog Bilgisi Başarıyla Güncellendi");
-
+            try
+            {
+                await _mediator.Send(command);
+                return Ok("Blog Bilgisi Başarıyla Güncellendi");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
+
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveBlog(int id)
         {
-            await _mediator.Send(new RemoveBlogCommand(id));
-            return Ok("Blog Bilgisi Başarıyla Silindi");
+            try
+            {
+                await _mediator.Send(new RemoveBlogCommand(id));
+                return Ok("Blog Bilgisi Başarıyla Silindi");
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet("GetBlogDetailWithAuthorById")]
@@ -73,7 +171,6 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         }
 
         [HttpGet("GetBlogListWithAuthor")]
-
         public async Task<IActionResult> GetBlogListWithAuthor([FromQuery] int? blogCategoryId)
         {
             {
@@ -83,16 +180,16 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
         }
 
         [HttpGet("SearchSuggestions")]
-        public async Task<IActionResult> SearchSuggestions([FromQuery] string q , [FromQuery] int take=6) 
-        
+        public async Task<IActionResult> SearchSuggestions([FromQuery] string q, [FromQuery] int take = 6)
         {
-            if (string.IsNullOrWhiteSpace(q) || q.Trim().Length<2)
+            if (string.IsNullOrWhiteSpace(q) || q.Trim().Length < 2)
             {
                 return Ok(new List<object>());
             }
             var result = await _mediator.Send(new GetBlogSuggestionsQuery(q, take));
             return Ok(result);
         }
+
         [HttpGet("GetTopBlogCategories")]
         public async Task<IActionResult> GetTopBlogCategories([FromQuery] int take = 5)
         {

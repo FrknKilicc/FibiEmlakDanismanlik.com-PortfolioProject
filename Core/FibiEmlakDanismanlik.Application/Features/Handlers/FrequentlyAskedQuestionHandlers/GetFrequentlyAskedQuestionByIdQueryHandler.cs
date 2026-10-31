@@ -23,6 +23,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.FrequentlyAskedQues
         public async Task<GetFrequentlyAskedQuestionByIdResult> Handle(GetFrequentlyAskedQuestionByIdQuery request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.Id);
+            if (value == null)
+            {
+                throw new KeyNotFoundException("SSS bulunamadı.");
+            }
             return new GetFrequentlyAskedQuestionByIdResult
             {
                 Answer = value.Answer,

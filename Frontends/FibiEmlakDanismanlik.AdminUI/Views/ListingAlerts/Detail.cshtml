@@ -1,0 +1,408 @@
+@model FibiEmlakDanismanlik.AdminUI.Models.ListingAlerts.ListingAlertDetailViewModel
+@inject FibiEmlakDanismanlik.AdminUI.Infrastructure.CurrentAdmin CurrentAdmin
+@using FibiEmlakDanismanlik.AdminUI.Models.ListingAlerts
+@using FibiEmlakDanismanlik.AdminUI.Models.Leads
+@using System.Globalization
+@{
+    ViewData["Title"] = $"Haber Talebi #{Model.Detail.ListingAlertId} - {Model.Detail.FullName}";
+    var waLink = LeadLabels.ToWhatsAppLink(Model.Detail.PhoneNumber);
+    var trCulture = CultureInfo.GetCultureInfo("tr-TR");
+}
+
+<div class="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h1>Haber Talebi Detayı <span class="text-muted fs-5 font-monospace">#@Model.Detail.ListingAlertId</span></h1>
+        <nav>
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                <li class="breadcrumb-item"><a href="/haber-bekleyenler">Haber Bekleyenler</a></li>
+                <li class="breadcrumb-item active">#@Model.Detail.ListingAlertId</li>
+            </ol>
+        </nav>
+    </div>
+    <div>
+        <a href="/haber-bekleyenler" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Listeye Dön
+        </a>
+    </div>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-check-circle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Success"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@TempData["Error"]</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-5"></i>
+        <div>@Model.ErrorMessage</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Sol Sütun: Kişi Bilgisi, Kriterler, Eşleşen İlanlar ve Geçmiş -->
+    <div class="col-lg-8 col-12">
+        <!-- 1. Kişi Bilgileri Kartı -->
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body pt-3">
+                <div class="d-flex justify-content-between align-items-start pb-3 border-bottom mb-3 flex-wrap gap-2">
+                    <div>
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-1">
+                            @Model.Detail.TypeDisplay
+                        </span>
+                        <h4 class="card-title p-0 m-0 text-dark fw-bold">@Model.Detail.FullName</h4>
+                    </div>
+                    <span class="badge bg-@ListingAlertLabels.StatusBadge(Model.Detail.Status) fs-6">
+                        @ListingAlertLabels.StatusName(Model.Detail.Status)
+                    </span>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">Telefon Numarası</label>
+                        <div class="d-flex align-items-center flex-wrap gap-2 mt-1">
+                            <a href="tel:@Model.Detail.PhoneNumber" class="fw-semibold text-decoration-none text-dark fs-6">
+                                <i class="bi bi-telephone text-primary me-1"></i>@Model.Detail.PhoneNumber
+                            </a>
+                            @if (!string.IsNullOrWhiteSpace(waLink))
+                            {
+                                <a href="@waLink" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-success py-0 px-2">
+                                    <i class="bi bi-whatsapp me-1"></i>WhatsApp
+                                </a>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">E-posta Adresi</label>
+                        <div class="mt-1">
+                            @if (!string.IsNullOrWhiteSpace(Model.Detail.Email))
+                            {
+                                <a href="mailto:@Model.Detail.Email" class="text-decoration-none">
+                                    <i class="bi bi-envelope text-primary me-1"></i>@Model.Detail.Email
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">—</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">Kayıt Tarihi</label>
+                        <div class="fw-medium mt-1">
+                            <i class="bi bi-clock text-muted me-1"></i>@Model.Detail.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">KVKK Onay Tarihi</label>
+                        <div class="fw-medium mt-1">
+                            <i class="bi bi-shield-check text-success me-1"></i>@LeadLabels.ToTurkeyTime(Model.Detail.KvkkApprovedAt).ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                    </div>
+
+                    @if (Model.Detail.SourceListingId.HasValue && Model.Detail.SourceListingId.Value > 0)
+                    {
+                        <div class="col-12">
+                            <label class="text-muted small d-block">Başvurulan Kaynak İlan</label>
+                            <div class="mt-1">
+                                <a href="/ilanlar/@Model.Detail.SourceListingTypeId/@Model.Detail.SourceListingId" class="text-decoration-none fw-semibold">
+                                    <i class="bi bi-link-45deg me-1"></i>@(Model.Detail.SourceListingTitle ?? $"İlan #{Model.Detail.SourceListingId}")
+                                </a>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="col-12">
+                        <label class="text-muted small d-block">Atanan Danışman</label>
+                        <div class="mt-1">
+                            @if (!string.IsNullOrWhiteSpace(Model.Detail.AssignedAgentName))
+                            {
+                                <span class="fw-semibold text-dark"><i class="bi bi-person me-1 text-primary"></i>@Model.Detail.AssignedAgentName</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-light text-secondary border">Henüz Danışman Atanmamış</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Arama Kriterleri Kartı -->
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body pt-3">
+                <h5 class="card-title p-0 pb-3 border-bottom mb-3">
+                    <i class="bi bi-search me-2 text-primary"></i>Aranan Emlak Kriterleri
+                </h5>
+
+                <div class="row g-3">
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">İlan Türü</label>
+                        <div class="fw-semibold text-dark mt-1">
+                            @Model.Detail.TypeDisplay
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">Lokasyon (İl / İlçe)</label>
+                        <div class="fw-semibold text-dark mt-1">
+                            @Model.Detail.CityName / @(!string.IsNullOrWhiteSpace(Model.Detail.DistrictName) ? Model.Detail.DistrictName : "Tüm ilçeler")
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">Oda Sayısı</label>
+                        <div class="fw-semibold text-dark mt-1">
+                            @(!string.IsNullOrWhiteSpace(Model.Detail.RoomCounts) ? Model.Detail.RoomCounts : "Fark etmez")
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-12">
+                        <label class="text-muted small d-block">Fiyat Aralığı</label>
+                        <div class="fw-semibold text-dark mt-1">
+                            @ListingAlertLabels.PriceRange(Model.Detail.MinPrice, Model.Detail.MaxPrice)
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Detail.Note))
+                    {
+                        <div class="col-12 mt-3">
+                            <label class="text-muted small d-block">Ek Not</label>
+                            <div class="p-3 bg-light border rounded text-dark mt-1" style="white-space: pre-wrap;">@Model.Detail.Note</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Eşleşen Yeni İlanlar Kartı -->
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body pt-3">
+                <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                    <h5 class="card-title p-0 m-0">
+                        <i class="bi bi-bell me-2 text-primary"></i>Eşleşen Yeni İlanlar
+                    </h5>
+                    <span class="badge @(Model.Detail.PendingMatches.Count > 0 ? "bg-success" : "bg-secondary")">
+                        @Model.Detail.PendingMatches.Count
+                    </span>
+                </div>
+
+                @if (Model.Detail.PendingMatches == null || !Model.Detail.PendingMatches.Any())
+                {
+                    <p class="text-muted small py-3 mb-0">Kriterlere uyan yeni ilan yok.</p>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var match in Model.Detail.PendingMatches)
+                        {
+                            <div class="list-group-item px-0 py-3">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">
+                                            <a href="/ilanlar/@match.ListingTypeId/@match.ListingId" class="text-dark text-decoration-none">
+                                                <i class="bi bi-house-door me-1 text-primary"></i>@match.Title
+                                            </a>
+                                        </h6>
+                                        <div class="small text-muted">
+                                            <span><i class="bi bi-geo-alt me-1"></i>@match.City / @match.District</span>
+                                            @if (!string.IsNullOrWhiteSpace(match.NumberOfRoom))
+                                            {
+                                                <span class="ms-2"><i class="bi bi-door-open me-1"></i>@match.NumberOfRoom</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="fw-bold fs-6 text-primary">@match.Price.ToString("N0", trCulture) TL</div>
+                                        <small class="text-muted d-block">@match.CreatedDate.ToString("dd.MM.yyyy HH:mm")</small>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2 border-top">
+                                    <div class="small text-muted">
+                                        <i class="bi bi-person me-1"></i>İlan Danışmanı: <span class="text-dark fw-medium">@(match.AgentName ?? "Belirtilmemiş")</span>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <form action="/haber-bekleyenler/@Model.Detail.ListingAlertId/eslesme" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="listingTypeId" value="@match.ListingTypeId" />
+                                            <input type="hidden" name="listingId" value="@match.ListingId" />
+                                            <input type="hidden" name="status" value="1" />
+                                            <input type="hidden" name="returnUrl" value="/haber-bekleyenler/@Model.Detail.ListingAlertId" />
+                                            <button type="submit" class="btn btn-sm btn-success py-1 px-3">
+                                                <i class="bi bi-check-lg me-1"></i> Haber verildi
+                                            </button>
+                                        </form>
+
+                                        <form action="/haber-bekleyenler/@Model.Detail.ListingAlertId/eslesme" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="listingTypeId" value="@match.ListingTypeId" />
+                                            <input type="hidden" name="listingId" value="@match.ListingId" />
+                                            <input type="hidden" name="status" value="2" />
+                                            <input type="hidden" name="returnUrl" value="/haber-bekleyenler/@Model.Detail.ListingAlertId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary py-1 px-3">
+                                                <i class="bi bi-x-lg me-1"></i> Uygun değil
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- 4. Geçmiş Kartı -->
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body pt-3">
+                <h5 class="card-title p-0 pb-3 border-bottom mb-3">
+                    <i class="bi bi-clock-history me-2 text-primary"></i>İşaretleme Geçmişi
+                </h5>
+
+                @if (Model.Detail.History == null || !Model.Detail.History.Any())
+                {
+                    <p class="text-muted small py-3 mb-0">Henüz geçmiş hareket kaydı bulunmuyor.</p>
+                }
+                else
+                {
+                    <div class="timeline">
+                        @foreach (var hist in Model.Detail.History.OrderByDescending(h => h.CreatedAtUtc))
+                        {
+                            <div class="p-3 mb-2 rounded border bg-light">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-1">
+                                    <div>
+                                        <span class="badge bg-@ListingAlertLabels.MatchStatusBadge(hist.Status) me-2">
+                                            @ListingAlertLabels.MatchStatusName(hist.Status)
+                                        </span>
+                                        <a href="/ilanlar/@hist.ListingTypeId/@hist.ListingId" class="fw-semibold text-dark text-decoration-none">
+                                            @(hist.ListingTitle ?? $"İlan #{hist.ListingId}")
+                                        </a>
+                                    </div>
+                                    <span class="small text-muted">
+                                        <i class="bi bi-clock me-1"></i>@LeadLabels.ToTurkeyTime(hist.CreatedAtUtc).ToString("dd.MM.yyyy HH:mm")
+                                    </span>
+                                </div>
+                                <div class="small text-muted mt-1">
+                                    <i class="bi bi-person me-1"></i>İşlemi Yapan: <span class="text-dark fw-medium">@(hist.AgentName ?? "Sistem")</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Sağ Sütun: Durum ve Atama Kartları -->
+    <div class="col-lg-4 col-12">
+        <!-- 1. Durum Kartı -->
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body pt-3">
+                <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                    <h5 class="card-title p-0 m-0">
+                        <i class="bi bi-flag me-2 text-primary"></i>Talep Durumu
+                    </h5>
+                    <span class="badge bg-@ListingAlertLabels.StatusBadge(Model.Detail.Status) fs-6">
+                        @ListingAlertLabels.StatusName(Model.Detail.Status)
+                    </span>
+                </div>
+
+                @if (Model.Detail.Status == 1)
+                {
+                    <p class="small text-muted mb-3">
+                        Bu talep şu an aktif olarak takip edilmektedir. Yeni ilanlar eklendiğinde kriter eşleşmeleri listelenir.
+                    </p>
+
+                    <form action="/haber-bekleyenler/@Model.Detail.ListingAlertId/durum" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="status" value="2" />
+                        <input type="hidden" name="returnUrl" value="/haber-bekleyenler/@Model.Detail.ListingAlertId" />
+                        <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                            <i class="bi bi-archive me-1"></i> Kaydı Kapat
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <p class="small text-muted mb-2">
+                        Bu talep kapatılmıştır.
+                    </p>
+                    @if (Model.Detail.ClosedAtUtc.HasValue)
+                    {
+                        <div class="small text-muted mb-3">
+                            <i class="bi bi-clock me-1"></i>Kapanış: @LeadLabels.ToTurkeyTime(Model.Detail.ClosedAtUtc.Value).ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                    }
+
+                    <form action="/haber-bekleyenler/@Model.Detail.ListingAlertId/durum" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="status" value="1" />
+                        <input type="hidden" name="returnUrl" value="/haber-bekleyenler/@Model.Detail.ListingAlertId" />
+                        <button type="submit" class="btn btn-outline-success btn-sm w-100">
+                            <i class="bi bi-arrow-repeat me-1"></i> Yeniden Aç
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+
+        <!-- 2. Danışman Atama Kartı (Sahip ve Yönetici) -->
+        @if (Model.CanAssign)
+        {
+            <div class="card mb-4 shadow-sm border-0">
+                <div class="card-body pt-3">
+                    <div class="d-flex justify-content-between align-items-center pb-2 border-bottom mb-3">
+                        <h5 class="card-title p-0 m-0">
+                            <i class="bi bi-person-gear me-2 text-primary"></i>Danışman Atama
+                        </h5>
+                    </div>
+
+                    <p class="small text-muted mb-3">
+                        Bu talebin takibinden sorumlu danışmanı belirleyin veya mevcut atamayı kaldırın.
+                    </p>
+
+                    <form action="/haber-bekleyenler/@Model.Detail.ListingAlertId/ata" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="/haber-bekleyenler/@Model.Detail.ListingAlertId" />
+                        <div class="mb-3">
+                            <label for="alertAgentSelect" class="form-label fw-semibold small">Atanan Danışman</label>
+                            <select id="alertAgentSelect" name="agentId" class="form-select">
+                                <option value="">— Atanmamış —</option>
+                                @foreach (var ag in Model.Agents)
+                                {
+                                    <option value="@ag.AgentId" selected="@(Model.Detail.AssignedAgentId == ag.AgentId ? "selected" : null)">
+                                        @ag.AgentName
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-outline-info btn-sm w-100">
+                            <i class="bi bi-person-check me-1"></i> Atamayı Kaydet
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>

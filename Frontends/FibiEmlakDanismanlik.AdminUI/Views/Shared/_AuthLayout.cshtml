@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>@ViewData["Title"] | Fibi Yönetim</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <partial name="_ThemeHead" />
+  <!-- Favicons -->
+  <link href="~/assets/img/favicon.ico" rel="icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="~/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="~/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="~/assets/css/style.css" rel="stylesheet">
+  <link href="~/css/admin.css" rel="stylesheet" asp-append-version="true">
+  @await RenderSectionAsync("Styles", required: false)
+  <link href="~/css/theme.css" rel="stylesheet" asp-append-version="true">
+</head>
+
+<body>
+
+  <div class="position-fixed top-0 end-0 m-3 dropdown" style="z-index: 1050;">
+    <button class="btn btn-outline-secondary btn-sm nav-icon d-flex align-items-center justify-content-center" id="themeToggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Tema seç" title="Tema" style="width: 38px; height: 38px; border-radius: 50%;">
+      <i class="bi bi-circle-half fs-5"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="themeToggle">
+      <li>
+        <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-theme-value="light">
+          <i class="bi bi-sun"></i>
+          <span>Açık</span>
+          <i class="bi bi-check2 ms-auto theme-check d-none"></i>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-theme-value="dark">
+          <i class="bi bi-moon-stars"></i>
+          <span>Koyu</span>
+          <i class="bi bi-check2 ms-auto theme-check d-none"></i>
+        </button>
+      </li>
+      <li>
+        <button type="button" class="dropdown-item d-flex align-items-center gap-2" data-theme-value="auto">
+          <i class="bi bi-circle-half"></i>
+          <span>Sistem</span>
+          <i class="bi bi-check2 ms-auto theme-check d-none"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <main>
+    <div class="container">
+
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8 d-flex flex-column align-items-center justify-content-center">
+
+              <div class="d-flex justify-content-center py-4">
+                <a href="/" class="logo d-flex align-items-center w-auto">
+                  <img src="~/assets/img/logo.png" alt="Fibi Yönetim">
+                  <span class="d-none d-lg-block">Fibi Yönetim</span>
+                </a>
+              </div><!-- End Logo -->
+
+              @RenderBody()
+
+              <div class="credits text-center py-3">
+                <!-- All the links in the footer should remain intact. -->
+                <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+  </main><!-- End #main -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="~/assets/js/main.js"></script>
+
+  @await RenderSectionAsync("Scripts", required: false)
+
+  <script src="~/js/theme.js" asp-append-version="true"></script>
+
+</body>
+
+</html>

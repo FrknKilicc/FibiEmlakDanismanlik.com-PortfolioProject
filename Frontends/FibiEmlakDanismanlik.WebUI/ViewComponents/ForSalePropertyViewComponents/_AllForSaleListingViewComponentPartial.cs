@@ -3,7 +3,7 @@ using FibiEmlakDanismanlik.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
-using FibiEmlakDanismanlik.Application.Features.Requests.PropertyRequests;
+
 
 
 namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponents
@@ -31,7 +31,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             return val;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(ListingLocationVm? location)
         {
             var client = _httpClientFactory.CreateClient();
             var apiUrl = _configuration["Url:ApiUrl"];
@@ -63,6 +63,15 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             string? district = TryStr("district");
             string? neighborhood = TryStr("neighborhood");
 
+            if (location != null && location.CityId > 0 && cityId == null)
+            {
+                cityId = location.CityId;
+                city = location.City;
+                districtId = location.DistrictId;
+                district = location.District;
+            }
+            ViewBag.Heading = location?.Heading;
+
             decimal? minPrice = TryDecimal("minPrice");
             decimal? maxPrice = TryDecimal("maxPrice");
             string? numberOfRoom = TryStr("numberOfRoom");
@@ -74,6 +83,15 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
             int? numberOfSection = TryInt("numberOfSection");
             int? agentId = TryInt("agentId");
             string? zoningStatus = TryStr("zoningStatus");
+            int? housingCategoryId = TryInt("housingCategoryId");
+            int? landCategoryId = TryInt("landCategoryId");
+            string? buildingAge = TryStr("buildingAge");
+            string? heating = TryStr("heating");
+            string? titleDeedStatus = TryStr("titleDeedStatus");
+            bool? furnished = TryBool("furnished");
+            bool? withinTheComplex = TryBool("withinTheComplex");
+            bool? loanEligible = TryBool("loanEligible");
+            bool? transferable = TryBool("transferable");
             string? searchTerm = TryStr("searchTerm");
 
             var sortBy = TryStr("sortBy") ?? "CreatedDate";
@@ -100,13 +118,19 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                     selectedIds.Add(matchedListingType.ListingTypeId);
             }
 
+            if (location?.ListingTypeId != null && !selectedIds.Any())
+                selectedIds.Add(location.ListingTypeId.Value);
+
             foreach (var f in facets)
                 f.Selected = selectedIds.Contains(f.ListingTypeId);
 
-            var request = new PropertyFilterRequest
+            var request = new PropertyFilterRequestDto
             {
                 ListingTypeIds = selectedIds.Any() ? selectedIds : null,
                 SelectedAmenityIds = selectedAmenityIds.Any() ? selectedAmenityIds : null,
+                CityId = cityId,
+                DistrictId = districtId,
+                NeighborhoodId = neighborhoodId,
                 City = city,
                 District = district,
                 Neighborhood = neighborhood,
@@ -120,6 +144,15 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 NumberOfSection = numberOfSection,
                 AgentId = agentId,
                 ZoningStatus = zoningStatus,
+                HousingCategoryId = housingCategoryId,
+                LandCategoryId = landCategoryId,
+                BuildingAge = buildingAge,
+                Heating = heating,
+                TitleDeedStatus = titleDeedStatus,
+                Furnished = furnished,
+                WithinTheComplex = withinTheComplex,
+                LoanEligible = loanEligible,
+                Transferable = transferable,
                 SearchTerm = searchTerm,
                 SortBy = sortBy,
                 SortDir = sortDir,
@@ -147,6 +180,26 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                     amenities = respObj.Amenties ?? new();
                     request.Page = page;
                     request.PageSize = pageSize;
+                }
+            }
+
+            var lastPage = (int)Math.Ceiling((double)total / pageSize);
+            if (items.Count == 0 && total > 0 && pageSize > 0 && page > lastPage)
+            {
+                page = lastPage;
+                request.Page = page;
+                body = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+                listResp = await client.PostAsync($"{apiBase}ForSales/filter", body);
+                if (listResp.IsSuccessStatusCode)
+                {
+                    var json = await listResp.Content.ReadAsStringAsync();
+                    var respObj = JsonConvert.DeserializeObject<ForSaleFilterResponseDto>(json);
+                    if (respObj != null)
+                    {
+                        items = respObj.Items ?? new();
+                        total = respObj.Total;
+                        amenities = respObj.Amenties ?? new();
+                    }
                 }
             }
 
@@ -186,10 +239,8 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
                 var v = HttpContext.Request.Query[key].ToString();
                 return string.IsNullOrWhiteSpace(v) ? null : v;
             }
+            bool? TryBool(string key) => bool.TryParse(HttpContext.Request.Query[key], out var b) ? b : null;
 
         }
     }
 }
-
-
-

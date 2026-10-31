@@ -1,56 +1,229 @@
-﻿@model List<ResultAllForSaleListingWithAgentDto>
+@model List<ResultAllForSaleListinForPageDto>
+@using FibiEmlakDanismanlik.Dto.PropertyDtos
+@using System.Globalization
+@inject FibiEmlakDanismanlik.WebUI.Services.SiteTextService SiteTextService
+@{
+    var texts = await SiteTextService.GetAsync();
+}
 
+@if (Model != null && Model.Any())
+{
+    var trCulture = CultureInfo.GetCultureInfo("tr-TR");
 
-    <section class="feature-style-two sec-pad">
+    <style>
+        .latest-listings-section .latest-listings-carousel .owl-nav { display: block; }
+        .latest-listings-section .latest-listings-carousel .owl-nav.disabled { display: none; }
+        @@media (max-width: 767px) {
+            .latest-listings-section .latest-listings-carousel .owl-nav { top: -88px; }
+            .latest-listings-section .latest-listings-carousel .owl-nav button { width: 42px; height: 42px; line-height: 42px; font-size: 18px; }
+            .latest-listings-section .sec-title { padding-right: 100px; }
+        }
+        .latest-listings-section .owl-stage {
+            display: flex;
+        }
+        .latest-listings-section .owl-item {
+            display: flex;
+            height: auto;
+        }
+        .latest-listings-section .feature-block-one {
+            display: flex;
+            width: 100%;
+        }
+        .latest-listings-section .feature-block-one .inner-box {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+        .latest-listings-section .image-box .image img {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            height: auto;
+            object-fit: cover;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+            padding: 0 20px 22px;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .btn-box {
+            margin-top: auto;
+            padding-top: 18px;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .title-text h4 {
+            font-size: 18px;
+            line-height: 26px;
+            min-height: 52px;
+            margin-bottom: 8px;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .title-text h4 a {
+            line-height: 26px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .latest-location {
+            font-size: 14px;
+            line-height: 22px;
+            margin: 0 0 10px;
+            color: #93959e;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .latest-location i {
+            color: #2dbe6c;
+            margin-right: 5px;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .latest-desc {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 24px;
+            min-height: 48px;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .author-info .author .author-thumb img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .author-info .author h6 {
+            max-width: 130px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .price-box .price-info h4 {
+            font-size: 20px;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .more-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+            margin-bottom: 0;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .more-details li {
+            float: none;
+            width: auto;
+            padding-left: 22px;
+            white-space: nowrap;
+            font-size: 14px;
+            line-height: 22px;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .more-details li i {
+            top: 4px;
+        }
+        .latest-listings-section .feature-block-one .inner-box .lower-content .more-details li:before {
+            display: none;
+        }
+    </style>
+
+    <section class="feature-style-two sec-pad latest-listings-section">
         <div class="auto-container">
             <div class="sec-title">
-                <h5>İlanlar</h5>
-                <h2>Son eklenenler</h2>
+                <h5>@texts["home.latest.eyebrow"]</h5>
+                <h2>@texts["home.latest.title"]</h2>
             </div>
-            <div class="three-item-carousel owl-carousel owl-theme owl-dots-none nav-style-one">
+            <div class="latest-listings-carousel owl-carousel owl-theme owl-dots-none nav-style-one">
                 @foreach (var item in Model)
                 {
+                    var detailUrl = ListingUrl.DetailPath(item.UsageTypeId == 2, item.ListingId, item.ListingTypeId, item.ListingType, item.PropertyName, item.District);
+                    var propImgUrl = !string.IsNullOrWhiteSpace(item.PropImgUrl1) ? item.PropImgUrl1 : "/Realshed/assets/images/background/Section1.jpeg";
+                    var propName = !string.IsNullOrWhiteSpace(item.PropertyName) ? item.PropertyName : "İlan Başlığı";
+                    var agentImgUrl = !string.IsNullOrWhiteSpace(item.AgentImgUrl) ? item.AgentImgUrl : "/Realshed/assets/images/FibiLogo.png";
+                    var agentName = !string.IsNullOrWhiteSpace(item.AgentName) ? item.AgentName : "Fibi Emlak";
+
+                    var hasDistrict = !string.IsNullOrWhiteSpace(item.District);
+                    var hasCity = !string.IsNullOrWhiteSpace(item.City);
+                    string? locationText = null;
+                    if (hasDistrict && hasCity)
+                    {
+                        locationText = $"{item.District}, {item.City}";
+                    }
+                    else if (hasDistrict)
+                    {
+                        locationText = item.District;
+                    }
+                    else if (hasCity)
+                    {
+                        locationText = item.City;
+                    }
+
                     <div class="feature-block-one">
                         <div class="inner-box">
                             <div class="image-box">
-                                <figure class="image"><img src="@item.PropImgUrl1" alt=""></figure>
-                                <div class="batch"><i class="icon-11"></i></div>
-                                <span class="category">@item.PropertyType</span>
+                                <figure class="image">
+                                    <a href="@detailUrl">
+                                        <img src="@propImgUrl" alt="@propName" width="370" height="278" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/Realshed/assets/images/background/Section1.jpeg';" fibi-responsive fibi-sizes="(max-width: 767px) 100vw, 370px">
+                                    </a>
+                                </figure>
+                                <div class="listing-badges">
+                                    @if (item.BestDeals == true)
+                                    {
+                                        <div class="batch"><i class="icon-11"></i></div>
+                                        <span class="category">En İyi Fiyat</span>
+                                    }
+                                    else
+                                    {
+                                        var listingType = !string.IsNullOrWhiteSpace(item.ListingType) ? item.ListingType : "İlan";
+                                        <span class="category">@listingType</span>
+                                    }
+                                </div>
                             </div>
                             <div class="lower-content">
                                 <div class="author-info clearfix">
                                     <div class="author pull-left">
-                                        <figure class="author-thumb"><img src="@item.AgentImgUrl" alt=""></figure>
-                                        <h6>@item.AgentName</h6>
+                                        <figure class="author-thumb">
+                                            <img src="@agentImgUrl" alt="@agentName" onerror="this.onerror=null;this.src='/Realshed/assets/images/FibiLogo.png';">
+                                        </figure>
+                                        <h6>@agentName</h6>
                                     </div>
-                                    <div class="buy-btn pull-right"><a href="/Realshed/property-details.html">Satılık</a></div>
+                                    <div class="buy-btn pull-right">
+                                        <a asp-controller="AllForSalePage" asp-action="Index">Satılık</a>
+                                    </div>
                                 </div>
-                                <div class="title-text"><h4><a href="/Realshed/property-details.html">@item.PropertyName</a></h4></div>
+                                <div class="title-text">
+                                    <h4>
+                                        <a href="@detailUrl" title="@propName">@propName</a>
+                                    </h4>
+                                </div>
+                                @if (!string.IsNullOrEmpty(locationText))
+                                {
+                                    <p class="latest-location"><i class="fas fa-map-marker-alt"></i> @locationText</p>
+                                }
                                 <div class="price-box clearfix">
                                     <div class="price-info pull-left">
-                                        <h6>Fiyat:</h6>
-                                        <h4>@item.Price.ToString("N0") TL</h4>
+                                        <h6>Fiyat</h6>
+                                        <h4>@item.Price.ToString("N0", trCulture) TL</h4>
                                     </div>
-                                    <ul class="other-option pull-right clearfix">
-                                        <li><a href="/Realshed/property-details.html"><i class="icon-12"></i></a></li>
-                                        <li><a href="/Realshed/property-details.html"><i class="icon-13"></i></a></li>
-                                    </ul>
                                 </div>
-                                <p>@item.PropertyDescription</p>
-                                <ul class="more-details clearfix">
-                                    <li><i class="icon-14"></i>3 Beds</li>
-                                    <li><i class="icon-15"></i>3 Banyo</li>
-                                    <li><i class="icon-16"></i>400 m2</li>
-                                </ul>
-                                <div class="btn-box"><a href="property-details.html" class="theme-btn btn-two">Detayları Gör</a></div>
+                                <p class="latest-desc">@FibiEmlakDanismanlik.WebUI.Models.PageMeta.StripHtmlAndTruncate(item.PropertyDescription, 160)</p>
+                                @if (item.Highlights != null && item.Highlights.Any())
+                                {
+                                    <ul class="more-details clearfix">
+                                        @foreach (var h in item.Highlights.Take(3))
+                                        {
+                                            <li><i class="@h.Icon"></i>@h.Text</li>
+                                        }
+                                    </ul>
+                                }
+                                <div class="btn-box">
+                                    <a href="@detailUrl" class="theme-btn btn-two">İlan Detayı</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 }
-
-
             </div>
-            <div class="more-btn centred"><a href="/Realshed/property-list.html" class="theme-btn btn-one">Tüm İlanları Gör</a></div>
+            <div class="more-btn centred">
+                <a asp-controller="AllForSalePage" asp-action="Index" class="theme-btn btn-one">Tüm İlanları Gör</a>
+            </div>
         </div>
     </section>
-
+}

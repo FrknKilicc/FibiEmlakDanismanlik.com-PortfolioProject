@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers
 {
-    public class GetAgentByIdQueryHandler : IRequestHandler<GetAgentByIdQuery, GetAgentByIdResult>
+    public class GetAgentByIdQueryHandler : IRequestHandler<GetAgentByIdQuery, GetAgentByIdResult?>
     {
         private readonly IRepository<Agent> _repository;
 
@@ -20,9 +20,13 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AgentHandlers
             _repository = repository;
         }
 
-        public async Task<GetAgentByIdResult> Handle(GetAgentByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GetAgentByIdResult?> Handle(GetAgentByIdQuery request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.Id);
+            if (value == null || !value.IsActive || !value.ShowOnWebsite)
+            {
+                return null;
+            }
             return new GetAgentByIdResult
             {
                 AgentId = value.AgentId,

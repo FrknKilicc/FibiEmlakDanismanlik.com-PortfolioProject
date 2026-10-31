@@ -1,8 +1,10 @@
-﻿using FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPropertyListingCommands;
+﻿using FibiEmlakDanismanlik.Application.Constants;
+using FibiEmlakDanismanlik.Application.Features.Commands.ForSaleCommercialPropertyListingCommands;
 using FibiEmlakDanismanlik.Application.Features.Queries.ForSaleCommercialPropertyListingQueries;
 using FibiEmlakDanismanlik.Application.Features.Queries.ForSalePropertyQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FibiEmlakDanismanlik.WebApi.Controllers
@@ -29,18 +31,21 @@ namespace FibiEmlakDanismanlik.WebApi.Controllers
             var value = await _mediator.Send(new GetForSaleCommercialPropertListingByIdQuery(id));
             return Ok(value);
         }
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPost]
         public async Task<IActionResult> CreateForSaleCommercialPropertyListing(CreateForSaleCommercialPropertyListingCommand command)
         {
             await _mediator.Send(command);
             return Ok("Satılık İş Yeri İlanı Başarıyla Oluşturuldu.");
         }
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpPut]
         public async Task<IActionResult> UpdateForSaleCommercialPropertyListing(UpdateForSaleCommercialPropertyListingCommand command)
         {
             await _mediator.Send(command);
             return Ok("Satılık İş Yeri İlanı Başarıyla Güncelleştirildi.");
         }
+        [Authorize(Policy = AuthConstants.PolicyManagerOrAbove)]
         [HttpDelete]
         public async Task<IActionResult> RemoveForSaleCommercialPropertyListing(int id)
         {

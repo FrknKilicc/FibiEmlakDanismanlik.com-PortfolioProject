@@ -20,6 +20,8 @@ namespace FibiEmlakDanismanlik.Dto.ContactDtos
         //Relational
 
         public int? PropertyListingId { get; set; }
+       
+        public bool KvkkApproved { get; set; }
       
         //Relational
     }

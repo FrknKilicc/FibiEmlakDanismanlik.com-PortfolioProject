@@ -23,11 +23,11 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.FrequentlyAskedQuestionViewC
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
                 var value = JsonConvert.DeserializeObject<List<ResultFaqDto>>(jsonData);
-                return View(value);
+                return View(value ?? new List<ResultFaqDto>());
             }
             else
             {
-                return View(null);
+                return View(new List<ResultFaqDto>());
             }
         }
     }

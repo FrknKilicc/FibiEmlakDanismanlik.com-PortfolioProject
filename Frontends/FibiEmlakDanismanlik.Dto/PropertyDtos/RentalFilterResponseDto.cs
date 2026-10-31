@@ -57,6 +57,6 @@ namespace FibiEmlakDanismanlik.Dto.PropertyDtos
 
         public List<string> ImageUrls { get; set; } = new();
 
-        public List<string> Highlights { get; set; } = new();
+        public List<ResultCardHighlightDto> Highlights { get; set; } = new();
     }
 }

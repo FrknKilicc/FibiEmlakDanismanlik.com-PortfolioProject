@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Fibi Emlak: gece yedeği (cron her gece 03:30 çalıştırır, root olarak).
+#   1) Veritabanı tam yedeği (.bak, CHECKSUM ile doğrulanır)
+#   2) Yüklenen görseller + Data Protection anahtarları + /etc/fibi ayarları (.tar.gz)
+#   3) Son 14 gün tutulur
+#   4) rclone'da "fibi-offsite" adlı bir hedef tanımlıysa (ör. Google Drive) yedekler oraya da kopyalanır.
+#      Sunucu tamamen kaybolursa veriyi kurtaracak tek kopya budur; kurulması şiddetle önerilir.
+set -euo pipefail
+
+# shellcheck disable=SC1091
+source /etc/fibi/migrator.env
+SQLCMD=/opt/mssql-tools18/bin/sqlcmd
+DB_DIR=/var/backups/fibi/db
+FILES_DIR=/var/backups/fibi/files
+KEEP_DAYS=14
+OFFSITE_REMOTE="fibi-offsite"
+
+export SQLCMDPASSWORD="$MIGRATOR_PASSWORD"
+stamp="$(date '+%Y%m%d-%H%M%S')"
+db_file="$DB_DIR/nightly-$stamp.bak"
+files_archive="$FILES_DIR/files-$stamp.tar.gz"
+
+"$SQLCMD" -S 127.0.0.1 -U "$MIGRATOR_USER" -C -b \
+    -Q "BACKUP DATABASE [$DB_NAME] TO DISK = N'$db_file' WITH COPY_ONLY, CHECKSUM, INIT;"
+"$SQLCMD" -S 127.0.0.1 -U "$MIGRATOR_USER" -C -b \
+    -Q "RESTORE VERIFYONLY FROM DISK = N'$db_file' WITH CHECKSUM;" >/dev/null
+
+# Data Protection anahtarları kaybolursa kayıtlı 2FA anahtarları çözülemez; görsellerle birlikte yedeklenir
+tar -czf "$files_archive" -C / var/lib/fibi/uploads var/lib/fibi/dp-keys etc/fibi
+chmod 600 "$files_archive"
+
+find "$DB_DIR" -name 'nightly-*.bak' -mtime +"$KEEP_DAYS" -delete
+find "$FILES_DIR" -name 'files-*.tar.gz' -mtime +"$KEEP_DAYS" -delete
+
+if command -v rclone >/dev/null 2>&1 && rclone listremotes 2>/dev/null | grep -qx "${OFFSITE_REMOTE}:"; then
+    rclone copy "$db_file" "${OFFSITE_REMOTE}:fibi-yedek/db/"
+    rclone copy "$files_archive" "${OFFSITE_REMOTE}:fibi-yedek/files/"
+    rclone delete "${OFFSITE_REMOTE}:fibi-yedek/" --min-age "${KEEP_DAYS}d" || true
+    echo "Yedek sunucu dışına kopyalandı."
+else
+    echo "UYARI: sunucu dışı yedek hedefi (rclone '${OFFSITE_REMOTE}') tanımlı değil; yedekler yalnızca bu sunucuda." >&2
+fi
+
+echo "Yedek tamam: $db_file, $files_archive"

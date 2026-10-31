@@ -1,7 +1,7 @@
 ﻿@model List<ResultFaqDto>
+@inject FibiEmlakDanismanlik.WebUI.Services.HtmlContentSanitizer HtmlSanitizer
 
-
-<section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
+<section class="page-title centred" style="background-image: url(/images/page-title/page-title-bg.jpg);">
     <div class="auto-container">
         <div class="content-box clearfix">
             <h1>Sıkça Sorulan Sorular</h1>
@@ -36,11 +36,11 @@
                             <li class="accordion block @(isActive ? "active-block" : "")">
                                 <div class="acc-btn @(isActive ? "active" : "")">
                                     <div class="icon-outer"><i class="fas fa-angle-down"></i></div>
-                                    <h5>@Html.Raw(item.Question)</h5>
+                                    <h5>@HtmlSanitizer.Sanitize(item.Question)</h5>
                                 </div>
                                 <div class="acc-content @(isActive ? "current" : "")">
                                     <div class="content-box">
-                                        @Html.Raw(item.Answer)
+                                        @HtmlSanitizer.Sanitize(item.Answer)
                                     </div>
                                 </div>
                             </li>

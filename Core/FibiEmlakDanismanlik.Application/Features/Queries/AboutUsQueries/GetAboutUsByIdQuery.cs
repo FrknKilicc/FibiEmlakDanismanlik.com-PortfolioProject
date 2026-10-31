@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FibiEmlakDanismanlik.Application.Features.Queries.AboutUsQueries
 {
-    public class GetAboutUsByIdQuery:IRequest<GetAboutUsByIdResult>
+    public class GetAboutUsByIdQuery:IRequest<GetAboutUsByIdResult?>
     {
         public int Id { get; set; }
 

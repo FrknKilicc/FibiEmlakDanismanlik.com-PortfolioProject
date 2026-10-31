@@ -21,6 +21,10 @@ namespace FibiEmlakDanismanlik.Application.Features.Handlers.AboutUsHandlers
         public async Task Handle(UpdateAboutUsCommand request, CancellationToken cancellationToken)
         {
             var value = await _repository.GetByIdAsync(request.AboutUsId);
+            if (value == null)
+            {
+                throw new KeyNotFoundException("Hakkımızda bulunamadı.");
+            }
             value.AboutUsId = request.AboutUsId;
             value.AboutUsImgUrl = request.AboutUsImgUrl;
             value.AboutUsDesc = request.AboutUsDesc;

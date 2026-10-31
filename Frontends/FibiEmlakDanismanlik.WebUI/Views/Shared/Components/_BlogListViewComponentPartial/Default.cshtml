@@ -5,7 +5,7 @@
 }
 
 <!--Page Title-->
-<section class="page-title centred" style="background-image: url(https://images.stockcake.com/public/e/3/0/e30fd6b9-27e3-4bf8-95ff-ba161c9d5931_large/real-estate-transaction-stockcake.jpg);">
+<section class="page-title centred" style="background-image: url(/images/page-title/page-title-bg.jpg);">
     <div class="auto-container">
         <div class="content-box clearfix">
             <h1>Blog Yazıları</h1>
@@ -27,22 +27,20 @@
                         <div class="inner-box align-items-center">
                             <div style="height:100%" class="image-box">
                                 <figure style="height:100%" class="image">
-                                    <a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">
+                                    <a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)">
                                         <img style="height:100%; object-fit:cover;" src="@item.BlogImgUrl" alt="@item.BlogTitle">
                                     </a>
                                 </figure>
 
                                 @if (item.TopNews)
                                 {
-                                    <a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId" class="feature">Öne Çıkanlar</a>
+                                    <a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)" class="feature">Öne Çıkanlar</a>
                                 }
                         </div>
 
                         <div class="content-box">
                             <h4>
-                                <a asp-controller="Blog"
-                                   asp-action="Detail"
-                                   asp-route-id="@item.BlogId"
+                                <a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)"
                                    title="@(string.IsNullOrWhiteSpace(item.BlogTitle) ? "Başlıksız" : item.BlogTitle)">
                                     @(string.IsNullOrWhiteSpace(item.BlogTitle)
                                                                         ? "Başlıksız"
@@ -52,34 +50,34 @@
                                 </a>
                             </h4>
 
-                                <ul class="post-info clearfix">
-                                    <li class="author-box">
-                                        <figure class="author-thumb">
-                                            <img src="@item.AuthorImgUrl" alt="@item.AuthorName">
-                                        </figure>
-                                        <h5>
-                                            <a asp-controller="Blog" asp-action="Detail" asp-route-id="@item.BlogId">
-                                                @item.AuthorName
-                                            </a>
-                                        </h5>
-                                    </li>
-                                    <li>Tarih: @item.CreatedDate.ToString("MMMM yyyy")</li>
-                                </ul>
+                            <ul class="post-info clearfix">
+                                <li class="author-box">
+                                    <figure class="author-thumb">
+                                        <img src="@(!string.IsNullOrWhiteSpace(item.AuthorImgUrl) ? item.AuthorImgUrl : "/Realshed/assets/images/FibiLogo.png")" alt="@item.AuthorName">
+                                    </figure>
+                                    <h5>
+                                        <a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)">
+                                            @item.AuthorName
+                                        </a>
+                                    </h5>
+                                </li>
+                                <li>Tarih: @item.CreatedDate.ToString("MMMM yyyy")</li>
+                            </ul>
 
-                                <p style="display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"
-                                   title="@(string.IsNullOrWhiteSpace(item.BlogDescription) ? "" : item.BlogDescription)">
-                                    @item.BlogDescription
-                                </p>
+                            <p style="display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; text-overflow:ellipsis;"
+                               title="@(string.IsNullOrWhiteSpace(item.BlogDescription) ? "" : item.BlogDescription)">
+                                @item.BlogDescription
+                            </p>
 
-                                <div class="btn-box">
-                                    <a asp-action="Detail" asp-controller="Blog" asp-route-id="@item.BlogId" class="theme-btn btn-two">
-                                        Devamını Oku
-                                    </a>
-                                </div>
+                            <div class="btn-box">
+                                <a href="@BlogUrl.DetailPath(item.BlogId, item.BlogTitle)" class="theme-btn btn-two">
+                                    Devamını Oku
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
                         }
         </div>
 

@@ -25,11 +25,11 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.MainBannerViewComponents
             {
                 var jsonData = await responseMessage.Content.ReadAsStringAsync();
                 var value = JsonConvert.DeserializeObject<List<ResultMainBannerDto>>(jsonData);
-                return View(value);
+                return View(value ?? new List<ResultMainBannerDto>());
             }
             else
             {
-                return View(null);
+                return View(new List<ResultMainBannerDto>());
             }
         }
     }

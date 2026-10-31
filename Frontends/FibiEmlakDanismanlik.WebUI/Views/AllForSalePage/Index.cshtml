@@ -1,10 +1,23 @@
-﻿@{
-    ViewData["Title"] = "Index";
+﻿@model FibiEmlakDanismanlik.WebUI.Models.ListingLocationVm?
+@{
+    ViewData["Title"] = "Satılık İlanlar";
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
 
-@await Component.InvokeAsync("_AllForSaleListingViewComponentPartial");
+@section Styles {
+    <link rel="stylesheet" href="~/lib/leaflet/leaflet.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/leaflet.markercluster/MarkerCluster.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/leaflet.markercluster/MarkerCluster.Default.css" asp-append-version="true" />
+    <link rel="stylesheet" href="/css/leaflet-markers.css" />
+    <link rel="stylesheet" href="~/css/listings-map.css" asp-append-version="true" />
+}
+
+@await Component.InvokeAsync("_AllForSaleListingViewComponentPartial", new { location = Model })
 
 @section Scripts {
     <script src="/js/for-sale-listing-filters.js"></script>
+    <script src="~/lib/leaflet/leaflet.js" asp-append-version="true"></script>
+    <script src="~/lib/leaflet.markercluster/leaflet.markercluster.js" asp-append-version="true"></script>
+    <script src="~/js/listings-map.js" asp-append-version="true"></script>
+    <script src="~/js/listing-view-toggle.js" asp-append-version="true"></script>
 }

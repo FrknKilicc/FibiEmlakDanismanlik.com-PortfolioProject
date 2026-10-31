@@ -1,0 +1,77 @@
+@model string
+@{
+    var active = Model ?? string.Empty;
+}
+
+<div class="content-nav-wrapper mb-4">
+    <nav class="content-nav" aria-label="İçerik gezinme çubuğu">
+        <a href="/icerik" class="chip content-nav-back" title="İçerik Merkezi">
+            <i class="bi bi-arrow-left"></i>
+            <span>Tüm içerik</span>
+        </a>
+
+        <div class="content-nav-divider" aria-hidden="true"></div>
+
+        <!-- Kurumsal -->
+        <a class="chip @(active == "hakkimizda" ? "active" : "")" href="/icerik?sekme=hakkimizda">
+            <i class="bi bi-info-circle"></i>
+            <span>Hakkımızda</span>
+        </a>
+        <a class="chip @(active == "iletisim" ? "active" : "")" href="/icerik?sekme=iletisim">
+            <i class="bi bi-telephone"></i>
+            <span>İletişim</span>
+        </a>
+        <a class="chip @(active == "sosyal-medya" ? "active" : "")" href="/icerik?sekme=sosyal-medya">
+            <i class="bi bi-share"></i>
+            <span>Sosyal Medya</span>
+        </a>
+
+        <div class="content-nav-divider" aria-hidden="true"></div>
+
+        <!-- Ana Sayfa -->
+        <a class="chip @(active == "banner" ? "active" : "")" href="/icerik?sekme=banner">
+            <i class="bi bi-image"></i>
+            <span>Banner</span>
+        </a>
+        <a class="chip @(active == "site-metinleri" ? "active" : "")" href="/icerik/site-metinleri">
+            <i class="bi bi-fonts"></i>
+            <span>Site Metinleri</span>
+        </a>
+        <a class="chip @(active == "ana-sayfa-gorselleri" ? "active" : "")" href="/icerik/ana-sayfa-gorselleri">
+            <i class="bi bi-images"></i>
+            <span>Ana Sayfa Görselleri</span>
+        </a>
+        <a class="chip @(active == "yorumlar" ? "active" : "")" href="/icerik/yorumlar">
+            <i class="bi bi-chat-quote"></i>
+            <span>Yorumlar</span>
+        </a>
+        <a class="chip @(active == "is-ortaklari" ? "active" : "")" href="/icerik/is-ortaklari">
+            <i class="bi bi-building"></i>
+            <span>İş Ortakları</span>
+        </a>
+
+        <div class="content-nav-divider" aria-hidden="true"></div>
+
+        <!-- Bilgi ve Blog -->
+        <a class="chip @(active == "sss" ? "active" : "")" href="/icerik?sekme=sss">
+            <i class="bi bi-question-circle"></i>
+            <span>SSS</span>
+        </a>
+        <a class="chip @(active == "blog" ? "active" : "")" href="/icerik/blog">
+            <i class="bi bi-journal-text"></i>
+            <span>Blog</span>
+        </a>
+
+        <div class="content-nav-divider" aria-hidden="true"></div>
+
+        <!-- Araçlar ve Sayfalar -->
+        <a class="chip @(active == "sehir-galerisi" ? "active" : "")" href="/icerik/sehir-galerisi">
+            <i class="bi bi-geo-alt"></i>
+            <span>Şehir Galerisi</span>
+        </a>
+        <a class="chip @(active == "kredi-oranlari" ? "active" : "")" href="/icerik/kredi-oranlari">
+            <i class="bi bi-bank"></i>
+            <span>Kredi Oranları</span>
+        </a>
+    </nav>
+</div>
