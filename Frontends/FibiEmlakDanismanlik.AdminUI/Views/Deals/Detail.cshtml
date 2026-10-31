@@ -201,11 +201,11 @@
                                 <label for="formAgreedPrice" class="form-label small fw-semibold">
                                     @(isRent ? "Aylık Kira (₺)" : "Anlaşılan Bedel (₺)")
                                 </label>
-                                <input type="text" inputmode="decimal" class="form-control form-control-sm" id="formAgreedPrice" data-help="Tarafların anlaştığı nihai işlem bedeli; komisyon oran girildiğinde hesaplama bu tutar üzerinden yapılır." name="AgreedPrice" value="@DealLabels.InputNumber(d.AgreedPrice)" required />
+                                <input type="text" inputmode="decimal" data-money="true" class="form-control form-control-sm" id="formAgreedPrice" data-help="Tarafların anlaştığı nihai işlem bedeli; komisyon oran girildiğinde hesaplama bu tutar üzerinden yapılır." name="AgreedPrice" value="@DealLabels.InputNumber(d.AgreedPrice)" required />
                             </div>
                             <div class="col-sm-4 col-12">
                                 <label for="formDepositAmount" class="form-label small fw-semibold">Kapora (₺)</label>
-                                <input type="text" inputmode="decimal" class="form-control form-control-sm" id="formDepositAmount" data-help="Alınan kapora tutarıdır. Kapora alındığında ilan durumu Opsiyonlu olarak güncellenir." name="DepositAmount" value="@DealLabels.InputNumber(d.DepositAmount)" />
+                                <input type="text" inputmode="decimal" data-money="true" class="form-control form-control-sm" id="formDepositAmount" data-help="Alınan kapora tutarıdır. Kapora alındığında ilan durumu Opsiyonlu olarak güncellenir." name="DepositAmount" value="@DealLabels.InputNumber(d.DepositAmount)" />
                             </div>
                             <div class="col-sm-4 col-12">
                                 <label for="formDepositDate" class="form-label small fw-semibold">Kapora Tarihi</label>
@@ -228,7 +228,7 @@
                                     </div>
                                     <div class="col-sm-6 col-12">
                                         <label class="form-label small text-muted mb-0">Alıcı Komisyon Tutarı (₺)</label>
-                                        <input type="text" inputmode="decimal" class="form-control form-control-sm" name="BuyerCommissionAmount" data-help="Alıcı veya kiracıdan tahsil edilecek net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir." value="@DealLabels.InputNumber(d.BuyerCommissionAmount)" />
+                                        <input type="text" inputmode="decimal" data-money="true" class="form-control form-control-sm" name="BuyerCommissionAmount" data-help="Alıcı veya kiracıdan tahsil edilecek net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir." value="@DealLabels.InputNumber(d.BuyerCommissionAmount)" />
                                     </div>
                                     <div class="col-sm-6 col-12">
                                         <label class="form-label small text-muted mb-0">Satıcı Komisyon Oranı (%)</label>
@@ -236,7 +236,7 @@
                                     </div>
                                     <div class="col-sm-6 col-12">
                                         <label class="form-label small text-muted mb-0">Satıcı Komisyon Tutarı (₺)</label>
-                                        <input type="text" inputmode="decimal" class="form-control form-control-sm" name="SellerCommissionAmount" data-help="Satıcı veya ev sahibinden alınacak net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir." value="@DealLabels.InputNumber(d.SellerCommissionAmount)" />
+                                        <input type="text" inputmode="decimal" data-money="true" class="form-control form-control-sm" name="SellerCommissionAmount" data-help="Satıcı veya ev sahibinden alınacak net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir." value="@DealLabels.InputNumber(d.SellerCommissionAmount)" />
                                     </div>
                                 </div>
                             }
@@ -245,11 +245,11 @@
                                 <div class="row g-2 mb-2">
                                     <div class="col-sm-6 col-12">
                                         <label class="form-label small text-muted mb-0">Kiracı Komisyon Tutarı (₺)</label>
-                                        <input type="text" inputmode="decimal" class="form-control form-control-sm" name="BuyerCommissionAmount" data-help="Alıcı veya kiracıdan tahsil edilecek net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir." value="@DealLabels.InputNumber(d.BuyerCommissionAmount)" />
+                                        <input type="text" inputmode="decimal" data-money="true" class="form-control form-control-sm" name="BuyerCommissionAmount" data-help="Alıcı veya kiracıdan tahsil edilecek net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir." value="@DealLabels.InputNumber(d.BuyerCommissionAmount)" />
                                     </div>
                                     <div class="col-sm-6 col-12">
                                         <label class="form-label small text-muted mb-0">Ev Sahibi Komisyon Tutarı (₺)</label>
-                                        <input type="text" inputmode="decimal" class="form-control form-control-sm" name="SellerCommissionAmount" data-help="Satıcı veya ev sahibinden alınacak net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir." value="@DealLabels.InputNumber(d.SellerCommissionAmount)" />
+                                        <input type="text" inputmode="decimal" data-money="true" class="form-control form-control-sm" name="SellerCommissionAmount" data-help="Satıcı veya ev sahibinden alınacak net komisyon tutarıdır; girilirse oran yerine bu tutar geçerlidir." value="@DealLabels.InputNumber(d.SellerCommissionAmount)" />
                                     </div>
                                 </div>
                             }
@@ -422,7 +422,7 @@
                                                                     </div>
                                                                     <div class="mb-1">
                                                                         <label class="form-label small mb-0">Tutar (₺)</label>
-                                                                        <input type="text" inputmode="decimal" name="amount" class="form-control form-control-sm" value="@DealLabels.InputNumber(share.Amount)" />
+                                                                        <input type="text" inputmode="decimal" data-money="true" name="amount" class="form-control form-control-sm" value="@DealLabels.InputNumber(share.Amount)" />
                                                                     </div>
                                                                     <div class="mb-2">
                                                                         <label class="form-label small mb-0">Not</label>
@@ -544,7 +544,7 @@
                                                         </div>
                                                         <div class="mb-1">
                                                             <label class="form-label small mb-0">Tutar (₺)</label>
-                                                            <input type="text" inputmode="decimal" name="amount" class="form-control form-control-sm" value="@DealLabels.InputNumber(share.Amount)" />
+                                                            <input type="text" inputmode="decimal" data-money="true" name="amount" class="form-control form-control-sm" value="@DealLabels.InputNumber(share.Amount)" />
                                                         </div>
                                                         <div class="mb-2">
                                                             <label class="form-label small mb-0">Not</label>
@@ -621,7 +621,7 @@
                                 </div>
                                 <div class="col-md-3 col-sm-6 col-12">
                                     <label class="form-label small text-muted mb-0">Tutar (₺)</label>
-                                    <input type="text" inputmode="decimal" name="amount" class="form-control form-control-sm" placeholder="Örn: 5.000" data-help="Çalışana ödenecek net prim tutarı; oran girilirse otomatik hesaplanır, tutar girilirse sabit kalır." />
+                                    <input type="text" inputmode="decimal" data-money="true" name="amount" class="form-control form-control-sm" placeholder="Örn: 5.000" data-help="Çalışana ödenecek net prim tutarı; oran girilirse otomatik hesaplanır, tutar girilirse sabit kalır." />
                                 </div>
                                 <div class="col-md-3 col-12">
                                     <label class="form-label small text-muted mb-0">Not</label>
@@ -699,7 +699,7 @@
 
                         <div class="mb-2">
                             <label for="refundAmount" class="form-label small fw-semibold">İade Tutarı (₺)</label>
-                            <input type="text" inputmode="decimal" class="form-control form-control-sm" id="refundAmount" data-help="Kapora iade edildiyse müşteriye geri ödenen tutar." name="depositRefundAmount" placeholder="Örn: 50.000" />
+                            <input type="text" inputmode="decimal" data-money="true" class="form-control form-control-sm" id="refundAmount" data-help="Kapora iade edildiyse müşteriye geri ödenen tutar." name="depositRefundAmount" placeholder="Örn: 50.000" />
                         </div>
 
                         <div class="mb-3">

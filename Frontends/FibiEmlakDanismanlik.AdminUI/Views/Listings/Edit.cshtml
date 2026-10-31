@@ -580,7 +580,7 @@
                             <div class="col-lg-4 col-md-6 col-12">
                                 <label for="grossArea" class="form-label fw-semibold">Brüt Alan</label>
                                 <div class="input-group">
-                                    <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("GrossArea") != null ? "is-invalid" : "")" id="grossArea" name="GrossArea" value="@Model.Form.GrossArea?.ToString(invCulture)" data-help="Brüt kullanım alanı (m²), duvarlar ve ortak alan payı dahil. Fiyat/m² hesaplarında kullanılır." disabled="@disabledAttr" />
+                                    <input type="text" inputmode="decimal" data-thousands="true" class="form-control @(Model.GetFieldError("GrossArea") != null ? "is-invalid" : "")" id="grossArea" name="GrossArea" value="@Model.Form.GrossArea?.ToString(invCulture)" data-help="Brüt kullanım alanı (m²), duvarlar ve ortak alan payı dahil. Fiyat/m² hesaplarında kullanılır." disabled="@disabledAttr" />
                                     <span class="input-group-text">m²</span>
                                 </div>
                                 @if (Model.GetFieldError("GrossArea") != null)
@@ -595,7 +595,7 @@
                             <div class="col-lg-4 col-md-6 col-12">
                                 <label for="netArea" class="form-label fw-semibold">Net Alan</label>
                                 <div class="input-group">
-                                    <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("NetArea") != null ? "is-invalid" : "")" id="netArea" name="NetArea" value="@Model.Form.NetArea?.ToString(invCulture)" data-help="Net kullanım alanı (m²), yalnızca bağımsız bölümün iç alanı." disabled="@disabledAttr" />
+                                    <input type="text" inputmode="decimal" data-thousands="true" class="form-control @(Model.GetFieldError("NetArea") != null ? "is-invalid" : "")" id="netArea" name="NetArea" value="@Model.Form.NetArea?.ToString(invCulture)" data-help="Net kullanım alanı (m²), yalnızca bağımsız bölümün iç alanı." disabled="@disabledAttr" />
                                     <span class="input-group-text">m²</span>
                                 </div>
                                 @if (Model.GetFieldError("NetArea") != null)
@@ -610,7 +610,7 @@
                             <div class="col-lg-4 col-md-6 col-12">
                                 <label for="openArea" class="form-label fw-semibold">Açık Alan</label>
                                 <div class="input-group">
-                                    <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("OpenArea") != null ? "is-invalid" : "")" id="openArea" name="OpenArea" value="@Model.Form.OpenArea?.ToString(invCulture)" data-help="Bahçe, teras gibi açık alan (m²). Boş bırakılabilir." disabled="@disabledAttr" />
+                                    <input type="text" inputmode="decimal" data-thousands="true" class="form-control @(Model.GetFieldError("OpenArea") != null ? "is-invalid" : "")" id="openArea" name="OpenArea" value="@Model.Form.OpenArea?.ToString(invCulture)" data-help="Bahçe, teras gibi açık alan (m²). Boş bırakılabilir." disabled="@disabledAttr" />
                                     <span class="input-group-text">m²</span>
                                 </div>
                                 @if (Model.GetFieldError("OpenArea") != null)
@@ -625,7 +625,7 @@
                             <div class="col-lg-4 col-md-6 col-12">
                                 <label for="areaInput" class="form-label fw-semibold">Alan</label>
                                 <div class="input-group">
-                                    <input type="number" step="any" min="0" class="form-control @(Model.GetFieldError("Area") != null ? "is-invalid" : "")" id="areaInput" name="Area" value="@Model.Form.Area?.ToString(invCulture)" data-help="Arsanın toplam yüzölçümü (m²)." disabled="@disabledAttr" />
+                                    <input type="text" inputmode="decimal" data-thousands="true" class="form-control @(Model.GetFieldError("Area") != null ? "is-invalid" : "")" id="areaInput" name="Area" value="@Model.Form.Area?.ToString(invCulture)" data-help="Arsanın toplam yüzölçümü (m²)." disabled="@disabledAttr" />
                                     <span class="input-group-text">m²</span>
                                 </div>
                                 @if (Model.GetFieldError("Area") != null)
