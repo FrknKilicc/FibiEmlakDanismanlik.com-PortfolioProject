@@ -1,5 +1,4 @@
 @model FibiEmlakDanismanlik.WebUI.Models.Footer.FooterViewModel
-@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment Env
 @{
     Layout = "~/Views/ThemeScaff/ScaffTemplate.cshtml";
 }
@@ -117,13 +116,6 @@
                     <p>Veri Sorumlusuna Başvuru Usul ve Esasları Hakkında Tebliğ kapsamında haklarınıza ilişkin taleplerinizi, kimliğinizi tevsik edici belgeler ile birlikte yazılı olarak ofis adresimize veya kayıtlı e-posta adresinizden yukarıda belirtilen e-posta adresimize iletebilirsiniz. Başvurularınız en geç 30 gün içinde ücretsiz olarak sonuçlandırılacaktır.</p>
 
                     <div class="legal-date">Son güncelleme: 25 Ekim 2026</div>
-
-                    @if (Env.IsDevelopment())
-                    {
-                        <p style="margin-top: 15px; font-size: 13px; color: #888888; font-style: italic;">
-                            Bu metin taslaktır; yayına almadan önce hukuk danışmanınıza kontrol ettiriniz.
-                        </p>
-                    }
                 </div>
             </div>
         </div>

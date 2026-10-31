@@ -3,6 +3,8 @@
 Bu dosya Claude Code'un projeyi tanıması için repo root'ta bulunur.
 Her oturumda otomatik okunur, context kaybı olmaz.
 
+> **CANLIYA ÇIKIŞ (2026-10-31'den itibaren aktif iş):** Sunucu, DNS, deploy, canlı veritabanı veya "canlıya çıkış" ile ilgili her işte önce [`docs/CANLIYA-CIKIS.md`](docs/CANLIYA-CIKIS.md) (durum, sıradaki adımlar, Claude kuralları), komutlar için [`deploy/README.md`](deploy/README.md) okunur. Canlı ortama erişim yalnızca Furkan'dadır; `master`'a push canlı yayını tetikler.
+
 ---
 
 ## Proje Kimliği
@@ -171,7 +173,8 @@ Betik çıktısını `Select-Object -First N` gibi bir şeye pipe'lama: pipeline
 ### Yarın (2026-10-28) — önce bunlar
 - [ ] **Elle kontrol (VS'te):** ilan formunda çoklu cephe kaydı (bir test turunda cephe NULL kaydedilmişti, sebep doğrulanmadı), koordinatla konum girme, il/ilçe/mahalle aramalı listeler, açıklama editörü, "Yakın Yerler" kartı; Site Metinleri ekranı (değişiklik sitede ≤30 sn); işlem formunda "Bağlı talep"; Ayarlar → Kullanılmayan görseller (yalnızca listele, silmeden önce bak); kontrol panelinde senkronizasyon hatası uyarısı; kenar menüde ElenAI (Yakında)
 - [x] **dev → master birleştirmesi:** (2026-10-31, Furkan'ın onayıyla, elle kontrol beklenmeden) `feature/claude-public-api-url` (tarayıcıya `Url:PublicApiUrl`, nginx `/api/` sınırlı açık) dev'e alındı, build + 110 test geçti, dev ve master push edildi. master push'u `deploy.yml`'i tetikler: GitHub'da `DEPLOY_ENABLED=true` ise canlıya yedek + migration (T5 kolon silme, soft delete, `AddNearbyCategoryOther` dahil) + yayın; Actions sekmesinden sonucu kontrol et. Canlı `site.env`'de `Url__PublicApiUrl` ayarlı olmalı
-- [ ] **Canlı veritabanı:** `tools/sql/deploy/README.md` sırasıyla (yedek → idempotent migration betiği: Komple Bina, SiteTexts, LinkDealToLead → `data-fixes.sql` AboutUs görsel yolu). Canlıya erişim yalnızca Furkan'da
+- [x] ~~**Canlı veritabanı:** `tools/sql/deploy/README.md`~~ — (2026-10-31) VDS akışında gereksiz: canlı DB yerel yedekten kurulur (`fibi-db-init`), migration'ları deploy hattı uygular; ayrıntı `docs/CANLIYA-CIKIS.md`
+- [ ] **Canlıya çıkış:** adımlar ve açık kararlar `docs/CANLIYA-CIKIS.md` (Turnstile, VDS, veri taşıma, DNS; demo ilanlar canlıda silinip gerçekleriyle değiştirilecek; hukuki metinler avukat onaylı)
 - [x] **ElenAI kullanıcısı (karar 2026-10-31):** ElenAI bir yapay zekâ/bot; insan kullanıcı gibi değerlendirilmez (2FA, gerçek e-posta, insan girişi yok). Yerel DB'de Sahip, Id 1046, `elenai@fibiemlak.com`, sitede gizli, rastgele bilinmeyen şifre, görsel `Realshed/assets/images/agents/Fibi-Emlak-Danismanlik-ElenAI.jpg`. Öneri: ElenAI yazılırken şifreyle giren Sahip hesabı yerine yalnızca gereken uçlara yetkili servis kimliği (API anahtarı/servis politikası) kullanılsın; Sahip rolü o zaman düşürülsün. Paneldeki "ElenAI (Yakında)" menüsü tıklanamaz, sayfası yok
 - [x] **Teknik borç kararları:** (1) ~~`PropImgUrl1..30` kaldırma~~ 2026-10-28 2. aşama da bitti (kolonlar silindi, aşağıda T5); (2) ~~`PropertyRepository` bölme~~ 2026-10-27 partial class; (3) ~570 derleme uyarısı: (2026-10-31 karar) toplu temizlik YAPILMAYACAK, ciddi sorun çıkarmadıkça dokunulmaz; (4) migration squash ÖNERİLMİYOR (canlıda migration geçmişi var)
 - [ ] Veri: 3 blog görseli dış sitelerden hotlink (harvard.edu, onthemarket, britannica): telif riski, panelden yerel görselle değiştirilmeli
@@ -210,7 +213,7 @@ Footer (`_FooterLayoutViewComponentPartial`) `AboutUs/current` (en küçük id),
 - [x] (Faz 8) Admin paneli: Hakkımızda, İletişim, Sosyal Medya ve Blog ekranları (`[Authorize]` CRUD uçları mevcut; footer, iletişim ve hakkımızda sayfaları bu tablolardan okuyor)
 - [x] (2026-10-23, `feature/antigravity-todo-batch2`) `AboutUsController`'da liste/aktif kayıt ucu yok; footer ve Hakkımızda sayfası `AboutUs/1`'e sabit bağlı. "Aktif/ilk kaydı getir" ucu eklenip ikisi de ona geçmeli
 - [x] (2026-10-24) Veri: `SocialMedias` bozuk kayıtları: Google Plus silindi, Twitter pasife alındı (doğru adres gelince panelden düzeltilip aktif edilir); yedek `bak20261019.SocialMedias_before_20261024`. Not: Facebook adresi `facebook.com/ankayapiemlakk`, doğru sayfa olduğu teyit edilmeli
-- [ ] Veri: `Contacts.EMail1` = `info@fibiEmlak.com` (footer küçük harfe çeviriyor); eski footer'da elle yazılı `(0212) 510 01 14` vardı, DB'de `05442603193` — doğru ofis telefonu teyit edilmeli
+- [ ] Veri: `Contacts.EMail1` = `info@fibiEmlak.com` (footer küçük harfe çeviriyor). (2026-10-31) Ofis telefonu `05323697828` (0532 369 78 28) yapıldı, `PhoneNumber2` boşaltıldı (yerel DB)
 - [x] (2026-10-20, `feature/antigravity-seo-and-fixes`) İletişim sayfası (`_GetContactInfoViewComponentPartial`) telefon linkleri sabit ve yanlış: `tel:+23055873407` / `tel:+23055873408` (tema kalıntısı); footer'daki gibi DB numarasından üretilmeli
 - [x] (2026-10-20, `feature/antigravity-seo-and-fixes`) Footer kozmetik: blog küçük görselleri eşit 90x90 değil (tema CSS'i `width/height`'ı eziyor), "Devamını Oku" linki yeşil yerine gri görünüyor
 - [x] (2026-10-23, `feature/antigravity-todo-batch2`) Footer "Kullanım Koşulları" (`/kullanim-kosullari`) ve "Gizlilik Politikası" (`/gizlilik-politikasi`) sayfaları yazıldı ve bağlandı. Metinler taslak: canlı öncesi hukukçu okumalı; ayrıntılı KVKK aydınlatma metni ayrı madde
@@ -272,7 +275,7 @@ Demo ilanlar `tools/sql/demo-listings-refresh.ps1` ile üretilen `demo-listings-
 - [ ] `FormSpamGuard` sayaçları bellek içi; WebUI birden fazla örnekle çalışırsa paylaşılmaz (gerekirse dağıtık önbellek)
 - [x] (2026-10-28, `feature/claude-public-api-url`) Tarayıcının çağırdığı API adresi `Url:PublicApiUrl` (canlıda `/api/`, aynı köken, CORS gerekmez; `Models/BrowserApiUrl.GetBrowserApiUrl`); sunucu tarafı istekler `Url:ApiUrl` ile iç adrese gider. nginx `/api/` altında yalnızca GET + 3 FİBİ Hizmetler POST'unu açar, Auth/Admin/Me uçları dışarıya kapalı (`deploy/server/nginx/fibi.conf`). Yeni bir tarayıcı POST'u eklenirse nginx'e de eklenmeli
 - [x] (2026-10-24, G9 ile) API'deki diğer GetById handler'ları da kayıt yoksa null kontrolsüz olabilir (ör. blog detayı); G9 kapsamında taranmalı
-- [ ] Veri: `Contacts.PhoneNumber2` = `PhoneNumber1` (iletişim sayfasında aynı numara iki kez), `EMail2` kişisel Gmail (`fibiinfo@gmail.com`)
+- [ ] Veri: `EMail2` kişisel Gmail (`fibiinfo@gmail.com`). (2026-10-31: `PhoneNumber2` kopyası boşaltıldı)
 - [x] (2026-10-25, `feature/antigravity-site-batch3`) Kozmetik: detay başlık bandı `page-title--listing` (clamp 26–42px, en fazla 2 satır); 404/hata sayfası mobilde `padding-top: 170px` (header absolute ~132px)
 - [ ] Veri: `Contacts.EMail1` iletişim sayfasında olduğu gibi `info@fibiEmlak.com` (büyük harfli) görünüyor; link küçük harfe çevriliyor ama kayıt düzeltilmeli
 - [x] (2026-10-27, `feature/antigravity-small-batch2`, karar: kaldır) Ana sayfadaki bülten aboneliği formu tema kalıntısıydı (`action="contact.html"`), bölüm kaldırıldı
@@ -341,7 +344,7 @@ Testler: UX 24/24, Hesabım 15/15, kat planı 17/17, içerik 23/23; açık/koyu 
 ### Site mobil UX (2026-10-31, `feature/antigravity-mobile-ux`)
 26 sayfa × 360/390/768 px otomatik tarandı (yatay taşma, ekran dışı öğe, dokunma hedefi, yazı boyutu) + 390 px kaydırmalı ekran görüntüleri. Düzeltilenler: tema demo renk değiştiricisi (palet simgesi, içeriği örtüyordu, çerezle site rengini değiştirebiliyordu) kaldırıldı; ≤767 px iç sayfa başlıkları absolute header altında kalıyordu (`.page-title` 155px üst boşluk); liste sayfalarında sonuç/Liste|Harita satırı ekran soluna taşıyordu; mobilde filtreler "Filtrele" düğmesiyle katlanır (`fibi-filter-panel`, `listing-view-toggle.js`), ilanlar ilk ekranda; Danışmanlar sayfasında liste yan sütundan önce; yukarı çık düğmesi footer alt bağlantılarını örtmüyor; KVKK onay kutuları 18px. Kurallar `propertyListStyle.css` sonunda "Mobil düzeltmeler" bloğu. Sonrası: 78 sayfa/genişlikte taşma 0.
 - (2026-10-31, `feature/antigravity-nearby-other-thousands`) Yakın yerlere "Diğer" kategorisi (migration `AddNearbyCategoryOther`, idempotent veri; yerel DB'ye uygulandı, canlıya deploy migration'ıyla gider). Panelde binlik ayraç ortak: `admin-ui.js` `[data-money]` (para) / `[data-thousands]` (m²), `formdata` olayında ham değer gider, ekran değişmez; JS'te sayı okumak için `window.fibiNumber.parse`. Kapsam: ilan fiyat/kira/depozito/aidat/m² fiyatı/brüt/net/açık/arsa alanı, işlem bedeli, kapora, komisyon tutarları, prim tutarları, kapora iadesi. Bilerek dışarıda: oranlar/yüzdeler, koordinat, kat/oda sayıları, sıra, banka oranları (küçük sayı veya noktalı ondalık). Ayrıca m² fiyat önerisinin ikinci kopyası (`listing-form.js`, ayraçlı fiyatı 9,68 okuyordu) silindi ve öneri ilk hesaptan sonra donmuyor
-- [ ] Veri (mobil taramada görüldü): danışman kartlarında açıklama "string" (AgentDescription demo değeri); Hakkımızda "Yorumlar" bölüm metni "Lorem ipsum"; panelden düzeltilmeli
+- [ ] Veri (mobil taramada görüldü): Hakkımızda "Yorumlar" bölüm metni "Lorem ipsum"; Site Metinleri'nden düzeltilmeli. (2026-10-31) "string" danışman açıklamaları boşaltıldı; açıklama artık panelde TinyMCE ile düzenlenir (Kullanıcılar formu + Hesabım, `textarea[data-rich-text]` + `js/rich-text-editor.js`), sitede `HtmlContentSanitizer` ile gösterilir; kolon `nvarchar(4000)` (migration `AgentDescriptionLength4000`)
 - [ ] İsteğe bağlı: harita sayfasında mobilde 71 ilanlık liste haritanın altında ~14 ekran; sayfalama/"daha fazla" düşünülebilir
 
 ### FİBİ Hizmetler Faz 2 (branch `feature/antigravity-fibi-services-phase2`, 2026-10-18'de yarıda kaldı)
@@ -353,7 +356,7 @@ Bitti: kademeli emsal şeması + migration (yerel DB'ye uygulandı), mahalle > i
 - [ ] Fibi Eksper modülü (şerefiye katsayılı değerleme bandı + satıcı lead)
 - [ ] Fibi Yatırım modülü (bütçe + strateji ile en iyi 5 bölge)
 - [ ] EVDS anahtarı alınırsa `dotnet user-secrets set "FibiMarketDataSync:EvdsApiKey" "<anahtar>"`; sağlayıcının yanıt biçimi o zaman doğrulanmalı
-- [ ] KVKK aydınlatma metni: (2026-10-25, `feature/antigravity-site-batch3`) `/kvkk-aydinlatma-metni` taslak sayfası yazıldı (veri sorumlusu bilgileri `Contacts`'tan; footer, sitemap, Gizlilik Politikası ve 6 formdaki onay metni bağlandı; "taslak" notu yalnızca Development'ta görünür). Kalan: canlı öncesi hukukçu okumalı; saklama süreleri (talep sonrası 2 yıl, haber ver 1 yıl hareketsizlik) metne yazıldı ama kodda otomatik silme yok
+- [ ] KVKK aydınlatma metni: (2026-10-25, `feature/antigravity-site-batch3`) `/kvkk-aydinlatma-metni` taslak sayfası yazıldı (veri sorumlusu bilgileri `Contacts`'tan; footer, sitemap, Gizlilik Politikası ve 6 formdaki onay metni bağlandı; "taslak" notu yalnızca Development'ta görünür). (2026-10-31) KVKK, Gizlilik ve Kullanım Koşulları avukat onaylı; taslak notu kaldırıldı. Kalan: saklama süreleri (talep sonrası 2 yıl, haber ver 1 yıl hareketsizlik) metne yazıldı ama kodda otomatik silme yok
 - [ ] Canlıda reverse proxy IP'si `ForwardedHeaders:KnownProxies` ayarına yazılmalı
 
 ---

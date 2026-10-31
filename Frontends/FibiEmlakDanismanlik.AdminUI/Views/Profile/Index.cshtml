@@ -187,7 +187,8 @@
                         <textarea class="form-control @(errDesc != null ? "is-invalid" : "")"
                                   id="AgentDescription" data-help="Sitedeki Danışmanlar sayfasında ve danışman profilinde ziyaretçilere gösterilen tanıtım yazısıdır."
                                   name="AgentDescription"
-                                  rows="4"
+                                  rows="8"
+                                  data-rich-text="true"
                                   placeholder="Uzmanlık alanları, deneyim veya biyografi...">@Model.ProfileForm.AgentDescription</textarea>
                         @if (errDesc != null)
                         {
@@ -476,4 +477,6 @@
 
 @section Scripts {
     <script src="~/js/image-upload.js" asp-append-version="true"></script>
+    <script src="~/assets/vendor/tinymce/tinymce.min.js"></script>
+    <script src="~/js/rich-text-editor.js" asp-append-version="true"></script>
 }

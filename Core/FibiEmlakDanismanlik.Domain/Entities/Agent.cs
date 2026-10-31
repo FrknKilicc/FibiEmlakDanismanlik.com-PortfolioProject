@@ -20,7 +20,7 @@ namespace FibiEmlakDanismanlik.Domain.Entities
         public string AgentTitle { get; set; }
 
         [Display(Name = "Açıklama")]
-        [MaxLength(500, ErrorMessage = "Açıklama en fazla 500 karakter olabilir.")]
+        [MaxLength(4000, ErrorMessage = "Açıklama en fazla 4000 karakter olabilir.")]
         public string AgentDescription { get; set; }
 
         [Display(Name = "Resim URL")]

@@ -1,4 +1,5 @@
-﻿@model FibiEmlakDanismanlik.WebUI.Models.AgentListingPageVm
+﻿@inject FibiEmlakDanismanlik.WebUI.Services.HtmlContentSanitizer HtmlSanitizer
+@model FibiEmlakDanismanlik.WebUI.Models.AgentListingPageVm
 
 
 
@@ -120,7 +121,7 @@
                                                 @if (!string.IsNullOrWhiteSpace(item.AgentDescription))
                                                 {
                                                     <div class="text">
-                                                        <p>@item.AgentDescription</p>
+                                                        @HtmlSanitizer.Sanitize(item.AgentDescription)
                                                     </div>
                                                 }
                                                 <ul class="info clearfix">
