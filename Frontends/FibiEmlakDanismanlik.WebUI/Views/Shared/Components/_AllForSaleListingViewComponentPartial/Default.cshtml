@@ -58,11 +58,12 @@
         </div>
     </div>
 </section>
-<section class="property-page-section property-grid" style="padding:110px 0 50px 0!important;">
+<section class="property-page-section property-grid fibi-list-section">
     <div class="auto-container">
         <div class="row clearfix">
             <div class="col-lg-4 col-md-12 col-sm-12 sidebar-side">
-                <div class="default-sidebar property-sidebar">
+                <button type="button" class="fibi-filter-toggle" aria-expanded="false" aria-controls="fibiListingFilters"><i class="fas fa-sliders-h"></i> <span>Filtrele</span></button>
+                <div class="default-sidebar property-sidebar fibi-filter-panel" id="fibiListingFilters">
                     <div id="forSaleFilterRoot" data-api="@ViewBag.ApiUrl"></div>
                     <!-- PROPERTY -->
                     <div class="filter-widget sidebar-widget">
