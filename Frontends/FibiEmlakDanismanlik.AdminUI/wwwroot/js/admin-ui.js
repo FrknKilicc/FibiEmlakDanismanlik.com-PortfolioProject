@@ -692,4 +692,156 @@
     // j) Alan açıklamaları ve tooltip'leri başlat
     window.fibiInitHelp(document);
   });
+  /* ==============================================================
+     # Binlik Ayraç ([data-money] para, [data-thousands] m² vb.)
+     Ekranda tr-TR (1.250.000,50); sunucuya giden form verisinde ham (1250000.50).
+     ============================================================== */
+
+  var THOUSANDS_SELECTOR = '[data-money], [data-thousands]';
+
+  function unformatNumber(val) {
+    if (!val) return '';
+    // Binlik noktaları sil, ondalık virgülü noktaya çevir
+    return String(val).replace(/\./g, '').replace(',', '.');
+  }
+
+  function formatNumberValue(val) {
+    if (val === null || val === undefined) return '';
+    var str = String(val).trim();
+    if (!str) return '';
+
+    var hasComma = str.indexOf(',') !== -1;
+    var parts = str.split(',');
+    var intRaw = parts[0].replace(/\D/g, '');
+    var decRaw = parts.length > 1 ? parts.slice(1).join('').replace(/\D/g, '').slice(0, 2) : null;
+
+    var formattedInt = '';
+    if (intRaw) {
+      if (intRaw.length > 1 && intRaw.startsWith('0')) {
+        intRaw = intRaw.replace(/^0+/, '') || '0';
+      }
+      formattedInt = intRaw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    } else if (hasComma) {
+      formattedInt = '0';
+    }
+
+    var finalVal = formattedInt;
+    if (hasComma) {
+      finalVal += ',' + (decRaw !== null ? decRaw : '');
+    }
+    return finalVal;
+  }
+
+  // Sunucu değerleri InvariantCulture gelir (9680000.00 veya 120.5)
+  function formatInitialNumber(val) {
+    if (!val) return '';
+    var str = String(val).trim();
+    if (!str) return '';
+
+    if (str.indexOf('.') !== -1 && str.indexOf(',') === -1) {
+      var dotParts = str.split('.');
+      var intStr = dotParts[0].replace(/\D/g, '');
+      var decStr = dotParts[1] ? dotParts[1].replace(/\D/g, '').slice(0, 2) : '';
+      if (/^0+$/.test(decStr)) {
+        decStr = '';
+      }
+      var formattedInt = intStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return decStr ? (formattedInt + ',' + decStr) : formattedInt;
+    }
+
+    return formatNumberValue(str);
+  }
+
+  function handleThousandsInput(e) {
+    var input = e.target;
+    var val = input.value;
+    var selStart = input.selectionStart || 0;
+    var targetCount = val.slice(0, selStart).replace(/[^\d,]/g, '').length;
+
+    var formatted = formatNumberValue(val);
+    input.value = formatted;
+
+    var newCursorPos = targetCount === 0 ? 0 : formatted.length;
+    var counted = 0;
+    for (var i = 0; i < formatted.length && targetCount > 0; i++) {
+      if (/[\d,]/.test(formatted[i])) {
+        counted++;
+      }
+      if (counted >= targetCount) {
+        newCursorPos = i + 1;
+        break;
+      }
+    }
+    input.setSelectionRange(newCursorPos, newCursorPos);
+  }
+
+  function handleThousandsKeyDown(e) {
+    var input = e.target;
+    if (e.key === 'Backspace') {
+      // Binlik noktanın hemen sağındayken önceki rakamı sil
+      var pos = input.selectionStart;
+      if (pos === input.selectionEnd && pos > 0 && input.value[pos - 1] === '.') {
+        e.preventDefault();
+        input.value = input.value.slice(0, pos - 2) + input.value.slice(pos);
+        var newPos = Math.max(0, pos - 2);
+        input.setSelectionRange(newPos, newPos);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    } else if (e.code === 'NumpadDecimal' || e.key === '.') {
+      // Numpad ayırıcısı ve elle yazılan nokta ondalık virgüle döner (binlik nokta otomatik eklenir)
+      e.preventDefault();
+      if (input.value.indexOf(',') === -1) {
+        var start = input.selectionStart;
+        input.value = input.value.slice(0, start) + ',' + input.value.slice(input.selectionEnd);
+        input.setSelectionRange(start + 1, start + 1);
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+  }
+
+  function initThousandsInputs(root) {
+    var scope = root || document;
+    scope.querySelectorAll(THOUSANDS_SELECTOR).forEach(function (input) {
+      if (input.dataset.thousandsReady) return;
+      input.dataset.thousandsReady = '1';
+      if (input.value) {
+        input.value = formatInitialNumber(input.value);
+      }
+      input.addEventListener('input', handleThousandsInput);
+      input.addEventListener('keydown', handleThousandsKeyDown);
+    });
+
+    // Gönderilen veri (normal submit ve new FormData(form)) ham sayıya çevrilir; ekrandaki değer değişmez
+    scope.querySelectorAll('form').forEach(function (form) {
+      if (form.dataset.thousandsFormReady || !form.querySelector(THOUSANDS_SELECTOR)) return;
+      form.dataset.thousandsFormReady = '1';
+      form.addEventListener('formdata', function (e) {
+        var names = {};
+        form.querySelectorAll(THOUSANDS_SELECTOR).forEach(function (input) {
+          if (input.name) names[input.name] = true;
+        });
+        Object.keys(names).forEach(function (name) {
+          var values = e.formData.getAll(name);
+          if (!values.length) return;
+          e.formData.delete(name);
+          values.forEach(function (v) {
+            e.formData.append(name, unformatNumber(v));
+          });
+        });
+      });
+    });
+  }
+
+  window.fibiNumber = {
+    // "1.250.000,5" -> 1250000.5 (boş/geçersizse NaN)
+    parse: function (val) { return parseFloat(unformatNumber(val)); },
+    format: formatNumberValue,
+    init: initThousandsInputs
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { initThousandsInputs(); });
+  } else {
+    initThousandsInputs();
+  }
 })();
