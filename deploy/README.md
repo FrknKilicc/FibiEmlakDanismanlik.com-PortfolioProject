@@ -8,8 +8,8 @@ Komutların hepsi tek satırdır, kopyala-yapıştır yapılabilir. `<IP>` görd
 | Parça | Adres | Sunucuda |
 |---|---|---|
 | Site (WebUI) | https://fibiemlak.com (www ve fibiemlak.online buraya yönlenir) | `fibi-site` servisi, 127.0.0.1:5001 |
-| Yönetim paneli (AdminUI) | https://panel.fibiemlak.com | `fibi-panel` servisi, 127.0.0.1:5002 |
-| WebApi | dışarıya kapalı (yalnızca `/uploads` görselleri fibiemlak.com üzerinden) | `fibi-api` servisi, 127.0.0.1:5000 |
+| Yönetim paneli (AdminUI) | https://yonetim.fibiemlak.com | `fibi-panel` servisi, 127.0.0.1:5002 |
+| WebApi | fibiemlak.com/api/ altında sınırlı açık: yalnızca okuma + 3 ziyaretçi formu; giriş ve yönetim uçları dışarıdan kapalı. Görseller fibiemlak.com/uploads | `fibi-api` servisi, 127.0.0.1:5000 |
 | Veritabanı | dışarıya kapalı | SQL Server 2025 Express, yalnızca 127.0.0.1 |
 | HTTPS | Let's Encrypt (ücretsiz, otomatik yenilenir) | nginx + certbot |
 
@@ -35,7 +35,7 @@ Komutların hepsi tek satırdır, kopyala-yapıştır yapılabilir. `<IP>` görd
 
 1. **Kod hazır olsun:** Antigravity/Claude branch'leri `dev`'e merge edilmiş, yerel `dev` push edilmiş olsun (`git push origin dev`). Sonra GitHub'da `dev` → `master` PR'ı açılıp merge edilir. Canlıya giden şey `master`'dır.
 2. **VDS:** Ubuntu 24.04, en az 4 GB RAM, 2 çekirdek, 60 GB SSD, Türkiye'de (KVKK). Sağlayıcı "snapshot/yedek" sunuyorsa aç.
-3. **Cloudflare Turnstile (ücretsiz, zorunlu):** https://dash.cloudflare.com → hesap aç → Turnstile → Add widget. Hostname olarak `fibiemlak.com`, `panel.fibiemlak.com`, `yeni.fibiemlak.com` ekle, mod "Managed". Sana bir **Site Key** ve bir **Secret Key** verir. *Bunlar olmadan panel girişi çalışmaz* (güvenlik için bilerek kapalı başarısız).
+3. **Cloudflare Turnstile (ücretsiz, zorunlu):** https://dash.cloudflare.com → hesap aç → Turnstile → Add widget. Hostname olarak `fibiemlak.com`, `yonetim.fibiemlak.com`, `yeni.fibiemlak.com` ekle, mod "Managed". Sana bir **Site Key** ve bir **Secret Key** verir. *Bunlar olmadan panel girişi çalışmaz* (güvenlik için bilerek kapalı başarısız).
 4. **Natro:** alan adında "Otomatik Yenileme"yi aç. "Profesyonel DNS Servisi → Yönet" ekranındaki tüm kayıtların ekran görüntüsünü al (geri dönüş için gerekir; özellikle MX/e-posta kayıtları).
 
 ## 1. Sunucuyu kur (JetSite'ı etkilemez)
@@ -143,19 +143,20 @@ Sonra **Actions → Deploy → Run workflow → master**. Yeşil tik gelirse ü�
 
 Natro → Alan Adı Yönetimi → fibiemlak.com → Profesyonel DNS Servisi → Yönet → **yeni kayıt ekle** (mevcutlara dokunma):
 
-- `A` kaydı, ad `panel`, değer `<IP>`
+- `A` kaydı, ad `yonetim`, değer `<IP>`
 - `A` kaydı, ad `yeni`, değer `<IP>`
 
 10-30 dakika bekle, sonra sunucuda:
 
 ```
-certbot --nginx -d yeni.fibiemlak.com -d panel.fibiemlak.com --redirect --agree-tos -m <E-POSTA> --no-eff-email
+certbot --nginx -d yeni.fibiemlak.com -d yonetim.fibiemlak.com --redirect --agree-tos -m <E-POSTA> --no-eff-email
 ```
 
 Deneme listesi:
 - [ ] https://yeni.fibiemlak.com açılıyor; ana sayfa, satılık/kiralık listeleri, ilan detayı, fotoğraflar, harita
+- [ ] Tarayıcıdan API çağıran yerler: ana sayfa arama önerileri, liste filtreleri (il/ilçe/özellik), "Haritada İlanlar", FİBİ Hizmetler formları, "Haber ver" formu
 - [ ] İletişim formu gönderiliyor (captcha görünüyor)
-- [ ] https://panel.fibiemlak.com girişi → 2FA kurulumu (QR) → panel açılıyor
+- [ ] https://yonetim.fibiemlak.com girişi → 2FA kurulumu (QR) → panel açılıyor
 - [ ] Panelde ilan düzenle + fotoğraf yükle → 30 saniye içinde yeni.fibiemlak.com'da görünüyor
 - [ ] Loglarda hata yok: `journalctl -u fibi-api -u fibi-site -u fibi-panel -n 100 --no-pager`
 
@@ -167,7 +168,7 @@ Deneme listesi:
 4. 10-30 dakika sonra sunucuda (fibiemlak.online kullanmıyorsan son iki `-d`'yi çıkar):
 
 ```
-certbot --nginx --expand -d fibiemlak.com -d www.fibiemlak.com -d yeni.fibiemlak.com -d panel.fibiemlak.com -d fibiemlak.online -d www.fibiemlak.online --redirect --agree-tos -m <E-POSTA> --no-eff-email
+certbot --nginx --expand -d fibiemlak.com -d www.fibiemlak.com -d yeni.fibiemlak.com -d yonetim.fibiemlak.com -d fibiemlak.online -d www.fibiemlak.online --redirect --agree-tos -m <E-POSTA> --no-eff-email
 ```
 
 5. 4. adımdaki deneme listesini https://fibiemlak.com üzerinde tekrarla.

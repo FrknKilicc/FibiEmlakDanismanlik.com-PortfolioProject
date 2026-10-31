@@ -62,7 +62,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForRentalPropertyViewCompone
                 }
             }
 
-            ViewBag.ApiUrl = _configuration["Url:ApiUrl"];
+            ViewBag.ApiUrl = _configuration.GetBrowserApiUrl();
 
             var layout = await FooterContentLoader.LoadAsync(_httpClientFactory, _configuration, _memoryCache);
             ViewBag.OfficeAddress = layout.Contact?.OfficeAddress;

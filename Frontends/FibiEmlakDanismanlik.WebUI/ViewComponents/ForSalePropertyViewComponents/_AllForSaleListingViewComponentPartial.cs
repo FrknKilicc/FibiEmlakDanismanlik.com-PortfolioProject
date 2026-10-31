@@ -35,7 +35,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.ForSalePropertyViewComponent
         {
             var client = _httpClientFactory.CreateClient();
             var apiUrl = _configuration["Url:ApiUrl"];
-            ViewBag.ApiUrl = apiUrl;
+            ViewBag.ApiUrl = _configuration.GetBrowserApiUrl();
 
             //  listingTypeIds
             var selectedIds = new List<int>();

@@ -1,3 +1,4 @@
+using FibiEmlakDanismanlik.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FibiEmlakDanismanlik.WebUI.ViewComponents.SectionsViewComponents
@@ -13,8 +14,7 @@ namespace FibiEmlakDanismanlik.WebUI.ViewComponents.SectionsViewComponents
 
         public IViewComponentResult Invoke()
         {
-            var apiUrl = _configuration["Url:ApiUrl"] ?? "https://localhost:7015/api/";
-            ViewBag.ApiUrl = apiUrl;
+            ViewBag.ApiUrl = _configuration.GetBrowserApiUrl() ?? "https://localhost:7015/api/";
             return View();
         }
     }
