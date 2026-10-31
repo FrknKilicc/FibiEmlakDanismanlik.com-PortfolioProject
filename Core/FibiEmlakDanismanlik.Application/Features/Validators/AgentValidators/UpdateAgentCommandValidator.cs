@@ -26,7 +26,7 @@ namespace FibiEmlakDanismanlik.Application.Features.Validators.AgentValidators
                 .MaximumLength(20).WithMessage("Telefon numarası en fazla 20 karakter olabilir.");
 
             RuleFor(x => x.AgentDescription)
-                .MaximumLength(500).WithMessage("Danışman açıklaması en fazla 500 karakter olabilir.");
+                .MaximumLength(4000).WithMessage("Danışman açıklaması en fazla 4000 karakter olabilir.");
 
             RuleFor(x => x.AgentImgUrl)
                 .MaximumLength(500).WithMessage("Fotoğraf adresi en fazla 500 karakter olabilir.")

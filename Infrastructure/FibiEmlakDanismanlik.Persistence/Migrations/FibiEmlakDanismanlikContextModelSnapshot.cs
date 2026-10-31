@@ -74,8 +74,8 @@ namespace FibiEmlakDanismanlik.Persistence.Migrations
 
                     b.Property<string>("AgentDescription")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<string>("AgentImgUrl")
                         .IsRequired()

@@ -30,8 +30,8 @@ namespace FibiEmlakDanismanlik.Application.Features.Validators.MeValidators
                 .WithMessage("Unvan en fazla 100 karakter olabilir.");
 
             RuleFor(x => x.AgentDescription)
-                .MaximumLength(2000)
-                .WithMessage("Açıklama en fazla 2000 karakter olabilir.");
+                .MaximumLength(4000)
+                .WithMessage("Açıklama en fazla 4000 karakter olabilir.");
 
             When(x => !string.IsNullOrWhiteSpace(x.AgentImgUrl), () =>
             {
