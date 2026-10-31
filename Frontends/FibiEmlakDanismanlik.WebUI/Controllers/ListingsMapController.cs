@@ -1,3 +1,4 @@
+using FibiEmlakDanismanlik.WebUI.Models;
 using FibiEmlakDanismanlik.WebUI.Models.ListingsMap;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +39,7 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
 
             var vm = new ListingsMapPageVm
             {
-                ApiUrl = _configuration["Url:ApiUrl"] ?? string.Empty,
+                ApiUrl = _configuration.GetBrowserApiUrl() ?? string.Empty,
                 InitialUsage = normalizedUsage,
                 InitialCategory = normalizedCategory
             };

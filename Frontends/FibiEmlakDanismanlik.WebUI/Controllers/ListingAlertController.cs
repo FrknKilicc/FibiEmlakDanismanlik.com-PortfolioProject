@@ -66,7 +66,7 @@ namespace FibiEmlakDanismanlik.WebUI.Controllers
                 model.RoomCounts.Add(oda.Trim());
             }
 
-            ViewBag.ApiUrl = _configuration["Url:ApiUrl"];
+            ViewBag.ApiUrl = _configuration.GetBrowserApiUrl();
 
             HttpContext.Items[PageMeta.TitleItemKey] = "Benzer İlan Çıkınca Haber Ver";
             HttpContext.Items[PageMeta.DescriptionItemKey] = "Aradığınız kriterlere uygun yeni bir satılık veya kiralık gayrimenkul ilanı yayınlandığında haberdar olun.";
