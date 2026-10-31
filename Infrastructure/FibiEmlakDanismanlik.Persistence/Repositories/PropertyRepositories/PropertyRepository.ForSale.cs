@@ -25,212 +25,106 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 {
     public partial class PropertyRepository
     {
-        private IQueryable<ForSalePropertyForListingViewModel> BuildForSaleListingQuery()
+        private IQueryable<ForSalePropertyForListingViewModel> ForSaleHousingRows()
         {
-            var activeStatuses = PropertyStatuses.ActiveSet;
+            return
+                from house in _context.forSaleHousingPropertyListings
+                join agent in _context.Agents on house.AgentId equals agent.AgentId
+                join lt in _context.listingTypes on house.ListingTypeId equals lt.ListingTypeId
+                where lt.UsageType == UsageType.ForSale
+                select new ForSalePropertyForListingViewModel
+                {
+                    ListingId = house.ForSaleHousingListId,
+                    ListingTypeId = house.ListingTypeId,
+                    PropertyNo = house.PropertyNo,
+                    PropertyName = house.PropertyName,
+                    PropertyDescription = house.PropertyDescription,
+                    PropertyStatus = house.PropertyStatus,
+                    CreatedDate = house.CreatedDate,
+                    Price = house.Price,
+                    TitleDeedStatus = house.TitleDeedStatus,
 
-            var housingQuery =
-    from house in _context.forSaleHousingPropertyListings
-    join agent in _context.Agents on house.AgentId equals agent.AgentId
-    join lt in _context.listingTypes on house.ListingTypeId equals lt.ListingTypeId
-    where lt.UsageType == UsageType.ForSale
-          && house.PropertyStatus != null
-          && activeStatuses.Contains(house.PropertyStatus)
-    select new ForSalePropertyForListingViewModel
-    {
+                    City = house.City,
+                    District = house.District,
+                    CityId = house.CityId,
+                    DistrictId = house.DistrictId,
+                    NeighborhoodId = house.NeighborhoodId,
+                    Neighborhood = house.Neighborhood,
+                    AddressDesc = house.AddressDesc,
+                    SourceType = 1,
+                    UsageTypeId = (int)lt.UsageType,
 
+                    // arsa boş
+                    Area = null,
+                    SharePercentage = null,
+                    PricePerSquareMeter = null,
+                    ParcelNumber = null,
+                    PlotNumber = null,
+                    MapSheetNumber = null,
+                    FloorAreaRatio = null,
+                    BaseAreaRatio = null,
+                    ZoningPlan = null,
+                    ZoningStatus = null,
+                    DevelopmentRight = null,
+                    LandLoan = null,
+                    Exchange = house.Exchange,
+                    BestDeals = house.BestDeals,
+                    LandCategoryId = null,
+                    HousingCategoryId = house.HousingCategoryId,
 
-        ListingId = house.ForSaleHousingListId,
+                    // konut dolu
+                    Facade = house.Facade,
+                    IsElevator = house.IsElevator,
+                    GrossArea = house.GrossArea,
+                    NetArea = house.NetArea,
+                    OpenArea = house.OpenArea,
+                    BuildingAge = house.BuildingAge,
+                    TotalNumberOfFloor = house.TotalNumberOfFloor,
+                    NumberOfFloors = house.NumberOfFloors,
+                    NumberOfBathRoom = house.NumberOfBathRoom,
+                    NumberOfRoom = house.NumberOfRoom,
+                    Heating = house.Heating,
+                    BlackBox = house.BlackBox,
+                    NumberOfBalconies = house.NumberOfBalconies,
+                    ParkingLot = house.ParkingLot,
+                    Furnished = house.Furnished,
+                    UsageStatus = house.UsageStatus,
+                    WithinTheComplex = house.WithinTheComplex,
+                    Dues = house.Dues,
+                    HomeLoan = house.HomeLoan,
 
-        ListingTypeId = house.ListingTypeId,
-        PropertyNo = house.PropertyNo,
-        PropertyName = house.PropertyName,
-        PropertyDescription = house.PropertyDescription,
-        PropertyStatus = house.PropertyStatus,
-        CreatedDate = house.CreatedDate,
-        Price = house.Price,
-        TitleDeedStatus = house.TitleDeedStatus,
+                    // ticari boş
+                    NumberOfSection = null,
+                    NumberOfKitchens = null,
+                    NumberOfBathrooms = null,
+                    Transferable = null,
 
-        City = house.City,
-        District = house.District,
-        CityId = house.CityId,
-        DistrictId = house.DistrictId,
-        NeighborhoodId = house.NeighborhoodId,
-        Neighborhood = house.Neighborhood,
-        AddressDesc = house.AddressDesc,
-        SourceType = 1,  // usage type 1 satılık konut 3 ise kiralık konut 
-        UsageTypeId = (int)lt.UsageType,
+                    AgentId = house.AgentId,
+                    AgentName = agent.AgentName,
+                    AgentTitle = agent.AgentTitle,
+                    AgentImgUrl = agent.AgentImgUrl,
+                    AgentPhoneNumber = agent.AgentPhoneNumber,
+                    Mail = agent.Mail,
 
+                    ListingType = "Konut",
 
+                    PropImgUrl1 = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 2 && i.ListingId == house.ForSaleHousingListId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? ""
+                };
+        }
 
-        // arsa boş
-        Area = null,
-        SharePercentage = null,
-        PricePerSquareMeter = null,
-        ParcelNumber = null,
-        PlotNumber = null,
-        MapSheetNumber = null,
-        FloorAreaRatio = null,
-        BaseAreaRatio = null,
-        ZoningPlan = null,
-        ZoningStatus = null,
-        DevelopmentRight = null,
-        LandLoan = null,
-        Exchange = null,
-        BestDeals = house.BestDeals,
-        LandCategoryId = null,
-        HousingCategoryId = house.HousingCategoryId,
-
-
-        // konut dolu
-        Facade = house.Facade,
-        IsElevator = house.IsElevator,
-        GrossArea = house.GrossArea,
-        NetArea = house.NetArea,
-        OpenArea = house.OpenArea,
-        BuildingAge = house.BuildingAge,
-        TotalNumberOfFloor = house.TotalNumberOfFloor,
-        NumberOfFloors = house.NumberOfFloors,
-        NumberOfBathRoom = house.NumberOfBathRoom,
-        NumberOfRoom = house.NumberOfRoom,
-        Heating = house.Heating,
-        BlackBox = house.BlackBox,
-        NumberOfBalconies = house.NumberOfBalconies,
-        ParkingLot = house.ParkingLot,
-        Furnished = house.Furnished,
-        UsageStatus = house.UsageStatus,
-        WithinTheComplex = house.WithinTheComplex,
-        Dues = house.Dues,
-        HomeLoan = house.HomeLoan,
-
-        // ticari boş
-        NumberOfSection = null,
-        NumberOfKitchens = null,
-        NumberOfBathrooms = null,
-        Transferable = null,
-
-        AgentId = house.AgentId,
-        AgentName = agent.AgentName,
-        AgentTitle = agent.AgentTitle,
-        AgentImgUrl = agent.AgentImgUrl,
-
-        ListingType = "Konut",
-
-        PropImgUrl1 = _context.ListingImages
-            .Where(i => i.ListingTypeId == 2 && i.ListingId == house.ForSaleHousingListId && i.Kind == ListingImageKind.Photo)
-            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
-            .Select(i => i.Url)
-            .FirstOrDefault() ?? ""
-    };
-
-            var commercialQuery =
-    from comm in _context.forSaleCommercialPropertyListings
-    join agent in _context.Agents on comm.AgentId equals agent.AgentId
-    join lt in _context.listingTypes on comm.ListingTypeId equals lt.ListingTypeId
-    where lt.UsageType == UsageType.ForSale
-          && comm.PropertyStatus != null
-          && activeStatuses.Contains(comm.PropertyStatus)
-    select new ForSalePropertyForListingViewModel
-    {
-
-        ListingId = comm.ForSaleCommercialListingId,
-        ListingTypeId = comm.ListingTypeId,
-        PropertyNo = comm.PropertyNo,
-        PropertyName = comm.PropertyName,
-        PropertyDescription = comm.PropertyDescription,
-        PropertyStatus = comm.PropertyStatus,
-        CreatedDate = comm.CreatedDate,
-        Price = comm.Price,
-        TitleDeedStatus = comm.TitleDeedStatus,
-        SourceType = 3, // usage type 3 kullanarak satılık işyeri anlamına geliyor.
-        UsageTypeId = (int)lt.UsageType,
-
-
-        //        Highlights = new List<CardHighlightViewModel>
-        //{
-        //    new() { Icon = "icon-14", Text = $"{comm.Area} m²" },
-        //    new() { Icon = "icon-15", Text = $"{comm.NumberOfFloors} Kat" },
-        //    new() { Icon = "icon-16", Text = $"{comm.NumberOfSection} Bölüm" }
-        //},
-
-        City = comm.City,
-        District = comm.District,
-        CityId = comm.CityId,
-        DistrictId = comm.DistrictId,
-        NeighborhoodId = comm.NeighborhoodId,
-        Neighborhood = comm.Neighborhood,
-        AddressDesc = comm.AddressDesc,
-
-        // arsa boş
-        Area = null,
-        SharePercentage = null,
-        PricePerSquareMeter = null,
-        ParcelNumber = null,
-        PlotNumber = null,
-        MapSheetNumber = null,
-        FloorAreaRatio = null,
-        BaseAreaRatio = null,
-        ZoningPlan = null,
-        ZoningStatus = null,
-        DevelopmentRight = null,
-        LandLoan = null,
-        Exchange = null,
-        BestDeals = comm.BestDeals,
-        LandCategoryId = null,
-        HousingCategoryId = null,
-
-
-        // konut boş
-        Facade = null,
-        IsElevator = null,
-        GrossArea = comm.GrossArea,
-        NetArea = null,
-        OpenArea = null,
-        BuildingAge = null,
-        TotalNumberOfFloor = null,
-        NumberOfFloors = comm.NumberOfFloors,
-        NumberOfBathRoom = null,
-        NumberOfRoom = null,
-        Heating = null,
-        BlackBox = null,
-        NumberOfBalconies = null,
-        ParkingLot = null,
-        Furnished = null,
-        UsageStatus = null,
-        WithinTheComplex = null,
-        Dues = null,
-        HomeLoan = null,
-
-        // ticari dolu
-        NumberOfSection = comm.NumberOfSection,
-        NumberOfKitchens = comm.NumberOfKitchens,
-        NumberOfBathrooms = comm.NumberOfBathrooms,
-        Transferable = comm.Transferable,
-
-        AgentId = comm.AgentId,
-        AgentName = agent.AgentName,
-        AgentTitle = agent.AgentTitle,
-        AgentImgUrl = agent.AgentImgUrl,
-
-        ListingType = "İşyeri",
-
-        PropImgUrl1 = _context.ListingImages
-            .Where(i => i.ListingTypeId == 3 && i.ListingId == comm.ForSaleCommercialListingId && i.Kind == ListingImageKind.Photo)
-            .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
-            .Select(i => i.Url)
-            .FirstOrDefault() ?? ""
-    };
-
-            var landQuery =
+        private IQueryable<ForSalePropertyForListingViewModel> ForSaleLandRows()
+        {
+            return
                 from land in _context.forSaleLandListings
                 join agent in _context.Agents on land.AgentId equals agent.AgentId
                 join lt in _context.listingTypes on land.ListingTypeId equals lt.ListingTypeId
                 where lt.UsageType == UsageType.ForSale
-                      && land.PropertyStatus != null
-                      && activeStatuses.Contains(land.PropertyStatus)
                 select new ForSalePropertyForListingViewModel
                 {
-
                     ListingId = land.ForSaleLandListingId,
                     ListingTypeId = land.ListingTypeId,
                     PropertyNo = land.PropertyNo,
@@ -240,15 +134,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     CreatedDate = land.CreatedDate,
                     Price = land.Price,
                     TitleDeedStatus = land.TitleDeedStatus,
-                    SourceType = 2, //usage type 2 - > satılık arsa anlamına geliyor
+                    SourceType = 2,
                     UsageTypeId = (int)lt.UsageType,
-
-                    //                    Highlights = new List<CardHighlightViewModel>
-                    //{
-                    //    new() { Icon = "icon-14", Text = $"{land.Area} m²" },
-                    //    new() { Icon = "icon-15", Text = $"{land.ZoningStatus} " },
-                    //    new() { Icon = "icon-16", Text = $"{land.PricePerSquareMeter} TL/m²" }
-                    //},
 
                     City = land.City,
                     District = land.District,
@@ -275,7 +162,6 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     BestDeals = land.BestDeals,
                     LandCategoryId = land.LandCategoryId,
                     HousingCategoryId = null,
-                    
 
                     // konut boş
                     Facade = null,
@@ -308,6 +194,8 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                     AgentName = agent.AgentName,
                     AgentTitle = agent.AgentTitle,
                     AgentImgUrl = agent.AgentImgUrl,
+                    AgentPhoneNumber = agent.AgentPhoneNumber,
+                    Mail = agent.Mail,
 
                     ListingType = "Arsa",
 
@@ -317,8 +205,105 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
                         .Select(i => i.Url)
                         .FirstOrDefault() ?? ""
                 };
+        }
 
-            return housingQuery.Concat(landQuery).Concat(commercialQuery);
+        private IQueryable<ForSalePropertyForListingViewModel> ForSaleCommercialRows()
+        {
+            return
+                from comm in _context.forSaleCommercialPropertyListings
+                join agent in _context.Agents on comm.AgentId equals agent.AgentId
+                join lt in _context.listingTypes on comm.ListingTypeId equals lt.ListingTypeId
+                where lt.UsageType == UsageType.ForSale
+                select new ForSalePropertyForListingViewModel
+                {
+                    ListingId = comm.ForSaleCommercialListingId,
+                    ListingTypeId = comm.ListingTypeId,
+                    PropertyNo = comm.PropertyNo,
+                    PropertyName = comm.PropertyName,
+                    PropertyDescription = comm.PropertyDescription,
+                    PropertyStatus = comm.PropertyStatus,
+                    CreatedDate = comm.CreatedDate,
+                    Price = comm.Price,
+                    TitleDeedStatus = comm.TitleDeedStatus,
+                    SourceType = 3,
+                    UsageTypeId = (int)lt.UsageType,
+
+                    City = comm.City,
+                    District = comm.District,
+                    CityId = comm.CityId,
+                    DistrictId = comm.DistrictId,
+                    NeighborhoodId = comm.NeighborhoodId,
+                    Neighborhood = comm.Neighborhood,
+                    AddressDesc = comm.AddressDesc,
+
+                    // arsa
+                    Area = comm.Area,
+                    SharePercentage = comm.SharePercentage,
+                    PricePerSquareMeter = null,
+                    ParcelNumber = null,
+                    PlotNumber = null,
+                    MapSheetNumber = null,
+                    FloorAreaRatio = null,
+                    BaseAreaRatio = null,
+                    ZoningPlan = null,
+                    ZoningStatus = null,
+                    DevelopmentRight = null,
+                    LandLoan = comm.LandLoan,
+                    Exchange = comm.Exchange,
+                    BestDeals = comm.BestDeals,
+                    LandCategoryId = null,
+                    HousingCategoryId = null,
+
+                    // konut
+                    Facade = comm.Facade,
+                    IsElevator = null,
+                    GrossArea = comm.GrossArea,
+                    NetArea = null,
+                    OpenArea = null,
+                    BuildingAge = null,
+                    TotalNumberOfFloor = null,
+                    NumberOfFloors = comm.NumberOfFloors,
+                    NumberOfBathRoom = null,
+                    NumberOfRoom = null,
+                    Heating = null,
+                    BlackBox = null,
+                    NumberOfBalconies = null,
+                    ParkingLot = null,
+                    Furnished = null,
+                    UsageStatus = null,
+                    WithinTheComplex = null,
+                    Dues = null,
+                    HomeLoan = null,
+
+                    // ticari dolu
+                    NumberOfSection = comm.NumberOfSection,
+                    NumberOfKitchens = comm.NumberOfKitchens,
+                    NumberOfBathrooms = comm.NumberOfBathrooms,
+                    Transferable = comm.Transferable,
+
+                    AgentId = comm.AgentId,
+                    AgentName = agent.AgentName,
+                    AgentTitle = agent.AgentTitle,
+                    AgentImgUrl = agent.AgentImgUrl,
+                    AgentPhoneNumber = agent.AgentPhoneNumber,
+                    Mail = agent.Mail,
+
+                    ListingType = "İşyeri",
+
+                    PropImgUrl1 = _context.ListingImages
+                        .Where(i => i.ListingTypeId == 3 && i.ListingId == comm.ForSaleCommercialListingId && i.Kind == ListingImageKind.Photo)
+                        .OrderByDescending(i => i.IsCover).ThenBy(i => i.SortOrder).ThenBy(i => i.ListingImageId)
+                        .Select(i => i.Url)
+                        .FirstOrDefault() ?? ""
+                };
+        }
+
+        private IQueryable<ForSalePropertyForListingViewModel> BuildForSaleListingQuery()
+        {
+            var activeStatuses = PropertyStatuses.ActiveSet;
+            return ForSaleHousingRows().Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus))
+                .Concat(ForSaleLandRows().Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)))
+                .Concat(ForSaleCommercialRows().Where(x => x.PropertyStatus != null && activeStatuses.Contains(x.PropertyStatus)));
         }
 
         public List<ForSalePropertyViewModel> GetAllForSalePropertyWithAgent()
@@ -397,168 +382,34 @@ namespace FibiEmlakDanismanlik.Persistence.Repositories.PropertyRepositories
 
         public async Task<ForSalePropertyForListingViewModel> GetUnifiedForSalePropertyById(int id, int? listingTypeId = null)
         {
-            List<AmenityItemViewModel> amenities = new();
-
             bool checkHousing = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.ForSaleHousingListing;
-            var housingById = checkHousing
-                ? await _context.forSaleHousingPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleHousingListId == id)
-                : null;
-
-            if (housingById != null)
+            var vm = checkHousing ? await ForSaleHousingRows().FirstOrDefaultAsync(x => x.ListingId == id) : null;
+            if (vm != null)
             {
-                amenities = await LoadAmenitiesAsync(_context.ForSaleHousingListingAmenities.Where(x => x.ForSaleHousingListId == id).Select(x => x.AmenityDefinition));
-                var vm = new ForSalePropertyForListingViewModel
-                {
-                    ListingId = housingById.ForSaleHousingListId,
-                    PropertyNo = housingById.PropertyNo,
-                    PropertyName = housingById.PropertyName,
-                    PropertyDescription = housingById.PropertyDescription,
-                    PropertyStatus = housingById.PropertyStatus,
-                    CreatedDate = housingById.CreatedDate,
-                    Price = housingById.Price,
-                    TitleDeedStatus = housingById.TitleDeedStatus,
-                    City = housingById.City,
-                    District = housingById.District,
-                    Neighborhood = housingById.Neighborhood,
-                    AddressDesc = housingById.AddressDesc,
-                    Facade = housingById.Facade,
-                    IsElevator = housingById.IsElevator,
-                    GrossArea = housingById.GrossArea,
-                    NetArea = housingById.NetArea,
-                    OpenArea = housingById.OpenArea,
-                    BuildingAge = housingById.BuildingAge,
-                    TotalNumberOfFloor = housingById.TotalNumberOfFloor,
-                    NumberOfFloors = housingById.NumberOfFloors,
-                    NumberOfBathRoom = housingById.NumberOfBathRoom,
-                    NumberOfRoom = housingById.NumberOfRoom,
-                    Heating = housingById.Heating,
-                    BlackBox = housingById.BlackBox,
-                    NumberOfBalconies = housingById.NumberOfBalconies,
-                    ParkingLot = housingById.ParkingLot,
-                    Furnished = housingById.Furnished,
-                    UsageStatus = housingById.UsageStatus,
-                    WithinTheComplex = housingById.WithinTheComplex,
-                    Dues = housingById.Dues,
-                    Exchange = housingById.Exchange,
-                    HomeLoan = housingById.HomeLoan,
-                    AgentId = housingById.AgentId,
-                    AgentName = housingById.Agent.AgentName,
-                    AgentTitle = housingById.Agent.AgentTitle,
-                    AgentImgUrl = housingById.Agent.AgentImgUrl,
-                    BestDeals = housingById.BestDeals,
-                    ListingType = "Konut",
-                    ListingTypeId = housingById.ListingTypeId,
-                    UsageTypeId = (int)housingById.ListingType.UsageType,
-                    Amenities = amenities,
-                    AgentPhoneNumber = housingById.Agent.AgentPhoneNumber,
-                    Mail = housingById.Agent.Mail
-                };
-
-                await FillPhotoSlotsAsync(new[] { vm }, x => (2, housingById.ForSaleHousingListId));
+                vm.Amenities = await LoadAmenitiesAsync(_context.ForSaleHousingListingAmenities.Where(x => x.ForSaleHousingListId == id).Select(x => x.AmenityDefinition));
+                await FillPhotoSlotsAsync(new[] { vm }, x => (2, id));
                 return vm;
             }
+
             bool checkLand = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.ForSaleLandListing;
-            var land = checkLand
-                ? await _context.forSaleLandListings.Include(x => x.Agent).Include(x => x.ListingType).Include(x => x.LandCategory).FirstOrDefaultAsync(x => x.ForSaleLandListingId == id)
-                : null;
-            
-
-            if (land != null)
+            vm = checkLand ? await ForSaleLandRows().FirstOrDefaultAsync(x => x.ListingId == id) : null;
+            if (vm != null)
             {
-                amenities = await LoadAmenitiesAsync(_context.ForSaleLandListingAmenities.Where(x => x.ForSaleLandListId == id).Select(x => x.AmenityDefinition));
-                var vm = new ForSalePropertyForListingViewModel
-                {
-                    ListingId = land.ForSaleLandListingId,
-                    PropertyNo = land.PropertyNo,
-                    PropertyName = land.PropertyName,
-                    PropertyDescription = land.PropertyDescription,
-                    PropertyStatus = land.PropertyStatus,
-                    CreatedDate = land.CreatedDate,
-                    City = land.City,
-                    District = land.District,
-                    Neighborhood = land.Neighborhood,
-                    AddressDesc = land.AddressDesc,
-                    ZoningStatus = land.ZoningStatus,
-                    SharePercentage = land.SharePercentage,
-                    Area = land.Area,
-                    Price = land.Price,
-                    PricePerSquareMeter = land.PricePerSquareMeter,
-                    ParcelNumber = land.ParcelNumber,
-                    PlotNumber = land.PlotNumber,
-                    MapSheetNumber = land.MapSheetNumber,
-                    FloorAreaRatio = land.FloorAreaRatio,
-                    BaseAreaRatio = land.BaseAreaRatio,
-                    ZoningPlan = land.ZoningPlan,
-                    TitleDeedStatus = land.TitleDeedStatus,
-                    DevelopmentRight = land.DevelopmentRight,
-                    LandLoan = land.LandLoan,
-                    Exchange = land.Exchange,
-                    LandCategoryId = land.LandCategoryId,
-                    AgentId = land.AgentId,
-                    AgentImgUrl = land.Agent.AgentImgUrl,
-                    AgentName = land.Agent.AgentName,
-                    AgentTitle = land.Agent.AgentTitle,
-                    BestDeals = land.BestDeals,
-                    ListingType = "Arsa",
-                    ListingTypeId = land.ListingTypeId,
-                    UsageTypeId = (int)land.ListingType.UsageType,
-                    AgentPhoneNumber = land.Agent.AgentPhoneNumber,
-                    Mail = land.Agent.Mail
-                };
-
-                await FillPhotoSlotsAsync(new[] { vm }, x => (1, land.ForSaleLandListingId));
+                vm.Amenities = await LoadAmenitiesAsync(_context.ForSaleLandListingAmenities.Where(x => x.ForSaleLandListId == id).Select(x => x.AmenityDefinition));
+                await FillPhotoSlotsAsync(new[] { vm }, x => (1, id));
                 return vm;
             }
+
             bool checkCommercial = !listingTypeId.HasValue || listingTypeId == (int)PropertyListingType.ForSaleCommercialPropertyListing;
-            var commercialById = checkCommercial
-                ? await _context.forSaleCommercialPropertyListings.Include(x => x.Agent).Include(x => x.ListingType).FirstOrDefaultAsync(x => x.ForSaleCommercialListingId == id)
-                : null;
-            if (commercialById != null)
+            vm = checkCommercial ? await ForSaleCommercialRows().FirstOrDefaultAsync(x => x.ListingId == id) : null;
+            if (vm != null)
             {
-                amenities = await LoadAmenitiesAsync(_context.ForSaleCommercialListingAmenities.Where(x => x.ForSaleCommercialListingId == id).Select(x => x.AmenityDefinition));
-                var vm = new ForSalePropertyForListingViewModel
-                {
-                    ListingId = commercialById.ForSaleCommercialListingId,
-                    PropertyNo = commercialById.PropertyNo,
-                    PropertyName = commercialById.PropertyName,
-                    PropertyDescription = commercialById.PropertyDescription,
-                    PropertyStatus = commercialById.PropertyStatus,
-                    CreatedDate = commercialById.CreatedDate,
-                    City = commercialById.City,
-                    District = commercialById.District,
-                    Neighborhood = commercialById.Neighborhood,
-                    AddressDesc = commercialById.AddressDesc,
-                    Facade = commercialById.Facade,
-                    NumberOfSection = commercialById.NumberOfSection,
-                    NumberOfKitchens = commercialById.NumberOfKitchens,
-                    NumberOfBathrooms = commercialById.NumberOfBathrooms,
-                    NumberOfFloors = commercialById.NumberOfFloors,
-                    GrossArea = commercialById.GrossArea,
-                    Area = commercialById.Area,
-                    Price = commercialById.Price,
-                    TitleDeedStatus = commercialById.TitleDeedStatus,
-                    SharePercentage = commercialById.SharePercentage,
-                    LandLoan = commercialById.LandLoan,
-                    Exchange = commercialById.Exchange,
-                    Transferable = commercialById.Transferable,
-                    BestDeals = commercialById.BestDeals,
-                    AgentId = commercialById.AgentId,
-                    AgentName = commercialById.Agent.AgentName,
-                    AgentImgUrl = commercialById.Agent.AgentImgUrl,
-                    AgentTitle = commercialById.Agent.AgentTitle,
-                    ListingType = "İşyeri",
-                    ListingTypeId = commercialById.ListingTypeId,
-                    UsageTypeId = (int)commercialById.ListingType.UsageType,
-                    Amenities = amenities,
-                    Mail = commercialById.Agent.Mail,
-                    AgentPhoneNumber = commercialById.Agent.AgentPhoneNumber
-                };
-
-                await FillPhotoSlotsAsync(new[] { vm }, x => (3, commercialById.ForSaleCommercialListingId));
+                vm.Amenities = await LoadAmenitiesAsync(_context.ForSaleCommercialListingAmenities.Where(x => x.ForSaleCommercialListingId == id).Select(x => x.AmenityDefinition));
+                await FillPhotoSlotsAsync(new[] { vm }, x => (3, id));
                 return vm;
             }
-            return null;
 
+            return null;
         }
 
         public async Task<List<ListingTypeFacetDto>> GetForSaleListingTypeFacetsAsync()
