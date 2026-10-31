@@ -8,6 +8,12 @@
         initViewToggle();
     }
 
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initFilterToggle);
+    } else {
+        initFilterToggle();
+    }
+
     function initViewToggle() {
         var toggleGroup = document.querySelector(".fibi-view-toggle");
         var mapRoot = document.getElementById("listingsMapRoot");
@@ -78,5 +84,22 @@
         } else {
             setView("list", false);
         }
+    }
+
+    // Mobilde filtre panelini aç/kapa
+    function initFilterToggle() {
+        var toggle = document.querySelector(".fibi-filter-toggle");
+        var panel = toggle && document.getElementById(toggle.getAttribute("aria-controls"));
+        if (!toggle || !panel) {
+            return;
+        }
+        var label = toggle.querySelector("span");
+        toggle.addEventListener("click", function () {
+            var open = panel.classList.toggle("is-open");
+            toggle.setAttribute("aria-expanded", open ? "true" : "false");
+            if (label) {
+                label.textContent = open ? "Filtreleri Gizle" : "Filtrele";
+            }
+        });
     }
 })();

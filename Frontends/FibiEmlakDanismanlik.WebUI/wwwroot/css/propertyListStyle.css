@@ -524,3 +524,70 @@ price-range alanı */
         height: auto;
     }
 }
+
+
+/* ==========================================================================
+   Mobil düzeltmeler (2026-10-31)
+   ========================================================================== */
+/* Liste sayfası bölüm boşluğu (eski satır içi stil) */
+.property-page-section.fibi-list-section { padding: 110px 0 50px 0; }
+
+/* Mobil filtre aç/kapa düğmesi */
+.fibi-filter-toggle { display: none; }
+
+@media only screen and (max-width: 991px) {
+    .property-page-section.fibi-list-section { padding: 40px 0 40px 0; }
+
+    .fibi-filter-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 48px;
+        margin-bottom: 20px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #2d2929;
+        font-size: 16px;
+        font-weight: 500;
+        font-family: inherit;
+        cursor: pointer;
+    }
+    .fibi-filter-toggle i { color: #22c55e; }
+    .fibi-filter-toggle[aria-expanded="true"] { background: #22c55e; border-color: #22c55e; color: #ffffff; }
+    .fibi-filter-toggle[aria-expanded="true"] i { color: #ffffff; }
+
+    /* select2/nice-select genişliği doğru hesaplansın diye display:none yerine yükseklik 0 */
+    .fibi-filter-panel:not(.is-open) { height: 0; overflow: hidden; visibility: hidden; margin: 0; padding: 0; }
+
+    /* Danışmanlar sayfasında liste önce, yan sütun sonra */
+    .agents-page-section .sidebar-side { order: 2; }
+}
+
+@media only screen and (max-width: 767px) {
+    /* Header mobilde absolute ve 124-132 px; sayfa başlığı altında kalmasın */
+    .page-title { padding: 155px 0 60px 0; }
+
+    /* Sonuç sayısı + Liste|Harita + sıralama alt alta, ekran içinde */
+    .property-page-section .item-shorting { flex-direction: column; align-items: stretch; }
+    .property-page-section .item-shorting .right-column {
+        float: none !important;
+        display: block;
+        width: 100%;
+        padding-right: 0;
+        margin: 0;
+        text-align: left;
+    }
+    .property-page-section .item-shorting .fibi-result-col { justify-content: space-between; margin-bottom: 12px; }
+    .property-page-section .item-shorting .fibi-view-toggle { margin-left: 0; }
+    .property-page-section .item-shorting .short-box { width: 100%; float: none; }
+
+    /* Yukarı çık düğmesi footer alt bağlantılarını örtmesin */
+    .main-footer .footer-bottom { padding-bottom: 80px; }
+
+    /* KVKK onay kutuları dokunmaya uygun boyutta */
+    input[type="checkbox"][name="KvkkApproved"],
+    #leadKvkkConsent { width: 18px !important; height: 18px !important; flex-shrink: 0; }
+}
