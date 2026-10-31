@@ -1,10 +1,10 @@
 /**
  * Fibi Emlak Danışmanlık - İlan Ekleme ve Düzenleme Formu
- * Konum zinciri (İl -> İlçe -> Mahalle), m² birim fiyat hesaplama ve çift gönderim koruması.
+ * Konum zinciri (İl -> İlçe -> Mahalle) ve çift gönderim koruması.
  */
 document.addEventListener('DOMContentLoaded', function () {
     initLocationDropdowns();
-    initPricePerSquareMeterSuggestion();
+
     initFormSubmitHandler();
     initNewListingCoordinates();
 });
@@ -293,44 +293,6 @@ function initLocationDropdowns() {
         selectEl.disabled = true;
         refreshSearchable(selectEl);
     }
-}
-
-/**
- * Arsa vb. ilanlar için Alan ve Fiyat/Kira değerine göre m² birim fiyatını otomatik hesaplar ve önerir.
- */
-function initPricePerSquareMeterSuggestion() {
-    var priceInput = document.getElementById('priceInput');
-    var rentInput = document.getElementById('rentInput');
-    var areaInput = document.getElementById('areaInput');
-    var m2PriceInput = document.getElementById('m2PriceInput');
-
-    if (!m2PriceInput || !areaInput || (!priceInput && !rentInput)) {
-        return;
-    }
-
-    var mainPriceInput = priceInput || rentInput;
-    var userManuallyChangedM2Price = !!m2PriceInput.value;
-
-    m2PriceInput.addEventListener('input', function () {
-        userManuallyChangedM2Price = true;
-    });
-
-    function calculateM2Price() {
-        if (userManuallyChangedM2Price) {
-            return;
-        }
-
-        var priceVal = parseFloat(mainPriceInput.value);
-        var areaVal = parseFloat(areaInput.value);
-
-        if (!isNaN(priceVal) && priceVal > 0 && !isNaN(areaVal) && areaVal > 0) {
-            var unitPrice = Math.round(priceVal / areaVal);
-            m2PriceInput.value = unitPrice;
-        }
-    }
-
-    mainPriceInput.addEventListener('input', calculateM2Price);
-    areaInput.addEventListener('input', calculateM2Price);
 }
 
 /**

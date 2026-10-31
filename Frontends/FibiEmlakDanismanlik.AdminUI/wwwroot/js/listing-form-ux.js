@@ -1,7 +1,7 @@
 /**
  * Fibi Emlak Danışmanlık - İlan Formu Gelişmiş Kullanıcı Deneyimi (UX)
  * 
- * 1. Para alanları tr-TR maskeleme ve ham gönderim
+ * 1. Para alanları: admin-ui.js (window.fibiNumber)
  * 2. Karakter sayaçları
  * 3. Otomatik büyüyen metin alanları (autogrow)
  * 4. Canlı tamamlanma oranı ve eksik listesi
@@ -28,152 +28,6 @@
 
         var wizardSections = isWizard ? Array.from(form.querySelectorAll('.listing-section')) : [];
         var goToWizardStepFn = null;
-
-        /* ==========================================================================
-           1. PARA ALANLARI ([data-money])
-           ========================================================================== */
-        var moneyInputs = Array.from(document.querySelectorAll('[data-money]'));
-
-        function unformatMoney(val) {
-            if (!val) return '';
-            // Binlik noktaları sil, ondalık virgülü noktaya çevir
-            return String(val).replace(/\./g, '').replace(',', '.');
-        }
-
-        function formatMoneyValue(val) {
-            if (val === null || val === undefined) return '';
-            var str = String(val).trim();
-            if (!str) return '';
-
-            var hasComma = str.indexOf(',') !== -1;
-            var parts = str.split(',');
-            var intRaw = parts[0].replace(/\D/g, '');
-            var decRaw = parts.length > 1 ? parts.slice(1).join('').replace(/\D/g, '').slice(0, 2) : null;
-
-            var formattedInt = '';
-            if (intRaw) {
-                if (intRaw.length > 1 && intRaw.startsWith('0')) {
-                    intRaw = intRaw.replace(/^0+/, '') || '0';
-                }
-                formattedInt = intRaw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            } else if (hasComma) {
-                formattedInt = '0';
-            }
-
-            var finalVal = formattedInt;
-            if (hasComma) {
-                finalVal += ',' + (decRaw !== null ? decRaw : '');
-            }
-            return finalVal;
-        }
-
-        function formatInitialMoney(val) {
-            if (!val) return '';
-            var str = String(val).trim();
-            if (!str) return '';
-
-            // Sunucudan InvariantCulture gelirse (örn. 9680000.00 veya 9680000)
-            if (str.indexOf('.') !== -1 && str.indexOf(',') === -1) {
-                var dotParts = str.split('.');
-                var intStr = dotParts[0].replace(/\D/g, '');
-                var decStr = dotParts[1] ? dotParts[1].replace(/\D/g, '').slice(0, 2) : '';
-                if (/^0+$/.test(decStr)) {
-                    decStr = '';
-                }
-                var formattedInt = intStr.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                return decStr ? (formattedInt + ',' + decStr) : formattedInt;
-            }
-
-            return formatMoneyValue(str);
-        }
-
-        function handleMoneyInput(e) {
-            var input = e.target;
-            var val = input.value;
-            var selStart = input.selectionStart || 0;
-
-            var leftText = val.slice(0, selStart);
-            var leftDigitsAndComma = leftText.replace(/[^\d,]/g, '');
-
-            var formatted = formatMoneyValue(val);
-            input.value = formatted;
-
-            var targetCount = leftDigitsAndComma.length;
-            var newCursorPos = 0;
-            var counted = 0;
-
-            for (var i = 0; i < formatted.length; i++) {
-                var ch = formatted[i];
-                if (/[\d,]/.test(ch)) {
-                    counted++;
-                }
-                if (counted >= targetCount) {
-                    newCursorPos = i + 1;
-                    break;
-                }
-            }
-            if (counted < targetCount) {
-                newCursorPos = formatted.length;
-            }
-
-            input.setSelectionRange(newCursorPos, newCursorPos);
-        }
-
-        function handleMoneyKeyDown(e) {
-            var input = e.target;
-            // Backspace ile binlik ayırıcı nokta silinirken önceki rakamı atlama/silme kolaylığı
-            if (e.key === 'Backspace') {
-                var pos = input.selectionStart;
-                if (pos === input.selectionEnd && pos > 0) {
-                    if (input.value[pos - 1] === '.') {
-                        e.preventDefault();
-                        var before = input.value.slice(0, pos - 2);
-                        var after = input.value.slice(pos);
-                        input.value = before + after;
-                        var newPos = Math.max(0, pos - 2);
-                        input.setSelectionRange(newPos, newPos);
-                        input.dispatchEvent(new Event('input', { bubbles: true }));
-                    }
-                }
-            } else if (e.code === 'NumpadDecimal') {
-                // Numpad ayırıcı tuşuna basıldığında virgül ekle
-                e.preventDefault();
-                var start = input.selectionStart;
-                var end = input.selectionEnd;
-                if (input.value.indexOf(',') === -1) {
-                    var valBefore = input.value.slice(0, start);
-                    var valAfter = input.value.slice(end);
-                    input.value = valBefore + ',' + valAfter;
-                    input.setSelectionRange(start + 1, start + 1);
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
-                }
-            }
-        }
-
-        moneyInputs.forEach(function (input) {
-            if (input.value) {
-                input.value = formatInitialMoney(input.value);
-            }
-            input.addEventListener('input', handleMoneyInput);
-            input.addEventListener('keydown', handleMoneyKeyDown);
-        });
-
-        // Form gönderilmeden HEMEN önce capture: true ile ham biçime dönüştür
-        form.addEventListener('submit', function () {
-            moneyInputs.forEach(function (input) {
-                input.dataset.formattedValue = input.value;
-                input.value = unformatMoney(input.value);
-            });
-
-            // HTML5 doğrulaması başarısız olursa formatı hemen geri getir
-            if (!form.checkValidity()) {
-                moneyInputs.forEach(function (input) {
-                    if (input.dataset.formattedValue !== undefined) {
-                        input.value = input.dataset.formattedValue;
-                    }
-                });
-            }
-        }, true); // capture: true
 
         /* ==========================================================================
            2. KARAKTER SAYACI ([data-counter])
@@ -274,11 +128,11 @@
                     label: priceEl ? 'Satış fiyatı' : 'Kira bedeli',
                     isComplete: function () {
                         if (priceEl) {
-                            var pVal = parseFloat(unformatMoney(priceEl.value));
+                            var pVal = window.fibiNumber.parse(priceEl.value);
                             if (!isNaN(pVal) && pVal > 0) return true;
                         }
                         if (rentEl) {
-                            var rVal = parseFloat(unformatMoney(rentEl.value));
+                            var rVal = window.fibiNumber.parse(rentEl.value);
                             if (!isNaN(rVal) && rVal > 0) return true;
                         }
                         return false;
@@ -296,11 +150,11 @@
                     label: grossAreaEl ? 'Brüt alan' : 'Alan (m²)',
                     isComplete: function () {
                         if (grossAreaEl) {
-                            var gVal = parseFloat(grossAreaEl.value);
+                            var gVal = window.fibiNumber.parse(grossAreaEl.value);
                             if (!isNaN(gVal) && gVal > 0) return true;
                         }
                         if (areaEl) {
-                            var aVal = parseFloat(areaEl.value);
+                            var aVal = window.fibiNumber.parse(areaEl.value);
                             if (!isNaN(aVal) && aVal > 0) return true;
                         }
                         return false;
@@ -635,11 +489,11 @@
                 var netAreaEl = document.getElementById('netArea');
                 var areaEl = document.getElementById('areaInput');
 
-                if (grossAreaEl && grossAreaEl.value.trim() && parseFloat(grossAreaEl.value) > 0) {
+                if (grossAreaEl && grossAreaEl.value.trim() && window.fibiNumber.parse(grossAreaEl.value) > 0) {
                     metaParts.push(grossAreaEl.value.trim() + ' m²');
-                } else if (netAreaEl && netAreaEl.value.trim() && parseFloat(netAreaEl.value) > 0) {
+                } else if (netAreaEl && netAreaEl.value.trim() && window.fibiNumber.parse(netAreaEl.value) > 0) {
                     metaParts.push(netAreaEl.value.trim() + ' m²');
-                } else if (areaEl && areaEl.value.trim() && parseFloat(areaEl.value) > 0) {
+                } else if (areaEl && areaEl.value.trim() && window.fibiNumber.parse(areaEl.value) > 0) {
                     metaParts.push(areaEl.value.trim() + ' m²');
                 }
 
@@ -980,12 +834,11 @@
 
             function recalculateM2() {
                 if (userChangedM2) return;
-                var rawPrice = parseFloat(unformatMoney(activePriceInput.value));
-                var rawArea = parseFloat(areaInputForM2.value);
+                var rawPrice = window.fibiNumber.parse(activePriceInput.value);
+                var rawArea = window.fibiNumber.parse(areaInputForM2.value);
                 if (!isNaN(rawPrice) && rawPrice > 0 && !isNaN(rawArea) && rawArea > 0) {
                     var unit = Math.round(rawPrice / rawArea);
-                    m2PriceInput.value = formatMoneyValue(unit.toString());
-                    m2PriceInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    m2PriceInput.value = window.fibiNumber.format(unit.toString());
                 }
             }
 
